@@ -15,7 +15,7 @@ app.get('/keyboard', (req, res)=>{
 });
 
 app.get('/cancel/:reservationKey', (req, res)=>{
-    kakaoEventHandler.cancelReservation(req.params.reservationKey);
+    kakaoEventHandler.cancelReservation(req.params.reservationKey, res);
 });
 
 app.post('/message', (req, res)=>{

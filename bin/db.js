@@ -230,3 +230,22 @@ exports.saveAlrimTalk = async function(alrimTalk){
         Item: alrimTalk
     });
 };
+
+exports.cancelReservation = async function(alrimTalk, user){
+    if(!user.sendCancelCount){
+        user.sendCancelCount = 0;
+    }
+    user.sendCancelCount += 1;
+
+    await put({
+        TableName: 'KaKaoUserList',
+        Item: user
+    });
+
+    alrimTalk.isCanceled = true;
+    await put({
+        TableName: 'AlrimTalk',
+        Item: alrimTalk
+    });
+
+}
