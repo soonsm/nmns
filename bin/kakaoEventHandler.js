@@ -7,27 +7,29 @@ const
 
 const
     apiStoreId = 'soonsm',
-    apiStoreKey = 'Nzc4MS0xNTIwNDI3MTgxMzc4LTMyMTQ4M2I1LTBiODUtNDYxNC05NDgzLWI1MGI4NWY2MTQzNw==',
-    plusFriendId = 'nomorenoshow',
-    senderProfileKey = '85c8ee456e69a2dd1ba45598ea31374570179eb2';
+    apiStoreKey = 'Nzc4MS0xNTIwNDI3MTgxMzc4LTMyMTQ4M2I1LTBiODUtNDYxNC05NDgzLWI1MGI4NWY2MTQzNw==';
 
 function formatPhone(phone){
     return phone.length === 11 ? (phone.substring(0,3) + '-' + phone.substring(3, 7) + '-' + phone.substring(7)) : (phone.substring(0,3) + '-' + phone.substring(3, 6) + '-' + phone.substring(6));
 }
 
-async function sendReservationCancelNotify(phone, shopName, reservationDate, reservationTime, reservationPhone){
+function phoneNumberValidation(phone){
+    const phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
+    return phoneRex.test(phone);
+}
 
-    let msg = `[${shopName} 예약취소알림]\n예약 취소를 알려드립니다.\n예약날짜: ${moment(reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(reservationTime,'HHmm').format('HH[시]mm[분]')} \n예약자 전화번호: ${formatPhone(reservationPhone)}`;
+async function sendReservationCancelNotify(user, alrimTalk){
 
+    let msg = `[${user.shopName} 예약취소알림]\n예약 취소를 알려드립니다.\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')} \n예약자 전화번호: ${formatPhone(alrimTalk.receiverPhone)}`;
     let result = false;
 
     await request({
-        "uri": `http://api.apistore.co.kr/kko/1.5/msg/${apiStoreId}`,
+        "uri": `http://api.apistore.co.kr/kko/1/msg/${apiStoreId}`,
         "headers": {'x-waple-authorization': apiStoreKey},
         "method": "POST",
         "json": {
-            phone: phone,
-            callback: phone,
+            phone: user.userPhone,
+            callback: user.userPhone,
             reqdate: moment().format('YYYYMMDDHHmmss'),
             msg: msg,
             template_code: 'A002',
@@ -46,36 +48,31 @@ async function sendReservationCancelNotify(phone, shopName, reservationDate, res
     return result;
 }
 
-function phoneNumberValidation(phone){
-    const phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
-    return phoneRex.test(phone);
-}
 
-async function sendAlrimTalk(phone, callback, msg) {
-    const apiVersion = null, clientId = null, clientKey = null;
-    const templateCode = null;
+async function sendAlrimTalk(user, alrimTalk) {
 
-    request({
-        "uri": `http://api.apistore.co.kr/kko/${apiVersion}/msg/${clientId}`,
-        "headers": {'x-waple-authorization': clientKey},
+    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(reservationTime,'HHmm').format('HH[시]mm[분]')}\n방문시준비사항: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
+    let result = false;
+
+    await request({
+        "uri": `http://api.apistore.co.kr/kko/1/msg/${apiStoreId}`,
+        "headers": {'x-waple-authorization': apiStoreKey},
         "method": "POST",
         "json": {
-            phone: phone,
-            callback: callback,
+            phone: alrimTalk.receiverPhone,
+            callback: user.userPhone,
+            reqdate: moment().format('YYYYMMDDHHmmss'),
             msg: msg,
-            template_code: templateCode,
-            failed_type: 'SMS',
-            url: url,
-            url_button_txt: url_button_txt,
-            failed_subject: '예약알림',
-            failed_msg: failed_msg,
-            btn_types: btn_types,
-            btn_txts: btn_txts,
-            btn_urls1: btn_urls1
+            template_code: 'A003',
+            url: `http://ec2-13-125-29-64.ap-northeast-2.compute.amazonaws.com/cancel/key=${alrimTalk.reservationKey}`,
+            url_button_txt: '예약취소'
         }
     }, (err, res, body) => {
         if (!err) {
-            console.log('message sent!: ', body)
+            console.log('ReservationCancelNotify sent!: ', body)
+            if(body.result_code === '200'){
+                result = true;
+            }
         } else {
             console.error("Unable to send message:" + body);
         }
@@ -115,13 +112,17 @@ exports.messageHandler = async function(userKey, content, res){
                 if(user.onGoingAlrimTalkKey){
                     let alrimTalk = await db.getAlrimTalk(user.onGoingAlrimTalkKey);
                     alrimTalk.isConfirmed = true;
-                    //TODO: 알림톡 API 호출
-                    // await sendAlrimTalk('01028904311', '01028904311', user.messageWithConfirm);
-                    alrimTalk.isSent = true;
-                    await db.saveAlrimTalk(alrimTalk);
-                    //사용자 정보에 전송 횟수 업데이트
-                    await db.setUserStatus(userKey, userStatus.beforeSelection, 'sendConfirmCount');
-                    returnMessage = message.messageWithHomeKeyboard('전송되었습니다.');
+                    if(await sendAlrimTalk(user,alrimTalk)){
+                        alrimTalk.isSent = true;
+                        await db.saveAlrimTalk(alrimTalk);
+                        //사용자 정보에 전송 횟수 업데이트
+                        await db.setUserStatus(userKey, userStatus.beforeSelection, 'sendConfirmCount');
+                        returnMessage = message.messageWithHomeKeyboard('전송되었습니다.');
+                    }else{
+                        //TODO: 알림톡 전송 실패 처리 강화
+                        returnMessage = message.messageWithHomeKeyboard('알림톡 전송을 실패하였습니다.');
+                    }
+
                 }else{
                     await db.setUserStatus(userKey, userStatus.beforeSelection);
                     returnMessage = message.messageWithHomeKeyboard('진행중인 알림톡이 없습니다.');
@@ -216,7 +217,7 @@ exports.cancelReservation = async function(reservationKey, res){
         let user = await db.getUser(alrimTalk.userKey);
         if(user){
             //알림톡 전송
-            if(await sendReservationCancelNotify(user.userPhone, user.shopName, alrimTalk.reservationDate, alrimTalk.reservationTime, alrimTalk.receiverPhone)){
+            if(await sendReservationCancelNotify(user, alrimTalk)){
                 //알림톡 Update (취소) && User Update (취소 카운트 up)
                 await db.cancelReservation(alrimTalk, user)
             }else{
@@ -224,6 +225,7 @@ exports.cancelReservation = async function(reservationKey, res){
             }
         }
     }
+    //TODO 검색 안될 때도 예약 취소됐다고 나오네.
     res.status(200).send(returnMsg);
 };
 
