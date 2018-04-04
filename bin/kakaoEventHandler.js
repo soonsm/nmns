@@ -210,9 +210,15 @@ exports.messageHandler = async function(userKey, content, res){
     res.status(200).json(returnMessage);
 };
 
+/**
+ * 예약취소 처리
+ * @param reservationKey
+ * @param res
+ * @returns {Promise<void>}
+ */
 exports.cancelReservation = async function(reservationKey, res){
     let alrimTalk = await db.getAlrimTalk(reservationKey);
-    let returnMsg = '예약이 취소되었습니다.';
+    let returnMsg = '예약 정보가 없습니다.';
     if(alrimTalk){
         let user = await db.getUser(alrimTalk.userKey);
         if(user){
@@ -220,12 +226,12 @@ exports.cancelReservation = async function(reservationKey, res){
             if(await sendReservationCancelNotify(user, alrimTalk)){
                 //알림톡 Update (취소) && User Update (취소 카운트 up)
                 await db.cancelReservation(alrimTalk, user)
+                returnMsg = '예약이 취소되었습니다.';
             }else{
                 returnMsg = `예약취소를 실패했습니다.\n${formatPhone(user.userPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
             }
         }
     }
-    //TODO 검색 안될 때도 예약 취소됐다고 나오네.
     res.status(200).send(returnMsg);
 };
 
