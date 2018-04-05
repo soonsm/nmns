@@ -18,6 +18,13 @@ function phoneNumberValidation(phone){
     return phoneRex.test(phone);
 }
 
+
+/*
+TODO List
+1. 노쇼 구분해서 보여주기(우리샵 노쇼, 다른샵 노쇼)
+2. 노쇼 등록 취소하기(마지막으로 등록한 노쇼취소, 전화번호 입력받아서 취소(단, 내가 등록한 노쇼에 한하여))
+ */
+
 async function sendReservationCancelNotify(user, alrimTalk){
 
     let msg = `[${user.shopName} 예약취소알림]\n예약 취소를 알려드립니다.\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')} \n예약자 전화번호: ${formatPhone(alrimTalk.receiverPhone)}`;
@@ -51,7 +58,7 @@ async function sendReservationCancelNotify(user, alrimTalk){
 
 async function sendAlrimTalk(user, alrimTalk) {
 
-    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(reservationTime,'HHmm').format('HH[시]mm[분]')}\n방문시준비사항: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
+    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')}\n방문시준비사항: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
     let result = false;
 
     await request({
