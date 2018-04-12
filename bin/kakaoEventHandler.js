@@ -282,6 +282,8 @@ exports.cancelReservation = async function(reservationKey, res){
             }else{
                 returnMsg = `예약취소를 실패했습니다.\n${formatPhone(user.userPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
             }
+        }else{
+            returnMsg = '사용자 정보가 없습니다.';
         }
     }
     res.status(200).send(returnMsg);
