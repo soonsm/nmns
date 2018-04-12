@@ -63,10 +63,11 @@ async function sendReservationCancelNotify(user, alrimTalk){
 
     return await sendAlrimTalk({
         phone: user.userPhone,
-        callback: user.userPhone,
-        reqdate: moment().format('YYYYMMDDHHmmss'),
+        callback: '01028904311',
         msg: msg,
-        template_code: 'A002'
+        template_code: 'A002',
+        apiVersion: 1,
+        client_id: apiStoreId
     });
 }
 
