@@ -35,25 +35,26 @@ TODO List
  */
 
 async function sendAlrimTalk(param){
-    let result = false;
 
-    await request({
-        "uri": `http://api.apistore.co.kr/kko/1/msg/${apiStoreId}`,
-        "headers": {'x-waple-authorization': apiStoreKey},
-        "method": "POST",
-        'form' : param
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('sendAlrimTalk sending result: ', body)
-            if(body.result_code === '200'){
-                resolve(true);
+    return new Promise(resolve => {
+        request({
+            "uri": `http://api.apistore.co.kr/kko/1/msg/${apiStoreId}`,
+            "headers": {'x-waple-authorization': apiStoreKey},
+            "method": "POST",
+            'form' : param
+        }, (err, res, body) => {
+            if (!err) {
+                console.log('sendAlrimTalk sending result: ', body)
+                if(JSON.parse(body).result_code === '200'){
+                    resolve(true);
+                }
+                resolve(false);
+            } else {
+                console.error("Unable to send sendAlrimTalk:", err);
+                resolve(false);
             }
-        } else {
-            console.error("Unable to send sendAlrimTalk:", body);
-        }
+        });
     });
-
-    return result;
 }
 
 async function sendReservationCancelNotify(user, alrimTalk){
