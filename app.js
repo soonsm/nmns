@@ -14,7 +14,7 @@ app.get('/keyboard', (req, res)=>{
     res.status(200).json(message.homeKeyboard);
 });
 
-app.get('/cancel/:reservationKey', (req, res)=>{
+app.get('/cancel/key=:reservationKey', (req, res)=>{
     kakaoEventHandler.cancelReservation(req.params.reservationKey, res);
 });
 
