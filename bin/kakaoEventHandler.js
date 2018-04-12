@@ -46,7 +46,7 @@ async function sendAlrimTalk(param){
         if (!err) {
             console.log('sendAlrimTalk sending result: ', body)
             if(body.result_code === '200'){
-                result = true;
+                resolve(true);
             }
         } else {
             console.error("Unable to send sendAlrimTalk:", body);
@@ -101,7 +101,7 @@ async function sendSenderRegister(){
         if (!err) {
             console.log('발신번호 인증/등록 전송 성공: ', body)
             if(body.result_code === '200'){
-                return true;
+                resolve(true);
             }
         } else {
             console.error("발신번호 인증/등록 전송 실패:", body);
@@ -268,8 +268,8 @@ exports.messageHandler = async function(userKey, content, res){
  * @returns {Promise<void>}
  */
 exports.cancelReservation = async function(reservationKey, res){
-    let alrimTalk = await db.getAlrimTalk(reservationKey);
     let returnMsg = '예약 정보가 없습니다.';
+    let alrimTalk = await db.getAlrimTalk(reservationKey);
     if(alrimTalk){
         let user = await db.getUser(alrimTalk.userKey);
         if(user){
