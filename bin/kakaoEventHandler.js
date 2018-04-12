@@ -162,7 +162,8 @@ exports.messageHandler = async function(userKey, content, res){
                 if(user.onGoingAlrimTalkKey){
                     let alrimTalk = await db.getAlrimTalk(user.onGoingAlrimTalkKey);
                     alrimTalk.isConfirmed = true;
-                    if(await sendReservationConfirm(user,alrimTalk)){
+                    const sendResult = await sendReservationConfirm(user,alrimTalk);
+                    if(sendResult){
                         alrimTalk.isSent = true;
                         await db.saveAlrimTalk(alrimTalk);
                         //사용자 정보에 전송 횟수 업데이트
@@ -273,7 +274,8 @@ exports.cancelReservation = async function(reservationKey, res){
         let user = await db.getUser(alrimTalk.userKey);
         if(user){
             //알림톡 전송
-            if(await sendReservationCancelNotify(user, alrimTalk)){
+            const sendResult = await sendReservationCancelNotify(user, alrimTalk);
+            if(sendResult){
                 //알림톡 Update (취소) && User Update (취소 카운트 up)
                 await db.cancelReservation(alrimTalk, user)
                 returnMsg = '예약이 취소되었습니다.';
