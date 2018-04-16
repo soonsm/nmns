@@ -30,8 +30,16 @@ exports.messageWithHomeKeyboard = function (text) {
             'text': text
         },
         'keyboard': exports.homeKeyboard
-    }
-}
+    };
+};
+
+exports.messageWithTyping = function (text) {
+    return {
+        'message': {
+            'text': text
+        }
+    };
+};
 
 exports.typePhoneNumber = {
     'message': {

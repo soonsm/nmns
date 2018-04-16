@@ -3,3 +3,4 @@ exports.beforeRegister = '1';
 exports.beforeRetrieve = '2';
 exports.beforeTypeAlrimTalkInfo = '3';
 exports.beforeConfirmAlrimTalkInfo = '4';
+exports.beforeTypeAlrimTalkKey = '5';

@@ -182,6 +182,13 @@ exports.setUserStatus = async function(userKey, userStatus, propertyToIncrement)
     });
 };
 
+exports.saveUser = async function(user){
+    return await put({
+        TableName: 'KaKaoUserList',
+        Item: user
+    });
+};
+
 exports.deleteFriend = async function(userKey){
     let user = await exports.getUser(userKey);
     if(user){

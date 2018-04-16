@@ -97,7 +97,7 @@ async function sendSenderRegister(){
             sendnumber : '01028904311',
             comment: 'NoMoreNoShow대표번호',
             pintype: 'SMS',
-            pincode: '693181'
+            pincode: '280483'
         }
     }, (err, res, body) => {
         if (!err) {
@@ -148,10 +148,12 @@ exports.messageHandler = async function(userKey, content, res){
                 // await sendSenderRegister();
                 // await sendTestAlrimTalk();
                 // returnMessage = message.messageWithHomeKeyboard('전송되었습니다.');
+
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkInfo, 'sendConfirmTryCount');
                 returnMessage = message.typeAlrimTalkInfo();
             }else{
-                returnMessage = message.messageWithHomeKeyboard('서비스 준비중입니다.');
+                await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
+                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC');
             }
         }
     }else if(content === message.yesAlrmTalkInfo || content === message.noAlrmTalkInfo){
@@ -245,6 +247,38 @@ exports.messageHandler = async function(userKey, content, res){
                         }
                     }else{
                         returnMessage = message.messageWithHomeKeyboard('서비스 준비중입니다.');
+                    }
+                    break;
+                case userStatus.beforeTypeAlrimTalkKey:
+                    //정보가 맞으면 User에 권한 추가
+                    //정보가 맞지 않으면 처음으로 돌아가
+                    const keyList = [
+                        {shopName: '승민샵', key: 'ABCABC121212', messageWithConfirm: '발톱 깍고와라', userPhone: '01028904311', cancelDue: '이틀'}
+                    ]
+                    const shopNameAndKey = content.split(" ");
+                    let isRight = false;
+                    if(shopNameAndKey.length === 2){
+                        const shopName = shopNameAndKey[0];
+                        const key = shopNameAndKey[1];
+                        for(let i=0; i <keyList.length; i++){
+                            let keyMap = keyList[i];
+                            if(shopName === keyMap.shopName && key === keyMap.key){
+                                user.shopName = shopName;
+                                user.hasRightToSendConfirm = 1;
+                                user.userStatus = userStatus.beforeSelection;
+                                user.messageWithConfirm = keyMap.messageWithConfirm;
+                                user.userPhone = keyMap.userPhone;
+                                user.cancelDue = keyMap.cancelDue;
+                                if(await db.saveUser(user)){
+                                    isRight = true;
+                                    returnMessage = message.messageWithHomeKeyboard('등록되었습니다.');
+                                }
+                            }
+                        }
+                    }
+                    if(!isRight){
+                        await db.setUserStatus(userKey, userStatus.beforeSelection);
+                        returnMessage = message.messageWithHomeKeyboard('사전에 등록된 정보가 아닙니다.\n(베타 테스터로 등록된 사용자만 이용 가능합니다.)');
                     }
                     break;
                 default:
