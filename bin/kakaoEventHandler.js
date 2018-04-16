@@ -153,7 +153,7 @@ exports.messageHandler = async function(userKey, content, res){
                 returnMessage = message.typeAlrimTalkInfo();
             }else{
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
-                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC');
+                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)');
             }
         }
     }else if(content === message.yesAlrmTalkInfo || content === message.noAlrmTalkInfo){
