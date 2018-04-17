@@ -132,6 +132,12 @@ exports.getUser = async function(userKey){
   });
 };
 
+exports.getAlrimTalkUserList = async function(){
+    return await getList({
+        TableName: 'AlrimTalkUser'
+    });
+};
+
 exports.getNoShow = async function(phoneNumber){
     let key = sha256(phoneNumber);
     return await get({

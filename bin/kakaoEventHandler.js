@@ -170,12 +170,10 @@ exports.messageHandler = async function(userKey, content, res){
                     if(sendResult){
                         alrimTalk.isSent = true;
                         await db.saveAlrimTalk(alrimTalk);
-                        //사용자 정보에 전송 횟수 업데이트
                         await db.setUserStatus(userKey, userStatus.beforeSelection, 'sendConfirmCount');
                         returnMessage = message.messageWithHomeKeyboard('전송되었습니다.');
                     }else{
-                        //TODO: 알림톡 전송 실패 처리 강화
-                        returnMessage = message.messageWithHomeKeyboard('알림톡 전송을 실패하였습니다.');
+                        returnMessage = message.messageWithHomeKeyboard('알림톡 전송을 실패하였습니다.\nnomorenoshow@gmail.com으로 연락바랍니다.');
                     }
 
                 }else{
@@ -189,28 +187,30 @@ exports.messageHandler = async function(userKey, content, res){
     }else{
         let user = await db.getUser(userKey);
         if(user){
-
-            let phoneNumber = content;
-            if(user.userStatus !== userStatus.beforeTypeAlrimTalkInfo &&!phoneNumberValidation(phoneNumber)){
-                returnMessage = message.messageWithHomeKeyboard('잘못입력하였습니다. 다시 입력하세요.\n(처음으로 돌아가려면 \'1\' 입력).');
-            }
-
             switch(user.userStatus){
                 case userStatus.beforeRegister:
-                    await db.addToNoShowList(phoneNumber);
-                    returnMessage = message.messageWithHomeKeyboard('등록되었습니다.');
-                    await db.setUserStatus(userKey, userStatus.beforeSelection, 'registerCount');
+                    if(phoneNumberValidation(content)){
+                        await db.addToNoShowList(content);
+                        returnMessage = message.messageWithHomeKeyboard('등록되었습니다.');
+                        await db.setUserStatus(userKey, userStatus.beforeSelection, 'registerCount');
+                    }else{
+                        returnMessage = message.messageWithTyping('잘못입력하였습니다. 다시 입력하세요.\n(처음으로 돌아가려면 \'1\' 입력).');
+                    }
                     break;
                 case userStatus.beforeRetrieve:
-                    let noShow = await db.getNoShow(phoneNumber);
-                    if(noShow && noShow.noShowCount > 0){
-                        const lastNoShowDate = noShow.lastNoShowDate;
-                        const lastNoShowDateStr = `${lastNoShowDate.substring(0,4)}년 ${lastNoShowDate.substring(4,6)}월 ${lastNoShowDate.substring(6)}일`;
-                        returnMessage = message.messageWithHomeKeyboard(`입력하신 번호는 NoShow 전적이 ${noShow.noShowCount}번 있습니다.\n(마지막 NoShow: ${lastNoShowDateStr})`);
+                    if(phoneNumberValidation(content)){
+                        let noShow = await db.getNoShow(content);
+                        if(noShow && noShow.noShowCount > 0){
+                            const lastNoShowDate = noShow.lastNoShowDate;
+                            const lastNoShowDateStr = `${lastNoShowDate.substring(0,4)}년 ${lastNoShowDate.substring(4,6)}월 ${lastNoShowDate.substring(6)}일`;
+                            returnMessage = message.messageWithHomeKeyboard(`입력하신 번호는 NoShow 전적이 ${noShow.noShowCount}번 있습니다.\n(마지막 NoShow: ${lastNoShowDateStr})`);
+                        }else{
+                            returnMessage = message.messageWithHomeKeyboard('입력하신 전화번호는 NoShow 전적이 없습니다.');
+                        }
+                        await db.setUserStatus(userKey, userStatus.beforeSelection, 'searchCount');
                     }else{
-                        returnMessage = message.messageWithHomeKeyboard('입력하신 전화번호는 NoShow 전적이 없습니다.');
+                        returnMessage = message.messageWithTyping('잘못입력하였습니다. 다시 입력하세요.\n(처음으로 돌아가려면 \'1\' 입력).');
                     }
-                    await db.setUserStatus(userKey, userStatus.beforeSelection, 'searchCount');
                     break;
                 case userStatus.beforeTypeAlrimTalkInfo:
                     if(user.hasRightToSendConfirm){
@@ -252,9 +252,10 @@ exports.messageHandler = async function(userKey, content, res){
                 case userStatus.beforeTypeAlrimTalkKey:
                     //정보가 맞으면 User에 권한 추가
                     //정보가 맞지 않으면 처음으로 돌아가
-                    const keyList = [
-                        {shopName: '승민샵', key: 'ABCABC121212', messageWithConfirm: '발톱 깍고와라', userPhone: '01028904311', cancelDue: '이틀'}
-                    ]
+                    // const keyList = [
+                    //     {shopName: '승민샵', key: 'ABCABC121212', messageWithConfirm: '발톱 깍고와라', userPhone: '01028904311', cancelDue: '이틀'}
+                    // ]
+                    const keyList = await db.getAlrimTalkUserList();
                     const shopNameAndKey = content.split(" ");
                     let isRight = false;
                     if(shopNameAndKey.length === 2){
