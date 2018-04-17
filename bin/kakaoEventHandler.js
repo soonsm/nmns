@@ -307,7 +307,7 @@ exports.messageHandler = async function(userKey, content, res){
 exports.cancelReservation = async function(reservationKey, res){
     let returnMsg = '예약 정보가 없습니다.';
     let alrimTalk = await db.getAlrimTalk(reservationKey);
-    if(alrimTalk){
+    if(alrimTalk && !alrimTalk.isCanceled){
         let user = await db.getUser(alrimTalk.userKey);
         if(user){
             //알림톡 전송
