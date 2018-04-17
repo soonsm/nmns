@@ -10,6 +10,12 @@ const
     kakaoEventHandler = require('./bin/kakaoEventHandler')
     ;
 
+// app.set('views engine', 'pug');
+
+app.get('/', function (req, res) {
+    res.render('reservationCancel.pug', { title: '예약취소안내', message: '예약취소되었습니다.' })
+});
+
 app.get('/keyboard', (req, res)=>{
     res.status(200).json(message.homeKeyboard);
 });

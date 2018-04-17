@@ -323,7 +323,8 @@ exports.cancelReservation = async function(reservationKey, res){
             returnMsg = '사용자 정보가 없습니다.';
         }
     }
-    res.status(200).send(returnMsg);
+    // res.status(200).send(returnMsg);
+    res.render('reservationCancel.pug', { title: '예약취소안내', message: returnMsg });
 };
 
 exports.friendAddHandler = async function(userKey, res){
