@@ -1,5 +1,8 @@
-html
-    head
-        title= title
-    body
-        h1(style='font-size:400%')= message
+extends ./../node_modules/pug-bootstrap/_bootstrap
+block body
+    +navbar("No More No Show")
+    div(style='margin:10px')
+        +panel-success(message)
+            p= contents
+
+    //h1(style='font-size:400%')= message

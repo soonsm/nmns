@@ -12,9 +12,10 @@ const
 
 // app.set('views engine', 'pug');
 
+/*
 app.get('/', function (req, res) {
-    res.render('reservationCancel.pug', { title: '예약취소안내', message: '예약취소되었습니다.' })
-});
+    res.render('reservationCancel.pug', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
+});*/
 
 app.get('/keyboard', (req, res)=>{
     res.status(200).json(message.homeKeyboard);
