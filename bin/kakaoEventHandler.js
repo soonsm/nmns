@@ -170,7 +170,7 @@ exports.messageHandler = async function(userKey, content, res){
                     if(sendResult){
                         alrimTalk.isSent = true;
                         await db.saveAlrimTalk(alrimTalk);
-                        await db.setUserStatus(userKey, userStatus.beforeSelection, 'sendConfirmCount');
+                        await db.setUserAlrimTalkSend(user);
                         returnMessage = message.messageWithHomeKeyboard('전송되었습니다.');
                     }else{
                         returnMessage = message.messageWithHomeKeyboard('알림톡 전송을 실패하였습니다.\nnomorenoshow@gmail.com으로 연락바랍니다.');

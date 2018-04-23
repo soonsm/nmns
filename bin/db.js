@@ -1,6 +1,7 @@
 const util = require('./util');
 const sha256 = require('js-sha256');
 const moment = require('moment');
+const userStatus = require('./userStatus');
 
 var AWS = require("aws-sdk");
 AWS.config.update({
@@ -188,6 +189,23 @@ exports.setUserStatus = async function(userKey, userStatus, propertyToIncrement)
     });
 };
 
+exports.setUserAlrimTalkSend = async function(user){
+  if(user){
+      user.userStatus = userStatus.beforeSelection;
+      let today = util.getToday();
+      user.lastVisitDate = today;
+      user.sendConfirmCount = (user.sendConfirmCount||0) + 1;
+      let log = user['sendConfirmCountDayLog'] || {};
+      log[today] = (log[today] ||0) +1;
+      user['sendConfirmCountDayLog'] = log;
+
+      return await put({
+          TableName: 'KaKaoUserList',
+          Item: user
+      });
+  }
+};
+
 exports.saveUser = async function(user){
     return await put({
         TableName: 'KaKaoUserList',
@@ -249,6 +267,11 @@ exports.cancelReservation = async function(alrimTalk, user){
         user.sendCancelCount = 0;
     }
     user.sendCancelCount += 1;
+
+    let today = util.getToday();
+    let log = user['sendCancelCountDayLog'] || {};
+    log[today] = (log[today] ||0) +1;
+    user['sendCancelCountDayLog'] = log;
 
     await put({
         TableName: 'KaKaoUserList',
