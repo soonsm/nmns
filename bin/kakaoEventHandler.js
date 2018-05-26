@@ -18,7 +18,7 @@ function formatPhone(phone){
 }
 
 function phoneNumberValidation(phone){
-    const phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
+    const phoneRex = /^01([016789])([0-9]{3,4})([0-9]{4})$/;
     return phoneRex.test(phone);
 }
 
@@ -74,7 +74,7 @@ async function sendReservationCancelNotify(user, alrimTalk){
 
 async function sendReservationConfirm(user, alrimTalk) {
 
-    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')}\n방문시준비사항: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
+    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')}\n안내사항: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
 
     return await sendAlrimTalk({
         phone: alrimTalk.receiverPhone,

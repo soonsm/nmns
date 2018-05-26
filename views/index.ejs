@@ -60,7 +60,7 @@
       <div class="container">
         <h1 class="text-uppercase mb-0">No More No Show</h1>
         <hr class="star-light">
-        <h2 class="godo normal w700">노쇼전적 조회 - 노쇼 신고 - 예약취소 간소화</h2>
+        <h2 class="godo normal w700">노쇼전적공유 - 예약취소 간소화</h2>
       </div>
     </header>
 
@@ -144,28 +144,28 @@
               <div class="control-group">
                 <div class="form-group floating-label-form-group controls mb-0 pb-2">
                   <label>상호명(띄어쓰기없이 작성)</label>
-                  <input class="form-control" id="name" type="text" placeholder="상호명(띄어쓰기없이 작성)" required="required" data-validation-required-message="상호명을 입력해주세요.">
+                  <input class="form-control" id="name" type="text" pattern="\S*" placeholder="상호명(띄어쓰기없이 작성)" required="required" data-validation-required-message="상호명을 입력해주세요." data-validation-pattern-message="공백을 포함 할 수 없습니다.">
                   <p class="help-block text-danger"></p>
                 </div>
               </div>
               <div class="control-group">
                 <div class="form-group floating-label-form-group controls mb-0 pb-2">
                   <label>이용신청결과를 받을 이메일 주소</label>
-                  <input class="form-control" id="email" type="email" placeholder="이용신청결과를 받을 이메일 주소" required="required" data-validation-required-message="이메일을 입력해주세요.">
+                  <input class="form-control" id="email" type="email" placeholder="이용신청결과를 받을 이메일 주소" required="required" data-validation-required-message="이메일을 입력해주세요." data-validation-email-message="올바른 이메일 양식이 아닙니다.">
                   <p class="help-block text-danger"></p>
                 </div>
               </div>
               <div class="control-group">
                 <div class="form-group floating-label-form-group controls mb-0 pb-2">
                   <label>예약취소 알림을 받을 휴대전화번호(번호만 입력)</label>
-                  <input class="form-control" id="phone" type="tel" placeholder="예약취소 알림을 받을 휴대전화번호(번호만 입력)" required="required" data-validation-required-message="전화번호를 입력해주세요.">
+                  <input class="form-control" id="phone" type="text" pattern="01([016789])([0-9]{3,4})([0-9]{4})" placeholder="예약취소 알림을 받을 휴대전화번호(번호만 입력)" required="required" data-validation-required-message="전화번호를 입력해주세요." data-validation-pattern-message="올바른 휴대전화번호 형식이 아닙니다.">
                   <p class="help-block text-danger"></p>
                 </div>
               </div>
               <div class="control-group">
                 <div class="form-group floating-label-form-group controls mb-0 pb-2">
                   <label>예약취소가능시간(예: 3시간전까지 가능하면, '3시간' 입력)</label>
-                  <input class="form-control" id="phone" type="tel" placeholder="예약취소가능시간(예: 3시간전까지 가능하면, '3시간' 입력)" required="required" data-validation-required-message="예약취소가능시간을 입력해주세요.">
+                  <input class="form-control" id="phone" type="text" placeholder="예약취소가능시간(예: 3시간전까지 가능하면, '3시간' 입력)" required="required" data-validation-required-message="예약취소가능시간을 입력해주세요.">
                   <p class="help-block text-danger"></p>
                 </div>
               </div>
