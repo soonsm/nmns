@@ -3,7 +3,8 @@ const
     db = require('./db'),
     userStatus = require('./userStatus'),
     request = require('request'),
-    moment = require('moment');
+    moment = require('moment'),
+    util = require('./util');
 
 const
     apiStoreId = 'soonsm',
@@ -15,11 +16,6 @@ function formatPhone(phone){
     }catch(e){
         return '';
     }
-}
-
-function phoneNumberValidation(phone){
-    const phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
-    return phoneRex.test(phone);
 }
 
 
@@ -189,7 +185,7 @@ exports.messageHandler = async function(userKey, content, res){
         if(user){
             switch(user.userStatus){
                 case userStatus.beforeRegister:
-                    if(phoneNumberValidation(content)){
+                    if(util.phoneNumberValidation(content)){
                         await db.addToNoShowList(content);
                         returnMessage = message.messageWithHomeKeyboard('등록되었습니다.');
                         await db.setUserStatus(userKey, userStatus.beforeSelection, 'registerCount');
@@ -198,7 +194,7 @@ exports.messageHandler = async function(userKey, content, res){
                     }
                     break;
                 case userStatus.beforeRetrieve:
-                    if(phoneNumberValidation(content)){
+                    if(util.phoneNumberValidation(content)){
                         let noShow = await db.getNoShow(content);
                         if(noShow && noShow.noShowCount > 0){
                             const lastNoShowDate = noShow.lastNoShowDate;
@@ -231,7 +227,7 @@ exports.messageHandler = async function(userKey, content, res){
                             errorMsg += `예약시간이 올바르지 않습니다.${time}\n`;
                         }
                         // 핸드폰 번호 검증
-                        if(!phoneNumberValidation(receiverPhone)){
+                        if(!util.phoneNumberValidation(receiverPhone)){
                             isValid = false;
                             errorMsg += `번호가 올바르지 않습니다.${receiverPhone}\n`;
                         }

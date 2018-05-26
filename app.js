@@ -7,7 +7,8 @@ const
 
 const
     message = require('./bin/message'),
-    kakaoEventHandler = require('./bin/kakaoEventHandler')
+    kakaoEventHandler = require('./bin/kakaoEventHandler'),
+    webHandler = require('./bin/webHandler')
 ;
 
 // app.set('views engine', 'pug');
@@ -18,6 +19,10 @@ app.engine('html', require('ejs').renderFile);
 //views/bst 경로 밑에 있는 정적 자원들을 바로 접근 가능하도록 설정
 app.use(express.static('views/bst'));
 
+app.get('/getNoShow/:phone', async function(req, res){
+    let phone = req.params.phone;
+    res.status(200).json(await webHandler.getNoShow(phone));
+});
 
 app.get('/', function (req, res) {
     res.render('index', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
