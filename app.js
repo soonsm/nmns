@@ -24,6 +24,12 @@ app.get('/getNoShow/:phone', async function(req, res){
     res.status(200).json(await webHandler.getNoShow(phone));
 });
 
+app.post('/addNoShow', async function(req, res){
+   let body = req.body;
+   let phone = body.phone;
+   res.status(200).json(await webHandler.addNoShow(phone));
+});
+
 app.get('/', function (req, res) {
     res.render('index', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
 });
