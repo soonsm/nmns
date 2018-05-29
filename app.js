@@ -1,20 +1,27 @@
 'use strict';
 
+require('marko/node-require');
+
 const
     express = require('express'),
+    markoExpress = require('marko/express'),
     body_parser = require('body-parser'),
     app = express().use(body_parser.json());
 
 const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
-    webRouter = require('./bin/webRouter')
+    webRouter = require('./bin/webRouter'),
+    index = require('./views/index')
 ;
 
 // app.set('views engine', 'pug');
 app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
+//app.set('view engine', 'ejs');
+//app.engine('html', require('ejs').renderFile);
+
+//enable res.marko(template, data);
+app.use(markoExpress());
 
 //views/bst 경로 밑에 있는 정적 자원들을 바로 접근 가능하도록 설정
 app.use(express.static('views/bst'));
@@ -23,7 +30,9 @@ app.use(express.static('views/bst'));
 app.use('/web', webRouter);
 
 app.get('/', function (req, res) {
-    res.render('index', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
+    //res.render('index', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
+    res.marko(index, { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
+    //index.render({message: 'asdasd'});
 });
 
 app.get('/a', function (req, res) {
