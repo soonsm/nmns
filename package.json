@@ -14,16 +14,19 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "^2.5.9",
-    "express": "~4.15.5",
+    "express": "^4.16.3",
     "jade-bootstrap": "^1.0.14",
     "jquery": "^3.3.1",
     "js-sha256": "^0.9.0",
+    "lodash": "^4.17.10",
     "marko": "^4.10.0",
     "moment": "^2.21.0",
+    "popper": "^1.0.1",
+    "popper.js": "^1.14.3",
     "propper": "^1.0.3",
     "pug": "^2.0.3",
     "pug-bootstrap": "0.0.15",
-    "request": "^2.72.0"
+    "request": "^2.87.0"
   },
   "devDependencies": {
     "gulp-jasmine": "^3.0.0",

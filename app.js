@@ -16,7 +16,7 @@ const
 ;
 
 // app.set('views engine', 'pug');
-app.set('views', __dirname + '/views');
+//app.set('views', __dirname + '/views'); //<-- 아래에서 안먹혀서 제외처리하고 수정
 //app.set('view engine', 'ejs');
 //app.engine('html', require('ejs').renderFile);
 
@@ -24,7 +24,7 @@ app.set('views', __dirname + '/views');
 app.use(markoExpress());
 
 //views/bst 경로 밑에 있는 정적 자원들을 바로 접근 가능하도록 설정
-app.use(express.static('views/bst'));
+app.use(express.static(__dirname + '/views/bst'));
 
 //Web request router
 app.use('/web', webRouter);
