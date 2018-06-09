@@ -1,6 +1,5 @@
+/*global jQuery, location*/
 (function($) {
-  "use strict"; // Start of use strict
-
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
@@ -37,29 +36,16 @@
   });
 
   // Collapse Navbar
-  var navbarCollapse = function() {
+  function navbarCollapse(){
     if ($("#mainNav").offset().top > 100) {
       $("#mainNav").addClass("navbar-shrink");
     } else {
       $("#mainNav").removeClass("navbar-shrink");
     }
   };
-  // Collapse now if page is not at top
   navbarCollapse();
   // Collapse the navbar when page is scrolled
   $(window).scroll(navbarCollapse);
-
-  // Modal popup$(function () {
-  $('.portfolio-item').magnificPopup({
-    type: 'inline',
-    preloader: false,
-    focus: '#username',
-    modal: true
-  });
-  $(document).on('click', '.portfolio-modal-dismiss', function(e) {
-    e.preventDefault();
-    $.magnificPopup.close();
-  });
 
   // Floating label headings for the contact form
   $(function() {
@@ -72,4 +58,49 @@
     });
   });
 
-})(jQuery); // End of use strict
+  function switchForm(){
+    if($(".loginPage form:visible input[name='email']").val() !== ""){
+      $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
+    }
+    $('.loginPage form').animate({height: "toggle", opacity: "toggle"}, "slow");
+  }
+  
+  $('.message a').click(switchForm);
+  
+  function alignMiddle(){
+    $(".carousel-caption").each(function(){
+      $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-($(this).height()>0?70+($(this).height()/2):130)-($(window).width()<=750?180:0)) + "px");
+    });
+    if($(window).width()>=751){
+      $(".loginPage").css("top", (($("#carouselWrapper").height()/2)-(25+($(".loginPage .form").height()/2))) + "px");
+    }else{
+      $(".loginPage").css("top", "5rem");
+    }
+  }
+
+  $(window).on("resize", alignMiddle);
+  
+  $("#mainIndicators img").on("load", function(){
+    alignMiddle();
+  });
+
+  $("#signupLink").on("click", function(){
+    if(!$(".loginPage form:visible").hasClass("signupForm")){
+      switchForm();
+    }
+    $(".loginPage .signupForm input[name='email']").focus();
+  });
+
+  $("#signinLink").on("click", function(){
+    if(!$(".loginPage form:visible").hasClass("signinForm")){
+      switchForm();
+    }
+    $(".loginPage .signinForm input[name='email']").focus();
+  });
+  
+  $(".signinForm button").on("click", function(e){
+    console.log("button clicked!");
+    console.log(e);
+    console.log(e.target);
+  });
+})(jQuery);

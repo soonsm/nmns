@@ -5,3 +5,4 @@ server.js
 README.md
 expressworks/*
 spec/*
+**/*.marko.js

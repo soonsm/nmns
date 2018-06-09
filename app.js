@@ -88,4 +88,4 @@ app.delete('/friend/:user_key', (req, res)=>{
 });
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening'));
+var server = app.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
