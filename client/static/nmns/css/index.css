@@ -483,7 +483,6 @@ a:focus, a:hover, a:active {
 	.loginPage {
     position: absolute;
     right: 5rem;
-    /*bottom: 3rem;*/
 	}
   #carouselWrapper{
     margin-top:4rem;
@@ -503,4 +502,7 @@ a:focus, a:hover, a:active {
   #carouselWrapper{
     margin-top:6rem;
   }
+}
+.carousel-item img{
+  max-height:800px;
 }
