@@ -3,6 +3,7 @@ node_modules/*
 main.js
 server.js
 README.md
+package-lock.json
 expressworks/*
 spec/*
 **/*.marko.js
