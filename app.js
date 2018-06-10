@@ -6,6 +6,10 @@ const
     express = require('express'),
     markoExpress = require('marko/express'),
     body_parser = require('body-parser'),
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy,
+    flash = require('connect-flash'),
+    session = require('express-session'),
     app = express().use(body_parser.json());
 
 const
@@ -26,8 +30,59 @@ app.use(markoExpress());
 //views/bst 경로 밑에 있는 정적 자원들을 바로 접근 가능하도록 설정
 app.use(express.static(__dirname + '/views/bst'));
 
+//flash && session setting
+app.use(session({secret: "cats", resave: false, saveUninitialized: false }));
+app.use(require('cookie-parser')());
+app.use(flash());
+
+//Passport configure
+passport.use(new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'pwd'
+    },
+    function(username, password, done) {
+        if(username === 'ksm'){
+            if(password === 'asd'){
+                return done(null, {email: 'ksm', pwd: 'asd'});
+            }else{
+                return done(null, false, { message: 'Incorrect password.' });
+            }
+        }else{
+            return done(null, false, { message: 'Incorrect username.' });
+        }
+    }
+));
+passport.serializeUser(function(user, cb) {
+    cb(null, user.email);
+});
+
+passport.deserializeUser(function(id, cb) {
+    if(id === 'ksm'){
+        return cb(null, {email: 'ksm', pwd: 'asd'});
+    }else{
+        return cb({msg: 'no user'});
+    }
+});
+app.use(passport.initialize());
+app.use(passport.session());
+
 //Web request router
 app.use('/web', webRouter);
+
+//Login Test
+//email이나 pwd 항목이 없으면 "message":"Missing credentials"
+app.post('/login', (req, res)=>{
+    passport.authenticate('local', (err,user,info)=>{
+        if(err){
+            res.status(404).json(err);
+        }
+        if(user){
+            res.status(200).json(user);
+        }else{
+            res.status(200).json(info);
+        }
+    })(req,res);
+});
 
 app.get('/', function (req, res) {
     //res.render('index', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
