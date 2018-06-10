@@ -6,8 +6,9 @@ const
     express = require('express'),
     markoExpress = require('marko/express'),
     body_parser = require('body-parser'),
-    app = express().use(body_parser.json());
-
+    app = express().use(body_parser.json()),
+    morgan = require("morgan");
+    
 const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
@@ -24,7 +25,8 @@ app.use(markoExpress());
 
 //views/bst 경로 밑에 있는 정적 자원들을 바로 접근 가능하도록 설정
 app.use(express.static(__dirname + '/client/static'));
-
+//요청 로깅
+app.use(morgan("combined"));
 //Web request router
 app.use('/web', webRouter);
 
