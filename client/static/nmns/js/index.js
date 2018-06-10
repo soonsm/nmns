@@ -58,11 +58,11 @@
     });
   });
 
-  function switchForm(){
+  function switchForm(callback){
     if($(".loginPage form:visible input[name='email']").val() !== ""){
       $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
     }
-    $('.loginPage form').animate({height: "toggle", opacity: "toggle"}, "slow");
+    $('.loginPage form').animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
   }
   
   $('.message a').click(switchForm);
@@ -84,18 +84,46 @@
     alignMiddle();
   });
 
-  $("#signupLink").on("click", function(){
+  $("#signupLink").on("click", function(e){
+    e.preventDefault();
     if(!$(".loginPage form:visible").hasClass("signupForm")){
-      switchForm();
+      switchForm(function(){
+        var first = true;
+        return function(){
+          if(first){
+            first = false;
+            return;
+          }
+          document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+          document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+          $(".loginPage .signupForm input[name='email']").focus();
+      }}());
+    }else{
+      document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+      document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+      $(".loginPage .signupForm input[name='email']").focus();
     }
-    $(".loginPage .signupForm input[name='email']").focus();
   });
 
-  $("#signinLink").on("click", function(){
+  $("#signinLink").on("click", function(e){
+    e.preventDefault();
     if(!$(".loginPage form:visible").hasClass("signinForm")){
-      switchForm();
+      switchForm(function(){
+        var first = true;
+        return function(){
+          if(first){
+            first = false;
+            return;
+          }
+          document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+          document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+          $(".loginPage .signinForm input[name='email']").focus();
+      }}());
+    }else{
+      document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+      document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
+      $(".loginPage .signinForm input[name='email']").focus();
     }
-    $(".loginPage .signinForm input[name='email']").focus();
   });
   
   $(".signinForm button").on("click", function(e){
