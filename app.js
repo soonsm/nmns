@@ -10,13 +10,13 @@ const
     LocalStrategy = require('passport-local').Strategy,
     flash = require('connect-flash'),
     session = require('express-session'),
-    app = express().use(body_parser.json());
-
+    app = express().use(body_parser.json()),
+    morgan = require("morgan");
+    
 const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
-    webRouter = require('./bin/webRouter'),
-    index = require('./views/index')
+    webRouter = require('./bin/webRouter')
 ;
 
 // app.set('views engine', 'pug');
@@ -66,6 +66,9 @@ passport.deserializeUser(function(id, cb) {
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(express.static(__dirname + '/client/static'));
+//요청 로깅
+app.use(morgan("combined"));
 //Web request router
 app.use('/web', webRouter);
 
@@ -85,13 +88,11 @@ app.post('/login', (req, res)=>{
 });
 
 app.get('/', function (req, res) {
-    //res.render('index', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
-    res.marko(index, { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
-    //index.render({message: 'asdasd'});
+    res.marko(require('./client/template/index'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
 });
 
 app.get('/a', function (req, res) {
-    res.render('reservationCancel.pug', { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
+    res.marko(require('./client/template/reservationCancel'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
 });
 
 app.get('/keyboard', (req, res)=>{
@@ -146,4 +147,4 @@ app.delete('/friend/:user_key', (req, res)=>{
 });
 
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 8088, () => console.log('nmns is listening'));
+var server = app.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
