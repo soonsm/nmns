@@ -12,7 +12,8 @@ const
 const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
-    webRouter = require('./bin/webRouter')
+    indexRouter = require('./bin/indexRouter'),
+    noShowRouter = require("./bin/noShowRouter")
 ;
 
 // app.set('views engine', 'pug');
@@ -28,7 +29,8 @@ app.use(express.static(__dirname + '/client/static'));
 //요청 로깅
 app.use(morgan("combined"));
 //Web request router
-app.use('/', webRouter);
+app.use('/', indexRouter);
+app.use('/noShow', noShowRouter);
 
 app.get('/a', function (req, res) {
     res.marko(require('./client/template/reservationCancel'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
