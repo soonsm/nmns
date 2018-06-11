@@ -6,3 +6,5 @@ README.md
 expressworks/*
 spec/*
 **/*.marko.js
+**/*.min.js
+**/*.min.css
