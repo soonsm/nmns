@@ -6,7 +6,7 @@ const
     express = require('express'),
     markoExpress = require('marko/express'),
     body_parser = require('body-parser'),
-    app = express().use(body_parser.json()),
+    app = express().use(body_parser.json({limit:"2mb"})),
     morgan = require("morgan");
     
 const
@@ -28,11 +28,7 @@ app.use(express.static(__dirname + '/client/static'));
 //요청 로깅
 app.use(morgan("combined"));
 //Web request router
-app.use('/web', webRouter);
-
-app.get('/', function (req, res) {
-    res.marko(require('./client/template/index'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
-});
+app.use('/', webRouter);
 
 app.get('/a', function (req, res) {
     res.marko(require('./client/template/reservationCancel'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
