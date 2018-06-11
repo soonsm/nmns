@@ -66,7 +66,7 @@ gulp.task('css:minify', function() {
       './client/**/*.css',
       '!./client/**/*.min.css'
     ])
-    .pipe(cleanCSS())
+    .pipe(cleanCSS({rebase:false}))
     .pipe(rename({
       suffix: '.min'
     }))
