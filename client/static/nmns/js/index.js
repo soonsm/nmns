@@ -126,9 +126,16 @@
     }
   });
   
-  $(".signinForm button").on("click", function(e){
-    console.log("button clicked!");
-    console.log(e);
-    console.log(e.target);
+  $("#signinBtn").on("click", function(e){
+    e.preventDefault();
+    $.post("/signin", {});
+  });
+  
+  $("#signupBtn").on("click", function(e){
+    e.preventDefault();
+  });
+  
+  $(".message a").on("click", function(e){
+    e.preventDefault(); 
   });
 })(jQuery);
