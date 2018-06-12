@@ -93,7 +93,7 @@
     </div>
     <div class="loginPage col-sm-8 col-md-5 hide-sm">
       <div class="form mx-auto">
-        <form class="signupForm">
+        <form class="signupForm" method="post" action="/signup">
           <div class="form-group">
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com"/>
             <input type="password" name="password" class="form-control" placeholder="비밀번호"/>
@@ -102,12 +102,12 @@
             <p class="message">계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">로그인</a>해주세요.</p>
           </div>
         </form>
-        <form class="signinForm" id="signinForm">
+        <form class="signinForm" id="signinForm" method="post" action="/signin">
           <div class="form-group">
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com"/>
             <input type="password" name="password" class="form-control" placeholder="비밀번호"/>
             <div class="form-check ml-2 text-left">
-              <input type="checkbox" class="form-check-input" id="rememberMeCheck" checked="checked"/>
+              <input type="checkbox" class="form-check-input" id="rememberMeCheck" name="rememberMe" value="true" checked="checked"/>
               <label class="form-check-label text-dark align-text-top mb-3" for="rememberMeCheck">자동 로그인</label>
             </div>
             <button id="signinBtn" class="btn-primary">로그인</button>

@@ -10,7 +10,7 @@ const
     LocalStrategy = require('passport-local').Strategy,
     flash = require('connect-flash'),
     session = require('express-session'),
-    app = express().use(body_parser.json()),
+    app = express(),
     morgan = require("morgan");
     
 const
@@ -25,8 +25,14 @@ const
 //app.set('view engine', 'ejs');
 //app.engine('html', require('ejs').renderFile);
 
+//static file은 session 설정 필요없으므로 위로 이동
+app.use(express.static(__dirname + '/client/static'));
+
 //enable res.marko(template, data);
 app.use(markoExpress());
+
+app.use(body_parser.json());
+app.use(body_parser.urlencoded({extended:false}));
 
 //flash && session setting
 app.use(session({secret: "cats", resave: false, saveUninitialized: false }));
@@ -61,9 +67,6 @@ passport.deserializeUser(function(id, cb) {
         return cb({msg: 'no user'});
     }
 });
-
-//static file은 session 설정 필요없으므로 위로 이동
-app.use(express.static(__dirname + '/client/static'));
 
 //요청 로깅
 app.use(morgan("combined"));

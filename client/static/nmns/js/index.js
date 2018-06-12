@@ -134,23 +134,25 @@
     e.preventDefault();
     var form = $(this).parent();
     console.log({"email":form.find("[type='email']").val(), "password":form.find("[type='password']").val(), "rememberMe":(form.find("[type='checkbox']").is(":checked")?false:true)});
-    $.ajax({
+    form.parent().submit();
+    /*$.ajax({
       method:"POST",
       url:"/signin", 
       data:JSON.stringify({"email":form.find("[type='email']").val(), "password":form.find("[type='password']").val(), "rememberMe":(form.find("[type='checkbox']").is(":checked")?false:true)}),
       contentType:"application/json"})
-      .always(function(data, status, error){console.log(data);console.log(status);console.log(error);});
+      .always(function(data, status, error){console.log(data);console.log(status);console.log(error);});*/
   });
   
   $("#signupBtn").on("click", function(e){
     e.preventDefault();
     var form = $(this).parent();
-    $.ajax({
+    form.parent().submit();
+    /*$.ajax({
       method:"POST",
       url:"/signup", 
       data:JSON.stringify({"email":form.find("[type='email']").val(), "password":form.find("[type='password']").val()}),
       contentType:"application/json"})
-      .always(function(data, status, error){console.log(data);console.log(status);console.log(error);});
+      .always(function(data, status, error){console.log(data);console.log(status);console.log(error);});*/
   });
   
   $(".message a").on("click", function(e){
