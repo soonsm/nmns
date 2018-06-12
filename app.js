@@ -16,7 +16,8 @@ const
 const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
-    webRouter = require('./bin/webRouter')
+    indexRouter = require('./bin/indexRouter'),
+    noShowRouter = require('./bin/noShowRouter')
 ;
 
 // app.set('views engine', 'pug');
@@ -26,9 +27,6 @@ const
 
 //enable res.marko(template, data);
 app.use(markoExpress());
-
-//views/bst 경로 밑에 있는 정적 자원들을 바로 접근 가능하도록 설정
-app.use(express.static(__dirname + '/views/bst'));
 
 //flash && session setting
 app.use(session({secret: "cats", resave: false, saveUninitialized: false }));
@@ -63,14 +61,20 @@ passport.deserializeUser(function(id, cb) {
         return cb({msg: 'no user'});
     }
 });
+
+//요청 로깅
+app.use(morgan("combined"));
+//static file은 session 설정 필요없으므로 위로 이동
+app.use(express.static(__dirname + '/client/static'));
+
+
+//세션 관리
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.static(__dirname + '/client/static'));
-//요청 로깅
-app.use(morgan("combined"));
 //Web request router
-app.use('/web', webRouter);
+app.use('/', indexRouter);
+app.use('/noShow', noShowRouter);
 
 //Login Test
 //email이나 pwd 항목이 없으면 "message":"Missing credentials"
@@ -85,10 +89,6 @@ app.post('/login', (req, res)=>{
             res.status(200).json(info);
         }
     })(req,res);
-});
-
-app.get('/', function (req, res) {
-    res.marko(require('./client/template/index'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
 });
 
 app.get('/a', function (req, res) {

@@ -49,6 +49,10 @@ gulp.task('lib', function() {
   gulp.src('./node_modules/jquery.easing/*.js')
     .pipe(gulp.dest('./client/static/lib/jquery-easing'));
 
+  // jQuery Validator
+  gulp.src('./node_modules/jquery-validation/dist/jquery.validate.min.js')
+    .pipe(gulp.dest('./client/static/lib/jquery-validation/dist'));
+
 });
 
 //Compile SCSS

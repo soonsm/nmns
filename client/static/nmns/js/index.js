@@ -84,6 +84,10 @@
     alignMiddle();
   });
 
+  $(document).ready(function(){
+    alignMiddle();
+  });
+
   $("#signupLink").on("click", function(e){
     e.preventDefault();
     if(!$(".loginPage form:visible").hasClass("signupForm")){
