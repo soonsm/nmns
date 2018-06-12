@@ -62,11 +62,11 @@ passport.deserializeUser(function(id, cb) {
     }
 });
 
-//요청 로깅
-app.use(morgan("combined"));
 //static file은 session 설정 필요없으므로 위로 이동
 app.use(express.static(__dirname + '/client/static'));
 
+//요청 로깅
+app.use(morgan("combined"));
 
 //세션 관리
 app.use(passport.initialize());

@@ -10,10 +10,12 @@ router.get('/index', function (req, res) {
 });
 
 router.post("/signup", function(req, res){
+  console.log(req.body);
   res.redirect("/");//not implemented. redirected to using get method
 });
 
 router.post("/signin", function(req, res){
+  console.log(req.body);
   res.redirect("/");//not implemented. redirected using get method
 });
 
