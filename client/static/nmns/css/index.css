@@ -1,5 +1,5 @@
 body {
-  font-family: 'Lato';
+  font-family: 'Lato', "맑은 고딕", "맑은고딕", "Malgun Gothic";
 }
 
 h1,
@@ -9,7 +9,6 @@ h4,
 h5,
 h6 {
   font-weight: 700;
-  font-family: 'Montserrat';
 }
 
 hr.star-light,
