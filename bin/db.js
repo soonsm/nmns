@@ -98,7 +98,8 @@ function newUser(userKey){
         userPhone: undefined,
         shopName: undefined,
         cancelDue: 0,
-        onGoingAlrimTalkKey: undefined
+        onGoingAlrimTalkKey: undefined,
+        noShowList: []
     };
 }
 
@@ -139,6 +140,27 @@ exports.getAlrimTalkUserList = async function(){
     });
 };
 
+exports.getMyNoShow = async function(user, phoneNumber){
+    let key = sha256(phoneNumber);
+    if(!user.noShowList){
+        user.noShowList = [];
+        await put({
+            TableName: 'KaKaoUserList',
+            Item: user
+        });
+        return null;
+    }
+
+    for(var i=0; i < user.noShowList.length; i++){
+        let noShow = user.noShowList[i];
+        if(noShow.noShowKey === key){
+            return noShow;
+        }
+    }
+
+    return null;
+}
+
 exports.getNoShow = async function(phoneNumber){
     let key = sha256(phoneNumber);
     return await get({
@@ -158,8 +180,36 @@ exports.getAlrimTalk = async function(reservationKey){
     });
 };
 
-exports.addToNoShowList = async function(phoneNumber){
+exports.addToNoShowList = async function(user, phoneNumber){
     let key = sha256(phoneNumber);
+
+    //내 매장 노쇼에 추가
+    if(!user.noShowList){
+        user.noShowList = [];
+    }
+    let hasNoShow = false;
+    for(var i =0; i<user.noShowList.length; i++){
+        let noShow = user.noShowList[i];
+        if(noShow.noShowKey === key){
+            noShow.noShowCount += 1;
+            noShow.lastNoShowDate = util.getToday();
+            hasNoShow = true;
+        }
+    }
+    if(!hasNoShow){
+        user.noShowList.push({
+            noShowKey: key,
+            noShowCount : 1,
+            lastNoShowDate : util.getToday()
+        });
+    }
+
+    await put({
+        TableName: 'KaKaoUserList',
+        Item: user
+    });
+
+    //전체 노쇼에 추가
     let noShow = await exports.getNoShow(phoneNumber);
     if(!noShow){
         noShow = newNoShow(key);
