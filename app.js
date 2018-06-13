@@ -20,11 +20,6 @@ const
     noShowRouter = require('./bin/noShowRouter')
 ;
 
-// app.set('views engine', 'pug');
-//app.set('views', __dirname + '/views'); //<-- 아래에서 안먹혀서 제외처리하고 수정
-//app.set('view engine', 'ejs');
-//app.engine('html', require('ejs').renderFile);
-
 //static file은 session 설정 필요없으므로 위로 이동
 app.use(express.static(__dirname + '/client/static'));
 
@@ -36,23 +31,22 @@ app.use(body_parser.urlencoded({extended:false}));
 
 //flash && session setting
 app.use(session({secret: "cats", resave: false, saveUninitialized: false }));
-app.use(require('cookie-parser')());
 app.use(flash());
 
 //Passport configure
 passport.use(new LocalStrategy({
         usernameField: 'email',
-        passwordField: 'pwd'
+        passwordField: 'password'
     },
     function(username, password, done) {
         if(username === 'ksm'){
             if(password === 'asd'){
-                return done(null, {email: 'ksm', pwd: 'asd'});
+                return done(null, {email: 'ksm', password: 'asd'});
             }else{
-                return done(null, false, { message: 'Incorrect password.' });
+                return done(null, false, { message: '비밀번호가 잘못되었습니다.' });
             }
         }else{
-            return done(null, false, { message: 'Incorrect username.' });
+            return done(null, false, { message: '등록되지 않은 사용자입니다.' });
         }
     }
 ));
@@ -62,7 +56,7 @@ passport.serializeUser(function(user, cb) {
 
 passport.deserializeUser(function(id, cb) {
     if(id === 'ksm'){
-        return cb(null, {email: 'ksm', pwd: 'asd'});
+        return cb(null, {email: 'ksm', password: 'asd'});
     }else{
         return cb({msg: 'no user'});
     }
@@ -76,23 +70,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //Web request router
-app.use('/', indexRouter);
+app.use('/', indexRouter(passport));
 app.use('/noShow', noShowRouter);
-
-//Login Test
-//email이나 pwd 항목이 없으면 "message":"Missing credentials"
-app.post('/login', (req, res)=>{
-    passport.authenticate('local', (err,user,info)=>{
-        if(err){
-            res.status(404).json(err);
-        }
-        if(user){
-            res.status(200).json(user);
-        }else{
-            res.status(200).json(info);
-        }
-    })(req,res);
-});
 
 app.get('/a', function (req, res) {
     res.marko(require('./client/template/reservationCancel'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
