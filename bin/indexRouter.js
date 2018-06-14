@@ -7,7 +7,7 @@ module.exports = function(passport){
 
 
     router.get('/index', function (req, res) {
-        res.marko(require('../client/template/index'));//TODO : add user email from cookie
+        res.marko(require('../client/template/index'), {email:"testda@test.com"});//TODO : add user email from cookie
     });
 
     router.post("/signup", async function(req, res){
@@ -68,7 +68,7 @@ module.exports = function(passport){
         })(req,res);
     });
 
-    router.get("/signoff", (req,res) => {
+    router.get("/signout", (req,res) => {
         req.logout();
         res.redirect('/');
     })

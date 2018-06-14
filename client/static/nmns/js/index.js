@@ -7,7 +7,7 @@
       target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
       if (target.length) {
         $('html, body').animate({
-          scrollTop: (target.offset().top - 70)
+          scrollTop: (target.offset().top - 60)
         }, 1000, "easeInOutExpo");
         return false;
       }
@@ -47,25 +47,12 @@
   // Collapse the navbar when page is scrolled
   $(window).scroll(navbarCollapse);
 
-  // Floating label headings for the contact form
-  $(function() {
-    $("body").on("input propertychange", ".floating-label-form-group", function(e) {
-      $(this).toggleClass("floating-label-form-group-with-value", !!$(e.target).val());
-    }).on("focus", ".floating-label-form-group", function() {
-      $(this).addClass("floating-label-form-group-with-focus");
-    }).on("blur", ".floating-label-form-group", function() {
-      $(this).removeClass("floating-label-form-group-with-focus");
-    });
-  });
-
   function switchForm(callback){
     if($(".loginPage form:visible input[name='email']").val() !== ""){
       $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
     }
     $('.loginPage form').animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
   }
-  
-  $('.message a').click(switchForm);
   
   function alignMiddle(){
     $(".carousel-caption").each(function(){
@@ -98,14 +85,17 @@
             first = false;
             return;
           }
-          document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-          document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-          $(".loginPage .signupForm input[name='email']").focus();
+          alignMiddle();
+          $('html, body').animate({
+            scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+          }, 1000, "easeInOutExpo");
+          $("#signupForm input[name='email']").focus();
       }}());
     }else{
-      document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-      document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-      $(".loginPage .signupForm input[name='email']").focus();
+      $('html, body').animate({
+        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+      }, 1000, "easeInOutExpo");
+      $("#signupForm input[name='email']").focus();
     }
   });
 
@@ -119,43 +109,63 @@
             first = false;
             return;
           }
-          document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-          document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-          $(".loginPage .signinForm input[name='email']").focus();
+          if(!$("#signinBtn").is(":visible")){
+            $(".message a.returnSignin").trigger("click");
+          }else{
+            $('html, body').animate({
+              scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+            }, 1000, "easeInOutExpo");
+            $("#signinForm input[name='email']").focus();
+          }
       }}());
     }else{
-      document.documentElement.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-      document.body.scrollTop = $("#mainNav").height() + parseInt($(".loginPage").css("top"));
-      $(".loginPage .signinForm input[name='email']").focus();
+      if(!$("#signinBtn").is(":visible")){
+        $(".message a.returnSignin").trigger("click");
+      }else{
+        $('html, body').animate({
+          scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+        }, 1000, "easeInOutExpo");
+        $("#signinForm input[name='email']").focus();
+      }
     }
   });
   
   $("#signinBtn").on("click", function(e){
     e.preventDefault();
-    var form = $(this).parent();
-    console.log({"email":form.find("[type='email']").val(), "password":form.find("[type='password']").val(), "rememberMe":(form.find("[type='checkbox']").is(":checked")?false:true)});
-    form.parent().submit();
-    /*$.ajax({
-      method:"POST",
-      url:"/signin", 
-      data:JSON.stringify({"email":form.find("[type='email']").val(), "password":form.find("[type='password']").val(), "rememberMe":(form.find("[type='checkbox']").is(":checked")?false:true)}),
-      contentType:"application/json"})
-      .always(function(data, status, error){console.log(data);console.log(status);console.log(error);});*/
+    $("#signinForm").submit();
   });
   
   $("#signupBtn").on("click", function(e){
     e.preventDefault();
-    var form = $(this).parent();
-    form.parent().submit();
-    /*$.ajax({
-      method:"POST",
-      url:"/signup", 
-      data:JSON.stringify({"email":form.find("[type='email']").val(), "password":form.find("[type='password']").val()}),
-      contentType:"application/json"})
-      .always(function(data, status, error){console.log(data);console.log(status);console.log(error);});*/
+    $("#signupForm").submit();
   });
   
-  $(".message a").on("click", function(e){
-    e.preventDefault(); 
+  $(".message a[class!='passwordReset'][class!='returnSignin']").on("click", function(e){
+    e.preventDefault();
+    switchForm();
+  });
+  
+  $(".message a.passwordReset").on("click", function(e){
+    e.preventDefault();
+    $("#normalSignin").hide();
+    $("#signinForm").attr("action", "/resetPassword");
+    $("#passwordReset").show();
+    alignMiddle();
+    $('html, body').animate({
+      scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+    }, 1000, "easeInOutExpo");
+    $("#signinForm input[name='email']").focus();
+  });
+  
+  $(".message a.returnSignin").on("click", function(e){
+    e.preventDefault();
+    $("#passwordReset").hide();
+    $("#signinForm").attr("action", "/signin");
+    $("#normalSignin").show();
+    alignMiddle();
+    $('html, body').animate({
+      scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+    }, 1000, "easeInOutExpo");
+    $("#signinForm input[name='email']").focus();
   });
 })(jQuery);
