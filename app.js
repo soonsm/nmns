@@ -39,9 +39,9 @@ passport.use(new LocalStrategy({
         passwordField: 'password'
     },
     function(username, password, done) {
-        if(username === 'ksm'){
+        if(username === 'ksm@test.com'){
             if(password === 'asd'){
-                return done(null, {email: 'ksm', password: 'asd'});
+                return done(null, {email: 'ksm@test.com', password: 'asd'});
             }else{
                 return done(null, false, { message: '비밀번호가 잘못되었습니다.' });
             }
@@ -55,8 +55,8 @@ passport.serializeUser(function(user, cb) {
 });
 
 passport.deserializeUser(function(id, cb) {
-    if(id === 'ksm'){
-        return cb(null, {email: 'ksm', password: 'asd'});
+    if(id === 'ksm@test.com'){
+        return cb(null, {email: 'ksm@test.com', password: 'asd'});
     }else{
         return cb({msg: 'no user'});
     }

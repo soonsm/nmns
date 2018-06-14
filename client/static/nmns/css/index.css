@@ -350,6 +350,9 @@ a:focus, a:hover, a:active {
   font-size: 0.9rem;
   border-radius:0;
 }
+.form input.error{
+  border:1px solid red;
+}
 .form button {
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;

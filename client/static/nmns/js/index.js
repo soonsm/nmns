@@ -73,6 +73,54 @@
 
   $(document).ready(function(){
     alignMiddle();
+    $("#signinForm").validate({
+      rules:{
+        email:{
+          required:true,
+          email:true
+        },
+        password:{
+          required:true
+        }
+      },
+      messages:{
+        email:{
+          required:"이메일을 입력해주세요.",
+          email:"올바른 이메일을 입력해주세요."
+        },
+        password:"비밀번호를 입력해주세요."
+      },
+      errorElement:"p",
+      errorClass:"message text-danger my-1",
+      onfocusout:false,
+      focusCleanup:true
+    });
+    $("#signupForm").validate({
+      rules:{
+        email:{
+          required:true,
+          email:true
+        },
+        password:{
+          required:true
+        },
+        passwordRepeat:{
+          equalTo:"#signupPassword"
+        }
+      },
+      messages:{
+        email:{
+          required:"이메일을 입력해주세요.",
+          email:"올바른 이메일을 입력해주세요."
+        },
+        password:"비밀번호를 입력해주세요.",
+        passwordRepeat:"비밀번호가 일치하지 않습니다."
+      },
+      errorElement:"p",
+      errorClass:"message text-danger my-1",
+      onfocusout:false,
+      focusCleanup:true
+    });
   });
 
   $("#signupLink").on("click", function(e){
@@ -132,12 +180,16 @@
   
   $("#signinBtn").on("click", function(e){
     e.preventDefault();
-    $("#signinForm").submit();
+    if($("#signinForm").valid()){
+      $("#signinForm").submit();
+    }
   });
   
   $("#signupBtn").on("click", function(e){
     e.preventDefault();
-    $("#signupForm").submit();
+    if($("#signupForm").valid()){
+      $("#signupForm").submit();
+    }
   });
   
   $(".message a[class!='passwordReset'][class!='returnSignin']").on("click", function(e){
