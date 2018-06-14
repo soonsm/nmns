@@ -125,7 +125,8 @@
 
   $("#signupLink").on("click", function(e){
     e.preventDefault();
-    if(!$(".loginPage form:visible").hasClass("signupForm")){
+    if(!$(".loginPage form:visible").is("#signupForm")){
+      console.log("bb");
       switchForm(function(){
         var first = true;
         return function(){
@@ -135,13 +136,14 @@
           }
           alignMiddle();
           $('html, body').animate({
-            scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+            scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
           }, 1000, "easeInOutExpo");
           $("#signupForm input[name='email']").focus();
       }}());
     }else{
+      console.log("aa");
       $('html, body').animate({
-        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
       }, 1000, "easeInOutExpo");
       $("#signupForm input[name='email']").focus();
     }
@@ -149,7 +151,7 @@
 
   $("#signinLink").on("click", function(e){
     e.preventDefault();
-    if(!$(".loginPage form:visible").hasClass("signinForm")){
+    if(!$(".loginPage form:visible").is("#signinForm")){
       switchForm(function(){
         var first = true;
         return function(){
@@ -161,7 +163,7 @@
             $(".message a.returnSignin").trigger("click");
           }else{
             $('html, body').animate({
-              scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+              scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
             }, 1000, "easeInOutExpo");
             $("#signinForm input[name='email']").focus();
           }
@@ -171,7 +173,7 @@
         $(".message a.returnSignin").trigger("click");
       }else{
         $('html, body').animate({
-          scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+          scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
         }, 1000, "easeInOutExpo");
         $("#signinForm input[name='email']").focus();
       }

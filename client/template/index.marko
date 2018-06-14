@@ -93,16 +93,17 @@
     </div>
     <div class="loginPage col-sm-8 col-md-5 hide-sm">
       <div class="form mx-auto">
-        <form id="signupForm" class=(input.email && "hide") method="post" action="/signup">
+        <form id="signupForm" class=(input.type==="signin" && "hide") method="post" action="/signup">
           <div class="form-group">
-            <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com"/>
+            <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
             <input id="signupPassword" type="password" name="password" class="form-control" placeholder="비밀번호"/>
             <input type="password" name="passwordRepeat" class="form-control" placeholder="비밀번호 확인"/>
             <button id="signupBtn" class="btn-primary">회원가입</button>
-            <p class="message">계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">로그인</a>해주세요.</p>
+            <p class="message text-danger" if(input.type === "signup" && input.message)>${input.message}</p>
+            <p class=["message", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">로그인</a>해주세요.</p>
           </div>
         </form>
-        <form id="signinForm" class=(!input.email && "hide") method="post" action="/signin">
+        <form id="signinForm" class=(input.type!=="signin" && "hide") method="post" action="/signin">
           <div class="form-group">
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
             <div id="normalSignin">
@@ -112,8 +113,8 @@
                 <label class="form-check-label text-dark align-text-top mb-3" for="rememberMeCheck">자동 로그인</label>
               </div>
               <button id="signinBtn" class="btn-primary">로그인</button>
-              <p class="message text-danger" if(input.message)>${input.message}</p>
-              <p class=["message", (input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">간편하게 가입</a>해보세요.</p>
+              <p class="message text-danger" if(input.type === "signin" && input.message)>${input.message}</p>
+              <p class=["message", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">간편하게 가입</a>해보세요.</p>
               <p class="message mt-1"><a class="passwordReset" href="#">비밀번호를 잊으셨나요?</a></p>
             </div>
             <div id="passwordReset">

@@ -72,13 +72,6 @@ section h2 {
   font-size: 1.25rem;
 }
 
-.btn-social {
-  width: 3.25rem;
-  height: 3.25rem;
-  font-size: 1.25rem;
-  line-height: 2rem;
-}
-
 .scroll-to-top {
   z-index: 1042;
   right: 1rem;
@@ -350,9 +343,7 @@ a:focus, a:hover, a:active {
   font-size: 0.9rem;
   border-radius:0;
 }
-.form input.error{
-  border:1px solid red;
-}
+
 .form button {
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;
