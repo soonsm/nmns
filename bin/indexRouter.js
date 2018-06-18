@@ -7,7 +7,7 @@ module.exports = function(passport){
 
 
     router.get('/index', function (req, res) {
-        res.marko(require('../client/template/index'), {type:"signin", email:"testtt@test.com", message:"test입니다."});//TODO : add user email from cookie
+        res.marko(require('../client/template/index'), {type:"signin", email:"ksm@test.com", message:"test입니다."});//TODO : add user email from cookie
     });
 
     router.post("/signup", async function(req, res){
@@ -77,7 +77,7 @@ module.exports = function(passport){
       if(req.user){
           //TODO: 로그인 된 상태이므로 main calendar page rendering
           //TODO: 밑에 res.marko는 내가 테스트하느라 한거고 태호가 캘린더 페이지 만들면 그걸로 바꿔
-          res.marko(require('../client/template/reservationCancel'));
+          res.marko(require('../client/template/main'), {user:req.user});
       }else{
           //로그인 되지 않은 상태이므로 index page로 이동
           res.redirect("/index");

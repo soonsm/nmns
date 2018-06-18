@@ -51,7 +51,23 @@ gulp.task('lib', function() {
 
   // jQuery Validator
   gulp.src('./node_modules/jquery-validation/dist/jquery.validate.min.js')
-    .pipe(gulp.dest('./client/static/lib/jquery-validation/dist'));
+    .pipe(gulp.dest('./client/static/lib/jquery-validation'));
+    
+  // Toast UI calendar
+  gulp.src('./node_modules/tui-calendar/dist/*.min.*')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  gulp.src('./node_modules/tui-calendar/dist/*.min.js*')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  gulp.src('./node_modules/tui-code-snippet/dist/*.min.*')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  gulp.src('./node_modules/tui-date-picker/dist/*.min.js')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  gulp.src('./node_modules/tui-date-picker/dist/*.css')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  gulp.src('./node_modules/tui-time-picker/dist/*.min.js')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  gulp.src('./node_modules/tui-time-picker/dist/*.css')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
 
 });
 
@@ -84,6 +100,7 @@ gulp.task('css', gulp.series('css:compile', 'css:minify'));
 gulp.task('js:minify', function() {
   return gulp.src([
       './client/**/*.js',
+      '!./client/**/*.marko.js',
       '!./client/**/*.min.js'
     ])
     .pipe(uglify())

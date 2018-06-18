@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="description" content="No More No Show - 노쇼그만">
+  <meta name="author" content="Koru">
+  <title>No More No Show</title>
+  <!-- Bootstrap core CSS -->
+  <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
+  <link href="/lib/tui-calendar/tui-date-picker.min.css" rel="stylesheet">
+  <link href="/lib/tui-calendar/tui-time-picker.min.css" rel="stylesheet">
+  <!-- Custom fonts for this template -->
+  <link href="/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+  <!-- Custom styles for this template -->
+  <link href="/nmns/css/main.min.css" rel="stylesheet">
+  <!-- 한글폰트 -->
+  <link href="/nmns/css/ko_font.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar bg-secondary navbar-shrink" id="mainNav">
+    <a class="navbar-brand js-scroll-trigger" href="/">No More No Show</a>
+    <button class="navbar-toggler navbar-toggler-right bg-primary text-white" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="d-none d-md-block"><if(input.user.name)>${input.user.name}</if><else>${input.user.email}</else></span>
+      <i class="fa fa-bars d-block d-md-none"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item mx-0 mx-lg-1">
+          <a id="myPageLink" class="btn py-2 px-0 px-lg-2 rounded godo normal w700" href="#">내 매장정보</a>
+        </li>
+        <li class="nav-item mx-0 mx-lg-1">
+          <a id="alrimLink" class="btn py-2 px-0 px-lg-2 rounded godo normal w700" href ="#">알림톡정보</a>
+        </li>
+        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 addNoShowLink" href ="#">노쇼추가</a>
+        </li>
+        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 getNoShowLink" href ="#">노쇼조회</a>
+        </li>
+        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 addReservLink" href ="#">예약추가</a>
+        </li>
+        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 addTaskLink" href ="#">일정추가</a>
+        </li>
+        <li class="mr-0 ml-1 mx-lg-1">
+          <a id="signoutLink" class="btn btn-flat btn-primary godo normal py-2 px-0 px-lg-2 d-block" href="#">로그아웃</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="mainRow" class="row">
+    <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded">
+      <ul class="list-group">
+        <a href="#" class="addNoShowLink list-group-item list-group-item-action">
+          <div class="d-flex w-100">
+            <span class="menu-collapsed">노쇼추가</span>
+          </div>
+        </a>
+        <a href="#" class="getNoShowLink list-group-item list-group-item-action">
+          <div class="d-flex w-100">
+            <span class="menu-collapsed">노쇼조회</span>
+          </div>
+        </a>
+        <a href="#" class="addReservLink list-group-item list-group-item-action">
+          <div class="d-flex w-100">
+            <span class="menu-collapsed">예약추가</span>
+          </div>
+        </a>
+        <a href="#" class="addTaskLink list-group-item list-group-item-action">
+          <div class="d-flex w-100">
+            <span class="menu-collapsed">일정추가</span>
+          </div>
+        </a>
+        <li class="list-group-item sidebar-separator-title d-flex">
+          <small>담당자 목록</small>
+        </li>
+      </ul>
+    </div>
+    <div id="mainContents" class="col bg-light">
+      <div id="mainCalendar" style="height:800px;"></div>
+    </div>
+    
+  </div>
+  <!-- Footer -->
+  <footer class="footer text-center px-0">
+    <div class="copyright py-4 text-center text-white">
+      <div class="container">
+        <small>Copyright &copy; nomorenoshow.com 2018</small>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+  <div class="scroll-to-top d-lg-none position-fixed ">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/lib/jquery/jquery.min.js"></script>
+  <script src="/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="/lib/jquery-easing/jquery.easing.min.js"></script>
+  <script src="/lib/jquery-validation/jquery.validate.min.js"></script>
+  <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
+  <script src="/lib/tui-calendar/tui-date-picker.min.js"></script>
+  <script src="/lib/tui-calendar/tui-time-picker.min.js"></script>
+  <script src="/lib/tui-calendar/tui-calendar.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="/nmns/js/main.min.js"></script>
+</body>
+</html>
