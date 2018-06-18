@@ -279,46 +279,8 @@ a:focus, a:hover, a:active {
   border-width: 2px;
 }
 
-.bg-primary {
-  background-color: #18BC9C !important;
-}
-
-.bg-secondary {
-  background-color: #2C3E50 !important;
-}
-
-.text-primary {
-  color: #18BC9C !important;
-}
-
-.text-secondary {
-  color: #2C3E50 !important;
-}
-
-.btn-primary {
-  background-color: #18BC9C;
-  border-color: #18BC9C;
-}
-
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-  background-color: #128f76;
-  border-color: #128f76;
-}
-
-.btn-secondary {
-  background-color: #2C3E50;
-  border-color: #2C3E50;
-}
-
-.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
-  background-color: #1a252f;
-  border-color: #1a252f;
-}
 /*login form*/
 
-.loginPage {
-  margin: auto;
-}
 .form form .form-group{
   margin-bottom:0;
 }
@@ -407,6 +369,10 @@ a:focus, a:hover, a:active {
   color: #EF3B3A;
 }
 /*carousel - login form*/
+.loginPage{
+  margin-left:auto;
+  margin-right:auto;
+}
 .loginPage form {
   width: 100%;
   color: #fff;
@@ -425,7 +391,7 @@ a:focus, a:hover, a:active {
 	}
 	.loginPage {
     position: absolute;
-    right: 5rem;
+    right: 8rem;
 	}
   #carouselWrapper{
     margin-top:4rem;
@@ -433,15 +399,10 @@ a:focus, a:hover, a:active {
 }
 @media (min-width: 992px) { 
 	.loginPage {
-    width: 970px;
-    margin-left: -485px;
+    
 	}
 }
 @media (min-width: 1200px) { 
-	.loginPage {
-    width: 1170px;
-    margin-left: -585px;
-	}
   #carouselWrapper{
     margin-top:6rem;
   }

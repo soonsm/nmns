@@ -56,7 +56,7 @@
   
   function alignMiddle(){
     $(".carousel-caption").each(function(){
-      $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-($(this).height()>0?70+($(this).height()/2):130)-($(window).width()<=750?180:0)) + "px");
+      $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-($(this).height()>0?70+($(this).height()/2):250)-($(window).width()<=750?180:0)) + "px");
     });
     if($(window).width()>=751){
       $(".loginPage").css("top", (($("#carouselWrapper").height()/2)-(25+($(".loginPage .form").height()/2))) + "px");

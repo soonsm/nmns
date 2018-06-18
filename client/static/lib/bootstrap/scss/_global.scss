@@ -93,3 +93,39 @@ section {
     line-height: 3.1rem;
   }
 }
+
+.bg-primary {
+  background-color: $primary !important;
+}
+
+.bg-secondary {
+  background-color: $secondary !important;
+}
+
+.text-primary {
+  color: $textPrimary !important;
+}
+
+.text-secondary {
+  color: $secondary !important;
+}
+
+.btn-primary {
+  background-color: $primary;
+  border-color: $primary;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: $darkPrimary;
+  border-color: $darkPrimary;
+}
+
+.btn-secondary {
+  background-color: $secondary;
+  border-color: $secondary;
+}
+
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
+  background-color: $textPrimary;
+  border-color: $textPrimary;
+}

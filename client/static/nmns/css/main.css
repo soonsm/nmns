@@ -185,63 +185,19 @@ header.masthead h2 {
     font-size: 1.75em;
   }
 }
-
-.footer {
-  background-color: #2C3E50;
-  color: #fff;
-}
-
-.copyright {
-  background-color: #1a252f;
-}
-
+/*
 a {
   color: #18BC9C;
 }
 
 a:focus, a:hover, a:active {
   color: #128f76;
-}
+}*/
 
 .btn {
   border-width: 2px;
 }
 
-.bg-primary {
-  background-color: #18BC9C !important;
-}
-
-.bg-secondary {
-  background-color: #2C3E50 !important;
-}
-
-.text-primary {
-  color: #18BC9C !important;
-}
-
-.text-secondary {
-  color: #2C3E50 !important;
-}
-
-.btn-primary {
-  background-color: #18BC9C;
-  border-color: #18BC9C;
-}
-
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-  background-color: #128f76;
-  border-color: #128f76;
-}
-
-.btn-secondary {
-  background-color: #2C3E50;
-  border-color: #2C3E50;
-}
-
-.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
-  background-color: #1a252f;
-  border-color: #1a252f;
-}
 /*login form*/
 
 .loginPage {
@@ -285,9 +241,9 @@ a:focus, a:hover, a:active {
   transition: all 0.3 ease;
   cursor: pointer;
 }
-.form button:hover,.form button:active,.form button:focus {
+/*.form button:hover,.form button:active,.form button:focus {
   background: #43A047;
-}
+}*/
 .form .message {
   margin: 1rem 0 0;
   color: #b3b3b3;
