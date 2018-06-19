@@ -56,10 +56,12 @@ module.exports = function(passport){
      */
     router.post("/signin", function(req, res){
         console.log(req.body);
+        //req.cookies.email = req.body.email;
         passport.authenticate('local', (err,user,info)=>{
             req.logIn(user, function(err) {
                 if (err) {
-                    return res.status(200).json(info);
+                    res.marko(require('../client/template/index'), {type:"signin", email:req.body.email, message:info});
+                    return;
                 }
                 //로그인 성공
                 res.redirect("/");
