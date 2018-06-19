@@ -319,16 +319,13 @@ a:focus, a:hover, a:active {
   transition: all 0.3 ease;
   cursor: pointer;
 }
-.form button:hover,.form button:active,.form button:focus {
-  background: #43A047;
-}
+
 .form .message {
   margin: 1rem 0 0;
   color: #b3b3b3;
   font-size: 0.8rem;
 }
 .form .message a {
-  color: #4CAF50;
   text-decoration: none;
 }
 .form .hide {

@@ -56,12 +56,24 @@
   
   function alignMiddle(){
     $(".carousel-caption").each(function(){
-      $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-($(this).height()>0?70+($(this).height()/2):250)-($(window).width()<=750?180:0)) + "px");
+      if($(window).width()<=750){
+        if($(this).height()>0){
+          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-250-($(this).height()/2)) + "px");
+        }else{
+          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-400) + "px");
+        }
+      }else{
+        if($(this).height()>0){
+          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-70-($(this).height()/2)) + "px");
+        }else{
+          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-130) + "px");
+        }
+      }
     });
     if($(window).width()>=751){
       $(".loginPage").css("top", (($("#carouselWrapper").height()/2)-(25+($(".loginPage .form").height()/2))) + "px");
     }else{
-      $(".loginPage").css("top", "5rem");
+      $(".loginPage").css("top", "2rem");
     }
   }
 
@@ -123,7 +135,7 @@
     });
   });
 
-  $("#signupLink").on("click", function(e){
+  $("#signupLink").on("click touch", function(e){
     e.preventDefault();
     if(!$(".loginPage form:visible").is("#signupForm")){
       console.log("bb");
@@ -149,7 +161,7 @@
     }
   });
 
-  $("#signinLink").on("click", function(e){
+  $("#signinLink").on("click touch", function(e){
     e.preventDefault();
     if(!$(".loginPage form:visible").is("#signinForm")){
       switchForm(function(){
@@ -180,26 +192,26 @@
     }
   });
   
-  $("#signinBtn").on("click", function(e){
+  $("#signinBtn").on("click touch", function(e){
     e.preventDefault();
     if($("#signinForm").valid()){
       $("#signinForm").submit();
     }
   });
   
-  $("#signupBtn").on("click", function(e){
+  $("#signupBtn").on("click touch", function(e){
     e.preventDefault();
     if($("#signupForm").valid()){
       $("#signupForm").submit();
     }
   });
   
-  $(".message a[class!='passwordReset'][class!='returnSignin']").on("click", function(e){
+  $(".message a[class!='passwordReset'][class!='returnSignin']").on("click touch", function(e){
     e.preventDefault();
     switchForm();
   });
   
-  $(".message a.passwordReset").on("click", function(e){
+  $(".message a.passwordReset").on("click touch", function(e){
     e.preventDefault();
     $("#normalSignin").hide();
     $("#signinForm").attr("action", "/resetPassword");
@@ -211,7 +223,7 @@
     $("#signinForm input[name='email']").focus();
   });
   
-  $(".message a.returnSignin").on("click", function(e){
+  $(".message a.returnSignin").on("click touch", function(e){
     e.preventDefault();
     $("#passwordReset").hide();
     $("#signinForm").attr("action", "/signin");

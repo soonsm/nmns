@@ -53,6 +53,10 @@ gulp.task('lib', function() {
   gulp.src('./node_modules/jquery-validation/dist/jquery.validate.min.js')
     .pipe(gulp.dest('./client/static/lib/jquery-validation'));
     
+  //socket.io
+  gulp.src("./node_modules/socket.io-client/dist/*slim.js*")
+    .pipe(gulp.dest("./client-static/lib/socket.io"));
+    
   // Toast UI calendar
   gulp.src('./node_modules/tui-calendar/dist/*.min.*')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
@@ -68,6 +72,7 @@ gulp.task('lib', function() {
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
   gulp.src('./node_modules/tui-time-picker/dist/*.css')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+    
 
 });
 
@@ -142,6 +147,7 @@ gulp.task('marko',function(){
 
 gulp.task('watch', function() {
   gulp.watch(['./client/static/nmns/css/*.css', '!./client/static/nmns/css/*.min.css'], gulp.parallel('css'));
+  gulp.watch(['./client/static/lib/bootstrap/scss/*.scss'], gulp.parallel('css'));
   gulp.watch(['./client/static/nmns/js/*.js', '!./client/static/nmns/js/*.min.js'], gulp.parallel('js:minify'));
   gulp.watch('./client/template/*.marko', gulp.parallel('marko'));
 });
