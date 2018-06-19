@@ -29,6 +29,10 @@ app.use(markoExpress());
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended:false}));
 
+//cookie parser
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 //flash && session setting
 app.use(session({secret: "cats", resave: false, saveUninitialized: false }));
 app.use(flash());

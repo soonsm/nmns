@@ -18,7 +18,7 @@ var marko = require('gulp-marko-compile');
 ].join('');*/
 
 // Copy third party libraries from /node_modules into /static/lib
-gulp.task('lib', function() {
+gulp.task('lib', async function() {
 
   // Bootstrap
   // gulp.src([

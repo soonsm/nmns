@@ -7,7 +7,8 @@ module.exports = function(passport){
 
 
     router.get('/index', function (req, res) {
-        res.marko(require('../client/template/index'), {type:"signin", email:"ksm@test.com", message:"test입니다."});//TODO : add user email from cookie
+        let cookiedEmail = req.cookies.email;
+        res.marko(require('../client/template/index'), {type:"signin", email:cookiedEmail, message:"test입니다."});
     });
 
     router.post("/signup", async function(req, res){
@@ -56,11 +57,12 @@ module.exports = function(passport){
      */
     router.post("/signin", function(req, res){
         console.log(req.body);
-        //req.cookies.email = req.body.email;
+        let email = req.body.email;
+        res.cookie('email', email);
         passport.authenticate('local', (err,user,info)=>{
             req.logIn(user, function(err) {
                 if (err) {
-                    res.marko(require('../client/template/index'), {type:"signin", email:req.body.email, message:info});
+                    res.marko(require('../client/template/index'), {type:"signin", email:email, message:info.message});
                     return;
                 }
                 //로그인 성공
@@ -77,8 +79,6 @@ module.exports = function(passport){
 
     router.get("/", function(req, res){//main calendar page
       if(req.user){
-          //TODO: 로그인 된 상태이므로 main calendar page rendering
-          //TODO: 밑에 res.marko는 내가 테스트하느라 한거고 태호가 캘린더 페이지 만들면 그걸로 바꿔
           res.marko(require('../client/template/main'), {user:req.user});
       }else{
           //로그인 되지 않은 상태이므로 index page로 이동
