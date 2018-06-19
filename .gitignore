@@ -1,6 +1,5 @@
 node_modules/*
 .idea
-main.js
 server.js
 README.md
 package-lock.json
