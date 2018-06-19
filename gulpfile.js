@@ -116,9 +116,9 @@ gulp.task('js:minify', function() {
 });
 
 //Default task
-//gulp.task('default', gulp.series("lib", gulp.parallel('css', 'js:minify')));
-gulp.task('default', gulp.parallel('css', 'js:minify'));
-//gulp.task("default", "lib");
+gulp.task('default', gulp.series("lib", gulp.parallel('css', 'js:minify')));
+//gulp.task('default', gulp.parallel('css', 'js:minify'));
+gulp.task("default", "lib");
 
 //Configure the browserSync task
 gulp.task('browserSync', function() {
