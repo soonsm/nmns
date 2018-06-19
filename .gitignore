@@ -1,4 +1,5 @@
 node_modules/*
+shared-local-instance.db
 .idea
 server.js
 README.md

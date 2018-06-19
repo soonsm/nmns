@@ -1,5 +1,12 @@
 'use strict';
 
+process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
+if (process.env.NODE_ENV == 'production') {
+    console.log("Production Mode");
+} else if (process.env.NODE_ENV == 'development') {
+    console.log("Development Mode");
+}
+
 require('marko/node-require');
 
 const
@@ -17,8 +24,11 @@ const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
     indexRouter = require('./bin/indexRouter'),
-    noShowRouter = require('./bin/noShowRouter')
+    noShowRouter = require('./bin/noShowRouter'),
+    db = require('./bin/webDb')
 ;
+
+
 
 //static file은 session 설정 필요없으므로 위로 이동
 app.use(express.static(__dirname + '/client/static'));
@@ -42,10 +52,11 @@ passport.use(new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
     },
-    function(username, password, done) {
-        if(username === 'ksm@test.com'){
-            if(password === 'asd'){
-                return done(null, {email: 'ksm@test.com', password: 'asd'});
+    async function(username, password, done) {
+        let user = await db.getWebUser(username);
+        if(user){
+            if(password === user.password){
+                return done(null, {email: user.email, password: user.password});
             }else{
                 return done(null, false, { message: '비밀번호가 잘못되었습니다.' });
             }
@@ -58,9 +69,10 @@ passport.serializeUser(function(user, cb) {
     cb(null, user.email);
 });
 
-passport.deserializeUser(function(id, cb) {
-    if(id === 'ksm@test.com'){
-        return cb(null, {email: 'ksm@test.com', password: 'asd'});
+passport.deserializeUser(async function(id, cb) {
+    let user = await db.getWebUser(id);
+    if(user){
+        return cb(null, user);
     }else{
         return cb({msg: 'no user'});
     }
