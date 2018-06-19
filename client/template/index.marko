@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="theme-color" content="#00796b" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="description" content="No More No Show - 노쇼그만">
   <meta name="author" content="Koru">
   <title>No More No Show</title>
@@ -15,6 +17,7 @@
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
   <!-- Custom styles for this template -->
   <link href="/nmns/css/index.min.css" rel="stylesheet">
+  <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
   <!-- 한글폰트 -->
   <link href="/nmns/css/ko_font.min.css" rel="stylesheet">
 </head>
@@ -58,7 +61,7 @@
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img class="d-block w-100 mx-auto" src="/nmns/img/portfolio/cabin.png" alt="노쇼 전적 공유">
-          <div class="carousel-caption col-8 text-center text-md-left">
+          <div class="carousel-caption col-8 col-md-7 text-center text-md-left">
             <h3>노쇼 전적 공유</h3>
             <p>앱 설치 없이 카카오톡으로<br class="d-lg-none"/> 간편하게 노쇼 전적을 신고, 공유합니다.</p>
             <p>우리 가게 뿐만 아니라 다른 가게에서<br class="d-lg-none"/> 공유한 노쇼 전적도 확인할 수 있어요!</p>
@@ -66,7 +69,7 @@
         </div>
         <div class="carousel-item">
           <img class="d-block w-100 mx-auto" src="/nmns/img/portfolio/cake.png" alt="예약관리">
-          <div class="carousel-caption col-8 text-center text-md-left">
+          <div class="carousel-caption col-8 col-md-7 text-center text-md-left">
             <h3>예약관리</h3>
             <p>앱 설치 없이 카카오톡으로<br class="d-lg-none"/> 간편하게 예약을 추가합니다.</p>
             <p>예약한 고객 전화번호를 넣으면<br class="d-lg-none"/> 예약내용을 카카오톡으로 보내드려요.</p>
@@ -75,7 +78,7 @@
         </div>
         <div class="carousel-item">
           <img class="d-block w-100 mx-auto" src="/nmns/img/portfolio/circus.png" alt="간편한 예약취소">
-          <div class="carousel-caption col-8 text-center text-md-left">
+          <div class="carousel-caption col-8 col-md-7 text-center text-md-left">
             <h3>간편한 예약취소</h3>
             <p>고객이 따로 연락하지 않아도<br class="d-lg-none"/> 카카오톡 버튼만 누르면 예약취소를 할 수 있어요!</p>
             <p>고객이 예약을 취소하면 점주님께 <br class="d-lg-none"/>예약취소 알림을 보내드립니다 :)</p>
@@ -100,7 +103,7 @@
             <input type="password" name="passwordRepeat" class="form-control" placeholder="비밀번호 확인"/>
             <button id="signupBtn" class="btn-primary">회원가입</button>
             <p class="message text-danger" if(input.type === "signup" && input.message)>${input.message}</p>
-            <p class=["message", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">로그인</a>해주세요.</p>
+            <p class=["message", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary">로그인</a>해주세요.</p>
           </div>
         </form>
         <form id="signinForm" class=(input.type!=="signin" && "hide") method="post" action="/signin">
@@ -114,12 +117,12 @@
               </div>
               <button id="signinBtn" class="btn-primary">로그인</button>
               <p class="message text-danger" if(input.type === "signin" && input.message)>${input.message}</p>
-              <p class=["message", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#">간편하게 가입</a>해보세요.</p>
-              <p class="message mt-1"><a class="passwordReset" href="#">비밀번호를 잊으셨나요?</a></p>
+              <p class=["message", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary">간편하게 가입</a>해보세요.</p>
+              <p class="message mt-1"><a class="passwordReset text-primary" href="#">비밀번호를 잊으셨나요?</a></p>
             </div>
             <div id="passwordReset">
                 <button id="resetBtn" class="btn-primary">비밀번호 재설정</button>
-                <p class="message">비밀번호를 찾으셨다면<br class="d-lg-none d-md-inline-block d-sm-none"/><a class="returnSignin" href="#"> 다시 로그인</a>해주세요.</p>
+                <p class="message">비밀번호를 찾으셨다면<br class="d-lg-none d-md-inline-block d-sm-none"/><a class="returnSignin text-primary" href="#"> 다시 로그인</a>해주세요.</p>
             </div>
           </div>
         </form>

@@ -185,95 +185,14 @@ header.masthead h2 {
     font-size: 1.75em;
   }
 }
-
-.portfolio {
-  margin-bottom: -15px;
-}
-
-.portfolio .portfolio-item {
-  position: relative;
-  display: block;
-  max-width: 25rem;
-  margin-bottom: 15px;
-}
-
-.portfolio .portfolio-item .portfolio-item-caption {
-  -webkit-transition: all ease 0.5s;
-  -moz-transition: all ease 0.5s;
-  transition: all ease 0.5s;
-  opacity: 0;
-  background-color: rgba(24, 188, 156, 0.9);
-}
-
-.portfolio .portfolio-item .portfolio-item-caption:hover {
-  opacity: 1;
-}
-
-.portfolio .portfolio-item .portfolio-item-caption .portfolio-item-caption-content {
-  font-size: 1.5rem;
-}
-
-@media (min-width: 576px) {
-  .portfolio {
-    margin-bottom: -30px;
-  }
-  .portfolio .portfolio-item {
-    margin-bottom: 30px;
-  }
-}
-
-.portfolio-modal .portfolio-modal-dialog {
-  padding: 3rem 1rem;
-  min-height: calc(100vh - 2rem);
-  margin: 1rem calc(1rem - 8px);
-  position: relative;
-  z-index: 2;
-  -moz-box-shadow: 0 0 3rem 1rem rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 0 3rem 1rem rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 3rem 1rem rgba(0, 0, 0, 0.5);
-}
-
-.portfolio-modal .portfolio-modal-dialog .close-button {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-}
-
-.portfolio-modal .portfolio-modal-dialog .close-button i {
-  line-height: 38px;
-}
-
-.portfolio-modal .portfolio-modal-dialog h2 {
-  font-size: 2rem;
-}
-
-@media (min-width: 768px) {
-  .portfolio-modal .portfolio-modal-dialog {
-    min-height: 100vh;
-    padding: 5rem;
-    margin: 3rem calc(3rem - 8px);
-  }
-  .portfolio-modal .portfolio-modal-dialog h2 {
-    font-size: 3rem;
-  }
-}
-
-.footer {
-  background-color: #2C3E50;
-  color: #fff;
-}
-
-.copyright {
-  background-color: #1a252f;
-}
-
+/*
 a {
   color: #18BC9C;
 }
 
 a:focus, a:hover, a:active {
   color: #128f76;
-}
+}*/
 
 .btn {
   border-width: 2px;
@@ -281,6 +200,9 @@ a:focus, a:hover, a:active {
 
 /*login form*/
 
+.loginPage {
+  margin: auto;
+}
 .form form .form-group{
   margin-bottom:0;
 }
@@ -319,13 +241,16 @@ a:focus, a:hover, a:active {
   transition: all 0.3 ease;
   cursor: pointer;
 }
-
+/*.form button:hover,.form button:active,.form button:focus {
+  background: #43A047;
+}*/
 .form .message {
   margin: 1rem 0 0;
   color: #b3b3b3;
   font-size: 0.8rem;
 }
 .form .message a {
+  color: #4CAF50;
   text-decoration: none;
 }
 .form .hide {
@@ -366,10 +291,6 @@ a:focus, a:hover, a:active {
   color: #EF3B3A;
 }
 /*carousel - login form*/
-.loginPage{
-  margin-left:auto;
-  margin-right:auto;
-}
 .loginPage form {
   width: 100%;
   color: #fff;
@@ -388,7 +309,7 @@ a:focus, a:hover, a:active {
 	}
 	.loginPage {
     position: absolute;
-    right: 8rem;
+    right: 5rem;
 	}
   #carouselWrapper{
     margin-top:4rem;
@@ -396,10 +317,15 @@ a:focus, a:hover, a:active {
 }
 @media (min-width: 992px) { 
 	.loginPage {
-    
+    width: 970px;
+    margin-left: -485px;
 	}
 }
 @media (min-width: 1200px) { 
+	.loginPage {
+    width: 1170px;
+    margin-left: -585px;
+	}
   #carouselWrapper{
     margin-top:6rem;
   }

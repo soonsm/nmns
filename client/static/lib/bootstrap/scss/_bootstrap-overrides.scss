@@ -22,20 +22,34 @@ a {
 
 .text-primary {
   color: $primary !important;
+  &:focus,
+  &:hover,
+  &:active {
+    color: $darkPrimary !important;
+  }
+}
+
+a.text-primary {
+  color: $primary !important;
+  &:focus,
+  &:hover,
+  &:active {
+    color: $darkPrimary !important;
+  }
 }
 
 .text-secondary {
   color: $secondary !important;
 }
 
-.btn-primary {
+.btn-primary:not(:disabled):not(.disabled) {
   background-color: $primary;
   border-color: $primary;
   &:hover,
   &:focus,
   &:active {
-    background-color: darken($primary, 10%);
-    border-color: darken($primary, 10%);
+    background-color: $darkPrimary;
+    border-color: $darkPrimary;
   }
 }
 
@@ -45,7 +59,7 @@ a {
   &:hover,
   &:focus,
   &:active {
-    background-color: darken($secondary, 10%);
-    border-color: darken($secondary, 10%);
+    background-color: $darkPrimary;
+    border-color: $darkPrimary;
   }
 }
