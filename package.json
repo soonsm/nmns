@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development node ./app",
+    "start": "./ddb  | NODE_ENV=development node ./app",
     "test": "jasmine",
     "testDebug": "node %NODE_DEBUG_OPTION% ./node_modules/jasmine/bin/jasmine.js"
   },

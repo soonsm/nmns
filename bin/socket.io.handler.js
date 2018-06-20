@@ -4,8 +4,8 @@ const
     db = require('./webDb');
 
 module.exports = function(express){
-    var server = require('http').createServer(app);
-    var io = require('../..')(server);
+    var server = require('http').createServer(express);
+    var io = require('socket.io')(server);
     var port = 8089;
 
     server.listen(port, () => {
