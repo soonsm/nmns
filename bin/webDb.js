@@ -3,9 +3,17 @@ const moment = require('moment');
 const sha256 = require('js-sha256');
 
 var AWS = require("aws-sdk");
-AWS.config.update({
-    region: "ap-northeast-2"
-});
+
+if (process.env.NODE_ENV == 'production') {
+    AWS.config.update({
+        region: "ap-northeast-2"
+    });
+} else if (process.env.NODE_ENV == 'development') {
+    AWS.config.update({
+        region: "eu-west-2",
+        endpoint: "http://localhost:8000"
+    });
+}
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -64,7 +72,7 @@ function newWebUser(user){
         staffList: [],
         alrimTalkInfo : {
             useYn: 'N',
-            callbackPhone: '',
+            callbackPhone: null,
             cancelDue: '3시간',
             notice: '예약시간을 지켜주세요.'
         },
@@ -76,6 +84,7 @@ function newWebUser(user){
         cancelAlrimTalkList: []
     };
 }
+exports.newWebUser = newWebUser;
 
 function newStaff(staff){
     return {
@@ -126,6 +135,15 @@ exports.signUp = async function(newUser){
     return await put({
         TableName: 'WebSecheduler',
         Item: newWebUser
+    });
+}
+
+exports.getWebUser = async function(email){
+    return await get({
+        TableName: 'WebSecheduler',
+        Key: {
+            'email': email
+        }
     });
 }
 
