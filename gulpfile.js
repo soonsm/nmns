@@ -3,30 +3,11 @@ var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
-var browserSync = require('browser-sync').create();
 var through = require('through2');
 var merge = require('merge-stream');
-var marko = require('gulp-marko-compile');
 
-// Set the banner content
-/*var banner = ['/*!\n',
-  ' * Start Bootstrap - <%= pkg.title %> v<%= pkg.version %> (<%= pkg.homepage %>)\n',
-  ' * Copyright 2013-' + (new Date()).getFullYear(), ' <%= pkg.author %>\n',
-  ' * Licensed under <%= pkg.license %> (https://github.com/BlackrockDigital/<%= pkg.name %>/blob/master/LICENSE)\n',
-  ' *\n',
-  ''
-].join('');*/
-
-// Copy third party libraries from /node_modules into /static/lib
+// Copy third party libraries from /node_modules into /client/static/lib
 gulp.task('lib', async function() {
-
-  // Bootstrap
-  // gulp.src([
-  //     './node_modules/bootstrap/dist/**/*',
-  //     '!./node_modules/bootstrap/dist/css/bootstrap-grid*',
-  //     '!./node_modules/bootstrap/dist/css/bootstrap-reboot*'
-  //   ])
-  //   .pipe(gulp.dest('./client/static/lib/bootstrap'));
 
   // Font Awesome
   gulp.src([
@@ -116,41 +97,13 @@ gulp.task('js:minify', function() {
 });
 
 //Default task
-gulp.task('default', gulp.series("lib", gulp.parallel('css', 'js:minify')));
-//gulp.task('default', gulp.parallel('css', 'js:minify'));
-gulp.task("default", "lib");
-
-//Configure the browserSync task
-gulp.task('browserSync', function() {
-  browserSync.init({
-    server: {
-      baseDir: "./client/"
-    },
-      open:false
-  });
-});
-
-require('marko/hot-reload').enable();
-gulp.task('marko',function(){
-    var reload = gulp.src("./template/*.marko")
-        .pipe(through.obj(function (file, enc, cb) {
-            require('marko/hot-reload').handleFileModified(file.path);
-            cb(null, file);
-        }));
-
-    var build = gulp.src("./client/template/*.marko")
-        .pipe(marko({preserveWhitespace: true}))
-        .pipe(gulp.dest("./client/template"));
-
-    return merge(reload,build);
-});
+gulp.task('default', gulp.series(gulp.parallel("lib"), gulp.parallel('js:minify', 'css')));
 
 gulp.task('watch', function() {
   gulp.watch(['./client/static/nmns/css/*.css', '!./client/static/nmns/css/*.min.css'], gulp.parallel('css'));
   gulp.watch(['./client/static/lib/bootstrap/scss/*.scss'], gulp.parallel('css'));
   gulp.watch(['./client/static/nmns/js/*.js', '!./client/static/nmns/js/*.min.js'], gulp.parallel('js:minify'));
-  gulp.watch('./client/template/*.marko', gulp.parallel('marko'));
 });
 
 // Dev task
-gulp.task('dev', gulp.series(gulp.parallel('css', 'js:minify'), 'watch'));
+gulp.task('dev', gulp.series(gulp.parallel('css', 'js:minify'), gulp.parallel('watch')));

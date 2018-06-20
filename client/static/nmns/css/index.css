@@ -375,7 +375,7 @@ a:focus, a:hover, a:active {
   color: #fff;
 }
 #carouselWrapper{
-  margin-top:4rem;
+  margin-top:4.5rem;
 }
 .carousel-caption {
   height:auto;
@@ -390,18 +390,10 @@ a:focus, a:hover, a:active {
     position: absolute;
     right: 8rem;
 	}
-  #carouselWrapper{
-    margin-top:4rem;
-  }
 }
 @media (min-width: 992px) { 
-	.loginPage {
-    
-	}
-}
-@media (min-width: 1200px) { 
-  #carouselWrapper{
-    margin-top:6rem;
+	#carouselWrapper{
+    margin-top:6.5rem;
   }
 }
 .carousel-item img{

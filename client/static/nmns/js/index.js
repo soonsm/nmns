@@ -66,7 +66,7 @@
         if($(this).height()>0){
           $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-70-($(this).height()/2)) + "px");
         }else{
-          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-130) + "px");
+          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-180) + "px");
         }
       }
     });

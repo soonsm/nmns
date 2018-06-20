@@ -23,11 +23,6 @@
 
   });
 
-  $("#signoutLink").on("click", function(e){
-    e.preventDefault();
-    window.location.replace("/signout");
-  });
-
   var Calendar =tui.Calendar;
   
   var calendar = new Calendar("#mainCalendar", {
