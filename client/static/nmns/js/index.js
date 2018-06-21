@@ -148,14 +148,14 @@
           }
           alignMiddle();
           $('html, body').animate({
-            scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
+            scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
           }, 1000, "easeInOutExpo");
           $("#signupForm input[name='email']").focus();
       }}());
     }else{
       console.log("aa");
       $('html, body').animate({
-        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
+        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
       }, 1000, "easeInOutExpo");
       $("#signupForm input[name='email']").focus();
     }
@@ -175,7 +175,7 @@
             $(".message a.returnSignin").trigger("click");
           }else{
             $('html, body').animate({
-              scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
+              scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
             }, 1000, "easeInOutExpo");
             $("#signinForm input[name='email']").focus();
           }
@@ -185,7 +185,7 @@
         $(".message a.returnSignin").trigger("click");
       }else{
         $('html, body').animate({
-          scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top")) - 45
+          scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
         }, 1000, "easeInOutExpo");
         $("#signinForm input[name='email']").focus();
       }
