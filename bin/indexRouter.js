@@ -1,6 +1,8 @@
 'use strict';
 const
     router = require('express').Router(),
+    emailValidator = require('email-validator'),
+    passwordValidator = require('password-validator'),
     db = require('./webDb');
 
 module.exports = function(passport){
@@ -18,28 +20,70 @@ module.exports = function(passport){
         let passwordRepeat = data.passwordRepeat;
 
         let error = {
+            type: 'signup',
+            email: email,
             message : null
         };
 
-        /*
-        TODO: 입력값 검증
-        이메일 검증
-        비밀번호 및 비밀번호 확인 공란 체크, 길이 체크, 문자 체크
-         */
-
-        if(password !== passwordRepeat){
-            error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
-            res.status(200).json(error);
+        //email validation
+        if(!emailValidator.validate(email)){
+            //email validation fail
+            error.message = '올바른 이메일 형식이 아닙니다.';
+            return res.marko(require('../client/template/index'), error);
         }
 
-        let user = await db.signUp({email: email, password: password});
+        //password validation
+        if(password !== passwordRepeat){
+            error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
+            return res.marko(require('../client/template/index'), error);
+        }
+
+        //password strength check
+        var schema = new passwordValidator();
+        schema
+            .is().min(8)                                    // Minimum length 8
+            .is().max(30)                                  // Maximum length 30
+            .has().digits()                                 // Must have digits
+            .has().symbols();                               // Must have symbols
+
+        const passwordFailRules = schema.validate(password, { list: true });
+        if(passwordFailRules && passwordFailRules.length > 0){
+            //password strength check fail
+            let passwordMessages = {
+                min: '길이제한 8글자 이상',
+                max: '길이제한 30글자 이하',
+                digits: '숫자포함',
+                symbols: '특수문자 포함'
+            }
+            let errorMessage = '입력하신 비밀번호는 다음의 조건을 만족해야 합니다.(';
+            for(var i=0; i<passwordFailRules.length; i++){
+                errorMessage += passwordMessages[passwordFailRules[i]];
+                if(i < passwordFailRules.length-1){
+                    errorMessage += ', ';
+                }
+            }
+            errorMessage += ')';
+            error.message = errorMessage;
+            return res.marko(require('../client/template/index'), error);
+
+        }
+
+        //기존 사용자 체크
+        let user = await db.getWebUser(email);
+        if(user){
+            error.message = '이미 존재하는 사용자입니다.';
+            return res.marko(require('../client/template/index'), error);
+        }
+
+        user = await db.signUp({email: email, password: password});
 
         if(user){
             //로그인처리
             req.logIn(user, () => res.redirect("/"));
+            res.redirect("/");
         }else{
             error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
-            res.status(200).json(error);
+            return res.marko(require('../client/template/index'), error);
         }
 
     });

@@ -1,1 +1,1 @@
-java -Djava.library.path=./dynamoDbLocal/DynamoDBLocal_lib -jar ./dynamoDbLocal/DynamoDBLocal.jar -sharedDb
+java -Djava.library.path=./dynamoDbLocal/DynamoDBLocal_lib -jar ./dynamoDbLocal/DynamoDBLocal.jar -sharedDb &

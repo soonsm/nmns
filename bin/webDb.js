@@ -130,7 +130,7 @@ exports.signUp = async function(newUser){
         return false;
     }
 
-    let newWebUser = newWebUser(newUser);
+    let newWebUser = exports.newWebUser(newUser);
 
     return await put({
         TableName: 'WebSecheduler',
