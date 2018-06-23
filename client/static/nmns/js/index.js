@@ -234,4 +234,5 @@
     }, 1000, "easeInOutExpo");
     $("#signinForm input[name='email']").focus();
   });
+
 })(jQuery);

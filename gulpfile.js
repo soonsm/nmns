@@ -36,7 +36,7 @@ gulp.task('lib', async function() {
     
   //socket.io
   gulp.src("./node_modules/socket.io-client/dist/*slim.js*")
-    .pipe(gulp.dest("./client-static/lib/socket.io"));
+    .pipe(gulp.dest("./client/static/lib/socket.io"));
     
   // Toast UI calendar
   gulp.src('./node_modules/tui-calendar/dist/*.min.*')
@@ -86,6 +86,7 @@ gulp.task('css', gulp.series('css:compile', 'css:minify'));
 gulp.task('js:minify', function() {
   return gulp.src([
       './client/**/*.js',
+      '!./client/static/lib/socket.io/socket.io.slim.js',
       '!./client/**/*.marko.js',
       '!./client/**/*.min.js'
     ])

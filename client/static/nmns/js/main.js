@@ -23,9 +23,9 @@
 
   });
 
-  var Calendar =tui.Calendar;
+  var NMNS_GLOBAL = {};
   
-  var calendar = new Calendar("#mainCalendar", {
+  NMNS_GLOBAL.calendar = new tui.Calendar("#mainCalendar", {
     defaultView:"week",
     taskView:true,
     template:{
@@ -35,5 +35,14 @@
         return template;
       }
     }
-  })
+  });
+  
+  NMNS_GLOBAL.socket = io();
+  NMNS_GLOBAL.socket.on("message", function(e){
+    console.log(e);
+  });
+  NMNS_GLOBAL.socket.emit("get info");
+  NMNS_GLOBAL.socket.on("get info", function(e){
+    console.log(e);
+  });
 })(jQuery);

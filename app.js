@@ -28,7 +28,9 @@ const
     db = require('./bin/webDb')
 ;
 
-
+//socket.io.handler
+var serv = require('http').Server(app);
+var io = require('socket.io')(serv);
 
 //static file은 session 설정 필요없으므로 위로 이동
 app.use(express.static(__dirname + '/client/static'));
@@ -144,8 +146,19 @@ app.delete('/friend/:user_key', (req, res)=>{
    }
 });
 
+io.on('connection', function(socket){
+  socket.on("get info", function(msg){
+     console.log(msg);
+     console.log("get info call");
+     socket.broadcast.emit("get info", "test");
+     socket.emit("get info", {for:socket}, "testt");
+  });
+  var user = socket.request.user;
+  console.log(user);
+  console.log("aaa hi");
+  socket.broadcast.emit("hi");
+});
+
+
 // Sets server port and logs message on success
 var server = app.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
-
-//socket.io.handler
-require('./bin/socket.io.handler')(express);
