@@ -12,6 +12,7 @@
     "aws-sdk": "^2.259.1",
     "body-parser": "^1.18.3",
     "bootstrap": "4.1.1",
+    "connect-dynamodb-session": "^1.1.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "debug": "~2.6.9",

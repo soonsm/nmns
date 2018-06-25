@@ -10,7 +10,7 @@ if (process.env.NODE_ENV == 'production') {
     });
 } else if (process.env.NODE_ENV == 'development') {
     AWS.config.update({
-        region: "eu-west-2",
+        region: "ap-northeast-2",
         endpoint: "http://localhost:8000"
     });
 }
@@ -58,7 +58,22 @@ function put(param) {
         });
     }));
 }
-function newWebUser(user){
+
+function query(params){
+    return new Promise((resolve => {
+        docClient.query(params, function(err, data) {
+            if (err) {
+                console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
+                resolve(null);
+            } else {
+                console.log("Query succeeded. Data:", data);
+                resolve(data.Items);
+            }
+        });
+    }));
+}
+
+exports.newWebUser = function(user){
     return {
         email: user.email,
         password: user.password,
@@ -84,16 +99,15 @@ function newWebUser(user){
         cancelAlrimTalkList: []
     };
 }
-exports.newWebUser = newWebUser;
 
-function newStaff(staff){
+exports.newStaff = function (staff){
     return {
         name: staff.name,
         color: staff.color || 'blue' //TODO: Default color 값 확인
     };
 }
 
-function newNoShow(key, noShowCase){
+exports.newNoShow = function(key, noShowCase){
     let newNoShow = {
         key: key,
         numOfNoShow: 1,
@@ -107,8 +121,10 @@ function newNoShow(key, noShowCase){
     return newNoShow;
 }
 
-function newReservation(reservation){
+
+exports.newReservation = function(reservation){
     return {
+        key: reservation.key,
         staffName: reservation.staffName || null,
         reservationDate: reservation.reservationDate,
         reservationTime: reservation.reservationTime,
@@ -146,6 +162,39 @@ exports.getWebUser = async function(email){
         }
     });
 }
+
+exports.getReservationList = async function(email){
+    let items =  await query({
+        TableName : "WebSecheduler",
+        ProjectionExpression:"reservationList",
+        KeyConditionExpression: "#key = :val ",
+        ExpressionAttributeNames:{
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val":email,
+        }
+    });
+
+    return items[0].reservationList;
+};
+
+exports.getStaffList = async function(email){
+    let items = await query({
+        TableName : "WebSecheduler",
+        ProjectionExpression:"staffList",
+        KeyConditionExpression: "#key = :val ",
+        ExpressionAttributeNames:{
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val":email,
+        }
+    });
+
+    return items[0].staffList;
+};
+
 
 function newAlrimTalk(reservationKey, userKey, phone, date, time){
     return {

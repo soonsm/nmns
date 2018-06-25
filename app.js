@@ -11,6 +11,7 @@ require('marko/node-require');
 
 const
     express = require('express'),
+    Server = require("http").Server,
     markoExpress = require('marko/express'),
     body_parser = require('body-parser'),
     passport = require('passport'),
@@ -18,6 +19,7 @@ const
     flash = require('connect-flash'),
     session = require('express-session'),
     app = express(),
+    server = Server(app),
     morgan = require("morgan");
     
 const
@@ -42,7 +44,21 @@ var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 //flash && session setting
-app.use(session({secret: "cats", resave: false, saveUninitialized: false }));
+const DynamoStore = require('connect-dynamodb-session')(session);
+let autoCreateValue = true;
+if (process.env.NODE_ENV == 'production') {
+    autoCreateValue = false;
+}
+let sessionMiddleware = session({secret: "rilahhuma", resave: false, saveUninitialized: false,
+    store: new DynamoStore({
+        region: 'ap-northeast-2',
+        tableName: 'SessionTable',
+        cleanupInterval: 0, // session is not expired unless log-out
+        touchAfter: 0,
+        autoCreate: autoCreateValue
+    }) });
+
+app.use(sessionMiddleware);
 app.use(flash());
 
 //Passport configure
@@ -143,10 +159,9 @@ app.delete('/friend/:user_key', (req, res)=>{
 });
 
 
+//socket.io.handler
+require('./bin/socket.io.handler')(server, sessionMiddleware);
 
 // Sets server port and logs message on success
-var server = app.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
+server.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
 
-
-//socket.io.handler
-require('./bin/socket.io.handler')(server);

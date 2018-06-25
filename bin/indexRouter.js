@@ -9,8 +9,7 @@ module.exports = function(passport){
 
 
     router.get('/index', function (req, res) {
-        let cookiedEmail = req.cookies.email;
-        res.marko(require('../client/template/index'), {type:"signin", email:cookiedEmail, message:"test입니다."});
+        res.marko(require('../client/template/index'), {type:"signin", email:req.cookies.email, message:req.cookies.errorMessage});
     });
 
     router.post("/signup", async function(req, res){
@@ -106,7 +105,8 @@ module.exports = function(passport){
         passport.authenticate('local', (err,user,info)=>{
             req.logIn(user, function(err) {
                 if (err) {
-                    res.marko(require('../client/template/index'), {type:"signin", email:email, message:info.message});
+                    res.cookie('errorMessage', info.message);
+                    res.redirect("/index");
                     return;
                 }
                 //로그인 성공

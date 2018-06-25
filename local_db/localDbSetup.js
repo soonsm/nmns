@@ -8,7 +8,7 @@ AWS.config.update({
 });
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
-
+/*
 var params = {
     TableName : "WebSecheduler",
     KeySchema: [
@@ -51,6 +51,7 @@ dynamodb.createTable(params, function(err, data) {
     }
 });
 
+//WebSecheduler Insert
 var user = db.newWebUser({email: 'ksm@test.com', password: 'asd', shopName: '스마일네일샵'});
 
 var params = {
@@ -65,4 +66,62 @@ docClient.put(params, function(err, data) {
         console.log("PutItem succeeded:", user);
     }
 });
+*/
+//예약정보 Insert
+var reservation = db.newReservation({
+    key: 'A1',
+    staffName: '정스탭',
+    reservationDate: '20180630',
+    reservationTime: '1730',
+    elapsedTime: '0230',
+    phone: '01028904311',
+    name: '김손님',
+    program: '패디큐어',
+    memo: {key: '회원권', value: '3회 남음'},
+    isCanceled: false,
+    cancelDate: null
+});
 
+var params = {
+    TableName: "WebSecheduler",
+    Key: {
+        'email': 'ksm@test.com'
+    },
+    UpdateExpression: "set reservationList[0] = :reservation",
+    ExpressionAttributeValues:{
+        ":reservation":reservation
+    },
+    ReturnValues:"UPDATED_NEW"
+};
+console.log("Updating the item...");
+docClient.update(params, function(err, data) {
+    if (err) {
+        console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+    }
+});
+
+var staff = db.newStaff({
+    name: '정스탭',
+    color: 'red'
+});
+var params = {
+    TableName: "WebSecheduler",
+    Key: {
+        'email': 'ksm@test.com'
+    },
+    UpdateExpression: "set staffList[0] = :staff",
+    ExpressionAttributeValues:{
+        ":staff":staff
+    },
+    ReturnValues:"UPDATED_NEW"
+};
+console.log("Updating the item...");
+docClient.update(params, function(err, data) {
+    if (err) {
+        console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+    }
+});
