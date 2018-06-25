@@ -11,13 +11,10 @@ gulp.task('lib', async function() {
 
   // Font Awesome
   gulp.src([
-      './node_modules/font-awesome/**/*',
-      '!./node_modules/font-awesome/{less,less/*}',
-      '!./node_modules/font-awesome/{scss,scss/*}',
-      '!./node_modules/font-awesome/.*',
-      '!./node_modules/font-awesome/*.{txt,json,md}'
+      './node_modules/@fortawesome/fontawesome-free/js/all.js',
+      './node_modules/@fortawesome/fontawesome-free/js/v4-shims.js',
     ])
-    .pipe(gulp.dest('./client/static/lib/font-awesome'));
+    .pipe(gulp.dest('./client/static/lib/font-awesome/js'));
 
   // jQuery
   gulp.src([
@@ -55,6 +52,10 @@ gulp.task('lib', async function() {
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
     
 
+  //moment
+  gulp.src(["./node_modules/moment/min/moment-with-locales.min.js",
+            "./node_modules/moment/min/locales.min.js"])
+    .pipe(gulp.dest("./client/static/lib/moment"));
 });
 
 //Compile SCSS

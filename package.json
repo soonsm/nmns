@@ -9,6 +9,7 @@
     "testDebug": "node %NODE_DEBUG_OPTION% ./node_modules/jasmine/bin/jasmine.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.1.0",
     "aws-sdk": "^2.259.1",
     "body-parser": "^1.18.3",
     "bootstrap": "4.1.1",
