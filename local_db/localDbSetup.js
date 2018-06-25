@@ -51,7 +51,7 @@ dynamodb.createTable(params, function(err, data) {
     }
 });
 
-var user = db.newWebUser({email: 'ksm@test.com', password: 'asd', shopName: '스마일네일샵'});
+var user = db.newWebUser({email: 'test@test.com', password: 'asdfasdf1!', shopName: '스마일네일1샵'});
 
 var params = {
     TableName: "WebSecheduler",

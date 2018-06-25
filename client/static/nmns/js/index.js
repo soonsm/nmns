@@ -85,6 +85,9 @@
 
   $(document).ready(function(){
     alignMiddle();
+    $.validator.addMethod("passwordCheck", function(value, element){
+      return /\W+/.test(value) && /[0-9]+/.test(value);//특수문자와 숫자가 하나 이상 포함
+    }, "비밀번호는 하나 이상의 숫자와 특수문자를 포함해야합니다.");
     $("#signinForm").validate({
       rules:{
         email:{
@@ -92,7 +95,10 @@
           email:true
         },
         password:{
-          required:true
+          required:true,
+          minlength:8,
+          maxlength:30,
+          passwordCheck:true
         }
       },
       messages:{
@@ -100,7 +106,11 @@
           required:"이메일을 입력해주세요.",
           email:"올바른 이메일을 입력해주세요."
         },
-        password:"비밀번호를 입력해주세요."
+        password:{
+          required:"비밀번호를 입력해주세요.",
+          minlength:"비밀번호는 최소 8자리 이상입니다.",
+          maxlength:"비밀번호는 최대 30자리 이내입니다."
+        }
       },
       errorElement:"p",
       errorClass:"message text-danger my-1",
@@ -114,7 +124,10 @@
           email:true
         },
         password:{
-          required:true
+          required:true,
+          minlength:8,
+          maxlength:30,
+          passwordCheck:true
         },
         passwordRepeat:{
           equalTo:"#signupPassword"
@@ -125,7 +138,11 @@
           required:"이메일을 입력해주세요.",
           email:"올바른 이메일을 입력해주세요."
         },
-        password:"비밀번호를 입력해주세요.",
+        password:{
+          required:"비밀번호를 입력해주세요.",
+          minlength:"비밀번호는 최소 8자리 이상입니다.",
+          maxlength:"비밀번호는 최대 30자리 이내입니다."
+        },
         passwordRepeat:"비밀번호가 일치하지 않습니다."
       },
       errorElement:"p",
