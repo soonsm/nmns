@@ -4,6 +4,7 @@ const db = require('./webDb');
 const moment = require('moment');
 
 const GetReservationList = 'get reserv';
+const GetManagerList = 'get manager';
 
 module.exports = function(server, sessionMiddleware){
   var io = require('socket.io')(server);
@@ -31,8 +32,9 @@ module.exports = function(server, sessionMiddleware){
         socket.emit(GetReservationList, makeResponse(status, await db.getReservationList(email, data.from, data.to), message));
     });
 
-    socket.on("get manager", async function(){
-      socket.emit("get manager", makeResponse(true, await db.getStaffList(email)));
+    socket.on(GetManagerList, async function(){
+        let managerList = await db.getStaffList(email);
+      socket.emit(GetManagerList, makeResponse(true, managerList));
     });
 
 

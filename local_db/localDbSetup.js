@@ -67,6 +67,27 @@ docClient.put(params, function(err, data) {
     }
 });
 */
+
+var params = {
+    TableName: "WebSecheduler",
+    Key: {
+        'email': 'ksm@test.com'
+    },
+    UpdateExpression: "set password = :reservation",
+    ExpressionAttributeValues:{
+        ":reservation":'rlatmdals1#'
+    },
+    ReturnValues:"UPDATED_NEW"
+};
+console.log("Updating the item...");
+docClient.update(params, function(err, data) {
+    if (err) {
+        console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+    }
+});
+
 //예약정보 Insert
 var reservation = db.newReservation({
     key: 'A1',
