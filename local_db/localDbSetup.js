@@ -70,14 +70,14 @@ docClient.put(params, function(err, data) {
 //예약정보 Insert
 var reservation = db.newReservation({
     key: 'A1',
-    staffName: '정스탭',
-    reservationDate: '20180630',
-    reservationTime: '1730',
+    manager: '정스탭',
+    date: '20180630',
+    time: '1730',
     elapsedTime: '0230',
-    phone: '01028904311',
+    contact: '01028904311',
     name: '김손님',
-    program: '패디큐어',
-    memo: {key: '회원권', value: '3회 남음'},
+    contents: '패디큐어',
+    etc: {key: '회원권', value: '3회 남음'},
     isCanceled: false,
     cancelDate: null
 });
@@ -103,8 +103,8 @@ docClient.update(params, function(err, data) {
 });
 
 var staff = db.newStaff({
-    name: '정스탭',
-    color: 'red'
+    key: 'A1',
+    name: '정스탭'
 });
 var params = {
     TableName: "WebSecheduler",

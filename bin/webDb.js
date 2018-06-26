@@ -102,8 +102,9 @@ exports.newWebUser = function(user){
 
 exports.newStaff = function (staff){
     return {
+        key: staff.key,
         name: staff.name,
-        color: staff.color || 'blue' //TODO: Default color 값 확인
+        color: staff.color || '#RRGGBB' //TODO: Default color 값 확인
     };
 }
 
@@ -125,14 +126,16 @@ exports.newNoShow = function(key, noShowCase){
 exports.newReservation = function(reservation){
     return {
         key: reservation.key,
-        staffName: reservation.staffName || null,
-        reservationDate: reservation.reservationDate,
-        reservationTime: reservation.reservationTime,
-        elapsedTime: reservation.elapsedTime,
-        phone: reservation.phone,
+        type: reservation.type || 'R',
         name: reservation.name,
-        program: reservation.program,
-        memo: reservation.memo,
+        date: reservation.date,
+        time: reservation.time,
+        isAllDay: reservation.isAllDay || false,
+        contents: reservation.contents,
+        manager: reservation.manager || null,
+        etc: reservation.etc,
+        elapsedTime: reservation.elapsedTime,
+        contact: reservation.contact,
         isCanceled: false,
         cancelDate: null
     };
@@ -163,11 +166,11 @@ exports.getWebUser = async function(email){
     });
 }
 
-exports.getReservationList = async function(email){
+exports.getReservationList = async function(email, from, to){
     let items =  await query({
         TableName : "WebSecheduler",
         ProjectionExpression:"reservationList",
-        KeyConditionExpression: "#key = :val ",
+        KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames:{
             "#key": "email"
         },

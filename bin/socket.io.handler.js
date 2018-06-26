@@ -1,7 +1,9 @@
 'use strict';
 
-const
-  db = require('./webDb');
+const db = require('./webDb');
+const moment = require('moment');
+
+const GetReservationList = 'get reserv';
 
 module.exports = function(server, sessionMiddleware){
   var io = require('socket.io')(server);
@@ -15,12 +17,22 @@ module.exports = function(server, sessionMiddleware){
     console.log('socket io email:', email);
 
 
-    socket.on("get reserv", async function(){
-      socket.emit("get reserv", await db.getReservationList(email));
+    socket.on(GetReservationList, async function(data){
+        let status = true;
+        let message = null;
+        if(!data || !data.from || !data.to){
+            message = '예약정보 조회에 필요한 데이터가 없습니다.({"from":${조회 시작 일자, string, YYYYMMDD}, "to":${조회 종료 일자, string, YYYYMMDD}})'
+            status = false;
+        }
+        if(!moment(data.from, 'YYYYMMDD').isValid() || !moment(data.to, 'YYYYMMDD').isValid()){
+            message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDD) from:${data.from}, to:${data.to}`;
+            status = false;
+        }
+        socket.emit(GetReservationList, makeResponse(status, await db.getReservationList(email, data.from, data.to), message));
     });
 
     socket.on("get manager", async function(){
-      socket.emit("get manager", await db.getStaffList(email));
+      socket.emit("get manager", makeResponse(true, await db.getStaffList(email)));
     });
 
 
@@ -36,6 +48,15 @@ module.exports = function(server, sessionMiddleware){
     socket.broadcast.emit("hi");
     */
   });
+};
+
+const makeResponse = function(status, data, message){
+  return {
+      type: 'response',
+      status: status,
+      message: message,
+      data: data
+  };
 }
 
 //TODO: polling handling
