@@ -25,21 +25,53 @@
 
   });
 
+  var socketResponse = function(requestName, callback){
+    return function(e){
+      if(e && e.type === "response"){
+        if(e.status){//success
+          if(callback){
+            callback(e);
+          }
+        }else{//fail
+          alert(requestName + "에 실패하였습니다." + (e.message?"(" + e.message + ")":""));
+        }
+      }else if(e && e.type === "push"){
+        console.log("server push!");
+        console.log(e);
+        if(callback){
+          callback(e);
+        }
+      }else{
+        console.log(e);
+      }
+    }
+  }();
   NMNS_GLOBAL.socket = io();
-  NMNS_GLOBAL.socket.on("message", function(e){
+  NMNS_GLOBAL.socket.on("message", socketResponse("서버 메시지 받기", function(e){
     console.log(e);
-  });
+  }));
   NMNS_GLOBAL.socket.emit("get info");
-  NMNS_GLOBAL.socket.on("get info", function(e){
+  NMNS_GLOBAL.socket.emit("get manager");
+  NMNS_GLOBAL.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
-  });
+  }));
   
-  NMNS_GLOBAL.socket.on("get reserv", function(e){
+  NMNS_GLOBAL.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
     //NMNS_GLOBAL.calendar.createSchedules(e.data);
-    refreshScheduleVisibility();
-  });
+    //refreshScheduleVisibility();
+  }));
 
+  NMNS_GLOBAL.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
+    console.log("get manager list");
+    console.log(e);
+    var html = "";
+    e.data.forEach(function(item){
+      html += "<div class='lnb-calendars-item'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
+      html += "<span style='background-color:"+item.color+"'</span><span>"+item.name+"</span></label></div>";
+    });
+    $("#managerList").innerHtml(html);
+  }));
   //calendars
   NMNS_GLOBAL.schedulelist = [];
   NMNS_GLOBAL.managerList = [{id:"1"}];
@@ -394,7 +426,7 @@ console.log("aaa");
 
   function setSchedules() {
     NMNS_GLOBAL.calendar.clear();
-    getSchedule(NMNS_GLOBAL.calendar.getViewName(), NMNS_GLOBAL.calendar.getDateRangeStart(), NMNS_GLOBAL.calendar.getDateRangeEnd());
+    getSchedule(NMNS_GLOBAL.calendar.getDateRangeStart(), NMNS_GLOBAL.calendar.getDateRangeEnd());
   }
 
   var resizeThrottled = tui.util.throttle(function() {
@@ -418,11 +450,10 @@ console.log("aaa");
       return target.dataset ? target.dataset.action : target.getAttribute('data-action');
   }
 
-  function getSchedule(viewName, start, end){
-    console.log(viewName);
-    console.log(start);
-    console.log(end);
-    NMNS_GLOBAL.socket.emit("get reserv", {start:start, end:end});
+  function getSchedule(start, end){
+    console.log(toYYYYMMDD(start._date));
+    console.log(toYYYYMMDD(end._date));
+    NMNS_GLOBAL.socket.emit("get reserv", {from:toYYYYMMDD(start._date), to:toYYYYMMDD(end._date)});
   }
 
   function findManager(managerId){
