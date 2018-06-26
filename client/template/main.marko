@@ -58,35 +58,35 @@
     </div>
   </nav>
 
-  <div id="mainRow" class="row">
-    <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded pr-0">
+  <div id="mainRow" class="row col px-0 mx-auto">
+    <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded px-0">
       <ul class="list-group">
-        <a href="#" class="addNoShowLink list-group-item list-group-item-action" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#noShowModal">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 추가</span>
           </div>
         </a>
-        <a href="#" class="getNoShowLink list-group-item list-group-item-action" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#noShowModal">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-search fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 조회</span>
           </div>
         </a>
-        <a href="#" class="addReservLink list-group-item list-group-item-action" data-toggle="modal" data-target="#reservModal">
+        <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#reservModal">
           <div class="d-flex w-100 align-items-center">
             <span class="far fa-calendar-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">예약 추가</span>
           </div>
         </a>
-        <a href="#" class="addTaskLink list-group-item list-group-item-action" data-toggle="modal" data-target="#taskModal">
+        <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#taskModal">
           <div class="d-flex w-100 align-items-center">
             <span class="far fa-calendar-check fa-fw mr-3"></span>
             <span class="menu-collapsed">일정 추가</span>
           </div>
         </a>
-        <li id="managerElements" class="list-group-item sidebar-separator-title d-flex">
-          <div>
+        <li id="managerElements" class="list-group-item sidebar-separator-title d-flex rounded-0 border-left-0 border-right-0">
+          <div class="border-bottom">
               <div class="lnb-calendars-item">
                   <label>
                       <input class="tui-full-calendar-checkbox-square" value="all" checked="" type="checkbox">
@@ -96,19 +96,11 @@
               </div>
           </div>
           <div id="managerList" class="lnb-calendars-d1">
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="1" checked="" type="checkbox"><span style="border-color: rgb(158, 95, 255); background-color: rgb(158, 95, 255);"></span><span>My Calendar</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="2" checked="" type="checkbox"><span style="border-color: #00a9ff; background-color: #00a9ff;"></span><span>Company</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="3" checked="" type="checkbox"><span style="border-color: #ff5583; background-color: #ff5583;"></span><span>Family</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="4" checked="" type="checkbox"><span style="border-color: #03bd9e; background-color: #03bd9e;"></span><span>Friend</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="5" checked="" type="checkbox"><span style="border-color: #bbdc00; background-color: #bbdc00;"></span><span>Travel</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="6" checked="" type="checkbox"><span style="border-color: #9d9d9d; background-color: #9d9d9d;"></span><span>etc</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="7" checked="" type="checkbox"><span style="border-color: #ffbb3b; background-color: #ffbb3b;"></span><span>Birthdays</span></label></div>
-            <div class="lnb-calendars-item"><label><input class="tui-full-calendar-checkbox-round" value="8" checked="" type="checkbox"><span style="border-color: #ff4040; background-color: #ff4040;"></span><span>National Holidays</span></label></div>
           </div>
         </li>
       </ul>
     </div>
-    <div id="mainContents" class="col bg-light">
+    <div id="mainContents" class="col bg-light pr-0">
       <div id="mainCalendarTools">
         <span id="renderRange"></span>
         <span class="dropdown">
@@ -126,13 +118,13 @@
     
   </div>
   <!-- Footer -->
-  <footer class="footer text-center px-0 bg-dark">
+<!--  <footer class="footer text-center px-0 bg-dark">
     <div class="py-4 text-center text-white">
       <div class="container">
         <small>Copyright &copy; nomorenoshow.com 2018</small>
       </div>
     </div>
-  </footer>
+  </footer>-->
 
   <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
   <div class="scroll-to-top d-lg-none position-fixed ">
@@ -157,6 +149,7 @@
   <script src="/lib/moment/moment-with-locales.min.js"></script>
   <script src="/lib/moment/locales.min.js"></script>
   <!-- Custom scripts for this template -->
+  <script src="/nmns/js/util.min.js"></script>
   <script src="/nmns/js/main.min.js"></script>
 </body>
 </html>
