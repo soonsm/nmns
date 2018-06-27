@@ -63,3 +63,22 @@ a.text-primary {
     border-color: $darkPrimary;
   }
 }
+
+.border-bottom {
+  border-bottom:1px solid $divider !important;
+}
+.border-left {
+  border-left:1px solid $divider !important;
+}
+.border-right {
+  border-right:1px solid $divider !important;
+}
+.border-top {
+  border-top:1px solid $divider !important;
+}
+.border{
+  border:1px solid $divider !important;
+}
+.list-group-item{
+  border:1px solid $divider;
+}

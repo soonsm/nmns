@@ -60,19 +60,18 @@
   
   NMNS_GLOBAL.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
-    //NMNS_GLOBAL.calendar.createSchedules(e.data);
-    //refreshScheduleVisibility();
+    drawSchedule(e.data);
+    refreshScheduleVisibility();
   }));
 
   NMNS_GLOBAL.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
-    console.log("get manager list");
-    console.log(e);
     var html = "";
     e.data.forEach(function(item){
-      html += "<div class='lnb-calendars-item'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
-      html += "<span style='background-color:"+item.color+"'</span><span>"+item.name+"</span></label></div>";
+      html += "<div class='lnbManagerItem py-2'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
+      html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
     });
     $("#managerList").html(html);
+    NMNS_GLOBAL.managerList = e.data;
   }));
   //calendars
   NMNS_GLOBAL.schedulelist = [];
@@ -333,7 +332,7 @@ console.log("aaa");
   function onChangeCalendars(e) {
     var managerId = e.target.value;
     var checked = e.target.checked;
-    var viewAll = document.querySelector('.lnb-calendars-item input');
+    var viewAll = document.querySelector('.lnbManagerItem input');
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
     var allCheckedCalendars = true;
 
@@ -453,9 +452,33 @@ console.log("aaa");
   }
 
   function getSchedule(start, end){
-    console.log(toYYYYMMDD(start._date));
-    console.log(toYYYYMMDD(end._date));
     NMNS_GLOBAL.socket.emit("get reserv", {from:toYYYYMMDD(start._date), to:toYYYYMMDD(end._date)});
+  }
+  
+  function drawSchedule(data){
+    NMNS_GLOBAL.calendar.createSchedules(data.map(function(schedule){
+      return {
+        id:schedule.key,
+        caneldarId:schedule.manager,
+        title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
+        start: moment(schedule.start, "YYYYMMDDHHmm").toDate(),
+        end:moment(schedule.end, "YYYYMMDDHHmm").toDate(),
+        isAllDay:schedule.isAllDay,
+        category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
+        dueDateClass:(schedule.type === "T"?"dueDateClass":""),
+        attendees:null,
+        recurrenceRule:null,
+        isPending:schedule.isCanceled,
+        isFocused:false,
+        isVisible:true,
+        isReadOnly:false,
+        isPrivate:false,
+        customStyle:null,
+        raw:{
+          
+        }
+      }
+    }));
   }
 
   function findManager(managerId){
