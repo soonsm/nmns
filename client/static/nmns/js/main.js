@@ -26,26 +26,28 @@
   });
 
   var socketResponse = function(requestName, callback){
-    return function(e){
-      if(e && e.type === "response"){
-        if(e.status){//success
+    return function(res){
+      console.log("aaaaaaaaaa");
+      console.log(res);
+      if(res && res.type === "response"){
+        if(res.status){//success
           if(callback){
-            callback(e);
+            callback(res);
           }
         }else{//fail
-          alert(requestName + "에 실패하였습니다." + (e.message?"(" + e.message + ")":""));
+          alert(requestName + "에 실패하였습니다." + (res.message?"(" + res.message + ")":""));
         }
-      }else if(e && e.type === "push"){
+      }else if(res && res.type === "push"){
         console.log("server push!");
-        console.log(e);
+        console.log(res);
         if(callback){
-          callback(e);
+          callback(res);
         }
       }else{
-        console.log(e);
+        console.log(res);
       }
     }
-  }();
+  };
   NMNS_GLOBAL.socket = io();
   NMNS_GLOBAL.socket.on("message", socketResponse("서버 메시지 받기", function(e){
     console.log(e);
@@ -70,7 +72,7 @@
       html += "<div class='lnb-calendars-item'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
       html += "<span style='background-color:"+item.color+"'</span><span>"+item.name+"</span></label></div>";
     });
-    $("#managerList").innerHtml(html);
+    $("#managerList").html(html);
   }));
   //calendars
   NMNS_GLOBAL.schedulelist = [];
