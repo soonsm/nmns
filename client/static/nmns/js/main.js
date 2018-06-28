@@ -153,12 +153,10 @@
   }
   
   function onClickMenu(e) {
-    var target = $(e.target).closest('a[role="menuitem"]')[0];
-    var action = getDataAction(target);
+    var action = getDataAction(e.target);
     var options = NMNS_GLOBAL.calendar.getOptions();
     var viewName = '';
 
-    console.log(target);
     console.log(action);
     switch (action) {
       case 'toggle-daily':
@@ -170,35 +168,6 @@
       case 'toggle-monthly':
         options.month.visibleWeeksCount = 0;
         viewName = 'month';
-        break;
-      case 'toggle-weeks2':
-        options.month.visibleWeeksCount = 2;
-        viewName = 'month';
-        break;
-      case 'toggle-weeks3':
-        options.month.visibleWeeksCount = 3;
-        viewName = 'month';
-        break;
-      case 'toggle-narrow-weekend':
-        options.month.narrowWeekend = !options.month.narrowWeekend;
-        options.week.narrowWeekend = !options.week.narrowWeekend;
-        viewName = NMNS_GLOBAL.calendar.getViewName();
-
-        target.querySelector('input').checked = options.month.narrowWeekend;
-        break;
-      case 'toggle-start-day-1':
-        options.month.startDayOfWeek = options.month.startDayOfWeek ? 0 : 1;
-        options.week.startDayOfWeek = options.week.startDayOfWeek ? 0 : 1;
-        viewName = NMNS_GLOBAL.calendar.getViewName();
-
-        target.querySelector('input').checked = options.month.startDayOfWeek;
-        break;
-      case 'toggle-workweek':
-        options.month.workweek = !options.month.workweek;
-        options.week.workweek = !options.week.workweek;
-        viewName = NMNS_GLOBAL.calendar.getViewName();
-
-        target.querySelector('input').checked = !options.month.workweek;
         break;
       default:
         break;
@@ -381,7 +350,7 @@ console.log("aaa");
     if (type === 'day') {
       $(".calendarType[data-action='toggle-daily']").addClass("active");
     } else if (type === 'week') {
-      $(".calendarType[data-action='toggle-daily']").addClass("active");
+      $(".calendarType[data-action='toggle-weekly']").addClass("active");
     } else {
       $(".calendarType[data-action='toggle-monthly']").addClass("active");
     }
@@ -417,7 +386,7 @@ console.log("aaa");
   
   function setEventListener() {
     $('.moveDate').on('click', onClickNavi);
-    $('.dropdown-menu a[role="menuitem"]').on('click', onClickMenu);
+    $('.calendarType').on('click', onClickMenu);
     $('#managerElements').on('change', onChangeCalendars);
 
     $('#btn-save-schedule').on('click', onNewSchedule);
