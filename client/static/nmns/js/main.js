@@ -216,14 +216,11 @@
     var action = getDataAction(e.target);
 
     switch (action) {
-      case 'move-prev':
+      case 'prev':
         NMNS_GLOBAL.calendar.prev();
         break;
-      case 'move-next':
+      case 'next':
         NMNS_GLOBAL.calendar.next();
-        break;
-      case 'move-today':
-        NMNS_GLOBAL.calendar.today();
         break;
       default:
         return;
@@ -419,7 +416,7 @@ console.log("aaa");
   }, 50);
   
   function setEventListener() {
-    $('#menu-navi').on('click', onClickNavi);
+    $('.moveDate').on('click', onClickNavi);
     $('.dropdown-menu a[role="menuitem"]').on('click', onClickMenu);
     $('#managerElements').on('change', onChangeCalendars);
 
