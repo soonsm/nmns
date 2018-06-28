@@ -387,12 +387,17 @@ console.log("aaa");
   function setEventListener() {
     $('.moveDate').on('click', onClickNavi);
     $('.calendarType').on('click', onClickMenu);
+    $("#calendarTypeMenuReference").next().children("a").on("touch click", function(e){
+      $("#calendarTypeMenu").html($(e.target).html());
+      $("#calendarTypeMenu").attr("data-action", $(e.target).data("action"));
+      $("#calendarTypeMenu").trigger("click");
+    });
     $('#managerElements').on('change', onChangeCalendars);
 
     $('#btn-save-schedule').on('click', onNewSchedule);
     $('#btn-new-schedule').on('click', createNewSchedule);
 
-    $('#dropdownMenu-calendars-list').on('click', onChangeNewScheduleCalendar);
+    $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
 
     window.addEventListener('resize', resizeThrottled);
   }

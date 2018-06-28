@@ -184,6 +184,9 @@ header.masthead h2 {
   header.masthead h2 {
     font-size: 1.75em;
   }
+  #mainContents{
+    padding-left:15px !important;
+  }
 }
 
 
@@ -214,4 +217,7 @@ div.tui-full-calendar-timegrid-container{
 #mainCalendarTools{
   min-height:50px;
   line-height:50px;
+}
+#mainContents{
+  padding-left:0;
 }
