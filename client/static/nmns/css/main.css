@@ -190,3 +190,28 @@ header.masthead h2 {
 .btn {
   border-width: 2px;
 }
+
+div.tui-full-calendar-weekday-grid{
+  overflow-y:auto;
+}
+
+div.tui-full-calendar-weekday-schedules{
+  overflow-y: auto;
+}
+div.tui-full-calendar-dayname-container{
+  overflow-y: auto;
+}
+div.tui-full-calendar-timegrid-container{
+  overflow-y: hidden;
+}
+#renderRange{
+  font-size:1.5rem;
+}
+.calendarTypeGroup{
+  right:0;
+  height:50px;
+}
+#mainCalendarTools{
+  min-height:50px;
+  line-height:50px;
+}

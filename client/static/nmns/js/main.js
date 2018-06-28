@@ -27,8 +27,6 @@
 
   var socketResponse = function(requestName, callback){
     return function(res){
-      console.log("aaaaaaaaaa");
-      console.log(res);
       if(res && res.type === "response"){
         if(res.status){//success
           if(callback){
@@ -60,8 +58,8 @@
   
   NMNS_GLOBAL.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
-    drawSchedule(e.data);
-    refreshScheduleVisibility();
+    //drawSchedule(e.data);
+    //refreshScheduleVisibility();
   }));
 
   NMNS_GLOBAL.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
@@ -380,31 +378,17 @@ console.log("aaa");
   }
 
   function setDropdownCalendarType() {
-    var calendarTypeName = document.getElementById('calendarTypeName');
-    var calendarTypeIcon = document.getElementById('calendarTypeIcon');
-    var options = NMNS_GLOBAL.calendar.getOptions();
     var type = NMNS_GLOBAL.calendar.getViewName();
-    var iconClassName;
-
+    
+    $(".calendarType").removeClass("active");
     if (type === 'day') {
-      type = 'Daily';
-      iconClassName = 'calendar-icon fas fa-bars';
+      $(".calendarType[data-action='toggle-daily']").addClass("active");
     } else if (type === 'week') {
-      type = 'Weekly';
-      iconClassName = 'calendar-icon fas fa-pause';
-    } else if (options.month.visibleWeeksCount === 2) {
-      type = '2 weeks';
-      iconClassName = 'calendar-icon fas fa-pause';
-    } else if (options.month.visibleWeeksCount === 3) {
-      type = '3 weeks';
-      iconClassName = 'calendar-icon fas fa-pause';
+      $(".calendarType[data-action='toggle-daily']").addClass("active");
     } else {
-      type = 'Monthly';
-      iconClassName = 'calendar-icon fas fa-th';
+      $(".calendarType[data-action='toggle-monthly']").addClass("active");
     }
 
-    calendarTypeName.innerHTML = type;
-    calendarTypeIcon.className = iconClassName;
   }
 
   function setRenderRangeText() {
