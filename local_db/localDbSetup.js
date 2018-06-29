@@ -92,7 +92,8 @@ docClient.update(params, function(err, data) {
 var reservation = db.newReservation({
     key: 'A1',
     manager: '정스탭',
-    date: '20180630',
+    start: '201806301730',
+    end: '201806301800',
     time: '1730',
     elapsedTime: '0230',
     contact: '01028904311',

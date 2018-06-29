@@ -450,3 +450,7 @@ a.text-primary:focus, a.text-primary:hover, a.text-primary:active {
 .list-group-item {
   border: 1px solid #bdbdbd;
 }
+
+.btn.btn-flat {
+  border-radius: 0;
+}

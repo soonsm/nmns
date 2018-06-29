@@ -19,17 +19,18 @@ module.exports = function(server, sessionMiddleware){
 
 
     socket.on(GetReservationList, async function(data){
+      console.log(data);
         let status = true;
         let message = null;
-        if(!data || !data.from || !data.to){
-            message = '예약정보 조회에 필요한 데이터가 없습니다.({"from":${조회 시작 일자, string, YYYYMMDD}, "to":${조회 종료 일자, string, YYYYMMDD}})'
+        if(!data || !data.start || !data.end){
+            message = '예약정보 조회에 필요한 데이터가 없습니다.({"start":${조회 시작 일자, string, YYYYMMDDHHmm}, "end":${조회 종료 일자, string, YYYYMMDDHHmm}})'
             status = false;
         }
-        if(!moment(data.from, 'YYYYMMDD').isValid() || !moment(data.to, 'YYYYMMDD').isValid()){
-            message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDD) from:${data.from}, to:${data.to}`;
+        if(!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()){
+            message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
             status = false;
         }
-        socket.emit(GetReservationList, makeResponse(status, await db.getReservationList(email, data.from, data.to), message));
+        socket.emit(GetReservationList, makeResponse(status, await db.getReservationList(email, data.start, data.end), message));
     });
 
     socket.on(GetManagerList, async function(){

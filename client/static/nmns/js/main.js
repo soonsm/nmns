@@ -154,26 +154,32 @@
   
   function onClickMenu(e) {
     var action = getDataAction(e.target);
-    var options = NMNS_GLOBAL.calendar.getOptions();
     var viewName = '';
 
     console.log(action);
     switch (action) {
       case 'toggle-daily':
         viewName = 'day';
+        $("#mainCalendar").height("auto");
         break;
       case 'toggle-weekly':
         viewName = 'week';
+        $("#mainCalendar").height("auto");
         break;
       case 'toggle-monthly':
-        options.month.visibleWeeksCount = 0;
+        var width = $(window).width();
+        if(width>=1200){
+          $("#mainCalendar").height("65rem");
+        }else if(width >= 992){
+          $("#mainCalendar").height("60rem");
+        }else{
+          $("#mainCalendar").height("55rem");
+        }
         viewName = 'month';
         break;
       default:
         break;
     }
-
-    NMNS_GLOBAL.calendar.setOptions(options, true);
     NMNS_GLOBAL.calendar.changeView(viewName, true);
 
     setDropdownCalendarType();
@@ -385,17 +391,17 @@ console.log("aaa");
   }, 50);
   
   function setEventListener() {
-    $('.moveDate').on('click', onClickNavi);
-    $('.calendarType').on('click', onClickMenu);
-    $("#calendarTypeMenuReference").next().children("a").on("touch click", function(e){
+    $('.moveDate').on('touch click', onClickNavi);
+    $('.calendarType').on('touch click', onClickMenu);
+    $("#calendarTypeMenu").next().children("a").on("touch click", function(e){
       $("#calendarTypeMenu").html($(e.target).html());
       $("#calendarTypeMenu").attr("data-action", $(e.target).data("action"));
       $("#calendarTypeMenu").trigger("click");
     });
     $('#managerElements').on('change', onChangeCalendars);
 
-    $('#btn-save-schedule').on('click', onNewSchedule);
-    $('#btn-new-schedule').on('click', createNewSchedule);
+    $('#btn-save-schedule').on('touch click', onNewSchedule);
+    $('#btn-new-schedule').on('touch click', createNewSchedule);
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
 
@@ -407,7 +413,9 @@ console.log("aaa");
   }
 
   function getSchedule(start, end){
-    NMNS_GLOBAL.socket.emit("get reserv", {from:toYYYYMMDD(start._date), to:toYYYYMMDD(end._date)});
+    console.log(start._date);
+    console.log(end._date);
+    NMNS_GLOBAL.socket.emit("get reserv", {start:toYYYYMMDD(start._date) + "0000", end:toYYYYMMDD(end._date) + "2359"});
   }
   
   function drawSchedule(data){
@@ -416,8 +424,8 @@ console.log("aaa");
         id:schedule.key,
         caneldarId:schedule.manager,
         title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
-        start: moment(schedule.start, "YYYYMMDDHHmm").toDate(),
-        end:moment(schedule.end, "YYYYMMDDHHmm").toDate(),
+        start: moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate(),
+        end:moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate(),
         isAllDay:schedule.isAllDay,
         category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
         dueDateClass:(schedule.type === "T"?"dueDateClass":""),
