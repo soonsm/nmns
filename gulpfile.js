@@ -36,6 +36,8 @@ gulp.task('lib', async function() {
     .pipe(gulp.dest("./client/static/lib/socket.io"));
     
   // Toast UI calendar
+  gulp.src('./node_modules/tui-calendar/dist/tui-calendar.js.map')
+    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
   gulp.src('./node_modules/tui-calendar/dist/*.min.*')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
   gulp.src('./node_modules/tui-calendar/dist/*.min.js*')

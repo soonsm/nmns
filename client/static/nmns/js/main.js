@@ -1,6 +1,6 @@
 /*global jQuery, location, moment, tui*/
 (function($) {
-  var NMNS_GLOBAL = {};
+  var NMNS = {};
   
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
@@ -46,41 +46,44 @@
       }
     }
   };
-  NMNS_GLOBAL.socket = io();
-  NMNS_GLOBAL.socket.on("message", socketResponse("서버 메시지 받기", function(e){
+  NMNS.socket = io();
+  NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
     console.log(e);
   }));
-  NMNS_GLOBAL.socket.emit("get info");
-  NMNS_GLOBAL.socket.emit("get manager");
-  NMNS_GLOBAL.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
+  NMNS.socket.emit("get info");
+  NMNS.socket.emit("get manager");
+  NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
   }));
   
-  NMNS_GLOBAL.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
+  NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
     drawSchedule(e.data);
     refreshScheduleVisibility();
   }));
 
-  NMNS_GLOBAL.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
+  NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
     var html = "";
     e.data.forEach(function(item){
       html += "<div class='lnbManagerItem py-2'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
       html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
     });
     $("#managerList").html(html);
-    NMNS_GLOBAL.managerList = e.data;
+    e.data.forEach(function(item){
+      item.checked = true;
+    });
+    NMNS.managerList = e.data;
   }));
   //calendars
-  NMNS_GLOBAL.schedulelist = [];
-  NMNS_GLOBAL.managerList = [{id:"1"}];
+  NMNS.schedulelist = [];
+  NMNS.managerList = [{id:"1"}];
   var selectedManager, datePicker;
-  NMNS_GLOBAL.calendar = new tui.Calendar("#mainCalendar", {
+  NMNS.calendar = new tui.Calendar("#mainCalendar", {
     taskView:["task"],
     scheduleView:true,
     useCreationPopup:true,
     useDetailPopup:true,
-    calendars:NMNS_GLOBAL.managerList,
+    calendars:NMNS.managerList,
     template:{
       monthGridHeader: function(model){
         var date = new Date(model.date);
@@ -102,7 +105,7 @@
     }
   });
   
-  NMNS_GLOBAL.calendar.on({
+  NMNS.calendar.on({
     clickSchedule:function(e){
       console.log("clickSchedule", e);
     },
@@ -117,11 +120,11 @@
       console.log("beforeUpdateSchedule", e);
       e.schedule.start = e.start;
       e.schedule.end = e.end;
-      NMNS_GLOBAL.calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.schedule);
+      NMNS.calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.schedule);
     },
     beforeDeleteSchedule:function(e){
       console.log("beforeDeleteSchedule", e);
-      NMNS_GLOBAL.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
+      NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
     },
     afterRenderSchedule:function(e){
       console.log("afterRenderSchedule", e);
@@ -180,7 +183,7 @@
       default:
         break;
     }
-    NMNS_GLOBAL.calendar.changeView(viewName, true);
+    NMNS.calendar.changeView(viewName, true);
 
     setDropdownCalendarType();
     setRenderRangeText();
@@ -192,10 +195,10 @@
 
     switch (action) {
       case 'prev':
-        NMNS_GLOBAL.calendar.prev();
+        NMNS.calendar.prev();
         break;
       case 'next':
-        NMNS_GLOBAL.calendar.next();
+        NMNS.calendar.next();
         break;
       default:
         return;
@@ -211,13 +214,13 @@
     var isAllDay = document.getElementById('new-schedule-allday').checked;
     var start = datePicker.getStartDate();
     var end = datePicker.getEndDate();
-    var manager = selectedManager ? selectedManager : NMNS_GLOBAL.managerList[0];
+    var manager = selectedManager ? selectedManager : NMNS.managerList[0];
 console.log("aaa");
     if (!title) {
       return;
     }
 
-    NMNS_GLOBAL.calendar.createSchedules([{
+    NMNS.calendar.createSchedules([{
       id: "",
       calendarId: manager.id,
       title: title,
@@ -247,7 +250,7 @@ console.log("aaa");
 
   function changeNewScheduleCalendar(calendarId) {
     var calendarNameElement = document.getElementById('calendarName');
-    var manager = NMNS_GLOBAL.manager;
+    var manager = NMNS.manager;
     var html = [];
 
     html.push('<span class="calendar-bar" style="background-color: ' + manager.bgColor + '; border-color:' + manager.borderColor + ';"></span>');
@@ -262,13 +265,13 @@ console.log("aaa");
     var start = event.start ? new Date(event.start.getTime()) : new Date();
     var end = event.end ? new Date(event.end.getTime()) : moment().add(1, 'hours').toDate();
     console.log("bbbbbb");
-    NMNS_GLOBAL.calendar.openCreationPopup({
+    NMNS.calendar.openCreationPopup({
         start: start,
         end: end
     });
   }
   function saveNewSchedule(scheduleData) {
-    var calendar = scheduleData.calendar || NMNS_GLOBAL.calendar;
+    var calendar = scheduleData.calendar || NMNS.calendar;
     var schedule = {
       id: "aaaaaaa",
       title: scheduleData.title,
@@ -294,7 +297,7 @@ console.log("aaa");
       schedule.borderColor = calendar.borderColor;
     }
 
-    //NMNS_GLOBAL.calendar.createSchedules([schedule]);
+    //NMNS.calendar.createSchedules([schedule]);
 
     refreshScheduleVisibility();
   }
@@ -315,7 +318,7 @@ console.log("aaa");
         span.style.backgroundColor = checked ? span.style.borderColor : 'transparent';
       });
 
-      NMNS_GLOBAL.managerList.forEach(function(manager) {
+      NMNS.managerList.forEach(function(manager) {
         manager.checked = checked;
       });
     } else {
@@ -337,11 +340,11 @@ console.log("aaa");
   function refreshScheduleVisibility() {
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
 
-    NMNS_GLOBAL.managerList.forEach(function(manager) {
-      NMNS_GLOBAL.calendar.toggleSchedules(manager.id, !manager.checked, false);
+    NMNS.managerList.forEach(function(manager) {
+      NMNS.calendar.toggleSchedules(manager.id, !manager.checked, false);
     });
 
-    NMNS_GLOBAL.calendar.render(true);
+    NMNS.calendar.render(true);
 
     managerElements.forEach(function(input) {
       var span = input.nextElementSibling;
@@ -350,7 +353,7 @@ console.log("aaa");
   }
 
   function setDropdownCalendarType() {
-    var type = NMNS_GLOBAL.calendar.getViewName();
+    var type = NMNS.calendar.getViewName();
     
     $(".calendarType").removeClass("active");
     if (type === 'day') {
@@ -365,29 +368,29 @@ console.log("aaa");
 
   function setRenderRangeText() {
     var renderRange = document.getElementById('renderRange');
-    var options = NMNS_GLOBAL.calendar.getOptions();
-    var viewName = NMNS_GLOBAL.calendar.getViewName();
+    var options = NMNS.calendar.getOptions();
+    var viewName = NMNS.calendar.getViewName();
     var html = [];
     if (viewName === 'day') {
-        html.push(moment(NMNS_GLOBAL.calendar.getDate().getTime()).format('YYYY.MM.DD'));
+        html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM.DD'));
     } else if (viewName === 'month' &&
         (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
-        html.push(moment(NMNS_GLOBAL.calendar.getDate().getTime()).format('YYYY.MM'));
+        html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM'));
     } else {
-        html.push(moment(NMNS_GLOBAL.calendar.getDateRangeStart().getTime()).format('YYYY.MM.DD'));
+        html.push(moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY.MM.DD'));
         html.push(' ~ ');
-        html.push(moment(NMNS_GLOBAL.calendar.getDateRangeEnd().getTime()).format(' MM.DD'));
+        html.push(moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM.DD'));
     }
     renderRange.innerHTML = html.join('');
   }
 
   function setSchedules() {
-    NMNS_GLOBAL.calendar.clear();
-    getSchedule(NMNS_GLOBAL.calendar.getDateRangeStart(), NMNS_GLOBAL.calendar.getDateRangeEnd());
+    NMNS.calendar.clear();
+    getSchedule(NMNS.calendar.getDateRangeStart(), NMNS.calendar.getDateRangeEnd());
   }
 
   var resizeThrottled = tui.util.throttle(function() {
-    NMNS_GLOBAL.calendar.render();
+    NMNS.calendar.render();
   }, 50);
   
   function setEventListener() {
@@ -415,7 +418,7 @@ console.log("aaa");
   function getSchedule(start, end){
     console.log(start._date);
     console.log(end._date);
-    NMNS_GLOBAL.socket.emit("get reserv", {start:toYYYYMMDD(start._date) + "0000", end:toYYYYMMDD(end._date) + "2359"});
+    NMNS.socket.emit("get reserv", {start:toYYYYMMDD(start._date) + "0000", end:toYYYYMMDD(end._date) + "2359"});
   }
   
   function drawSchedule(data){
@@ -429,31 +432,35 @@ console.log("aaa");
         isAllDay:schedule.isAllDay,
         category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
         dueDateClass:(schedule.type === "T"?"dueDateClass":""),
-        attendees:null,
-        recurrenceRule:null,
+        attendees:[],
+        recurrenceRule:true,
         isPending:schedule.isCanceled,
         isFocused:false,
         isVisible:true,
         isReadOnly:false,
         isPrivate:false,
-        customStyle:null,
-        location:null,
+        customStyle:"",
+        location:"",
+        bgColor:"#9e5fff",
+        borderColor:"$9e5fff",
+        color:"#ffffff",
+        dragBgColor:"#9e5fff",
         raw:{
           
         }
       }
     });
     console.log(test);
-    NMNS_GLOBAL.calendar.createSchedules(test);
+    NMNS.calendar.createSchedules(test, true);
   }
 
   function findManager(managerId){
-    NMNS_GLOBAL.managerList.find(function(manager){
+    NMNS.managerList.find(function(manager){
       return (manager.id === managerId);
     });
   }
 
-  window.cal = NMNS_GLOBAL.calendar;
+  window.cal = NMNS.calendar;
 
   setDropdownCalendarType();
   setRenderRangeText();
