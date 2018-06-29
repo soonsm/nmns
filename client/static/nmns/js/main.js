@@ -58,8 +58,8 @@
   
   NMNS_GLOBAL.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
-    //drawSchedule(e.data);
-    //refreshScheduleVisibility();
+    drawSchedule(e.data);
+    refreshScheduleVisibility();
   }));
 
   NMNS_GLOBAL.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
@@ -419,10 +419,10 @@ console.log("aaa");
   }
   
   function drawSchedule(data){
-    NMNS_GLOBAL.calendar.createSchedules(data.map(function(schedule){
+    var test = data.map(function(schedule){
       return {
         id:schedule.key,
-        caneldarId:schedule.manager,
+        calendarId:"A1",//schedule.manager,
         title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
         start: moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate(),
         end:moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate(),
@@ -437,11 +437,14 @@ console.log("aaa");
         isReadOnly:false,
         isPrivate:false,
         customStyle:null,
+        location:null,
         raw:{
           
         }
       }
-    }));
+    });
+    console.log(test);
+    NMNS_GLOBAL.calendar.createSchedules(test);
   }
 
   function findManager(managerId){
