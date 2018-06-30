@@ -172,11 +172,15 @@ exports.getReservationList = async function(email, from, to){
         ProjectionExpression:"reservationList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames:{
-            "#key": "email"
+            "#key": "email",
+            "#date": "date"
         },
         ExpressionAttributeValues: {
             ":val":email,
-        }
+            ":from":from,
+            ":to":to
+        },
+        FilterExpression: "#date >= :from AND #date <= :to"
     });
 
     return items[0].reservationList;

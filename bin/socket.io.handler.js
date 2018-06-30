@@ -64,3 +64,4 @@ const makeResponse = function(status, data, message){
 //TODO: polling handling
 //TODO: dynamodb session
 //TODO: passport.socketio
+//TODO: queryfilter
