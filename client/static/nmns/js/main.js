@@ -95,6 +95,15 @@
       },
       time:function(schedule){
         return getTimeSchedule(schedule, false);
+      },
+      alldayTitle:function(){
+        return "<span class='tui-full-calendar-left-content'>하루종일</span>";
+      },
+      taskTitle:function(){
+        return "<span class='tui-full-calendar-left-content'>일정</span>";
+      },
+      timegridDisplayPrimayTime:function(time){
+        return time.hour + ":00";
       }
     },
     month:{
@@ -433,7 +442,7 @@ console.log("aaa");
         category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
         dueDateClass:(schedule.type === "T"?"dueDateClass":""),
         attendees:[],
-        recurrenceRule:true,
+        recurrenceRule:false,
         isPending:schedule.isCanceled,
         isFocused:false,
         isVisible:true,
