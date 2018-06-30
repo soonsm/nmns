@@ -27,8 +27,6 @@
 
   var socketResponse = function(requestName, callback){
     return function(res){
-      console.log("aaaaaaaaaa");
-      console.log(res);
       if(res && res.type === "response"){
         if(res.status){//success
           if(callback){
@@ -60,19 +58,18 @@
   
   NMNS_GLOBAL.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
-    //NMNS_GLOBAL.calendar.createSchedules(e.data);
-    //refreshScheduleVisibility();
+    drawSchedule(e.data);
+    refreshScheduleVisibility();
   }));
 
   NMNS_GLOBAL.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
-    console.log("get manager list");
-    console.log(e);
     var html = "";
     e.data.forEach(function(item){
-      html += "<div class='lnb-calendars-item'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
-      html += "<span style='background-color:"+item.color+"'</span><span>"+item.name+"</span></label></div>";
+      html += "<div class='lnbManagerItem py-2'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
+      html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
     });
     $("#managerList").html(html);
+    NMNS_GLOBAL.managerList = e.data;
   }));
   //calendars
   NMNS_GLOBAL.schedulelist = [];
@@ -156,58 +153,33 @@
   }
   
   function onClickMenu(e) {
-    var target = $(e.target).closest('a[role="menuitem"]')[0];
-    var action = getDataAction(target);
-    var options = NMNS_GLOBAL.calendar.getOptions();
+    var action = getDataAction(e.target);
     var viewName = '';
 
-    console.log(target);
     console.log(action);
     switch (action) {
       case 'toggle-daily':
         viewName = 'day';
+        $("#mainCalendar").height("auto");
         break;
       case 'toggle-weekly':
         viewName = 'week';
+        $("#mainCalendar").height("auto");
         break;
       case 'toggle-monthly':
-        options.month.visibleWeeksCount = 0;
+        var width = $(window).width();
+        if(width>=1200){
+          $("#mainCalendar").height("65rem");
+        }else if(width >= 992){
+          $("#mainCalendar").height("60rem");
+        }else{
+          $("#mainCalendar").height("55rem");
+        }
         viewName = 'month';
-        break;
-      case 'toggle-weeks2':
-        options.month.visibleWeeksCount = 2;
-        viewName = 'month';
-        break;
-      case 'toggle-weeks3':
-        options.month.visibleWeeksCount = 3;
-        viewName = 'month';
-        break;
-      case 'toggle-narrow-weekend':
-        options.month.narrowWeekend = !options.month.narrowWeekend;
-        options.week.narrowWeekend = !options.week.narrowWeekend;
-        viewName = NMNS_GLOBAL.calendar.getViewName();
-
-        target.querySelector('input').checked = options.month.narrowWeekend;
-        break;
-      case 'toggle-start-day-1':
-        options.month.startDayOfWeek = options.month.startDayOfWeek ? 0 : 1;
-        options.week.startDayOfWeek = options.week.startDayOfWeek ? 0 : 1;
-        viewName = NMNS_GLOBAL.calendar.getViewName();
-
-        target.querySelector('input').checked = options.month.startDayOfWeek;
-        break;
-      case 'toggle-workweek':
-        options.month.workweek = !options.month.workweek;
-        options.week.workweek = !options.week.workweek;
-        viewName = NMNS_GLOBAL.calendar.getViewName();
-
-        target.querySelector('input').checked = !options.month.workweek;
         break;
       default:
         break;
     }
-
-    NMNS_GLOBAL.calendar.setOptions(options, true);
     NMNS_GLOBAL.calendar.changeView(viewName, true);
 
     setDropdownCalendarType();
@@ -219,14 +191,11 @@
     var action = getDataAction(e.target);
 
     switch (action) {
-      case 'move-prev':
+      case 'prev':
         NMNS_GLOBAL.calendar.prev();
         break;
-      case 'move-next':
+      case 'next':
         NMNS_GLOBAL.calendar.next();
-        break;
-      case 'move-today':
-        NMNS_GLOBAL.calendar.today();
         break;
       default:
         return;
@@ -333,7 +302,7 @@ console.log("aaa");
   function onChangeCalendars(e) {
     var managerId = e.target.value;
     var checked = e.target.checked;
-    var viewAll = document.querySelector('.lnb-calendars-item input');
+    var viewAll = document.querySelector('.lnbManagerItem input');
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
     var allCheckedCalendars = true;
 
@@ -381,31 +350,17 @@ console.log("aaa");
   }
 
   function setDropdownCalendarType() {
-    var calendarTypeName = document.getElementById('calendarTypeName');
-    var calendarTypeIcon = document.getElementById('calendarTypeIcon');
-    var options = NMNS_GLOBAL.calendar.getOptions();
     var type = NMNS_GLOBAL.calendar.getViewName();
-    var iconClassName;
-
+    
+    $(".calendarType").removeClass("active");
     if (type === 'day') {
-      type = 'Daily';
-      iconClassName = 'calendar-icon fas fa-bars';
+      $(".calendarType[data-action='toggle-daily']").addClass("active");
     } else if (type === 'week') {
-      type = 'Weekly';
-      iconClassName = 'calendar-icon fas fa-pause';
-    } else if (options.month.visibleWeeksCount === 2) {
-      type = '2 weeks';
-      iconClassName = 'calendar-icon fas fa-pause';
-    } else if (options.month.visibleWeeksCount === 3) {
-      type = '3 weeks';
-      iconClassName = 'calendar-icon fas fa-pause';
+      $(".calendarType[data-action='toggle-weekly']").addClass("active");
     } else {
-      type = 'Monthly';
-      iconClassName = 'calendar-icon fas fa-th';
+      $(".calendarType[data-action='toggle-monthly']").addClass("active");
     }
 
-    calendarTypeName.innerHTML = type;
-    calendarTypeIcon.className = iconClassName;
   }
 
   function setRenderRangeText() {
@@ -436,14 +391,19 @@ console.log("aaa");
   }, 50);
   
   function setEventListener() {
-    $('#menu-navi').on('click', onClickNavi);
-    $('.dropdown-menu a[role="menuitem"]').on('click', onClickMenu);
+    $('.moveDate').on('touch click', onClickNavi);
+    $('.calendarType').on('touch click', onClickMenu);
+    $("#calendarTypeMenu").next().children("a").on("touch click", function(e){
+      $("#calendarTypeMenu").html($(e.target).html());
+      $("#calendarTypeMenu").attr("data-action", $(e.target).data("action"));
+      $("#calendarTypeMenu").trigger("click");
+    });
     $('#managerElements').on('change', onChangeCalendars);
 
-    $('#btn-save-schedule').on('click', onNewSchedule);
-    $('#btn-new-schedule').on('click', createNewSchedule);
+    $('#btn-save-schedule').on('touch click', onNewSchedule);
+    $('#btn-new-schedule').on('touch click', createNewSchedule);
 
-    $('#dropdownMenu-calendars-list').on('click', onChangeNewScheduleCalendar);
+    $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
 
     window.addEventListener('resize', resizeThrottled);
   }
@@ -453,9 +413,38 @@ console.log("aaa");
   }
 
   function getSchedule(start, end){
-    console.log(toYYYYMMDD(start._date));
-    console.log(toYYYYMMDD(end._date));
-    NMNS_GLOBAL.socket.emit("get reserv", {from:toYYYYMMDD(start._date), to:toYYYYMMDD(end._date)});
+    console.log(start._date);
+    console.log(end._date);
+    NMNS_GLOBAL.socket.emit("get reserv", {start:toYYYYMMDD(start._date) + "0000", end:toYYYYMMDD(end._date) + "2359"});
+  }
+  
+  function drawSchedule(data){
+    var test = data.map(function(schedule){
+      return {
+        id:schedule.key,
+        calendarId:"A1",//schedule.manager,
+        title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
+        start: moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate(),
+        end:moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate(),
+        isAllDay:schedule.isAllDay,
+        category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
+        dueDateClass:(schedule.type === "T"?"dueDateClass":""),
+        attendees:null,
+        recurrenceRule:null,
+        isPending:schedule.isCanceled,
+        isFocused:false,
+        isVisible:true,
+        isReadOnly:false,
+        isPrivate:false,
+        customStyle:null,
+        location:null,
+        raw:{
+          
+        }
+      }
+    });
+    console.log(test);
+    NMNS_GLOBAL.calendar.createSchedules(test);
   }
 
   function findManager(managerId){

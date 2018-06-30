@@ -104,7 +104,7 @@ exports.newStaff = function (staff){
     return {
         key: staff.key,
         name: staff.name,
-        color: staff.color || '#RRGGBB' //TODO: Default color 값 확인
+        color: staff.color || '#ff00ff' //TODO: Default color 값 확인
     };
 }
 

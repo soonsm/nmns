@@ -95,10 +95,7 @@
           email:true
         },
         password:{
-          required:true,
-          minlength:8,
-          maxlength:30,
-          passwordCheck:true
+          required:true
         }
       },
       messages:{
@@ -106,11 +103,7 @@
           required:"이메일을 입력해주세요.",
           email:"올바른 이메일을 입력해주세요."
         },
-        password:{
-          required:"비밀번호를 입력해주세요.",
-          minlength:"비밀번호는 최소 8자리 이상입니다.",
-          maxlength:"비밀번호는 최대 30자리 이내입니다."
-        }
+        password:"비밀번호를 입력해주세요."
       },
       errorElement:"p",
       errorClass:"message text-danger my-1",
