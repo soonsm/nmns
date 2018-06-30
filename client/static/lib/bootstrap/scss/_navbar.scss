@@ -1,43 +1,45 @@
 // Styling for the navbar
 #mainNav {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  height: 4rem;
+  padding-top: .6rem;
+  padding-bottom: .6rem;
   @include heading-font;
   .navbar-brand {
     color: $white;
-    font-size: 1.5em;
+    font-size: 1.5rem;
   }
   .navbar-nav {
-    margin-top: 1rem;
     letter-spacing: 0.0625rem;
+    li.nav-item {
+      a.nav-link {
+        color: $white;
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+          background-color: $darkPrimary;
+          border: 0;
+        }
+      }
+    }
   }
   .navbar-toggler {
     font-size: 80%;
     padding: 0.8rem;
   }
 }
-.navbar-nav {
-  li.nav-item {
-    a.nav-link {
+@media(min-width:992px) {
+  #mainNav {
+    .navbar-nav > li.nav-item > a.nav-link.active {
       color: $white;
-      &:hover,
+      background: $primary;
+      &:active,
       &:focus,
-      &:active {
+      &:hover,
+      &.active {
+        color: $white;
         background-color: $darkPrimary;
         border: 0;
       }
-    }
-    a.nav-link.active{
-      background-color: $darkPrimary;
-      border: 0;
-    }
-  }
-}
-@media(min-width:992px) {
-  #mainNav {
-    .navbar-nav {
-      margin-top: 0;
     }
   }
 }

@@ -10,3 +10,9 @@ spec/*
 **/*.min.js
 **/*.min.css
 client/static/lib/bootstrap/css/nmns.css
+**/*.eot
+**/*.svg
+**/*.ttf
+**/*.woff
+**/*.woff2
+

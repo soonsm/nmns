@@ -11,6 +11,9 @@
   <title>No More No Show</title>
   <!-- Bootstrap core CSS -->
   <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/lib/font-awesome/css/all.min.css" rel="stylesheet">
+  <link href="/lib/font-awesome/css/v4-shims.min.css" rel="stylesheet">
+  
   <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
   <link href="/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
   <link href="/lib/tui-calendar/tui-date-picker.min.css" rel="stylesheet">
@@ -32,7 +35,7 @@
       <span class="d-none d-md-block"><if(input.user.name)>${input.user.name}</if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav float-right text-white text-right">
+      <ul class="navbar-nav float-left text-white">
         <li class="nav-item mx-0 mx-lg-1">
           <a id="myPageLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
         </li>
@@ -52,7 +55,7 @@
           <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addTaskLink text-white" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check align-middle d-none d-md-inline-block"></i> 일정 추가</a>
         </li>
         <li class="nav-item mx-0 mx-lg-1">
-          <a id="signoutLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="/signout"><i class="fas fa-sign-out-alt align-middle d-none d-md-inline-block"></i> 로그아웃</a>
+          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="/signout"><i class="fas fa-sign-out-alt align-middle d-none d-md-inline-block"></i> 로그아웃</a>
         </li>
       </ul>
     </div>
@@ -152,8 +155,6 @@
   <script src="/lib/tui-calendar/tui-date-picker.min.js"></script>
   <script src="/lib/tui-calendar/tui-calendar.min.js"></script>
   <script src="/lib/socket.io/socket.io.slim.js"></script>
-  <script src="/lib/font-awesome/js/all.min.js"></script>
-  <script src="/lib/font-awesome/js/v4-shims.min.js"></script>
   <script src="/lib/moment/moment-with-locales.min.js"></script>
   <script src="/lib/moment/locales.min.js"></script>
   <!-- Custom scripts for this template -->
