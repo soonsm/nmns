@@ -15,6 +15,8 @@ gulp.task('lib', async function() {
       './node_modules/@fortawesome/fontawesome-free/js/v4-shims.js',
     ])
     .pipe(gulp.dest('./client/static/lib/font-awesome/js'));
+  gulp.src('./node_modules/@fortawesome/fontawesome-free/css/all.css')
+    .pipe(gulp.dest('./client/static/lib/font-awesome/css'));
 
   // jQuery
   gulp.src([
