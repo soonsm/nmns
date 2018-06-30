@@ -34,18 +34,6 @@
     offset: 80
   });
 
-  // Collapse Navbar
-  function navbarCollapse(){
-    if ($("#mainNav").offset().top > 100) {
-      $("#mainNav").addClass("navbar-shrink");
-    } else {
-      $("#mainNav").removeClass("navbar-shrink");
-    }
-  };
-  navbarCollapse();
-  // Collapse the navbar when page is scrolled
-  $(window).scroll(navbarCollapse);
-
   function switchForm(callback){
     if($(".loginPage form:visible input[name='email']").val() !== ""){
       $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
