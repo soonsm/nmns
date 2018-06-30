@@ -129,3 +129,27 @@ section {
   background-color: $textPrimary;
   border-color: $textPrimary;
 }
+
+input[type=checkbox]{
+  display:none;
+}
+input[type=checkbox] + label:before{
+  font-family: "Font Awesome 5 Free";
+  font-weight: 400;
+  display: inline-block;
+  content: "\f0c8";
+  letter-spacing: 8px;
+  color: $secondary;
+}
+input[type=checkbox]:not(:checked):hover + label:before{
+  font-weight: 900;
+  color: $lightPrimary;
+}
+input[type=checkbox]:checked + label:before{
+  content: "\f14a";
+  font-weight: 900;
+  color: $primary;
+}
+input[type=checkbox] + label + label{
+  color: $secondary;
+}

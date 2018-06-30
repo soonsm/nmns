@@ -36,25 +36,25 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav float-left text-white">
-        <li class="nav-item mx-0 mx-lg-1">
+        <li class="nav-item mx-0 ">
           <a id="myPageLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
         </li>
-        <li class="nav-item mx-0 mx-lg-1">
+        <li class="nav-item mx-0 ">
           <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell align-middle d-none d-md-inline-block"></i> 알림톡 정보</a>
         </li>
-        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none">
           <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addNoShowLink text-white" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus align-middle d-none d-md-inline-block"></i> 노쇼 추가</a>
         </li>
-        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none">
           <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 getNoShowLink text-white" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search align-middle d-none d-md-inline-block"></i> 노쇼 조회</a>
         </li>
-        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none">
           <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addReservLink text-white" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus align-middle d-none d-md-inline-block"></i> 예약 추가</a>
         </li>
-        <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none">
           <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addTaskLink text-white" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check align-middle d-none d-md-inline-block"></i> 일정 추가</a>
         </li>
-        <li class="nav-item mx-0 mx-lg-1">
+        <li class="nav-item mx-0">
           <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="/signout"><i class="fas fa-sign-out-alt align-middle d-none d-md-inline-block"></i> 로그아웃</a>
         </li>
       </ul>
@@ -92,9 +92,9 @@
           <div class="border-bottom">
               <div class="lnbManagerItem">
                   <label>
-                      <input class="tui-full-calendar-checkbox-square" value="all" checked="" type="checkbox">
-                      <span></span>
-                      <small>모든 담당자 보기</small>
+                      <input id="managerCheckAll" value="all" checked="" type="checkbox">
+                      <label for="managerCheckAll"></label>
+                      <label for="managerCheckAll"><small>모든 담당자 보기</small></label>
                   </label>
               </div>
           </div>
