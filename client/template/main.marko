@@ -25,34 +25,34 @@
 <body id="page-top">
 
   <!-- Navigation -->
-  <nav class="navbar bg-secondary navbar-shrink" id="mainNav">
+  <nav class="navbar bg-primary navbar-shrink" id="mainNav">
     <a class="navbar-brand js-scroll-trigger" href="/">No More No Show</a>
-    <button class="navbar-toggler navbar-toggler-right btn btn-primary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="d-none d-md-block"><if(input.user.name)>${input.user.name}</if><else>${input.user.email}</else></span>
+    <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fa fa-bars d-block d-md-none"></i>
+      <span class="d-none d-md-block"><if(input.user.name)>${input.user.name}</if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav ml-auto">
+      <ul class="navbar-nav float-right text-white text-right">
         <li class="nav-item mx-0 mx-lg-1">
-          <a id="myPageLink" class="btn py-2 px-0 px-lg-2 rounded godo normal w700" href="#" data-toggle="modal" data-target="#infoModal">내 매장 정보</a>
+          <a id="myPageLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
         </li>
         <li class="nav-item mx-0 mx-lg-1">
-          <a id="alrimLink" class="btn py-2 px-0 px-lg-2 rounded godo normal w700" href ="#" data-toggle="modal" data-target="#alrimModal">알림톡 정보</a>
+          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell align-middle d-none d-md-inline-block"></i> 알림톡 정보</a>
         </li>
         <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
-          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 addNoShowLink" href ="#" data-toggle="modal" data-target="#noShowModal">노쇼 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addNoShowLink text-white" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus align-middle d-none d-md-inline-block"></i> 노쇼 추가</a>
         </li>
         <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
-          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 getNoShowLink" href ="#" data-toggle="modal" data-target="#noShowModal">노쇼 조회</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 getNoShowLink text-white" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search align-middle d-none d-md-inline-block"></i> 노쇼 조회</a>
         </li>
         <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
-          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 addReservLink" href ="#" data-toggle="modal" data-target="#reservModal">예약 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addReservLink text-white" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus align-middle d-none d-md-inline-block"></i> 예약 추가</a>
         </li>
         <li class="nav-item mx-0 mx-lg-1 d-block d-lg-none">
-          <a class="btn py-2 px-0 px-lg-2 rounded godo normal w700 addTaskLink" href ="#" data-toggle="modal" data-target="#taskModal">일정 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 addTaskLink text-white" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check align-middle d-none d-md-inline-block"></i> 일정 추가</a>
         </li>
-        <li class="mr-0 ml-1 mx-lg-1">
-          <a id="signoutLink" class="btn btn-flat btn-primary godo normal py-2 px-0 px-lg-2 d-block" href="/signout">로그아웃</a>
+        <li class="nav-item mx-0 mx-lg-1">
+          <a id="signoutLink" class="btn btn-primary btn-flat py-1 my-1 px-2 px-lg-3 godo normal w700 text-white" href="/signout"><i class="fas fa-sign-out-alt align-middle d-none d-md-inline-block"></i> 로그아웃</a>
         </li>
       </ul>
     </div>

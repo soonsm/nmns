@@ -23,15 +23,17 @@ hr.star-dark {
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
 }
-
 hr.star-light:after,
 hr.star-dark:after {
+  @include fa-icon;
+  @extend .fas;
   position: relative;
   top: -.8em;
   display: inline-block;
   padding: 0 0.25em;
-  content: '\f005';
-  font-family: FontAwesome;
+  content: fa-content($fa-var-star);
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
   font-size: 2em;
 }
 
