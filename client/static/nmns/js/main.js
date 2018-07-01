@@ -71,19 +71,22 @@
     $("#managerList").html(html);
     e.data.forEach(function(item){
       item.checked = true;
+      item.id = item.key;
+      item.bgColor = item.color;
+      item.borderColor = item.color;
     });
-    NMNS.managerList = e.data;
+    NMNS.calendar.setCalendars(e.data);
+    console.log("manager info loading done");
   }));
   //calendars
   NMNS.schedulelist = [];
-  NMNS.managerList = [{id:"1"}];
   var selectedManager, datePicker;
   NMNS.calendar = new tui.Calendar("#mainCalendar", {
     taskView:["task"],
     scheduleView:true,
     useCreationPopup:true,
     useDetailPopup:true,
-    calendars:NMNS.managerList,
+    calendars:[],
     template:{
       monthGridHeader: function(model){
         var date = new Date(model.date);
@@ -113,6 +116,12 @@
       daynames:["일", "월", "화", "수", "목", "금", "토"],
       hourStart:8,
       hourEnd:21
+    },
+    theme:{
+      'week.currentTime.color': '#009688',
+      'week.currentTimeLinePast.border': '1px dashed #009688',
+      'week.currentTimeLineBullet.backgroundColor': '#009688',
+      'week.currentTimeLineToday.border': '1px solid #009688',
     }
   });
   
@@ -125,6 +134,7 @@
     },
     beforeCreateSchedule:function(e){
       console.log("beforeCreateSchedule", e);
+      console.log(e.guide);
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
@@ -170,7 +180,6 @@
     var action = getDataAction(e.target);
     var viewName = '';
 
-    console.log(action);
     switch (action) {
       case 'toggle-daily':
         viewName = 'day';
@@ -225,7 +234,7 @@
     var isAllDay = document.getElementById('new-schedule-allday').checked;
     var start = datePicker.getStartDate();
     var end = datePicker.getEndDate();
-    var manager = selectedManager ? selectedManager : NMNS.managerList[0];
+    var manager = selectedManager ? selectedManager : NMNS.calendar.getOptions().calendars[0];
 console.log("aaa");
     if (!title) {
       return;
@@ -329,7 +338,7 @@ console.log("aaa");
         span.style.backgroundColor = checked ? span.style.borderColor : 'transparent';
       });
 
-      NMNS.managerList.forEach(function(manager) {
+      NMNS.calendar.getOptions().calendars.forEach(function(manager) {
         manager.checked = checked;
       });
     } else {
@@ -351,7 +360,7 @@ console.log("aaa");
   function refreshScheduleVisibility() {
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
 
-    NMNS.managerList.forEach(function(manager) {
+    NMNS.calendar.getOptions().calendars.forEach(function(manager) {
       NMNS.calendar.toggleSchedules(manager.id, !manager.checked, false);
     });
 
@@ -433,10 +442,11 @@ console.log("aaa");
   }
   
   function drawSchedule(data){
-    var test = data.map(function(schedule){
+    NMNS.calendar.createSchedules(data.map(function(schedule){//mapping server data to client data
+      var manager = findManager("A1");//findManager(schedule.manager);
       return {
         id:schedule.key,
-        calendarId:"A1",//schedule.manager,
+        calendarId:manager?manager.key:"A1",//schedule.manager,
         title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
         start: moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate(),
         end:moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate(),
@@ -452,22 +462,20 @@ console.log("aaa");
         isPrivate:false,
         customStyle:"",
         location:"",
-        bgColor:"#9e5fff",
-        borderColor:"#9e5fff",
+        bgColor:manager?manager.color:"#b2dfdb",
+        borderColor:manager?manager.color:"#b2dfdb",
         color:"#ffffff",
-        dragBgColor:"#9e5fff",
+        dragBgColor:manager?manager.color:"#b2dfdb",
         raw:{
           
         }
       }
-    });
-    console.log(test);
-    NMNS.calendar.createSchedules(test, true);
+    }), true);
   }
 
   function findManager(managerId){
-    NMNS.managerList.find(function(manager){
-      return (manager.id === managerId);
+    return NMNS.calendar.getOptions().calendars.find(function(manager){
+      return (manager.key === managerId);
     });
   }
 
