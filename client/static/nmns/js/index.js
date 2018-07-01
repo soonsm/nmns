@@ -13,7 +13,6 @@
       }
     }
   });
-
   // Scroll to top button appear
   $(document).scroll(function() {
     var scrollDistance = $(this).scrollTop();
@@ -34,18 +33,6 @@
     target: '#mainNav',
     offset: 80
   });
-
-  // Collapse Navbar
-  function navbarCollapse(){
-    if ($("#mainNav").offset().top > 100) {
-      $("#mainNav").addClass("navbar-shrink");
-    } else {
-      $("#mainNav").removeClass("navbar-shrink");
-    }
-  };
-  navbarCollapse();
-  // Collapse the navbar when page is scrolled
-  $(window).scroll(navbarCollapse);
 
   function switchForm(callback){
     if($(".loginPage form:visible input[name='email']").val() !== ""){

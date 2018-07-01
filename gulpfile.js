@@ -10,11 +10,12 @@ var merge = require('merge-stream');
 gulp.task('lib', async function() {
 
   // Font Awesome
-  gulp.src([
-      './node_modules/@fortawesome/fontawesome-free/js/all.js',
-      './node_modules/@fortawesome/fontawesome-free/js/v4-shims.js',
-    ])
-    .pipe(gulp.dest('./client/static/lib/font-awesome/js'));
+  gulp.src(['./node_modules/@fortawesome/fontawesome-free/css/all.css',
+    './node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css'])
+    .pipe(gulp.dest('./client/static/lib/font-awesome/css'));
+  gulp.src(['./node_modules/@fortawesome/fontawesome-free/webfonts/*',
+    '!./node_modules/@fortawesome/fontawesome-free/webfonts/*brands*'])
+    .pipe(gulp.dest('./client/static/lib/font-awesome/webfonts'));
 
   // jQuery
   gulp.src([
@@ -36,13 +37,13 @@ gulp.task('lib', async function() {
     .pipe(gulp.dest("./client/static/lib/socket.io"));
     
   // Toast UI calendar
-  gulp.src('./node_modules/tui-calendar/dist/*.min.*')
+  gulp.src('./node_modules/tui-calendar/dist/tui-calendar.js.map')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
-  gulp.src('./node_modules/tui-calendar/dist/*.min.js*')
+  gulp.src('./node_modules/tui-calendar/dist/*min*')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
-  gulp.src('./node_modules/tui-code-snippet/dist/*.min.*')
+  gulp.src('./node_modules/tui-code-snippet/dist/*min*')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
-  gulp.src('./node_modules/tui-date-picker/dist/*.min.js')
+  gulp.src('./node_modules/tui-date-picker/dist/*.css')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
   gulp.src('./node_modules/tui-date-picker/dist/*.css')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
@@ -51,10 +52,9 @@ gulp.task('lib', async function() {
   gulp.src('./node_modules/tui-time-picker/dist/*.css')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
     
-
   //moment
   gulp.src(["./node_modules/moment/min/moment-with-locales.min.js",
-            "./node_modules/moment/min/locales.min.js"])
+    "./node_modules/moment/min/locales.min.js"])
     .pipe(gulp.dest("./client/static/lib/moment"));
 });
 
