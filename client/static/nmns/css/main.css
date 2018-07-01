@@ -36,3 +36,6 @@ button.calendarType{
 button.calendarType:active, button.calendarType:hover, button.calendarType:focus, button.calendarType.active{
   background-color: #b2dfdb !important;
 }
+button.moveDate{
+  line-height: 1.0;
+}

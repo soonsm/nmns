@@ -453,7 +453,7 @@ console.log("aaa");
         customStyle:"",
         location:"",
         bgColor:"#9e5fff",
-        borderColor:"$9e5fff",
+        borderColor:"#9e5fff",
         color:"#ffffff",
         dragBgColor:"#9e5fff",
         raw:{
