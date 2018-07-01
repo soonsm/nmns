@@ -73,6 +73,34 @@ function query(params){
     }));
 }
 
+function update(params){
+    return new Promise((resolve => {
+        docClient.update(params, function(err, data) {
+            if (err) {
+                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                resolve(true);
+            } else {
+                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                resolve(false);
+            }
+        });
+    }));
+}
+
+function del(param) {
+    return new Promise((resolve => {
+        docClient.delete(param, function (err, data) {
+            if (err) {
+                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
+                resolve(false);
+            } else {
+                console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
+                resolve(true);
+            }
+        });
+    }));
+}
+
 exports.newWebUser = function(user){
     return {
         email: user.email,
@@ -108,19 +136,7 @@ exports.newStaff = function (staff){
     };
 }
 
-exports.newNoShow = function(key, noShowCase){
-    let newNoShow = {
-        key: key,
-        numOfNoShow: 1,
-        lastNoShowDate: moment.format('YYYYMMDD'),
-        noShowCaseList: []
-    };
 
-    if(noShowCase){
-        newNoShow.noShowCaseList.push(noShowCase);
-    }
-    return newNoShow;
-}
 
 
 exports.newReservation = function(reservation){
@@ -128,13 +144,12 @@ exports.newReservation = function(reservation){
         key: reservation.key,
         type: reservation.type || 'R',
         name: reservation.name,
-        date: reservation.date,
-        time: reservation.time,
+        start: reservation.start,
+        end: reservation.end,
         isAllDay: reservation.isAllDay || false,
         contents: reservation.contents,
         manager: reservation.manager || null,
         etc: reservation.etc,
-        elapsedTime: reservation.elapsedTime,
         contact: reservation.contact,
         isCanceled: false,
         cancelDate: null
@@ -172,18 +187,26 @@ exports.getReservationList = async function(email, from, to){
         ProjectionExpression:"reservationList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames:{
-            "#key": "email",
-            "#date": "date"
+            "#key": "email"
         },
         ExpressionAttributeValues: {
-            ":val":email,
-            ":from":from,
-            ":to":to
-        },
-        FilterExpression: "#date >= :from AND #date <= :to"
+            ":val":email
+        }
     });
 
-    return items[0].reservationList;
+    if(items.length === 0){
+        return [];
+    }else{
+        let list = items[0].reservationList;
+        let filteredList = [];
+        for(var i=0;i<list.length;i++){
+            let reservation = list[i];
+            if(reservation.start >= from && reservation.end <= to){
+                filteredList.push(reservation);
+            }
+        }
+        return filteredList;
+    }
 };
 
 exports.getStaffList = async function(email){
@@ -198,9 +221,168 @@ exports.getStaffList = async function(email){
             ":val":email,
         }
     });
+    if(items.length === 0){
+        return [];
+    }
 
     return items[0].staffList;
 };
+
+exports.newNoShow = function(phone, noShowCase, name){
+    let key = sha256(phone);
+    let newNoShow = {
+        noShowKey: key,
+        name: name,
+        noShowCount: 1,
+        lastNoShowDate: moment().format('YYYYMMDD'),
+        noShowCaseList: []
+    };
+
+    if(noShowCase){
+        newNoShow.noShowCaseList.push(noShowCase);
+    }
+    return newNoShow;
+}
+exports.getMyNoShow = async function(email){
+    let items = await query({
+        TableName : "WebSecheduler",
+        ProjectionExpression:"noShowList",
+        KeyConditionExpression: "#key = :val ",
+        ExpressionAttributeNames:{
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val":email,
+        }
+    });
+    if(items.length === 0){
+        return [];
+    }
+
+    return items[0].noShowList;
+}
+exports.getNoShow = async function(phoneNumber){
+    let key = sha256(phoneNumber);
+    return await get({
+        TableName: 'NoShowList',
+        Key: {
+            'noShowKey': key
+        }
+    });
+};
+
+exports.addToNoShowList = async function(email, phone, noShowCase, name){
+    let noShow = await exports.getNoShow(phone);
+    if(!noShow){
+        noShow = exports.newNoShow(phone, noShowCase, name);
+    }else{
+        noShow.noShowCount += 1;
+        noShow.lastNoShowDate = moment().format('YYYYMMDD');
+        if(name){
+            noShow.name = name;
+        }
+        if(noShowCase){
+            noShow.noShowCaseList.push(noShowCase);
+        }
+    }
+    await put({
+        TableName: 'NoShowList',
+        Item: noShow
+    });
+
+    let myNoShowList = await exports.getMyNoShow(email);
+    //TODO: 내꺼에 있으면 업데이트 없으면 추가
+    /**
+     * 내꺼에 있는지 검색
+     * 있으면 꺼내
+     * 없으면 생성
+     * 그리고 저장
+     */
+    let key = sha256(phone);
+    let myNoShow;
+    for(var i=0;i<myNoShowList.length;i++){
+        let noShow = myNoShowList[i];
+        if(noShow.noShowKey === key){
+            myNoShow = noShow;
+            myNoShow.noshowRegister += 1;
+            myNoShow.lastNoShowDate = moment().format('YYYYMMDD');
+            if(name){
+                myNoShow.name = name;
+            }
+            if(noShowCase){
+                myNoShow.noShowCaseList.push(noShowCase);
+            }
+            break;
+        }
+    }
+    if(!myNoShow){
+        myNoShow = exports.newNoShow(phone, noShowCase, name);
+        myNoShowList.push(myNoShow);
+    }
+    await update({
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email
+        },
+        UpdateExpression: "set noShowList = :newNoShowList",
+        ExpressionAttributeValues:{
+            ":newNoShowList":myNoShowList
+        },
+        ReturnValues:"NONE"
+    });
+
+
+
+}
+exports.deleteNoShow = async function(phone, email){
+    let key = sha256(phone);
+    let isItMine = false;
+    let delIndex = -1;
+    let myNoShowList = await exports.getMyNoShow(email);
+    for(var i=0;i<myNoShowList.length;i++){
+        let myNoShow = myNoShowList[i];
+        if(myNoShow.noShowKey === key){
+            isItMine = true;
+            break;
+        }
+    }
+    if(isItMine){
+        myNoShowList.splice(delIndex, 1);
+        //WebScheudler update
+        await update({
+            TableName: "WebSecheduler",
+            Key: {
+                'email': email
+            },
+            UpdateExpression: "set noShowList = :newNoShowList",
+            ExpressionAttributeValues:{
+                ":newNoShowList":myNoShowList
+            },
+            ReturnValues:"NONE"
+        });
+        //NoShowList update
+        let noShow = await exports.getNoShow(phone);
+        if(noShow){
+            noShow.noShowCount -= 1;
+            if(noShow.noShowCount === 0){
+                await del({
+                    TableName: 'NoShowList',
+                    Key: {
+                        "noShowKey": sha256(phone)
+                    }
+                });
+            }else{
+                await put({
+                    TableName: 'NoShowList',
+                    Item: noShow
+                });
+            }
+        }
+        return true;
+    }else{
+        return false;
+    }
+}
 
 
 function newAlrimTalk(reservationKey, userKey, phone, date, time){
@@ -217,13 +399,6 @@ function newAlrimTalk(reservationKey, userKey, phone, date, time){
     }
 }
 
-function newNoShow(key){
-    return {
-        noShowKey: key,
-        lastNoShowDate: util.getToday(),
-        noShowCount: 0
-    };
-}
 
 exports.getUser = async function(userKey){
   return await get({
@@ -240,16 +415,6 @@ exports.getAlrimTalkUserList = async function(){
     });
 };
 
-exports.getNoShow = async function(phoneNumber){
-    let key = sha256(phoneNumber);
-    return await get({
-        TableName: 'NoShowList',
-        Key: {
-            'noShowKey': key
-        }
-    });
-};
-
 exports.getAlrimTalk = async function(reservationKey){
     return await get({
         TableName: 'AlrimTalk',
@@ -258,20 +423,6 @@ exports.getAlrimTalk = async function(reservationKey){
         }
     });
 };
-
-exports.addToNoShowList = async function(phoneNumber){
-    let key = sha256(phoneNumber);
-    let noShow = await exports.getNoShow(phoneNumber);
-    if(!noShow){
-        noShow = newNoShow(key);
-    }
-    noShow.noShowCount += 1;
-    noShow.lastNoShowDate = util.getToday();
-    return await put({
-        TableName: 'NoShowList',
-        Item: noShow
-    });
-}
 
 exports.setUserStatus = async function(userKey, userStatus, propertyToIncrement){
     let user = await exports.getUser(userKey);

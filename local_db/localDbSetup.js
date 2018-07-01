@@ -2,6 +2,7 @@
 
 var AWS = require("aws-sdk");
 var db = require('./../bin/webDb');
+var moment = require('moment');
 AWS.config.update({
     region: "eu-west-2",
     endpoint: "http://localhost:8000"
@@ -92,10 +93,8 @@ docClient.update(params, function(err, data) {
 var reservation = db.newReservation({
     key: 'A1',
     manager: '정스탭',
-    start: '201806301730',
-    end: '201806301800',
-    time: '1730',
-    elapsedTime: '0230',
+    start: moment().format('YYYYMMDD') + '1730',
+    end: moment().format('YYYYMMDD') + '1800',
     contact: '01028904311',
     name: '김손님',
     contents: '패디큐어',
@@ -136,6 +135,39 @@ var params = {
     UpdateExpression: "set staffList[0] = :staff",
     ExpressionAttributeValues:{
         ":staff":staff
+    },
+    ReturnValues:"UPDATED_NEW"
+};
+console.log("Updating the item...");
+docClient.update(params, function(err, data) {
+    if (err) {
+        console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+    }
+});
+
+
+var noShow = db.newNoShow('01011112222', '잠수');
+noShow.noShowCount = 1;
+docClient.put({
+    TableName: 'NoShowList',
+    Item: noShow
+}, function (err, data) {
+    if (err) {
+        console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Added item:", JSON.stringify(noShow));
+    }
+});
+var params = {
+    TableName: "WebSecheduler",
+    Key: {
+        'email': 'ksm@test.com'
+    },
+    UpdateExpression: "set noShowList[0] = :noShow",
+    ExpressionAttributeValues:{
+        ":noShow":noShow
     },
     ReturnValues:"UPDATED_NEW"
 };
