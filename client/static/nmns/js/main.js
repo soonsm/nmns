@@ -1,6 +1,6 @@
 /*global jQuery, location, moment, tui*/
 (function($) {
-  var NMNS = {};
+  var NMNS = {needInit:true};
   
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
@@ -21,63 +21,6 @@
     $('.navbar-collapse').collapse('hide');
   });
 
-  $(document).ready(function(){
-
-  });
-
-  var socketResponse = function(requestName, callback){
-    return function(res){
-      if(res && res.type === "response"){
-        if(res.status){//success
-          if(callback){
-            callback(res);
-          }
-        }else{//fail
-          alert(requestName + "에 실패하였습니다." + (res.message?"(" + res.message + ")":""));
-        }
-      }else if(res && res.type === "push"){
-        console.log("server push!");
-        console.log(res);
-        if(callback){
-          callback(res);
-        }
-      }else{
-        console.log(res);
-      }
-    }
-  };
-  NMNS.socket = io();
-  NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
-    console.log(e);
-  }));
-  NMNS.socket.emit("get info");
-  NMNS.socket.emit("get manager");
-  NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
-    console.log(e);
-  }));
-  
-  NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
-    console.log(e);
-    drawSchedule(e.data);
-    refreshScheduleVisibility();
-  }));
-
-  NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
-    var html = "";
-    e.data.forEach(function(item){
-      html += "<div class='lnbManagerItem py-2'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
-      html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
-    });
-    $("#managerList").html(html);
-    e.data.forEach(function(item){
-      item.checked = true;
-      item.id = item.key;
-      item.bgColor = item.color;
-      item.borderColor = item.color;
-    });
-    NMNS.calendar.setCalendars(e.data);
-    console.log("manager info loading done");
-  }));
   //calendars
   NMNS.schedulelist = [];
   var selectedManager, datePicker;
@@ -86,7 +29,6 @@
     scheduleView:true,
     useCreationPopup:true,
     useDetailPopup:true,
-    calendars:[],
     template:{
       monthGridHeader: function(model){
         var date = new Date(model.date);
@@ -124,6 +66,66 @@
       'week.currentTimeLineToday.border': '1px solid #009688',
     }
   });
+
+  var socketResponse = function(requestName, callback){
+    return function(res){
+      if(res && res.type === "response"){
+        if(res.status){//success
+          if(callback){
+            callback(res);
+          }
+        }else{//fail
+          alert(requestName + "에 실패하였습니다." + (res.message?"(" + res.message + ")":""));
+        }
+      }else if(res && res.type === "push"){
+        console.log("server push!");
+        console.log(res);
+        if(callback){
+          callback(res);
+        }
+      }else{
+        console.log(res);
+      }
+    }
+  };
+  NMNS.socket = io();
+  NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
+    console.log(e);
+  }));
+  NMNS.socket.emit("get info");
+  NMNS.socket.emit("get manager");
+  
+  NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
+    console.log(e);
+  }));
+  
+  NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
+    console.log(e);
+    drawSchedule(e.data);
+    refreshScheduleVisibility();
+  }));
+
+  NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
+    var html = "";
+    e.data.forEach(function(item){
+      html += "<div class='lnbManagerItem py-2'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
+      html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
+    });
+    $("#managerList").html(html);
+    e.data.forEach(function(item){
+      item.checked = true;
+      item.id = item.key;
+      item.bgColor = item.color;
+      item.borderColor = item.color;
+    });
+    console.log(e.data);
+    NMNS.calendar.setCalendars(e.data);
+    console.log(NMNS.calendar.getCalendars());
+    if(NMNS.needInit){
+      delete NMNS.needInit;
+      setSchedules();
+    }
+  }));
   
   NMNS.calendar.on({
     clickSchedule:function(e){
@@ -239,7 +241,7 @@
     var isAllDay = document.getElementById('new-schedule-allday').checked;
     var start = datePicker.getStartDate();
     var end = datePicker.getEndDate();
-    var manager = selectedManager ? selectedManager : NMNS.calendar.getOptions().calendars[0];
+    var manager = selectedManager ? selectedManager : NMNS.calendar.getCalendars()[0];
 console.log("aaa");
     if (!title) {
       return;
@@ -343,7 +345,7 @@ console.log("aaa");
         span.style.backgroundColor = checked ? span.style.borderColor : 'transparent';
       });
 
-      NMNS.calendar.getOptions().calendars.forEach(function(manager) {
+      NMNS.calendar.getCalendars().forEach(function(manager) {
         manager.checked = checked;
       });
     } else {
@@ -365,7 +367,7 @@ console.log("aaa");
   function refreshScheduleVisibility() {
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
 
-    NMNS.calendar.getOptions().calendars.forEach(function(manager) {
+    NMNS.calendar.getCalendars().forEach(function(manager) {
       NMNS.calendar.toggleSchedules(manager.id, !manager.checked, false);
     });
 
@@ -449,6 +451,7 @@ console.log("aaa");
   function drawSchedule(data){
     NMNS.calendar.createSchedules(data.map(function(schedule){//mapping server data to client data
       var manager = findManager("A1");//findManager(schedule.manager);
+      console.log(manager);
       return {
         id:schedule.key,
         calendarId:manager?manager.key:"A1",//schedule.manager,
@@ -479,7 +482,8 @@ console.log("aaa");
   }
 
   function findManager(managerId){
-    return NMNS.calendar.getOptions().calendars.find(function(manager){
+    console.log(NMNS.calendar.getCalendars());
+    return NMNS.calendar.getCalendars().find(function(manager){
       return (manager.key === managerId);
     });
   }
@@ -488,7 +492,6 @@ console.log("aaa");
 
   setDropdownCalendarType();
   setRenderRangeText();
-  setSchedules();
   setEventListener();
 
 })(jQuery);

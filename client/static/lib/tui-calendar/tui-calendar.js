@@ -5963,6 +5963,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * Get calendar list
+	 * @returns {Array.<Object>} calendars - calendar list
+	 */
+	Calendar.prototype.getCalendars = function() {
+	    return this._controller.getCalendars();
+	};
+	
+	/**
 	 * Open schedule creation popup
 	 * @param {Schedule} schedule - preset schedule data
 	 */
@@ -7072,6 +7080,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Base.prototype.setCalendars = function(calendars) {
 	    this.calendars = calendars;
+	};
+	
+	/**
+	 * Get calendar list
+	 * @return {Array.<Calendar>} calendars - calendar list
+	 */
+	Base.prototype.getCalendars = function() {
+	    return this.calendars;
 	};
 	
 	// mixin

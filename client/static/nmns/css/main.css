@@ -39,3 +39,6 @@ button.calendarType:active, button.calendarType:hover, button.calendarType:focus
 button.moveDate{
   line-height: 1.0;
 }
+button.moveDate:focus{
+  box-shadow:none;
+}

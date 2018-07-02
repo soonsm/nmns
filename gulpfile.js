@@ -39,7 +39,7 @@ gulp.task('lib', async function() {
   // Toast UI calendar
   gulp.src('./node_modules/tui-calendar/dist/tui-calendar.js.map')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
-  gulp.src('./node_modules/tui-calendar/dist/*min*')
+  gulp.src(['./node_modules/tui-calendar/dist/*min*', "!./node_modules/tui-calendar/dist/tui-calendar.min.css"])
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
   gulp.src('./node_modules/tui-code-snippet/dist/*min*')
     .pipe(gulp.dest('./client/static/lib/tui-calendar'));
