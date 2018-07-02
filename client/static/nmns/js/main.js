@@ -178,6 +178,9 @@
   
   function onClickMenu(e) {
     var action = getDataAction(e.target);
+    if(!action){
+      action = getDataAction(e.target.parentElement);
+    }
     var viewName = '';
 
     switch (action) {
@@ -212,7 +215,9 @@
 
   function onClickNavi(e) {
     var action = getDataAction(e.target);
-
+    if(!action){
+      action = getDataAction(e.target.parentElement);
+    }
     switch (action) {
       case 'prev':
         NMNS.calendar.prev();
