@@ -91,15 +91,15 @@ docClient.update(params, function(err, data) {
 
 //예약정보 Insert
 var reservation = db.newReservation({
-    key: 'A1',
+    id: 'A1',
     manager: '정스탭',
     start: moment().format('YYYYMMDD') + '1730',
     end: moment().format('YYYYMMDD') + '1800',
     contact: '01028904311',
     name: '김손님',
     contents: '패디큐어',
-    etc: {key: '회원권', value: '3회 남음'},
-    isCanceled: false,
+    etc: '회원권 3회 남음',
+    status: 'RESERVED',
     cancelDate: null
 });
 
@@ -124,7 +124,7 @@ docClient.update(params, function(err, data) {
 });
 
 var staff = db.newStaff({
-    key: 'A1',
+    id: 'A1',
     name: '정스탭'
 });
 var params = {

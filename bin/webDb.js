@@ -78,10 +78,10 @@ function update(params){
         docClient.update(params, function(err, data) {
             if (err) {
                 console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-                resolve(true);
+                resolve(false);
             } else {
                 console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-                resolve(false);
+                resolve(true);
             }
         });
     }));
@@ -130,7 +130,7 @@ exports.newWebUser = function(user){
 
 exports.newStaff = function (staff){
     return {
-        key: staff.key,
+        id: staff.id,
         name: staff.name,
         color: staff.color || '#ff00ff' //TODO: Default color 값 확인
     };
@@ -139,22 +139,7 @@ exports.newStaff = function (staff){
 
 
 
-exports.newReservation = function(reservation){
-    return {
-        key: reservation.key,
-        type: reservation.type || 'R',
-        name: reservation.name,
-        start: reservation.start,
-        end: reservation.end,
-        isAllDay: reservation.isAllDay || false,
-        contents: reservation.contents,
-        manager: reservation.manager || null,
-        etc: reservation.etc,
-        contact: reservation.contact,
-        isCanceled: false,
-        cancelDate: null
-    };
-}
+
 
 
 exports.signUp = async function(newUser){
@@ -181,7 +166,52 @@ exports.getWebUser = async function(email){
     });
 }
 
-exports.getReservationList = async function(email, from, to){
+exports.newReservation = function(reservation){
+    return {
+        id: reservation.id,
+        type: reservation.type || 'R',
+        name: reservation.name,
+        start: reservation.start,
+        end: reservation.end,
+        isAllDay: reservation.isAllDay || false,
+        contents: reservation.contents,
+        manager: reservation.manager || null,
+        etc: reservation.etc,
+        contact: reservation.contact,
+        status: reservation.status || 'RESERVED',
+        cancelDate: null
+    };
+}
+
+exports.addNewReservation = async function(email, newReservation){
+    return await update({
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set reservationList = list_append(reservationList, :newReservation)",
+        ExpressionAttributeValues:{
+            ":newReservation":[newReservation]
+        },
+        ReturnValues:"NONE"
+    });
+};
+
+exports.updateReservation = async function(email, reservation){
+    return await update({
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email
+        },
+        UpdateExpression: "set reservationList = :reservation",
+        ExpressionAttributeValues:{
+            ":reservation":reservation
+        },
+        ReturnValues:"NONE"
+    });
+}
+
+exports.getReservationList = async function(email, start, end){
     let items =  await query({
         TableName : "WebSecheduler",
         ProjectionExpression:"reservationList",
@@ -198,14 +228,18 @@ exports.getReservationList = async function(email, from, to){
         return [];
     }else{
         let list = items[0].reservationList;
-        let filteredList = [];
-        for(var i=0;i<list.length;i++){
-            let reservation = list[i];
-            if(reservation.start >= from && reservation.end <= to){
-                filteredList.push(reservation);
+        if(start && end){
+            let filteredList = [];
+            for(var i=0;i<list.length;i++){
+                let reservation = list[i];
+                if(reservation.start >= start && reservation.end <= end){
+                    filteredList.push(reservation);
+                }
             }
+            return filteredList;
+        }else{
+            return list;
         }
-        return filteredList;
     }
 };
 
