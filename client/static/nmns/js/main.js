@@ -49,6 +49,15 @@
       },
       timegridDisplayPrimayTime:function(time){
         return time.hour + ":00";
+      },
+      popupIsAllDay:function(){
+        return "하루종일";
+      },
+      startDatePlaceholder:function(){
+        return "시작일시(ex. 2018-01-01 00:00)"
+      },
+      endDatePlaceholder:function(){
+        return "종료일시(ex. 2018-12-31 00:00)"
       }
     },
     month:{

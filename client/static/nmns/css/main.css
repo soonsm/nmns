@@ -42,3 +42,39 @@ button.moveDate{
 button.moveDate:focus{
   box-shadow:none;
 }
+#sidebarContainer{
+  max-width:850px;
+}
+
+.tui-full-calendar-button.tui-full-calendar-popup-close{
+  font-size:1.3rem;
+}
+.tui-full-calendar-popup{
+  font-size:0.9rem;
+}
+#creationPopupAllDay, #creationPopupAllDay + label, #creationPopupAllDay + label + label{
+  font-size:0.9rem;
+}
+#creationPopupAllDay{
+  display:none;
+}
+#tui-full-calendar-schedule-start-date, #tui-full-calendar-schedule-end-date{
+  max-width:140px;
+}
+.tui-full-calendar-popup .input-group-prepend i{
+  min-width:32px;
+  background-color:white;
+  border-radius:0 !important;
+}
+.tui-full-calendar-popup input.form-control{
+  border-radius:0;
+}
+.tui-full-calendar-popup .tui-full-calendar-popup-container{
+  width: 300px;
+  min-width: 300px;
+}
+@media (min-width: 576px){
+  .tui-full-calendar-popup .tui-full-calendar-popup-container{
+    width: 474px;
+  }
+}
