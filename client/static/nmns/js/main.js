@@ -123,7 +123,6 @@
     $("#managerList").html(html);
     e.data.forEach(function(item){
       item.checked = true;
-      item.id = item.key;
       item.bgColor = item.color;
       item.borderColor = item.color;
     });
@@ -142,6 +141,7 @@
     },
     clickDayname:function(e){
       console.log("clickDayname", e);
+      NMNS.calendar.setOptions({week:{hourStart:9, hourEnd:23}});
     },
     beforeCreateSchedule:function(e){
       console.log("beforeCreateSchedule", e);
@@ -459,11 +459,11 @@ console.log("aaa");
   
   function drawSchedule(data){
     NMNS.calendar.createSchedules(data.map(function(schedule){//mapping server data to client data
-      var manager = findManager("A1");//findManager(schedule.manager);
+      var manager = findManager(schedule.manager);
       console.log(manager);
       return {
-        id:schedule.key,
-        calendarId:manager?manager.key:"A1",//schedule.manager,
+        id:schedule.id,
+        calendarId:manager?manager.id:"A1",//schedule.manager,
         title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
         start: moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate(),
         end:moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate(),
@@ -484,7 +484,9 @@ console.log("aaa");
         color:"#ffffff",
         dragBgColor:manager?manager.color:"#b2dfdb",
         raw:{
-          
+          contact:schedule.contact,
+          contents:schedule.contents,
+          etc:schedule.etc
         }
       }
     }), true);
@@ -493,7 +495,7 @@ console.log("aaa");
   function findManager(managerId){
     console.log(NMNS.calendar.getCalendars());
     return NMNS.calendar.getCalendars().find(function(manager){
-      return (manager.key === managerId);
+      return (manager.id === managerId);
     });
   }
 

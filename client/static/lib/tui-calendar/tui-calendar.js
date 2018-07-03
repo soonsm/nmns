@@ -14228,7 +14228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	ScheduleCreationPopup.prototype._makeEditModeData = function(viewModel) {
 	    var schedule = viewModel.schedule;
-	    var title, isPrivate, location, startDate, endDate, isAllDay, state;
+	    var title, isPrivate, location, startDate, endDate, isAllDay, state, contact, etc, contents;
 	    var raw = schedule.raw || {};
 	    var calendars = this.calendars;
 	    var calendarIndex;
@@ -14241,6 +14241,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    endDate = schedule.end;
 	    isAllDay = schedule.isAllDay;
 	    state = schedule.state;
+	    contact = raw.contact;
+	    contents = raw.contents;
+	    etc = raw.etc;
 	
 	    calendarIndex = calendars.findIndex(function(calendar) {
 	        return calendar.id === viewModel.schedule.calendarId;
@@ -14263,7 +14266,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        end: endDate,
 	        raw: {
 	            location: location,
-	            'class': isPrivate ? 'private' : 'public'
+	            'class': isPrivate ? 'private' : 'public',
+	            contact : contact,
+	            contents : contents,
+	            etc: etc
 	        },
 	        zIndex: this.layer.zIndex + 5,
 	        isEditMode: this._isEditMode
@@ -14816,11 +14822,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 	    var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
+	    console.log("helpers");
+	    console.log(helpers);
+	    console.log("depth0");
+	    console.log(depth0);
+	    console.log("data");
+	    console.log(data);
+	    console.log("partials");
+	    console.log(partials);
 	var result = 
 	  "<div class=\"" + escapedCssPrefix + "popup\">\n"
 	  + "<div class=\"" + escapedCssPrefix + "popup-container\">\n"
     
-/*	    +"<div class=\"form-group\">"*/
 		+"  <div class=\"row mb-2 mb-sm-3\">"
 		+"    <label for=\"creationPopupName\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">고객이름</label>"
 		+"    <div class=\"col-9 col-sm-5 input-group input-group-sm\">"
@@ -14836,7 +14849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-mobile-alt\"></i>"
 		+"      </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처(숫자)\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처(숫자)\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.raw.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"raw.contact","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
   		
@@ -14846,7 +14859,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupStartDate\" data-toggle=\"datetimepicker\"></i>"
 			+"     </div>"
 				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupStartDate\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
-				//+ "<div id=\"" + escapedCssPrefix + "startpicker-container\" style=\"margin-left: -1px; position: relative\"></div>\n"
 			+ "</div>\n"
 			+ "<span class=\"px-2 " + escapedCssPrefix + "dash\">—</span>\n"
 			+ "<div id=\"creationPopupEndDate\" class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\" data-target-input=\"nearest\">\n"
@@ -14854,7 +14866,6 @@ return /******/ (function(modules) { // webpackBootstrap
 			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupEndDate\" data-toggle=\"datetimepicker\"></i>"
 			+"   </div>"
 				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupEndDate\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
-				//+ "<div id=\"" + escapedCssPrefix + "endpicker-container\" style=\"margin-left: -1px; position: relative\"></div>\n"
 			+ "</div>\n"
 			+ "<div class=\"" + escapedCssPrefix + "section-allday pl-4 pl-sm-0\">\n"
 				+ "<input id=\"creationPopupAllDay\" name=\"isAllDay\" type=\"checkbox\"" + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isAllDay : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "") + "></input>\n"
@@ -14864,12 +14875,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		+ "</div>\n"
 		
 		+"  <div class=\"row mb-2 mb-sm-3\">"
-		+"    <label for=\"creationPopupContent\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">예약내용</label>"
+		+"    <label for=\"creationPopupContents\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">예약내용</label>"
 		+"    <div class=\"col-sm-9 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupContentIcon\" class=\"input-group-text fas fa-list-ul\"></i>"
+		+"        <i id=\"creationPopupContentsIcon\" class=\"input-group-text fas fa-list-ul\"></i>"
 		+"       </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContent\" name=\"content\" aria-describedby=\"creationPopupContentIcon\" placeholder=\"예약내용\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContents\" name=\"content\" aria-describedby=\"creationPopupContentsIcon\" placeholder=\"예약내용\" value=\"" + alias4(((helper = (helper = helpers.contents || (depth0 != null ? depth0.raw.contents : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"raw.contents","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
 		
@@ -14882,11 +14893,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"       </div>"
 			    + "<button id=\"creationPopupManager\" type=\"button\" aria-describedby=\"creationPopupManagerIcon\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\" class=\"btn btn-sm dropdown-toggle btn-flat form-control text-left\">\n"
 				    + "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>\n"
-				    //+ "<span id=\"" + escapedCssPrefix + "schedule-calendar\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.name : stack1), depth0)) + "</span>\n" 
 				    + "<span>" + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.name : stack1), depth0)) + "</span>\n" 
 			    + "</button>\n" 
 			    + "<div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"creationPopupManager\" role=\"menu\">"
-		//	    + "<div class=\"dropdown-menu\" style=\"z-index: " + alias4(((helper = (helper = helpers.zIndex || (depth0 != null ? depth0.zIndex : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"zIndex","hash":{},"data":data}) : helper))) + "\">\n"
 			    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.calendars : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 			    + "</div>\n"
 		    + "</div>\n"
@@ -14898,11 +14907,10 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupEtcIcon\" class=\"input-group-text far fa-bookmark\"></i>"
 		+"       </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"content\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"content\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\" value=\"" + alias4(((helper = (helper = helpers.etc || (depth0 != null ? depth0.raw.etc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"raw.etc","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
-	/*	+"</div>"*/
-	    
+
 	    /*+ "<div class=\"" + escapedCssPrefix + "popup-section\">\n"
 	    	+ "<div class=\"" + escapedCssPrefix + "popup-section-item " + escapedCssPrefix + "section-title\">\n"
 		    	+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-title\"></span>\n"
