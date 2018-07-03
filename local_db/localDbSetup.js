@@ -148,7 +148,7 @@ docClient.update(params, function(err, data) {
 });
 
 
-var noShow = db.newNoShow('01011112222', '잠수');
+var noShow = db.newNoShow('01011115555', '잠수5');
 noShow.noShowCount = 1;
 docClient.put({
     TableName: 'NoShowList',
@@ -160,6 +160,7 @@ docClient.put({
         console.log("Added item:", JSON.stringify(noShow));
     }
 });
+/*
 var params = {
     TableName: "WebSecheduler",
     Key: {
@@ -179,3 +180,4 @@ docClient.update(params, function(err, data) {
         console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
     }
 });
+*/

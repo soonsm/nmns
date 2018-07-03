@@ -136,12 +136,6 @@ exports.newStaff = function (staff){
     };
 }
 
-
-
-
-
-
-
 exports.signUp = async function(newUser){
 
     if(!newUser || !newUser.email || !newUser.password){
@@ -277,7 +271,7 @@ exports.newNoShow = function(phone, noShowCase, name){
     }
     return newNoShow;
 }
-exports.getMyNoShow = async function(email){
+exports.getMyNoShow = async function(email, phone){
     let items = await query({
         TableName : "WebSecheduler",
         ProjectionExpression:"noShowList",
@@ -293,16 +287,33 @@ exports.getMyNoShow = async function(email){
         return [];
     }
 
-    return items[0].noShowList;
+    let noShowList = items[0].noShowList;
+    if(!phone){
+        return noShowList;
+    }else{
+        let key = sha256(phone);
+        for(let i=0; i<noShowList.length;i++){
+            let noShow = noShowList[i];
+            if(noShow.noShowKey === key){
+                return [noShow];
+            }
+        }
+        return [];
+    }
 }
 exports.getNoShow = async function(phoneNumber){
     let key = sha256(phoneNumber);
-    return await get({
+    let noShow = await get({
         TableName: 'NoShowList',
         Key: {
             'noShowKey': key
         }
     });
+    if(noShow){
+        return [noShow];
+    }else{
+        return [];
+    }
 };
 
 exports.addToNoShowList = async function(email, phone, noShowCase, name){
@@ -325,20 +336,14 @@ exports.addToNoShowList = async function(email, phone, noShowCase, name){
     });
 
     let myNoShowList = await exports.getMyNoShow(email);
-    //TODO: 내꺼에 있으면 업데이트 없으면 추가
-    /**
-     * 내꺼에 있는지 검색
-     * 있으면 꺼내
-     * 없으면 생성
-     * 그리고 저장
-     */
+    //내꺼에 있으면 업데이트 없으면 추가
     let key = sha256(phone);
     let myNoShow;
     for(var i=0;i<myNoShowList.length;i++){
         let noShow = myNoShowList[i];
         if(noShow.noShowKey === key){
             myNoShow = noShow;
-            myNoShow.noshowRegister += 1;
+            myNoShow.noShowCount += 1;
             myNoShow.lastNoShowDate = moment().format('YYYYMMDD');
             if(name){
                 myNoShow.name = name;
@@ -346,6 +351,7 @@ exports.addToNoShowList = async function(email, phone, noShowCase, name){
             if(noShowCase){
                 myNoShow.noShowCaseList.push(noShowCase);
             }
+            myNoShowList[i] = myNoShow;
             break;
         }
     }
@@ -353,7 +359,7 @@ exports.addToNoShowList = async function(email, phone, noShowCase, name){
         myNoShow = exports.newNoShow(phone, noShowCase, name);
         myNoShowList.push(myNoShow);
     }
-    await update({
+    return await update({
         TableName: "WebSecheduler",
         Key: {
             'email': email
@@ -371,17 +377,23 @@ exports.addToNoShowList = async function(email, phone, noShowCase, name){
 exports.deleteNoShow = async function(phone, email){
     let key = sha256(phone);
     let isItMine = false;
-    let delIndex = -1;
+    let delIndex = -1, noShowToDelete;
     let myNoShowList = await exports.getMyNoShow(email);
     for(var i=0;i<myNoShowList.length;i++){
         let myNoShow = myNoShowList[i];
         if(myNoShow.noShowKey === key){
             isItMine = true;
+            noShowToDelete = myNoShow;
             break;
         }
     }
     if(isItMine){
-        myNoShowList.splice(delIndex, 1);
+        if(noShowToDelete.noShowCount == 1){
+            myNoShowList.splice(delIndex, 1);
+        }else{
+            noShowToDelete.noShowCount -=1;
+            myNoShowList.splice(delIndex, 1, noShowToDelete);
+        }
         //WebScheudler update
         await update({
             TableName: "WebSecheduler",

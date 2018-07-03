@@ -135,42 +135,56 @@ module.exports = function (server, sessionMiddleware) {
 
             console.log(data);
 
+            if((mine !== true && mine !== false)|| !contact){
+                status=false;
+                message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "mine":${내 노쇼만 볼것인지 여부, boolean}})';
+            }else if(!util.phoneNumberValidation(contact)){
+                message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
+                status = false;
+            }
+
             if (mine === true) {
-                resultData = await db.getMyNoShow(email);
+                resultData = await db.getMyNoShow(email, contact);
             } else {
-                if (!contact && !mine) {
-                    message = '노쇼 조회에 필요한 데이터가 없습니다.({"contact":${고객 모바일, string, optional}, "mine":${내 노쇼만 볼것인지 여부, boolean, optional}})';
-                    status = false;
-                } else if (contact && !util.phoneNumberValidation(contact)) {
-                    message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
-                    status = false;
-                } else if (contact) {
-                    resultData = [await db.getNoShow(contact)];
-                }
+                resultData = await db.getNoShow(contact);
             }
 
             socket.emit(GetNoShow, makeResponse(status, resultData, message));
         });
 
         socket.on(AddNoShow, async function (data) {
-            const phone = data.contact;
+            let status = true, message = null, resultData = null;
+            const contact = data.contact;
             const name = data.name;
             const noShowCase = data.noShowCase;
 
-            //TODO: validation
+            //validation
+            if(!contact || !name){
+                status = false;
+                message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "name":${고객 이름, string, optional},"noShowCase":${매장 코멘트, string, optional}})';
+            }else if(!util.phoneNumberValidation(contact)){
+                status = false;
+                message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
+            }
+            resultData = await db.addToNoShowList(email, contact, noShowCase, name);
 
-            let addedNoShow = await db.addToNoShowList(email, phone, noShowCase, name);
-
-            socket.emit(AddNoShow, makeResponse(true, addedNoShow, null));
+            socket.emit(AddNoShow, makeResponse(status, resultData, message));
         });
 
         socket.on(DelNoShow, async function (data) {
-            const phone = data.contact;
-            let status = true, message;
+            let status = true, message = null;
+            const contact = data.contact;
 
-            //TODO: validation
+            //validation
+            if(!contact ){
+                status = false;
+                message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}})';
+            }else if(!util.phoneNumberValidation(contact)){
+                status = false;
+                message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
+            }
 
-            let deleteResult = await db.deleteNoShow(phone, email);
+            let deleteResult = await db.deleteNoShow(contact, email);
             if (!deleteResult) {
                 status = false;
                 message = '내가 추가한 노쇼만 삭제 할 수 있습니다.';
