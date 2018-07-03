@@ -128,14 +128,6 @@ exports.newWebUser = function(user){
     };
 }
 
-exports.newStaff = function (staff){
-    return {
-        id: staff.id,
-        name: staff.name,
-        color: staff.color || '#ff00ff' //TODO: Default color 값 확인
-    };
-}
-
 exports.signUp = async function(newUser){
 
     if(!newUser || !newUser.email || !newUser.password){
@@ -237,6 +229,13 @@ exports.getReservationList = async function(email, start, end){
     }
 };
 
+exports.newStaff = function (staff){
+    return {
+        id: staff.id,
+        name: staff.name,
+        color: staff.color || '#ff00ff' //TODO: Default color 값 확인
+    };
+}
 exports.getStaffList = async function(email){
     let items = await query({
         TableName : "WebSecheduler",
@@ -254,6 +253,19 @@ exports.getStaffList = async function(email){
     }
 
     return items[0].staffList;
+};
+exports.addNewStaff = async function(email,staff){
+    return await update({
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set staffList = list_append(staffList, :newStaff)",
+        ExpressionAttributeValues:{
+            ":newStaff":[staff]
+        },
+        ReturnValues:"NONE"
+    });
 };
 
 exports.newNoShow = function(phone, noShowCase, name){
