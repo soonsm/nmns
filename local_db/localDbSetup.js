@@ -92,7 +92,7 @@ docClient.update(params, function(err, data) {
 //예약정보 Insert
 var reservation = db.newReservation({
     id: 'A1',
-    manager: '정스탭',
+    manager: 'A1',
     start: moment().format('YYYYMMDD') + '1730',
     end: moment().format('YYYYMMDD') + '1800',
     contact: '01028904311',

@@ -7,10 +7,13 @@ const util = require('./util');
 const GetReservationList = 'get reserv';
 const AddReservation = 'add reserv';
 const UpdateReservation = 'update reserv';
-const GetManagerList = 'get manager';
 const GetNoShow = 'get noshow';
 const AddNoShow = 'add noshow';
 const DelNoShow = 'delete noshow';
+const GetManagerList = 'get manager';
+const AddManager = 'add manager';
+const UpdateManager = 'update manager';
+const DelManager = 'delete manager';
 
 
 module.exports = function (server, sessionMiddleware) {
@@ -62,9 +65,9 @@ module.exports = function (server, sessionMiddleware) {
 
             if(status){
                 //validation for id, status
-                if(!data.id || !data.status || (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED')){
+                if(!data.id || !data.status || (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')){
                     status = false;
-                    message = 'id와 status가 필요합니다.({"id": ${예약키, string}, "status": ${상태, string, 값: RESERVED, CANCELED, DELETED}})';
+                    message = 'id와 status가 필요합니다.({"id": ${예약키, string}, "status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
                 }
             }
             if(status){
@@ -88,6 +91,10 @@ module.exports = function (server, sessionMiddleware) {
                     if(!await db.updateReservation(email, reservationList)){
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error';
+                    }
+                    if(data.status === 'NOSHOW'){
+                        //noShow 입력
+                        await db.addToNoShowList(email, data.contact, null, data.name);
                     }
                 }else{
                     status = false;
@@ -126,6 +133,52 @@ module.exports = function (server, sessionMiddleware) {
         socket.on(GetManagerList, async function () {
             let managerList = await db.getStaffList(email);
             socket.emit(GetManagerList, makeResponse(true, managerList));
+        });
+
+        socket.on(AddManager, async (staff)=>{
+            let status = true, message = null, resultData=null;
+            let name = staff.name;
+
+            if(!name){
+                status = false;
+                message = '담당자 추가에 필요한 데이터가 없습니다. ({"name":${매니저 이름, string}, "color":${저장할 색깔, string, #RRGGBB, optional}})';
+            }
+
+            if(status){
+                staff.id = email+name+moment().format('YYYYMMDDHHmmssSSS');
+                if(! await db.addNewStaff(email, db.newStaff(staff))){
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error';
+                }
+                resultData = {id: staff.id};
+            }
+
+            socket.emit(AddManager, makeResponse(status, resultData, message));
+        });
+
+        socket.on(UpdateManager, async (staff)=>{
+            let status = true, message = null, resultData=null;
+            let name = staff.name;
+            let color = staff.color;
+
+            if(!name || !color){
+                status = false;
+                message = '담당자 수정에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${변경후 매니저 이름, string}, "color":${변경할 색깔, string, #RRGGBB}})';
+            }
+
+            if(status){
+                let staffList = await db.getStaffList(email);
+
+                //TODO: 여기서 찾고 수정하는거 해야돼 없으면 에러주고
+
+                if(!db.addNewStaff(email, db.newStaff(staff))){
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error';
+                }
+                resultData = {id: staff.id};
+            }
+
+            socket.emit(UpdateManager, makeResponse(status, resultData, message));
         });
 
         socket.on(GetNoShow, async function (data) {
@@ -203,7 +256,7 @@ const reservationValidation = function(data){
     let status = true, message;
     if(!data.name || !data.start || !data.end || !data.contact){
         status = false;
-        message = '예약추가에 필요한 데이터가 없습니다. ({"type":${예약/일정 구분, string, R(예약)/T(일정), optional, default: R}, "name":${고객 이름 혹은 일정이름, string}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "contents":${시술정보, string, optional}, "manager":${담당 매니저 이름, string, optional}, "etc":${부가정보, string, optional})';
+        message = '예약추가에 필요한 데이터가 없습니다. ({"type":${예약/일정 구분, string, R(예약)/T(일정), optional, default: R}, "name":${고객 이름 혹은 일정이름, string}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "contents":${시술정보, string, optional}, "manager":${담당 매니저 id, string, optional}, "etc":${부가정보, string, optional})';
     }else if(!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
         status = false;
