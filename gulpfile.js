@@ -56,6 +56,11 @@ gulp.task('lib', async function() {
   gulp.src(["./node_modules/moment/min/moment-with-locales.min.js",
     "./node_modules/moment/min/locales.min.js"])
     .pipe(gulp.dest("./client/static/lib/moment"));
+    
+  //datetimepicker
+  gulp.src(["./node_modules/tempusdominus-bootstrap-4/build/js/*min.js",
+    "./node_modules/tempusdominus-bootstrap-4/build/css/*min.css"])
+    .pipe(gulp.dest("./client/static/lib/datetimepicker"));
 });
 
 //Compile SCSS

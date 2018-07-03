@@ -14211,8 +14211,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        boxElement = guideElements.length ? guideElements[0] : null;
 	    }
 	    layer.setContent(tmpl(viewModel));
-	    this._createDatepicker(viewModel.start, viewModel.end);
 	    layer.show();
+	    this._createDatepicker(viewModel.start, viewModel.end);
 	
 	    this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 	
@@ -14417,7 +14417,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {TZDate} end - end date
 	 */
 	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
-	    var cssPrefix = config.cssPrefix;
+	    /*var cssPrefix = config.cssPrefix;
 	    this.rangePicker = DatePicker.createRangePicker({
 	        startpicker: {
 	            date: new TZDate(start.getTime()).toDate(),
@@ -14434,7 +14434,105 @@ return /******/ (function(modules) { // webpackBootstrap
 	            showMeridiem: false
 	        },
 	        usageStatistics: true
+	    });*/
+	    $("#creationPopupStartDate").datetimepicker({
+	    	icons:{
+	    		up: "fas fa-chevron-up",
+	    		down: "fas fa-chevron-down",
+	    		time: 'far fa-clock',
+          date: 'far fa-calendar',
+          previous: 'fas fa-chevron-left',
+          next: 'fas fa-chevron-right',
+          close: 'fas fa-times'
+	    	},
+	    	defaultDate: new TZDate(start.getTime()).toDate(),
+	    	format: "YYYY-MM-DD HH:mm",
+	    	dayViewHeaderFormat : "YYYY년 M월",
+	    	stepping:10,
+	    	locale: "ko",
+	    	sideBySide: true,
+	    	widgetPositioning:{
+	    		horizontal: "left"
+	    	},
+	    	allowInputToggle:true,
+	    	tooltips: {
+			    today: '오늘',
+			    clear: '초기화',
+			    close: '닫기',
+			    selectMonth: '월 선택',
+			    prevMonth: '지난달',
+			    nextMonth: '다음달',
+			    selectYear: '연도 선택',
+			    prevYear: '전년도',
+			    nextYear: '내년도',
+			    selectDecade: '연도 선택',
+			    prevDecade: '지난 연도',
+			    nextDecade: '다음 연도',
+			    prevCentury: '이전세기',
+			    nextCentury: '다음세기',
+			    incrementHour: '시 증가',
+			    pickHour: '시 선택',
+			    decrementHour:'시 감소',
+			    incrementMinute: '분 증가',
+			    pickMinute: '분 선택',
+			    decrementMinute:'분 감소'
+				},
+				buttons:{
+					showClose:true
+				}
 	    });
+	    $("#creationPopupEndDate").datetimepicker({
+	    	icons:{
+	    		up: "fas fa-chevron-up",
+	    		down: "fas fa-chevron-down",
+	    		time: 'far fa-clock',
+          date: 'far fa-calendar',
+          previous: 'fas fa-chevron-left',
+          next: 'fas fa-chevron-right',
+          close: 'fas fa-times'
+	    	},
+	    	defaultDate: new TZDate(end.getTime()).toDate(),
+	    	format: "YYYY-MM-DD HH:mm",
+	    	dayViewHeaderFormat : "YYYY년 M월",
+	    	stepping:10,
+	    	locale: "ko",
+	    	sideBySide: true,
+	    	widgetPositioning:{
+	    		horizontal: "right"
+	    	},
+	    	allowInputToggle:true,
+	    	tooltips: {
+			    today: '오늘',
+			    clear: '초기화',
+			    close: '닫기',
+			    selectMonth: '월 선택',
+			    prevMonth: '지난달',
+			    nextMonth: '다음달',
+			    selectYear: '연도 선택',
+			    prevYear: '전년도',
+			    nextYear: '내년도',
+			    selectDecade: '연도 선택',
+			    prevDecade: '지난 연도',
+			    nextDecade: '다음 연도',
+			    prevCentury: '이전세기',
+			    nextCentury: '다음세기',
+			    incrementHour: '시 증가',
+			    pickHour: '시 선택',
+			    decrementHour:'시 감소',
+			    incrementMinute: '분 증가',
+			    pickMinute: '분 선택',
+			    decrementMinute:'분 감소'
+				},
+				buttons:{
+					showClose:true
+				}
+	    });
+	    $("#creationPopupStartDate").on("change.datetimepicker", function (e) {
+          $('#creationPopupEndDate').datetimepicker('minDate', e.date);
+      });
+      $("#creationPopupEndDate").on("change.datetimepicker", function (e) {
+          $('#creationPopupStartDate').datetimepicker('maxDate', e.date);
+      });
 	};
 	
 	/**
@@ -14743,20 +14841,20 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"  </div>"
   		
 		+ "<div class=\"row mb-1 mb-sm-3\">\n"
-			+ "<div class=\"input-group input-group-sm col-5 col-sm-4 pr-0 " + escapedCssPrefix + "section-start-date\">\n"
+			+ "<div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 " + escapedCssPrefix + "section-start-date\" data-target-input=\"nearest\">\n"
 				+ "<div class=\"input-group-prepend\">"
-			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\"></i>"
+			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupStartDate\" data-toggle=\"datetimepicker\"></i>"
 			+"     </div>"
-				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" class=\"form-control\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
-				+ "<div id=\"" + escapedCssPrefix + "startpicker-container\" style=\"margin-left: -1px; position: relative\"></div>\n"
+				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupStartDate\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
+				//+ "<div id=\"" + escapedCssPrefix + "startpicker-container\" style=\"margin-left: -1px; position: relative\"></div>\n"
 			+ "</div>\n"
-			+ "<span class=\"px-2 fas fa-minus " + escapedCssPrefix + "dash\"></span>\n"
-			+ "<div class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\">\n"
+			+ "<span class=\"px-2 " + escapedCssPrefix + "dash\">—</span>\n"
+			+ "<div id=\"creationPopupEndDate\" class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\" data-target-input=\"nearest\">\n"
 				+ "<div class=\"input-group-prepend\">"
-			+"       <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\"></i>"
-			+"     </div>"
-				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" class=\"form-control\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
-				+ "<div id=\"" + escapedCssPrefix + "endpicker-container\" style=\"margin-left: -1px; position: relative\"></div>\n"
+			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupEndDate\" data-toggle=\"datetimepicker\"></i>"
+			+"   </div>"
+				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupEndDate\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
+				//+ "<div id=\"" + escapedCssPrefix + "endpicker-container\" style=\"margin-left: -1px; position: relative\"></div>\n"
 			+ "</div>\n"
 			+ "<div class=\"" + escapedCssPrefix + "section-allday pl-4 pl-sm-0\">\n"
 				+ "<input id=\"creationPopupAllDay\" name=\"isAllDay\" type=\"checkbox\"" + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isAllDay : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "") + "></input>\n"
@@ -14778,15 +14876,16 @@ return /******/ (function(modules) { // webpackBootstrap
 		
 		+"  <div class=\"row mb-2 mb-sm-3\">"
 		+"    <label for=\"creationPopupManager\" class=\"col-2 pr-0 col-form-label d-sm-inline-block d-none\">담당자</label>"
-		    + "<div class=\"input-group input-group-sm btn-group col-sm-9\">\n"
-		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupManagerIcon\" class=\"input-group-text fas fa-user-tie\"></i>"
+		    + "<div class=\"input-group input-group-sm btn-group dropdown col-sm-9\">\n"
+		+"       <div class=\"d-inline-block input-group-prepend d-sm-none\">"
+		+"         <i id=\"creationPopupManagerIcon\" class=\"input-group-text fas fa-user-tie\"></i>"
 		+"       </div>"
 			    + "<button id=\"creationPopupManager\" type=\"button\" aria-describedby=\"creationPopupManagerIcon\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\" class=\"btn btn-sm dropdown-toggle btn-flat form-control text-left\">\n"
 				    + "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>\n"
-				    + "<span id=\"" + escapedCssPrefix + "schedule-calendar\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.name : stack1), depth0)) + "</span>\n" 
+				    //+ "<span id=\"" + escapedCssPrefix + "schedule-calendar\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.name : stack1), depth0)) + "</span>\n" 
+				    + "<span>" + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.name : stack1), depth0)) + "</span>\n" 
 			    + "</button>\n" 
-			    + "<div class=\"dropdown-menu\">"
+			    + "<div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"creationPopupManager\" role=\"menu\">"
 		//	    + "<div class=\"dropdown-menu\" style=\"z-index: " + alias4(((helper = (helper = helpers.zIndex || (depth0 != null ? depth0.zIndex : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"zIndex","hash":{},"data":data}) : helper))) + "\">\n"
 			    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.calendars : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 			    + "</div>\n"
