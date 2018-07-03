@@ -47,7 +47,8 @@ button.moveDate:focus{
 }
 
 .tui-full-calendar-button.tui-full-calendar-popup-close{
-  font-size:1.3rem;
+  font-size:1.2rem;
+  right:16px;
 }
 .tui-full-calendar-popup{
   font-size:0.9rem;

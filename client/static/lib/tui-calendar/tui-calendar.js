@@ -14683,7 +14683,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 		var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 		var test = 
-		  "<a href=\"\" class=\"dropdown-item " + escapedCssPrefix + "popup-section-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
+		  "<a href=\"\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
 		    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper))) + "\">\n"
 			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(((helper = (helper = helpers.bgColor || (depth0 != null ? depth0.bgColor : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"bgColor","hash":{},"data":data}) : helper))) + "\"></span>\n"
 			+ "<span class=\"" + escapedCssPrefix + "content\">"
@@ -14786,7 +14786,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				    + "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>\n"
 				    + "<span id=\"" + escapedCssPrefix + "schedule-calendar\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.name : stack1), depth0)) + "</span>\n" 
 			    + "</button>\n" 
-			    + "<div class=\"dropdown-menu\" style=\"z-index: " + alias4(((helper = (helper = helpers.zIndex || (depth0 != null ? depth0.zIndex : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"zIndex","hash":{},"data":data}) : helper))) + "\">\n"
+			    + "<div class=\"dropdown-menu\">"
+		//	    + "<div class=\"dropdown-menu\" style=\"z-index: " + alias4(((helper = (helper = helpers.zIndex || (depth0 != null ? depth0.zIndex : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"zIndex","hash":{},"data":data}) : helper))) + "\">\n"
 			    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.calendars : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 			    + "</div>\n"
 		    + "</div>\n"
