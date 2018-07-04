@@ -156,13 +156,13 @@ exports.newReservation = function(reservation){
     return {
         id: reservation.id,
         type: reservation.type || 'R',
-        name: reservation.name,
+        name: reservation.name || null,
         start: reservation.start,
         end: reservation.end,
         isAllDay: reservation.isAllDay || false,
-        contents: reservation.contents,
+        contents: reservation.contents || null,
         manager: reservation.manager || null,
-        etc: reservation.etc,
+        etc: reservation.etc || null,
         contact: reservation.contact,
         status: reservation.status || 'RESERVED',
         cancelDate: null

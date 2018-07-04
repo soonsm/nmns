@@ -59,16 +59,16 @@ module.exports = function (server, sessionMiddleware) {
             socket.emit(GetReservationList, makeResponse(status, resultData, message));
         });
 
-        socket.on(UpdateReservation, async function (data) {
-            console.log(data);
+        socket.on(UpdateReservation, async function (newReservation) {
+            console.log(newReservation);
 
-            let validationResult = reservationValidation(email, data);
+            let validationResult = reservationValidation(email, newReservation);
             let status = validationResult.status;
             let message = validationResult.message || '수정완료';
 
             if(status){
                 //validation for id, status
-                if(!data.status || (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')){
+                if(!newReservation.status || (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
                     status = false;
                     message = 'status가 필요합니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
                 }
@@ -84,8 +84,8 @@ module.exports = function (server, sessionMiddleware) {
                 let isItMyReservation = false;
                 for(var i=0; i<reservationList.length; i++){
                     let reservation = reservationList[i];
-                    if(reservation.id === data.id){
-                        reservationList[i] = data;
+                    if(reservation.id === newReservation.id){
+                        reservationList[i] = db.newReservation(newReservation);
                         isItMyReservation = true;
                         break;
                     }
@@ -95,9 +95,9 @@ module.exports = function (server, sessionMiddleware) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error';
                     }
-                    if(data.status === 'NOSHOW'){
+                    if(newReservation.status === 'NOSHOW'){
                         //noShow 입력
-                        await db.addToNoShowList(email, data.contact, null, data.name);
+                        await db.addToNoShowList(email, newReservation.contact, null, newReservation.name);
                     }
                 }else{
                     status = false;
@@ -105,7 +105,7 @@ module.exports = function (server, sessionMiddleware) {
                 }
 
             }
-            socket.emit(UpdateReservation, makeResponse(status, {id: data.id}, message));
+            socket.emit(UpdateReservation, makeResponse(status, {id: newReservation.id}, message));
         });
 
         socket.on(AddReservation, async function(data){
