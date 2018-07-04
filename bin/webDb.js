@@ -267,6 +267,19 @@ exports.addNewStaff = async function(email,staff){
         ReturnValues:"NONE"
     });
 };
+exports.updateStaffList = async function(email, staffList){
+    return await update({
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email
+        },
+        UpdateExpression: "set staffList = :staffList",
+        ExpressionAttributeValues:{
+            ":staffList":staffList
+        },
+        ReturnValues:"NONE"
+    });
+}
 
 exports.newNoShow = function(phone, noShowCase, name){
     let key = sha256(phone);
@@ -371,7 +384,7 @@ exports.addToNoShowList = async function(email, phone, noShowCase, name){
         myNoShow = exports.newNoShow(phone, noShowCase, name);
         myNoShowList.push(myNoShow);
     }
-    return await update({
+    await update({
         TableName: "WebSecheduler",
         Key: {
             'email': email
@@ -383,7 +396,7 @@ exports.addToNoShowList = async function(email, phone, noShowCase, name){
         ReturnValues:"NONE"
     });
 
-
+    return noShow;
 
 }
 exports.deleteNoShow = async function(phone, email){
