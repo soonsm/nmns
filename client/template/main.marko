@@ -148,6 +148,7 @@
   <script src="/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Plugin JavaScript -->
+  <script src="/nmns/js/util.min.js"></script>
   <script src="/lib/moment/moment-with-locales.min.js"></script>
   <script src="/lib/moment/locales.min.js"></script>
   <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
@@ -158,7 +159,9 @@
   <script src="/lib/socket.io/socket.io.slim.js"></script>
   <!-- Custom scripts for this template -->
   <script src="/lib/jquery-validation/jquery.validate.min.js"></script>
-  <script src="/nmns/js/util.min.js"></script>
+  <script>
+    var NMNS = {email:"${input.user.email}"};
+  </script>
   <script src="/nmns/js/main.js"></script>
 </body>
 </html>

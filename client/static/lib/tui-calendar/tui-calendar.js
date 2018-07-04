@@ -13905,7 +13905,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._toggleIsPrivate.bind(this),
 	        this._onClickSaveSchedule.bind(this)
 	    ];
-	
 	    domevent.on(container, 'click', this._onClick, this);
 	}
 	
@@ -13923,8 +13922,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (popupLayer) {
 	        return;
 	    }
-	
+			
 	    this.hide();
+			
 	};
 	
 	/**
@@ -14052,7 +14052,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether event target is allday section or not
 	 */
 	ScheduleCreationPopup.prototype._toggleIsAllday = function(target) {
-	    var className = config.classname('section-allday');
+	    /*var className = config.classname('section-allday');
 	    var alldaySection = domutil.hasClass(target, className) ? target : domutil.closest(target, '.' + className);
 	    var checkbox;
 	
@@ -14063,7 +14063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return true;
 	    }
 	
-	    return false;
+	    return false;*/
 	};
 	
 	/**
@@ -14095,33 +14095,61 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether save button is clicked or not
 	 */
 	ScheduleCreationPopup.prototype._onClickSaveSchedule = function(target) {
-	    var className = config.classname('popup-save');
-	    var cssPrefix = config.cssPrefix;
-	    var title, isPrivate, location, isAllDay, startDate, endDate, state;
-	    var start, end, calendarId;
-	
-	    if (!domutil.hasClass(target, className) && !domutil.closest(target, '.' + className)) {
+			console.log("onclicksaveSchedule", target);
+			if (!$(target).is("#creationPopupSave")) {
 	        return false;
+	    }else if(!this.validator){
+				this.validator = $("#creationPopupForm").validate({
+		      rules:{
+		        contact:{
+		          required:true,
+		          digits:true
+		        },
+		        start:{
+		        	required: true
+		        },
+		        end:{
+		        	required: true
+		        }
+		      },
+		      messages:{
+		        contact:{
+		        	required:"연락처를 입력해주세요.",
+		        	digits:"숫자만 입력해주세요."
+		        },
+		        start:"시작시간을 입력해주세요.",
+		        end:"종료시간을 입력해주세요."
+		      },
+		      errorElement:"p",
+		      errorClass:"message text-danger my-1 pl-4 pl-sm-0",
+		      errorPlacement:function(error, element){
+		      	error.appendTo(element.parent().parent());
+		      },
+		      highlight: function(element, errorClass) {
+			      $(element).removeClass(errorClass);
+			    }
+		    });
 	    }
-	
-	    title = domutil.get(cssPrefix + 'schedule-title');
-	    startDate = new TZDate(this.rangePicker.getStartDate());
-	    endDate = new TZDate(this.rangePicker.getEndDate());
-	
-	    if (!title.value) {
-	        title.focus();
-	
-	        return true;
+	    if(!this.validator.form()){
+	    	this.validator.showErrors();
+	    	return true;
 	    }
-	
+	    var title, isAllDay, startDate, endDate, contents, contact, etc;
+	    var start, end, calendarId, manager = this._selectedCal;
+	console.log(moment($("#tui-full-calendar-schedule-start-date").val(), "YYYY-MM-DD HH:mm"));
+	console.log(moment($("#tui-full-calendar-schedule-end-date").val(), "YYYY-MM-DD HH:mm"));
+	    startDate = new TZDate(moment($("#tui-full-calendar-schedule-start-date").val(), "YYYY-MM-DD HH:mm").toDate());
+	    endDate = new TZDate(moment($("#tui-full-calendar-schedule-end-date").val(), "YYYY-MM-DD HH:mm").toDate());
+
 	    if (!startDate && !endDate) {
 	        return true;
 	    }
 	
-	    isPrivate = !domutil.hasClass(domutil.get(cssPrefix + 'schedule-private'), config.classname('public'));
-	    location = domutil.get(cssPrefix + 'schedule-location');
-	    state = domutil.get(cssPrefix + 'schedule-state');
-	    isAllDay = !!domutil.get(cssPrefix + 'schedule-allday').checked;
+	    title = $("#creationPopupName").val();
+	    contents = $("#creationPopupContents").val();
+	    contact = $("#creationPopupContact").val();
+	    etc = $("#creationPopupEtc").val();
+	    isAllDay = $("#creationPopupAllDay").is(":checked");
 	
 	    if (isAllDay) {
 	        startDate.setHours(0);
@@ -14135,25 +14163,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    start = new TZDate(startDate);
 	    end = new TZDate(endDate);
 	
-	    if (this._selectedCal) {
-	        calendarId = this._selectedCal.id;
+	    if (manager) {
+	        calendarId = manager.id;
 	    }
 	
 	    if (this._isEditMode) {
 	        this.fire('beforeUpdateSchedule', {
 	            schedule: {
 	                calendarId: calendarId,
-	                title: title.value,
+	                title: title,
 	                raw: {
-	                    class: isPrivate ? 'private' : 'public',
-	                    location: location.value
+	                    contents: contents,
+		                  contact: contact,
+		                  etc: etc
 	                },
 	                start: start,
 	                end: end,
 	                isAllDay: isAllDay,
-	                state: state.innerText,
-	                triggerEventName: 'click',
-	                id: this._scheduleId
 	            },
 	            start: start,
 	            end: end,
@@ -14168,15 +14194,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.fire('beforeCreateSchedule', {
 	            calendarId: calendarId,
-	            title: title.value,
+	            title: title,
+	            name: title,
 	            raw: {
-	                class: isPrivate ? 'private' : 'public',
-	                location: location.value
+	                "class": 'public',
+	                location: location.value,
+	                contents: contents,
+		              contact: contact,
+		              etc: etc
 	            },
-	            start: new TZDate(startDate),
-	            end: new TZDate(endDate),
+	            start: start,
+	            end: end,
 	            isAllDay: isAllDay,
-	            state: state.innerText
+	            state: "Busy",
+	            manager:calendarId,
+	            contents: contents,
+              contact: contact,
+              etc: etc,
+              category: isAllDay?"allday":"time",
+				      dueDateClass:"",
+				      attendees:[],
+				      recurrenceRule:false,
+				      isPending:false,
+				      isFocused:false,
+				      isVisible:true,
+				      isReadOnly:false,
+				      isPrivate:false,
+				      customStyle:"",
+				      location:"",
+				      bgColor:manager?manager.color:"#b2dfdb",
+				      borderColor:manager?manager.color:"#b2dfdb",
+				      color:"#ffffff",
+				      dragBgColor:manager?manager.color:"#b2dfdb",
 	        });
 	    }
 	
@@ -14213,7 +14262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    layer.setContent(tmpl(viewModel));
 	    layer.show();
 	    this._createDatepicker(viewModel.start, viewModel.end);
-	
+			document.getElementById("creationPopupForm").onsubmit = function(){return false;};
 	    this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 	
 	    util.debounce(function() {
@@ -14264,6 +14313,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        state: state,
 	        start: startDate,
 	        end: endDate,
+	        contact: contact,
+	        contents : contents,
+	        etc: etc,
 	        raw: {
 	            location: location,
 	            'class': isPrivate ? 'private' : 'public',
@@ -14451,7 +14503,8 @@ return /******/ (function(modules) { // webpackBootstrap
           next: 'fas fa-chevron-right',
           close: 'fas fa-times'
 	    	},
-	    	defaultDate: new TZDate(start.getTime()).toDate(),
+	    	defaultDate: start.toDate(),
+	    	date: start.toDate(),
 	    	format: "YYYY-MM-DD HH:mm",
 	    	dayViewHeaderFormat : "YYYY년 M월",
 	    	stepping:10,
@@ -14497,15 +14550,13 @@ return /******/ (function(modules) { // webpackBootstrap
           next: 'fas fa-chevron-right',
           close: 'fas fa-times'
 	    	},
-	    	defaultDate: new TZDate(end.getTime()).toDate(),
+	    	defaultDate: end.toDate(),
+	    	date: end.toDate(),
 	    	format: "YYYY-MM-DD HH:mm",
 	    	dayViewHeaderFormat : "YYYY년 M월",
 	    	stepping:10,
 	    	locale: "ko",
 	    	sideBySide: true,
-	    	widgetPositioning:{
-	    		horizontal: "right"
-	    	},
 	    	allowInputToggle:true,
 	    	tooltips: {
 			    today: '오늘',
@@ -14831,8 +14882,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    console.log("partials");
 	    console.log(partials);
 	var result = 
-	  "<div class=\"" + escapedCssPrefix + "popup\">\n"
-	  + "<div class=\"" + escapedCssPrefix + "popup-container\">\n"
+	  "<div id=\"creationPopup\" class=\"" + escapedCssPrefix + "popup\">\n"
+	  + "<form id=\"creationPopupForm\" class=\"" + escapedCssPrefix + "popup-container\">\n"
     
 		+"  <div class=\"row mb-2 mb-sm-3\">"
 		+"    <label for=\"creationPopupName\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">고객이름</label>"
@@ -14844,12 +14895,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    </div>"
 		+"  </div>"
 		+"  <div class=\"row mb-2 mb-sm-3\">"
-		+"    <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">고객연락처</label>"
+		+"    <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처<span class=\"text-danger\">*</span></label>"
 		+"    <div class=\"col-9 col-sm-5 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-mobile-alt\"></i>"
 		+"      </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처(숫자)\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.raw.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"raw.contact","hash":{},"data":data}) : helper))) + "\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처(숫자)\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
   		
@@ -14858,14 +14909,14 @@ return /******/ (function(modules) { // webpackBootstrap
 				+ "<div class=\"input-group-prepend\">"
 			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupStartDate\" data-toggle=\"datetimepicker\"></i>"
 			+"     </div>"
-				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupStartDate\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
+				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" name=\"start\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupStartDate\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
 			+ "</div>\n"
 			+ "<span class=\"px-2 " + escapedCssPrefix + "dash\">—</span>\n"
 			+ "<div id=\"creationPopupEndDate\" class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\" data-target-input=\"nearest\">\n"
 				+ "<div class=\"input-group-prepend\">"
 			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupEndDate\" data-toggle=\"datetimepicker\"></i>"
 			+"   </div>"
-				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupEndDate\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
+				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" name=\"end\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupEndDate\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
 			+ "</div>\n"
 			+ "<div class=\"" + escapedCssPrefix + "section-allday pl-4 pl-sm-0\">\n"
 				+ "<input id=\"creationPopupAllDay\" name=\"isAllDay\" type=\"checkbox\"" + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isAllDay : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "") + "></input>\n"
@@ -14880,7 +14931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupContentsIcon\" class=\"input-group-text fas fa-list-ul\"></i>"
 		+"       </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContents\" name=\"content\" aria-describedby=\"creationPopupContentsIcon\" placeholder=\"예약내용\" value=\"" + alias4(((helper = (helper = helpers.contents || (depth0 != null ? depth0.raw.contents : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"raw.contents","hash":{},"data":data}) : helper))) + "\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContents\" name=\"content\" aria-describedby=\"creationPopupContentsIcon\" placeholder=\"예약내용\" value=\"" + alias4(((helper = (helper = helpers.contents || (depth0 != null ? depth0.contents : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contents","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
 		
@@ -14907,7 +14958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupEtcIcon\" class=\"input-group-text far fa-bookmark\"></i>"
 		+"       </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"content\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\" value=\"" + alias4(((helper = (helper = helpers.etc || (depth0 != null ? depth0.raw.etc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"raw.etc","hash":{},"data":data}) : helper))) + "\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"content\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\" value=\"" + alias4(((helper = (helper = helpers.etc || (depth0 != null ? depth0.etc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"etc","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
 
@@ -14923,9 +14974,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			+ "<span class=\"fas fa-times\"></span>"
 		+ "</button>\n"
 		+ "<div class=\"text-right\">"
-			+ "<button class=\"btn btn-primary btn-flat\">저장</button>"
+			+ "<button id=\"creationPopupSave\" class=\"btn btn-primary btn-flat\">저장</button>"
 		+ "</div>\n"
-	  + "</div>\n"
+	  + "</form>\n"
 	  + "<div id=\"" + escapedCssPrefix + "popup-arrow\" class=\"" + escapedCssPrefix + "popup-arrow " + escapedCssPrefix + "arrow-bottom\">\n"
 	  	+ "<div class=\"" + escapedCssPrefix + "popup-arrow-border\">\n"
 	  		+ "<div class=\"" + escapedCssPrefix + "popup-arrow-fill\"></div>\n"
@@ -15209,122 +15260,72 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Handlebars = __webpack_require__(8);
 	module.exports = (Handlebars['default'] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
-	
-	  return "        <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-detail-item\"><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "calendar-dot\" style=\"background-color: "
-	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.bgColor : stack1), depth0))
-	    + "\"></span><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
-	    + "</span></div>\n";
+			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
+	  return 
+	  	"<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
+			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>"
+			+ "<span class=\"" + escapedCssPrefix + "content\">"
+				+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
+	    + "</span>"
+    + "</div>\n";
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
-	
-	  return "<div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-detail\">\n  <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-container\">\n    <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-section "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "section-header\">\n      <div>\n        <span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "schedule-private "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "ic-private\"></span>\n        <span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "schedule-title\">"
-	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.title : stack1), depth0))
-	    + "</span>\n      </div>\n      <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-detail-date "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4((helpers["popupDetailDate-tmpl"] || (depth0 && depth0["popupDetailDate-tmpl"]) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.isAllDay : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.start : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.end : stack1),{"name":"popupDetailDate-tmpl","hash":{},"data":data}))
-	    + "</div>\n    </div>\n    <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "section-detail\">\n        <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-detail-item\"><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "ic-location-b\"></span><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4((helpers["popupDetailLocation-tmpl"] || (depth0 && depth0["popupDetailLocation-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailLocation-tmpl","hash":{},"data":data}))
-	    + "</span></div>\n        <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-detail-item\"><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "ic-user-b\"></span><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4((helpers["popupDetailUser-tmpl"] || (depth0 && depth0["popupDetailUser-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailUser-tmpl","hash":{},"data":data}))
-	    + "</span></div>\n        <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-detail-item\"><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "ic-state-b\"></span><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4((helpers["popupDetailState-tmpl"] || (depth0 && depth0["popupDetailState-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailState-tmpl","hash":{},"data":data}))
-	    + "</span></div>\n"
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.calendar : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + "    </div>\n    <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "section-button\">\n      <button class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-edit\"><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "ic-edit\"></span><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4(((helper = (helper = helpers["popupEdit-tmpl"] || (depth0 != null ? depth0["popupEdit-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupEdit-tmpl","hash":{},"data":data}) : helper)))
-	    + "</span></button>\n      <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-vertical-line\"></div>\n      <button class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-delete\"><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "icon "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "ic-delete\"></span><span class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "content\">"
-	    + alias4(((helper = (helper = helpers["popupDelete-tmpl"] || (depth0 != null ? depth0["popupDelete-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupDelete-tmpl","hash":{},"data":data}) : helper)))
-	    + "</span></button>\n    </div>\n  </div>\n  <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-top-line\" style=\"background-color: "
-	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.bgColor : stack1), depth0))
-	    + "\"></div>\n  <div id=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-arrow\" class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-arrow "
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "arrow-left\">\n    <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-arrow-border\">\n        <div class=\""
-	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
-	    + "popup-arrow-fill\"></div>\n    </div>\n  </div>\n</div>\n";
+			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
+	  var result = 
+	  	"<div id=\"detailPopup\" class=\"" + escapedCssPrefix + "popup " + escapedCssPrefix + "popup-detail\">\n"
+	  	+ "<div class=\"" + escapedCssPrefix + "popup-container\">\n"
+	  		+ "<div class=\"" + escapedCssPrefix + "popup-section " + escapedCssPrefix + "section-header\">\n"
+	  			+ "<div>\n"
+	  				+ "<span class=\"" + escapedCssPrefix + "schedule-private " + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-private\"></span>\n"
+	  				+ "<span class=\"" + escapedCssPrefix + "schedule-title\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.title : stack1), depth0)) + "</span>\n"
+  				+ "</div>\n"
+  				+ "<div class=\"" + escapedCssPrefix + "popup-detail-date " + escapedCssPrefix + "content\">"
+	    			+ alias4((helpers["popupDetailDate-tmpl"] || (depth0 && depth0["popupDetailDate-tmpl"]) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.isAllDay : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.start : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.end : stack1),{"name":"popupDetailDate-tmpl","hash":{},"data":data}))
+	    		+ "</div>\n"
+    		+ "</div>\n"
+    		+ "<div class=\"" + escapedCssPrefix + "section-detail\">\n"
+    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
+    			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-location-b\"></span>"
+    			+ "<span class=\"" + escapedCssPrefix + "content\">"
+	    			+ alias4((helpers["popupDetailLocation-tmpl"] || (depth0 && depth0["popupDetailLocation-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailLocation-tmpl","hash":{},"data":data}))
+	    		+ "</span></div>\n"
+    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
+    			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-user-b\"></span>"
+    			+ "<span class=\"" + escapedCssPrefix + "content\">" + alias4((helpers["popupDetailUser-tmpl"] || (depth0 && depth0["popupDetailUser-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailUser-tmpl","hash":{},"data":data})) + "</span>"
+  			+ "</div>\n"
+  			+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
+  				+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-state-b\"></span>"
+  				+ "<span class=\"" + escapedCssPrefix + "content\">"
+	    			+ alias4((helpers["popupDetailState-tmpl"] || (depth0 && depth0["popupDetailState-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailState-tmpl","hash":{},"data":data}))
+	    		+ "</span>"
+    		+ "</div>\n"
+	    	+ ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.calendar : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "</div>\n"
+	    + "<div class=\"" + escapedCssPrefix + "section-button\">\n"
+	    	+ "<button class=\"" + escapedCssPrefix + "popup-edit\">"
+	    		+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-edit\"></span>"
+	    		+ "<span class=\"" + escapedCssPrefix + "content\">"
+	    			+ alias4(((helper = (helper = helpers["popupEdit-tmpl"] || (depth0 != null ? depth0["popupEdit-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupEdit-tmpl","hash":{},"data":data}) : helper)))
+	    		+ "</span>"
+    		+ "</button>\n"
+    		+ "<div class=\"" + escapedCssPrefix + "popup-vertical-line\"></div>\n"
+    		+ "<button class=\"" + escapedCssPrefix + "popup-delete\">"
+    			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-delete\"></span>"
+    			+ "<span class=\"" + escapedCssPrefix + "content\">"
+	    			+ alias4(((helper = (helper = helpers["popupDelete-tmpl"] || (depth0 != null ? depth0["popupDelete-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupDelete-tmpl","hash":{},"data":data}) : helper)))
+	    		+ "</span>"
+    		+ "</button>\n"
+  		+ "</div>\n"
+		+ "</div>\n"
+		+ "<div class=\"" + escapedCssPrefix + "popup-top-line\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></div>\n"
+		+ "<div id=\"" + escapedCssPrefix + "popup-arrow\" class=\"" + escapedCssPrefix + "popup-arrow " + escapedCssPrefix + "arrow-left\">\n"
+			+ "<div class=\"" + escapedCssPrefix + "popup-arrow-border\">\n"
+				+ "<div class=\"" + escapedCssPrefix + "popup-arrow-fill\"></div>\n"
+			+ "</div>\n"
+		+ "</div>\n"
+	+ "</div>\n";
+	console.log(result);
+	return result;
 	},"useData":true});
 
 /***/ },

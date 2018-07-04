@@ -1,6 +1,6 @@
-/*global jQuery, location, moment, tui*/
+/*global jQuery, location, moment, tui, NMNS, io*/
 (function($) {
-  var NMNS = {needInit:true};
+  NMNS.needInit = true;
   
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
@@ -54,10 +54,10 @@
         return "하루종일";
       },
       startDatePlaceholder:function(){
-        return "시작일시(ex. 2018-01-01 00:00)"
+        return "시작시간";
       },
       endDatePlaceholder:function(){
-        return "종료일시(ex. 2018-12-31 00:00)"
+        return "종료시간";
       }
     },
     month:{
@@ -76,21 +76,24 @@
     }
   });
 
-  var socketResponse = function(requestName, callback){
+  var socketResponse = function(requestName, successCallback, failCallback){
     return function(res){
       if(res && res.type === "response"){
         if(res.status){//success
-          if(callback){
-            callback(res);
+          if(successCallback){
+            successCallback(res);
           }
         }else{//fail
           alert(requestName + "에 실패하였습니다." + (res.message?"(" + res.message + ")":""));
+          if(failCallback){
+            failCallback(res);
+          }
         }
       }else if(res && res.type === "push"){
         console.log("server push!");
         console.log(res);
-        if(callback){
-          callback(res);
+        if(successCallback){
+          successCallback(res);
         }
       }else{
         console.log(res);
@@ -150,9 +153,10 @@
     },
     beforeUpdateSchedule:function(e){
       console.log("beforeUpdateSchedule", e);
-      e.schedule.start = e.start;
-      e.schedule.end = e.end;
-      NMNS.calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.schedule);
+      var id = e.schedule.id;
+      delete e.schedule.id;
+      console.log(e.schedule);
+      NMNS.calendar.updateSchedule(id, e.calendar.id, {title:"김손님aaa"});
     },
     beforeDeleteSchedule:function(e){
       console.log("beforeDeleteSchedule", e);
@@ -188,9 +192,9 @@
   }
   
   function onClickMenu(e) {
-    var action = getDataAction(e.target);
+    var action = e.target.getAttribute('data-action');
     if(!action){
-      action = getDataAction(e.target.parentElement);
+      action = e.target.parentElement.getAttribute('data-action');
     }
     var viewName = '';
 
@@ -225,9 +229,9 @@
   }
 
   function onClickNavi(e) {
-    var action = getDataAction(e.target);
+    var action = e.target.getAttribute('data-action');
     if(!action){
-      action = getDataAction(e.target.parentElement);
+      action = e.target.parentElement.getAttribute('data-action');
     }
     switch (action) {
       case 'prev':
@@ -280,7 +284,7 @@ console.log("aaa");
 
   function onChangeNewScheduleCalendar(e) {
     var target = $(e.target).closest('a[role="menuitem"]')[0];
-    var calendarId = getDataAction(target);
+    var calendarId = target.getAttribute('data-action');
     changeNewScheduleCalendar(calendarId);
   }
 
@@ -307,8 +311,13 @@ console.log("aaa");
     });
   }
   function saveNewSchedule(scheduleData) {
-    var calendar = scheduleData.calendar || NMNS.calendar;
-    var schedule = {
+    scheduleData.id = NMNS.email + generateRandom();
+    console.log(scheduleData);
+    
+    NMNS.calendar.createSchedules([scheduleData]);
+    scheduleData.start = moment(scheduleData.start.toDate()).format("YYYYMMDDHHmm");
+    scheduleData.end = moment(scheduleData.end.toDate()).format("YYYYMMDDHHmm");
+    /*var schedule = {
       id: "aaaaaaa",
       title: scheduleData.title,
       isAllDay: scheduleData.isAllDay,
@@ -320,10 +329,10 @@ console.log("aaa");
       bgColor: calendar.bgColor,
       dragBgColor: calendar.bgColor,
       borderColor: calendar.borderColor,
-      /*raw: {
+      raw: {
           'class': scheduleData.raw['class'],
           location: scheduleData.raw.location
-      },*/
+      },
       state: scheduleData.state
     };
     if (calendar) {
@@ -331,11 +340,8 @@ console.log("aaa");
       schedule.color = calendar.color;
       schedule.bgColor = calendar.bgColor;
       schedule.borderColor = calendar.borderColor;
-    }
-
-    //NMNS.calendar.createSchedules([schedule]);
-
-    refreshScheduleVisibility();
+    }*/
+    NMNS.socket.emit("add reserv", scheduleData);
   }
 
   function onChangeCalendars(e) {
@@ -447,13 +453,7 @@ console.log("aaa");
     window.addEventListener('resize', resizeThrottled);
   }
 
-  function getDataAction(target) {
-      return target.dataset ? target.dataset.action : target.getAttribute('data-action');
-  }
-
   function getSchedule(start, end){
-    console.log(start._date);
-    console.log(end._date);
     NMNS.socket.emit("get reserv", {start:toYYYYMMDD(start._date) + "0000", end:toYYYYMMDD(end._date) + "2359"});
   }
   
@@ -493,7 +493,6 @@ console.log("aaa");
   }
 
   function findManager(managerId){
-    console.log(NMNS.calendar.getCalendars());
     return NMNS.calendar.getCalendars().find(function(manager){
       return (manager.id === managerId);
     });
@@ -505,4 +504,7 @@ console.log("aaa");
   setRenderRangeText();
   setEventListener();
 
+  NMNS.socket.on("add reserv", socketResponse("예약 추가", null, function(e){
+    NMNS.calendar.updateSchedule(e.data.id, e.data.manager, e.data);
+  }));
 })(jQuery);

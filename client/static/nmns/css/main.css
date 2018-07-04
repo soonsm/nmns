@@ -70,7 +70,7 @@ button.moveDate:focus{
 .tui-full-calendar-popup input.form-control{
   border-radius:0;
 }
-.tui-full-calendar-popup .tui-full-calendar-popup-container{
+#creationPopup .tui-full-calendar-popup-container{
   width: 300px;
   min-width: 300px;
 }
@@ -85,7 +85,7 @@ button.moveDate:focus{
   font-size:.9rem;
 }
 @media (min-width: 576px){
-  .tui-full-calendar-popup .tui-full-calendar-popup-container{
+  #creationPopup .tui-full-calendar-popup-container{
     width: 535px;
   }
   #creationPopupManager + div.dropdown-menu{
@@ -102,6 +102,9 @@ button.moveDate:focus{
 #creationPopupManagerIcon{
   padding-left: 8px;
 }
+#creationPopupStartDateIcon, #creationPopupEndDateIcon{
+  line-height: 1.8;
+}
 #creationPopupManager{
   border: 1px solid #ced4da;
 }
@@ -114,7 +117,7 @@ button.moveDate:focus{
   top:45%;
 }
 .tui-full-calendar-section-allday{
-  line-height:31px;
+  line-height:35px;
 }
 .tui-full-calendar-section-allday #creationPopupAllDay + label{
   width:15px;
@@ -122,4 +125,7 @@ button.moveDate:focus{
 }
 .tui-full-calendar-section-allday #creationPopupAllDay + label + label{
   margin-bottom:0;
+}
+.compactLabel{
+  letter-spacing: -1px;
 }
