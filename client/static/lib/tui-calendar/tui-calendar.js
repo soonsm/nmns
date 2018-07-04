@@ -14170,6 +14170,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this._isEditMode) {
 	        this.fire('beforeUpdateSchedule', {
 	            schedule: {
+	            		id:this._scheduleId,
 	                calendarId: calendarId,
 	                title: title,
 	                raw: {
@@ -14180,6 +14181,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                start: start,
 	                end: end,
 	                isAllDay: isAllDay,
+	                manager: calendarId,
+	                name: title,
+	                contents: contents,
+	                contact: contact,
+	                etc: etc
 	            },
 	            start: start,
 	            end: end,
@@ -14958,7 +14964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupEtcIcon\" class=\"input-group-text far fa-bookmark\"></i>"
 		+"       </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"content\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\" value=\"" + alias4(((helper = (helper = helpers.etc || (depth0 != null ? depth0.etc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"etc","hash":{},"data":data}) : helper))) + "\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"etc\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\" value=\"" + alias4(((helper = (helper = helpers.etc || (depth0 != null ? depth0.etc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"etc","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
 

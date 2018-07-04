@@ -153,10 +153,10 @@
     },
     beforeUpdateSchedule:function(e){
       console.log("beforeUpdateSchedule", e);
+      NMNS.socket.emit("update reserv", e.schedule);
       var id = e.schedule.id;
       delete e.schedule.id;
-      console.log(e.schedule);
-      NMNS.calendar.updateSchedule(id, e.calendar.id, {title:"김손님aaa"});
+      NMNS.calendar.updateSchedule(id, e.calendar.id, e.schedule);
     },
     beforeDeleteSchedule:function(e){
       console.log("beforeDeleteSchedule", e);
