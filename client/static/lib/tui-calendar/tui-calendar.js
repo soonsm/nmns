@@ -9928,6 +9928,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	
 	            detailView.render(eventData);
+	            // NMNS CUSTOMIZING START
+	            $(".detailPopupLabel").off("mouseenter").on("mouseenter", function(e){
+	            	if(!$(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel").off("mouseleave").on("mouseleave", function(e){
+	            	if($(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel .dropdown-menu a").off("click touch").on("click touch", function(e){
+	            	if($(this).data("badge") === "light"){//delete
+	            		if(eventData.schedule.isAllDay){
+	            			weekView.handler.creation.allday.fire("beforeDeleteSchedule", eventData);
+	            		}else{
+	            			weekView.handler.creation.time.fire("beforeDeleteSchedule", eventData);
+	            		}
+	            	}else{
+	            		var status = $(this).data("badge");
+	            		eventData.schedule.status = (status === "success"? "RESERVED" : (status === "secondary"? "CANCELED" : (status === "danger"? "NOSHOW": "RESERVED")));
+	            		if(eventData.schedule.isAllDay){
+	            			weekView.handler.move.allday.fire("beforeUpdateSchedule", eventData);
+	            		}else{
+	            			weekView.handler.move.time.fire("beforeUpdateSchedule", eventData);
+	            		}
+	            	}
+            		detailView.hide();
+	            });
+	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
 	            if (eventData.isAllDay) {
@@ -15340,18 +15366,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    + "<div class=\"" + escapedCssPrefix + "section-button\">\n"
 	    	+ "<button class=\"" + escapedCssPrefix + "popup-edit\">"
 	    		+ "<span class=\"" + escapedCssPrefix + "content\">"
-	    			+ "<i class=\"fas fa-edit fa-fw align-middle\"></i>"
+	    			+ "<i class=\"fas fa-edit fa-fw\"></i>"
 	    			+ alias4(((helper = (helper = helpers["popupEdit-tmpl"] || (depth0 != null ? depth0["popupEdit-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupEdit-tmpl","hash":{},"data":data}) : helper)))
 	    		+ "</span>"
     		+ "</button>\n"
-    		+ "<button class=\"detailPopupLabel\">"
-    			+ "<span class=\"" + escapedCssPrefix + "content\">"
+    		+ "<div class=\"detailPopupLabel dropup d-inline-block text-center\">"
+    			+ "<span id=\"detailPopupLabelDropdown\" class=\"" + escapedCssPrefix + "content dropdown-toggle dropdown-toggle-up\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\" data-reference=\"parent\">"
     				+ "<span class=\"badge badge-" + (status === "NOSHOW" ? "danger" : (status === "RESERVED"? "success" : (status === "CANCELED" ? "secondary" : "light"))) + "\">" + (status === "NOSHOW" ? "노쇼" : (status === "RESERVED"? "정상" : (status === "CANCELED" ? "취소" : "삭제"))) + "</span>"
 	    		+ "</span>"
-    		+ "</button>\n"
+	    		+ "<div class=\"dropdown-menu text-center\" aria-labelledby=\"detailPopupLabelDropdown\">\n"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"light\"><span class=\"badge badge-light\">삭제</span></a>"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"danger\"><span class=\"badge badge-danger\">노쇼</span></a>"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"secondary\"><span class=\"badge badge-secondary\">취소</span></a>"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"success\"><span class=\"badge badge-success\">정상</span></a>"
+    			+ "</div>\n"
+    		+ "</div>\n"
     		+ "<button class=\"" + escapedCssPrefix + "popup-delete\">"
     			+ "<span class=\"" + escapedCssPrefix + "content\">"
-    				+ "<i class=\"fas fa-trash fa-fw align-middle\"></i>"
+    				+ "<i class=\"fas fa-trash fa-fw\"></i>"
 	    			+ alias4(((helper = (helper = helpers["popupDelete-tmpl"] || (depth0 != null ? depth0["popupDelete-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupDelete-tmpl","hash":{},"data":data}) : helper)))
 	    		+ "</span>"
     		+ "</button>\n"
@@ -19453,6 +19485,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	
 	            detailView.render(eventData);
+	            // NMNS CUSTOMIZING START
+	            $(".detailPopupLabel").off("mouseenter").on("mouseenter", function(e){
+	            	if(!$(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel").off("mouseleave").on("mouseleave", function(e){
+	            	if($(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel .dropdown-menu a").off("click touch").on("click touch", function(e){
+	            	console.log(eventData);
+	            	if($(this).data("badge") === "light"){//delete
+	            		creationHandler.fire("beforeDeleteSchedule", eventData);
+	            	}else{
+	            		var status = $(this).data("badge");
+	            		eventData.schedule.status = (status === "success"? "RESERVED" : (status === "secondary"? "CANCELED" : (status === "danger"? "NOSHOW": "RESERVED")));
+	            		creationHandler.fire("beforeUpdateSchedule", eventData.schedule);
+	            	}
+	            });
+	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
 	            creationHandler.fire('beforeDeleteSchedule', eventData);

@@ -61,7 +61,7 @@
         return "종료시간";
       },
       popupDetailDate:function(isAllDay, start, end){
-        var startDate = moment(start.toDate()), endDate = moment(end.toDate());
+        var startDate = moment(start instanceof Date? start : start.toDate()), endDate = moment(end instanceof Date? end : end.toDate());
         var isSameDate = startDate.isSame(endDate, 'day');
         var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm a';
 
@@ -166,9 +166,10 @@
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
-      NMNS.history.push(e.history);
+      NMNS.history.push(e.history || e.schedule);
       var id = e.schedule.id;
       delete e.schedule.id;
+      console.log(e);
       NMNS.calendar.updateSchedule(id, e.calendar.id, e.schedule);
       e.schedule.id = id;
       e.schedule.start = moment(e.schedule.start.toDate()).format("YYYYMMDDHHmm");
@@ -179,6 +180,11 @@
       NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
       e.schedule.status = "DELETED";
+      e.schedule.start = moment((e.schedule.start instanceof Date)? e.schedule.start : e.schedule.start.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.end = moment((e.schedule.end instanceof Date)? e.schedule.end : e.schedule.end.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.name = e.schedule.title;
+      e.schedule.type = "R";
+      console.log(e.schedule);
       NMNS.socket.emit("update reserv", e.schedule);
     }
   });
@@ -453,6 +459,8 @@ console.log("aaa");
   function drawSchedule(data){
     NMNS.calendar.createSchedules(data.map(function(schedule){//mapping server data to client data
       if(schedule.raw){
+        if(typeof schedule.start === "string") schedule.start = moment(schedule.start, "YYYYMMDDHHmm").toDate();
+        if(typeof schedule.end === "string") schedule.end = moment(schedule.end, "YYYYMMDDHHmm").toDate();
         return schedule;
       }
       var manager = findManager(schedule.manager || schedule.calendarId);
@@ -460,8 +468,8 @@ console.log("aaa");
         id:schedule.id,
         calendarId:manager?manager.id:"A1",//schedule.manager,
         title:schedule.name || schedule.title,//?schedule.name:(schedule.contact?schedule.contact:schedule.content),
-        start: (typeof schedule.start === "string"? moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate() : schedule.start),
-        end: (typeof schedule.end === "string"? moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate() : schedule.end),
+        start: (typeof schedule.start === "string"? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
+        end: (typeof schedule.end === "string"? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
         isAllDay:schedule.isAllDay,
         category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
         dueDateClass:(schedule.type === "T"?"dueDateClass":""),
@@ -519,7 +527,9 @@ console.log("aaa");
       refreshScheduleVisibility();
     }else{
       delete origin.id;
-      NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal.id, origin);
+      if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
+      if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
+      NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
     }
   }));
   

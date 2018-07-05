@@ -82,13 +82,13 @@ button.moveDate:focus{
   width: 300px;
   min-width: 300px;
 }
-.dropdown-menu{
+#creationPopup .dropdown-menu{
   margin-top:0;
   padding: .25rem 0;
   border-radius: 0;
   width:234px;
 }
-.dropdown-menu .dropdown-item{
+#creationPopup .dropdown-menu .dropdown-item{
   padding-left:0.5rem;
   font-size:.9rem;
 }
@@ -160,6 +160,17 @@ button.moveDate:focus{
   border:none;
   cursor:pointer;
 }
-.detailPopupLabel span span{
+.detailPopupLabel span span, .detailPopupLabel div span{
   font-size:.8rem;
+}
+#detailPopupLabelDropdown:after{
+  display:none;
+}
+.detailPopupLabel .dropdown-menu{
+  min-width:5.5rem;
+  width:5.5rem;
+}
+.detailPopupLabel .dropdown-item{
+  padding-left:1.5rem;
+  font-size:.9rem;
 }
