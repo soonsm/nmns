@@ -3,6 +3,7 @@
 const db = require('./webDb');
 const moment = require('moment');
 const util = require('./util');
+const passportSocketIo = require('passport.socketio');
 
 const GetReservationList = 'get reserv';
 const AddReservation = 'add reserv';
@@ -16,11 +17,18 @@ const UpdateManager = 'update manager';
 const DelManager = 'delete manager';
 
 
-module.exports = function (server, sessionMiddleware) {
+module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
     // io.use(function (socket, next) {
     //     sessionMiddleware(socket.request, socket.request.res, next);
     // });
+    io.use(passportSocketIo.authorize({
+        key: 'connect.sid',
+        secret: 'rilahhuma',
+        store: sessionStore,
+        passport: passport,
+        cookieParser: cookieParser
+    }));
 
 
     io.on('connection', async function (socket) {
@@ -31,7 +39,7 @@ module.exports = function (server, sessionMiddleware) {
         if (process.env.NODE_ENV == 'production') {
             email = socket.request.session.passport.user;
         } else if (process.env.NODE_ENV == 'development') {
-            email = 'ksm@test.com';
+            email = socket.request.user.email;
         }
 
         console.log('socket io email:', email);

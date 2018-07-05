@@ -144,12 +144,19 @@ exports.signUp = async function(newUser){
 }
 
 exports.getWebUser = async function(email){
-    return await get({
-        TableName: 'WebSecheduler',
-        Key: {
-            'email': email
+    let items =  await query({
+        TableName : "WebSecheduler",
+        ProjectionExpression:"email, password",
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames:{
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val":email
         }
     });
+
+    return items[0];
 }
 
 exports.newReservation = function(reservation){
