@@ -18,11 +18,13 @@ const DelManager = 'delete manager';
 
 module.exports = function (server, sessionMiddleware) {
     var io = require('socket.io')(server);
-    io.use(function (socket, next) {
-        sessionMiddleware(socket.request, socket.request.res, next);
-    });
+    // io.use(function (socket, next) {
+    //     sessionMiddleware(socket.request, socket.request.res, next);
+    // });
+
 
     io.on('connection', async function (socket) {
+        console.log(`socket.handshake.session=${socket.handshake.session}`);
 
         var email;
         process.env.NODE_ENV = (process.env.NODE_ENV && (process.env.NODE_ENV).trim().toLowerCase() == 'production') ? 'production' : 'development';
@@ -60,7 +62,7 @@ module.exports = function (server, sessionMiddleware) {
         });
 
         socket.on(UpdateReservation, async function (newReservation) {
-            console.log(newReservation);
+            console.log('UpdateReservation:', newReservation);
 
             let validationResult = reservationValidation(email, newReservation);
             let status = validationResult.status;
@@ -68,9 +70,9 @@ module.exports = function (server, sessionMiddleware) {
 
             if(status){
                 //validation for id, status
-                if(!newReservation.status || (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
+                if(newReservation.status && (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
                     status = false;
-                    message = 'status가 필요합니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
+                    message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
                 }
             }
             if(status){
@@ -85,7 +87,10 @@ module.exports = function (server, sessionMiddleware) {
                 for(var i=0; i<reservationList.length; i++){
                     let reservation = reservationList[i];
                     if(reservation.id === newReservation.id){
-                        reservationList[i] = db.newReservation(newReservation);
+                        for(let x in newReservation){
+                            reservation[x] = newReservation[x];
+                        }
+                        reservationList[i] = reservation;
                         isItMyReservation = true;
                         break;
                     }
