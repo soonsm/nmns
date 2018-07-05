@@ -3,6 +3,7 @@
 const db = require('./webDb');
 const moment = require('moment');
 const util = require('./util');
+const passportSocketIo = require('passport.socketio');
 
 const GetReservationList = 'get reserv';
 const AddReservation = 'add reserv';
@@ -16,23 +17,26 @@ const UpdateManager = 'update manager';
 const DelManager = 'delete manager';
 
 
-module.exports = function (server, sessionMiddleware) {
+module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
-    io.use(function (socket, next) {
-        sessionMiddleware(socket.request, socket.request.res, next);
-    });
+    io.use(passportSocketIo.authorize({
+        key: 'connect.sid',
+        secret: 'rilahhuma',
+        store: sessionStore,
+        passport: passport,
+        cookieParser: cookieParser
+    }));
+
 
     io.on('connection', async function (socket) {
-
-        var email;
-        process.env.NODE_ENV = (process.env.NODE_ENV && (process.env.NODE_ENV).trim().toLowerCase() == 'production') ? 'production' : 'development';
-        if (process.env.NODE_ENV == 'production') {
-            email = socket.request.session.passport.user;
-        } else if (process.env.NODE_ENV == 'development') {
-            email = 'ksm@test.com';
-        }
+        var email = socket.request.user.email;
 
         console.log('socket io email:', email);
+
+        if(!email || !socket.request.user.logged_in){
+            console.log(`User ${email} is not logged in`);
+            return;
+        }
 
         /**
          * Reservation
@@ -60,7 +64,7 @@ module.exports = function (server, sessionMiddleware) {
         });
 
         socket.on(UpdateReservation, async function (newReservation) {
-            console.log(newReservation);
+            console.log('UpdateReservation:', newReservation);
 
             let validationResult = reservationValidation(email, newReservation);
             let status = validationResult.status;
@@ -68,9 +72,9 @@ module.exports = function (server, sessionMiddleware) {
 
             if(status){
                 //validation for id, status
-                if(!newReservation.status || (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
+                if(newReservation.status && (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
                     status = false;
-                    message = 'status가 필요합니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
+                    message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
                 }
             }
             if(status){
@@ -85,7 +89,10 @@ module.exports = function (server, sessionMiddleware) {
                 for(var i=0; i<reservationList.length; i++){
                     let reservation = reservationList[i];
                     if(reservation.id === newReservation.id){
-                        reservationList[i] = db.newReservation(newReservation);
+                        for(let x in newReservation){
+                            reservation[x] = newReservation[x];
+                        }
+                        reservationList[i] = reservation;
                         isItMyReservation = true;
                         break;
                     }
@@ -306,7 +313,7 @@ module.exports = function (server, sessionMiddleware) {
 const reservationValidation = function(email, data){
     let status = false, message;
     if(!data.id || !data.start || !data.end || !data.contact){
-        message = '예약추가(수정)에 필요한 데이터가 없습니다. ({"id": ${예약키}, "type":${예약/일정 구분, string, R(예약)/T(일정), optional, default: R}, "name":${고객 이름 혹은 일정이름, string}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "contents":${시술정보, string, optional}, "manager":${담당 매니저 id, string, optional}, "etc":${부가정보, string, optional})';
+        message = '예약추가(수정)에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
     }else if(!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
     }else if(!util.phoneNumberValidation(data.contact)) {

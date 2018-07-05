@@ -20,7 +20,8 @@ const
     session = require('express-session'),
     app = express(),
     server = Server(app),
-    morgan = require("morgan");
+    morgan = require("morgan"),
+    cookieParser = require('cookie-parser');
     
 const
     message = require('./bin/message'),
@@ -40,7 +41,6 @@ app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended:false}));
 
 //cookie parser
-var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 //flash && session setting
@@ -49,16 +49,16 @@ let autoCreateValue = true;
 if (process.env.NODE_ENV == 'production') {
     autoCreateValue = false;
 }
-let sessionMiddleware = session({secret: "rilahhuma", resave: false, saveUninitialized: false,
-    store: new DynamoStore({
-        region: 'ap-northeast-2',
-        tableName: 'SessionTable',
-        cleanupInterval: 0, // session is not expired unless log-out
-        touchAfter: 0,
-        autoCreate: autoCreateValue
-    }) });
+let sessionStore = new DynamoStore({
+    region: 'ap-northeast-2',
+    tableName: 'SessionTable',
+    cleanupInterval: 0, // session is not expired unless log-out
+    touchAfter: 0,
+    autoCreate: autoCreateValue
+});
 
-app.use(sessionMiddleware);
+app.use(session({secret: "rilahhuma", resave: false, saveUninitialized: false,
+    store: sessionStore }));
 app.use(flash());
 
 //Passport configure
@@ -160,7 +160,7 @@ app.delete('/friend/:user_key', (req, res)=>{
 
 
 //socket.io.handler
-require('./bin/socket.io.handler')(server, sessionMiddleware);
+require('./bin/socket.io.handler')(server, sessionStore, passport, cookieParser);
 
 // Sets server port and logs message on success
 server.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
