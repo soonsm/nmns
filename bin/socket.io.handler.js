@@ -19,9 +19,6 @@ const DelManager = 'delete manager';
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
-    // io.use(function (socket, next) {
-    //     sessionMiddleware(socket.request, socket.request.res, next);
-    // });
     io.use(passportSocketIo.authorize({
         key: 'connect.sid',
         secret: 'rilahhuma',
@@ -32,17 +29,14 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
 
     io.on('connection', async function (socket) {
-        console.log(`socket.handshake.session=${socket.handshake.session}`);
-
-        var email;
-        process.env.NODE_ENV = (process.env.NODE_ENV && (process.env.NODE_ENV).trim().toLowerCase() == 'production') ? 'production' : 'development';
-        if (process.env.NODE_ENV == 'production') {
-            email = socket.request.session.passport.user;
-        } else if (process.env.NODE_ENV == 'development') {
-            email = socket.request.user.email;
-        }
+        var email = socket.request.user.email;
 
         console.log('socket io email:', email);
+
+        if(!email || !socket.request.user.logged_in){
+            console.log(`User ${email} is not logged in`);
+            return;
+        }
 
         /**
          * Reservation
