@@ -1,6 +1,7 @@
 /*global jQuery, location, moment, tui, NMNS, io*/
 (function($) {
   NMNS.needInit = true;
+  NMNS.history = [];
   
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
@@ -116,7 +117,7 @@
     drawSchedule(e.data);
     refreshScheduleVisibility();
   }));
-
+  
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
     var html = "";
     e.data.forEach(function(item){
@@ -129,9 +130,7 @@
       item.bgColor = item.color;
       item.borderColor = item.color;
     });
-    console.log(e.data);
     NMNS.calendar.setCalendars(e.data);
-    console.log(NMNS.calendar.getCalendars());
     if(NMNS.needInit){
       delete NMNS.needInit;
       setSchedules();
@@ -147,23 +146,23 @@
       NMNS.calendar.setOptions({week:{hourStart:9, hourEnd:23}});
     },
     beforeCreateSchedule:function(e){
-      console.log("beforeCreateSchedule", e);
-      console.log(e.guide);
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
-      console.log("beforeUpdateSchedule", e);
-      NMNS.socket.emit("update reserv", e.schedule);
+      NMNS.history.push(e.history);
       var id = e.schedule.id;
       delete e.schedule.id;
       NMNS.calendar.updateSchedule(id, e.calendar.id, e.schedule);
+      e.schedule.id = id;
+      e.schedule.start = moment(e.schedule.start.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.end = moment(e.schedule.end.toDate()).format("YYYYMMDDHHmm");
+      NMNS.socket.emit("update reserv", e.schedule);
     },
     beforeDeleteSchedule:function(e){
-      console.log("beforeDeleteSchedule", e);
+      NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
-    },
-    afterRenderSchedule:function(e){
-      console.log("afterRenderSchedule", e);
+      e.schedule.status = "DELETED";
+      NMNS.socket.emit("update reserv", e.schedule);
     }
   });
   
@@ -312,35 +311,12 @@ console.log("aaa");
   }
   function saveNewSchedule(scheduleData) {
     scheduleData.id = NMNS.email + generateRandom();
-    console.log(scheduleData);
     
     NMNS.calendar.createSchedules([scheduleData]);
+    
+    NMNS.history.push(scheduleData);
     scheduleData.start = moment(scheduleData.start.toDate()).format("YYYYMMDDHHmm");
     scheduleData.end = moment(scheduleData.end.toDate()).format("YYYYMMDDHHmm");
-    /*var schedule = {
-      id: "aaaaaaa",
-      title: scheduleData.title,
-      isAllDay: scheduleData.isAllDay,
-      start: scheduleData.start,
-      end: scheduleData.end,
-      category: scheduleData.isAllDay ? 'allday' : 'time',
-      dueDateClass: '',
-      color: calendar.color,
-      bgColor: calendar.bgColor,
-      dragBgColor: calendar.bgColor,
-      borderColor: calendar.borderColor,
-      raw: {
-          'class': scheduleData.raw['class'],
-          location: scheduleData.raw.location
-      },
-      state: scheduleData.state
-    };
-    if (calendar) {
-      schedule.calendarId = calendar.id;
-      schedule.color = calendar.color;
-      schedule.bgColor = calendar.bgColor;
-      schedule.borderColor = calendar.borderColor;
-    }*/
     NMNS.socket.emit("add reserv", scheduleData);
   }
 
@@ -420,7 +396,7 @@ console.log("aaa");
         html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM'));
     } else {
         html.push(moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY.MM.DD'));
-        html.push(' ~ ');
+        html.push(' – ');
         html.push(moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM.DD'));
     }
     renderRange.innerHTML = html.join('');
@@ -459,14 +435,16 @@ console.log("aaa");
   
   function drawSchedule(data){
     NMNS.calendar.createSchedules(data.map(function(schedule){//mapping server data to client data
-      var manager = findManager(schedule.manager);
-      console.log(manager);
+      if(schedule.raw){
+        return schedule;
+      }
+      var manager = findManager(schedule.manager || schedule.calendarId);
       return {
         id:schedule.id,
         calendarId:manager?manager.id:"A1",//schedule.manager,
-        title:schedule.name?schedule.name:(schedule.contact?schedule.contact:schedule.content),
-        start: moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate(),
-        end:moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate(),
+        title:schedule.name || schedule.title,//?schedule.name:(schedule.contact?schedule.contact:schedule.content),
+        start: (typeof schedule.start === "string"? moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate() : schedule.start),
+        end: (typeof schedule.end === "string"? moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate() : schedule.end),
         isAllDay:schedule.isAllDay,
         category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
         dueDateClass:(schedule.type === "T"?"dueDateClass":""),
@@ -486,7 +464,8 @@ console.log("aaa");
         raw:{
           contact:schedule.contact,
           contents:schedule.contents,
-          etc:schedule.etc
+          etc:schedule.etc,
+          status: schedule.status
         }
       }
     }), true);
@@ -504,7 +483,27 @@ console.log("aaa");
   setRenderRangeText();
   setEventListener();
 
-  NMNS.socket.on("add reserv", socketResponse("예약 추가", null, function(e){
-    NMNS.calendar.updateSchedule(e.data.id, e.data.manager, e.data);
+  NMNS.socket.on("add reserv", socketResponse("예약 추가하기", function(e){
+    NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
+  }, function(e){
+    var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
+    NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
+    delete origin.id;
+    NMNS.calendar.deleteSchedule(e.data.id, origin.manager);
   }));
+  
+  NMNS.socket.on("update reserv", socketResponse("예약 정보 변경하기", function(e){
+    NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
+  }, function(e){
+    var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
+    NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
+    if(origin.status === "DELETED"){
+      drawSchedule([origin]);
+      refreshScheduleVisibility();
+    }else{
+      delete origin.id;
+      NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal.id, origin);
+    }
+  }));
+  
 })(jQuery);

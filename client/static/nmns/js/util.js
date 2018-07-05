@@ -66,3 +66,27 @@ var generateRandom = function(){
   }
 
 }();
+
+Array.prototype.remove = function(target, test) {
+    var i=0;
+    while (i < this.length) {
+      if(test(this[i], target)){
+        this.splice(i, 1);
+      }
+      ++i;
+    }
+    return this;
+};
+
+if(!Array.prototype.find){
+  Array.prototype.find = function(test){
+    var i=0;
+    while(i < this.length){
+      if(test(this[i])){
+        return this[i];
+      }
+      ++i;
+    }
+    return undefined;
+  }
+}

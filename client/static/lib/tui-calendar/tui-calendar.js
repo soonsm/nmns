@@ -6895,6 +6895,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        schedule.set('isFocused', options.isFocused);
 	    }
 	
+			if (options.raw && options.raw.contents){
+				schedule.setRaw('contents', options.raw.contents);
+			}
+	
+			if (options.raw && options.raw.contact){
+				schedule.setRaw('contact', options.raw.contact);
+			}
+	
+			if (options.raw && options.raw.etc){
+				schedule.setRaw('etc', options.raw.etc);
+			}
 	    this._removeFromMatrix(schedule);
 	    this._addToMatrix(schedule);
 	
@@ -7537,6 +7548,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        this._changed[propName] = true;
+	
+	        /**
+	         * Dirty flag
+	         * @type {Boolean}
+	         * @name _dirty
+	         * @memberof dirty
+	         */
+	        this._dirty = true;
+	    },
+	    /**
+	     * Set raw property value with dirty flagging.
+	     * @param {string} propName Property name in raw object.
+	     * @param {*} value Proprty value in raw object.
+	     */
+	    setRaw: function(propName, value) {
+	        var originValue = this.raw[propName];
+	
+	        if (originValue === value) {
+	            return;
+	        }
+	
+	        this.raw[propName] = value;
+	
+	        if (!this._changed) {
+	            /**
+	             * Save changed properties.
+	             * @memberof dirty
+	             * @name _changed
+	             * @type {Object}
+	             */
+	            this._changed = {};
+	        }
+	    		if(!this._changed.raw){
+	    			this._changed.raw = {};
+	    		}
+	
+	        this._changed.raw[propName] = true;
 	
 	        /**
 	         * Dirty flag
@@ -14095,7 +14143,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether save button is clicked or not
 	 */
 	ScheduleCreationPopup.prototype._onClickSaveSchedule = function(target) {
-			console.log("onclicksaveSchedule", target);
 			if (!$(target).is("#creationPopupSave")) {
 	        return false;
 	    }else if(!this.validator){
@@ -14134,10 +14181,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    	this.validator.showErrors();
 	    	return true;
 	    }
-	    var title, isAllDay, startDate, endDate, contents, contact, etc;
+	    var title, isAllDay, startDate, endDate, contents, contact, etc, status;
 	    var start, end, calendarId, manager = this._selectedCal;
-	console.log(moment($("#tui-full-calendar-schedule-start-date").val(), "YYYY-MM-DD HH:mm"));
-	console.log(moment($("#tui-full-calendar-schedule-end-date").val(), "YYYY-MM-DD HH:mm"));
+
 	    startDate = new TZDate(moment($("#tui-full-calendar-schedule-start-date").val(), "YYYY-MM-DD HH:mm").toDate());
 	    endDate = new TZDate(moment($("#tui-full-calendar-schedule-end-date").val(), "YYYY-MM-DD HH:mm").toDate());
 
@@ -14158,10 +14204,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        endDate.setHours(23);
 	        endDate.setMinutes(59);
 	        endDate.setSeconds(59);
+			    startDate = new TZDate(startDate);
+			    endDate = new TZDate(endDate);
 	    }
 	
-	    start = new TZDate(startDate);
-	    end = new TZDate(endDate);
 	
 	    if (manager) {
 	        calendarId = manager.id;
@@ -14176,19 +14222,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                raw: {
 	                    contents: contents,
 		                  contact: contact,
-		                  etc: etc
+		                  etc: etc,
+		                  status : this._viewModel.status
 	                },
-	                start: start,
-	                end: end,
+	                start: startDate,
+	                end: endDate,
 	                isAllDay: isAllDay,
 	                manager: calendarId,
 	                name: title,
 	                contents: contents,
 	                contact: contact,
-	                etc: etc
+	                etc: etc,
+	                status : this._viewModel.status,
 	            },
-	            start: start,
-	            end: end,
+              history : this._viewModel,
+	            start: startDate,
+	            end: endDate,
 	            calendar: this._selectedCal,
 	            triggerEventName: 'click'
 	        });
@@ -14204,19 +14253,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: title,
 	            raw: {
 	                "class": 'public',
-	                location: location.value,
+	                location: "",
 	                contents: contents,
 		              contact: contact,
-		              etc: etc
+		              etc: etc,
+		              status: "RESERVED"
 	            },
-	            start: start,
-	            end: end,
+	            start: startDate,
+	            end: endDate,
 	            isAllDay: isAllDay,
 	            state: "Busy",
-	            manager:calendarId,
-	            contents: contents,
-              contact: contact,
-              etc: etc,
               category: isAllDay?"allday":"time",
 				      dueDateClass:"",
 				      attendees:[],
@@ -14232,6 +14278,11 @@ return /******/ (function(modules) { // webpackBootstrap
 				      borderColor:manager?manager.color:"#b2dfdb",
 				      color:"#ffffff",
 				      dragBgColor:manager?manager.color:"#b2dfdb",
+	            manager:calendarId,
+	            contents: contents,
+              contact: contact,
+              etc: etc,
+				      status: "RESERVED"
 	        });
 	    }
 	
@@ -14259,7 +14310,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
-	        viewModel = this._makeEditModeData(viewModel);
+	        this._viewModel = viewModel = this._makeEditModeData(viewModel);
 	    } else {
 	        this.guide = viewModel.guide;
 	        guideElements = this._getGuideElements(this.guide);
@@ -14283,15 +14334,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	ScheduleCreationPopup.prototype._makeEditModeData = function(viewModel) {
 	    var schedule = viewModel.schedule;
-	    var title, isPrivate, location, startDate, endDate, isAllDay, state, contact, etc, contents;
+	    var title, isPrivate, location, startDate, endDate, isAllDay, state, contact, etc, contents, status;
 	    var raw = schedule.raw || {};
 	    var calendars = this.calendars;
 	    var calendarIndex;
 	
 	    var id = schedule.id;
 	    title = schedule.title;
-	    isPrivate = raw['class'] === 'private';
-	    location = raw.location;
 	    startDate = schedule.start;
 	    endDate = schedule.end;
 	    isAllDay = schedule.isAllDay;
@@ -14299,6 +14348,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    contact = raw.contact;
 	    contents = raw.contents;
 	    etc = raw.etc;
+	    status = raw.status;
 	
 	    calendarIndex = calendars.findIndex(function(calendar) {
 	        return calendar.id === viewModel.schedule.calendarId;
@@ -14313,8 +14363,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        selectedCal: this._selectedCal,
 	        calendars: calendars,
 	        title: title,
-	        isPrivate: isPrivate,
-	        location: location,
+	        isPrivate: false,
+	        location: "",
 	        isAllDay: isAllDay,
 	        state: state,
 	        start: startDate,
@@ -14322,12 +14372,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        contact: contact,
 	        contents : contents,
 	        etc: etc,
+            status: status,
 	        raw: {
-	            location: location,
-	            'class': isPrivate ? 'private' : 'public',
+	            location: "",
+	            'class': 'public',
 	            contact : contact,
 	            contents : contents,
-	            etc: etc
+	            etc: etc,
+	            status: status
 	        },
 	        zIndex: this.layer.zIndex + 5,
 	        isEditMode: this._isEditMode
@@ -14481,24 +14533,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {TZDate} end - end date
 	 */
 	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
-	    /*var cssPrefix = config.cssPrefix;
-	    this.rangePicker = DatePicker.createRangePicker({
-	        startpicker: {
-	            date: new TZDate(start.getTime()).toDate(),
-	            input: '#' + cssPrefix + 'schedule-start-date',
-	            container: '#' + cssPrefix + 'startpicker-container'
-	        },
-	        endpicker: {
-	            date: new TZDate(end.getTime()).toDate(),
-	            input: '#' + cssPrefix + 'schedule-end-date',
-	            container: '#' + cssPrefix + 'endpicker-container'
-	        },
-	        format: 'yyyy-MM-dd HH:mm',
-	        timepicker: {
-	            showMeridiem: false
-	        },
-	        usageStatistics: true
-	    });*/
 	    $("#creationPopupStartDate").datetimepicker({
 	    	icons:{
 	    		up: "fas fa-chevron-up",
@@ -14591,10 +14625,10 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 	    });
 	    $("#creationPopupStartDate").on("change.datetimepicker", function (e) {
-          $('#creationPopupEndDate').datetimepicker('minDate', e.date);
+          $('#creationPopupEndDate').datetimepicker('minDate', e.date.add(10, 'm'));
       });
       $("#creationPopupEndDate").on("change.datetimepicker", function (e) {
-          $('#creationPopupStartDate').datetimepicker('maxDate', e.date);
+          $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
       });
 	};
 	
