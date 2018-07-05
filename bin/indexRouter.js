@@ -9,6 +9,8 @@ module.exports = function(passport){
 
 
     router.get('/index', function (req, res) {
+        console.log('index cookie', req.cookies.errorMessage);
+        res.clearCookie('errorMessage');
         res.marko(require('../client/template/index'), {type:"signin", email:req.cookies.email, message:req.cookies.errorMessage});
     });
 
