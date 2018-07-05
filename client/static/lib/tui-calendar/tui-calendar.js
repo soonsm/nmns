@@ -14065,32 +14065,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether 
 	 */
 	ScheduleCreationPopup.prototype._selectDropdownMenuItem = function(target) {
-	    var itemClassName = config.classname('dropdown-menu-item');
-	    var iconClassName = config.classname('icon');
-	    var contentClassName = config.classname('content');
+	    var itemClassName = config.classname('dropdown-item');
 	    var selectedItem = domutil.hasClass(target, itemClassName) ? target : domutil.closest(target, '.' + itemClassName);
-	    var bgColor, title, dropdown, dropdownBtn;
-	
 	    if (!selectedItem) {
 	        return false;
 	    }
-	
-	    bgColor = domutil.find('.' + iconClassName, selectedItem).style.backgroundColor || 'transparent';
-	    title = domutil.find('.' + contentClassName, selectedItem).innerHTML;
-	
-	    dropdown = domutil.closest(selectedItem, config.classname('.dropdown'));
-	    dropdownBtn = domutil.find(config.classname('.dropdown-button'), dropdown);
-	    domutil.find('.' + contentClassName, dropdownBtn).innerText = title;
-	
-	    if (domutil.hasClass(dropdown, config.classname('section-calendar'))) {
-	        domutil.find('.' + iconClassName, dropdownBtn).style.backgroundColor = bgColor;
-	        this._selectedCal = common.find(this.calendars, function(cal) {
-	            return cal.id === domutil.getData(selectedItem, 'calendarId');
-	        });
-	    }
-	
-	    domutil.removeClass(dropdown, config.classname('open'));
-	
+
+      this._selectedCal = common.find(this.calendars, function(cal) {
+          return cal.id === domutil.getData(selectedItem, 'calendarId');
+      });
+      $("#creationPopupManager").html($(selectedItem).html());
+      
 	    return true;
 	};
 	
@@ -14878,7 +14863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 		var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 		var test = 
-		  "<a href=\"\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
+		  "<a href=\"#\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
 		    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper))) + "\">\n"
 			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(((helper = (helper = helpers.bgColor || (depth0 != null ? depth0.bgColor : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"bgColor","hash":{},"data":data}) : helper))) + "\"></span>\n"
 			+ "<span class=\"" + escapedCssPrefix + "content\">"

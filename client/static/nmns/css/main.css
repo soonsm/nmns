@@ -1,7 +1,7 @@
+/*main contents*/
 div.tui-full-calendar-weekday-grid{
   overflow-y:auto;
 }
-
 div.tui-full-calendar-weekday-schedules{
   overflow-y: auto;
 }
@@ -42,10 +42,18 @@ button.moveDate{
 button.moveDate:focus{
   box-shadow:none;
 }
+/* side bar */
 #sidebarContainer{
   max-width:230px;
 }
-
+#managerList div:first-child{
+  margin-top:.5rem;
+}
+#managerList .lnbManagerItem{
+  line-height:.8rem;
+  margin-left:.25rem;
+}
+/* creation popup */
 .tui-full-calendar-button.tui-full-calendar-popup-close{
   font-size:1.2rem;
   right:16px;

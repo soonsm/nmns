@@ -121,7 +121,7 @@
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
     var html = "";
     e.data.forEach(function(item){
-      html += "<div class='lnbManagerItem py-2'><label><input class='tui-full-calendar-checkbox-round' value='"+item.key+"' checked='' type='checkbox'>";
+      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
       html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
     });
     $("#managerList").html(html);
@@ -320,8 +320,8 @@ console.log("aaa");
     NMNS.socket.emit("add reserv", scheduleData);
   }
 
-  function onChangeCalendars(e) {
-    var managerId = e.target.value;
+  function onChangeManagers(e) {
+    var managerId = $(e.target).parents(".lnbManagerItem").data("value");
     var checked = e.target.checked;
     var viewAll = document.querySelector('.lnbManagerItem input');
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
@@ -419,7 +419,7 @@ console.log("aaa");
       $("#calendarTypeMenu").attr("data-action", $(e.target).data("action"));
       $("#calendarTypeMenu").trigger("click");
     });
-    $('#managerElements').on('change', onChangeCalendars);
+    $('#managerElements').on('change', onChangeManagers);
 
     $('#btn-save-schedule').on('touch click', onNewSchedule);
     $('#btn-new-schedule').on('touch click', createNewSchedule);

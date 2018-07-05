@@ -124,15 +124,16 @@ docClient.update(params, function(err, data) {
 });
 
 var staff = db.newStaff({
-    id: 'A1',
-    name: '정스탭'
+    id: 'A2',
+    name: '정스탭2',
+    color: "#009688"
 });
 var params = {
     TableName: "WebSecheduler",
     Key: {
         'email': 'ksm@test.com'
     },
-    UpdateExpression: "set staffList[0] = :staff",
+    UpdateExpression: "set staffList[1] = :staff",
     ExpressionAttributeValues:{
         ":staff":staff
     },
