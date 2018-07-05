@@ -313,7 +313,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 const reservationValidation = function(email, data){
     let status = false, message;
     if(!data.id || !data.start || !data.end || !data.contact){
-        message = '예약추가(수정)에 필요한 데이터가 없습니다. ({"id": ${예약키}, "type":${예약/일정 구분, string, R(예약)/T(일정), optional, default: R}, "name":${고객 이름 혹은 일정이름, string}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "contents":${시술정보, string, optional}, "manager":${담당 매니저 id, string, optional}, "etc":${부가정보, string, optional})';
+        message = '예약추가(수정)에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
     }else if(!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
     }else if(!util.phoneNumberValidation(data.contact)) {
