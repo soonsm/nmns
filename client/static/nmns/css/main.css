@@ -137,3 +137,29 @@ button.moveDate:focus{
 .compactLabel{
   letter-spacing: -1px;
 }
+#detailPopup .tui-full-calendar-section-button{
+  border-top: 1px solid #bdbdbd;
+}
+#detailPopup .tui-full-calendar-section-button .tui-full-calendar-popup-delete, #detailPopup .tui-full-calendar-section-button .tui-full-calendar-popup-edit, #detailPopup .tui-full-calendar-section-button .detailPopupLabel{
+  width: calc(33.3333% - 2px);
+  padding: 0;
+  margin: 7px 0 11px 0;
+  vertical-align: middle;
+}
+#detailPopup .tui-full-calendar-section-button .tui-full-calendar-content{
+  display:block;
+  height:20px;
+  line-height:20px;
+  border-right:1px solid #bdbdbd;
+}
+#detailPopup .tui-full-calendar-section-button .tui-full-calendar-popup-delete .tui-full-calendar-content{
+  border-right:none;
+}
+.detailPopupLabel{
+  background:none;
+  border:none;
+  cursor:pointer;
+}
+.detailPopupLabel span span{
+  font-size:.8rem;
+}

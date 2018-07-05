@@ -14070,10 +14070,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!selectedItem) {
 	        return false;
 	    }
-
-      this._selectedCal = common.find(this.calendars, function(cal) {
-          return cal.id === domutil.getData(selectedItem, 'calendarId');
-      });
+			var selectedCalendarId = domutil.getData(selectedItem, 'calendarId');
+      this._selectedCal = this.calendars.find(function(cal){ return (cal.id === selectedCalendarId);});
+      /*common.find(this.calendars, function(cal) {
+          return cal.id === selectedCalendarId;
+      });*/
       $("#creationPopupManager").html($(selectedItem).html());
       
 	    return true;
@@ -14923,7 +14924,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처<span class=\"text-danger\">*</span></label>"
 		+"    <div class=\"col-9 col-sm-5 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-mobile-alt\"></i>"
+		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone\"></i>"
 		+"      </div>"
 		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처(숫자)\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
@@ -15296,47 +15297,61 @@ return /******/ (function(modules) { // webpackBootstrap
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
+			console.log("depth0", depth0);
+			console.log("stack1", stack1);
+			var status = alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.status : stack1), depth0));
 	  var result = 
 	  	"<div id=\"detailPopup\" class=\"" + escapedCssPrefix + "popup " + escapedCssPrefix + "popup-detail\">\n"
 	  	+ "<div class=\"" + escapedCssPrefix + "popup-container\">\n"
 	  		+ "<div class=\"" + escapedCssPrefix + "popup-section " + escapedCssPrefix + "section-header\">\n"
-	  			+ "<div>\n"
-	  				+ "<span class=\"" + escapedCssPrefix + "schedule-private " + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-private\"></span>\n"
+	  			+ "<div title=\"고객이름\">\n"
 	  				+ "<span class=\"" + escapedCssPrefix + "schedule-title\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.title : stack1), depth0)) + "</span>\n"
   				+ "</div>\n"
-  				+ "<div class=\"" + escapedCssPrefix + "popup-detail-date " + escapedCssPrefix + "content\">"
+  				+ "<div class=\"" + escapedCssPrefix + "popup-detail-date " + escapedCssPrefix + "content\" title=\"예약 시간\">"
 	    			+ alias4((helpers["popupDetailDate-tmpl"] || (depth0 && depth0["popupDetailDate-tmpl"]) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.isAllDay : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.start : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.end : stack1),{"name":"popupDetailDate-tmpl","hash":{},"data":data}))
 	    		+ "</div>\n"
     		+ "</div>\n"
     		+ "<div class=\"" + escapedCssPrefix + "section-detail\">\n"
-    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
-    			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-location-b\"></span>"
-    			+ "<span class=\"" + escapedCssPrefix + "content\">"
-	    			+ alias4((helpers["popupDetailLocation-tmpl"] || (depth0 && depth0["popupDetailLocation-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailLocation-tmpl","hash":{},"data":data}))
+    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객 연락처\">"
+    			+ "<i class=\"fas fa-phone fa-fw align-middle\"></i>"
+    			+ "<span class=\"" + escapedCssPrefix + "content\"> "
+	    			+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0))
 	    		+ "</span></div>\n"
-    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
-    			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-user-b\"></span>"
-    			+ "<span class=\"" + escapedCssPrefix + "content\">" + alias4((helpers["popupDetailUser-tmpl"] || (depth0 && depth0["popupDetailUser-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailUser-tmpl","hash":{},"data":data})) + "</span>"
+    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"예약 내용\">"
+    			+ "<i class=\"fas fa-list-ul fa-fw align-middle\"></i>"
+    			+ "<span class=\"" + escapedCssPrefix + "content\"> "
+    				+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contents : stack1), depth0))
+  				+ "</span>"
   			+ "</div>\n"
-  			+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
-  				+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-state-b\"></span>"
-  				+ "<span class=\"" + escapedCssPrefix + "content\">"
-	    			+ alias4((helpers["popupDetailState-tmpl"] || (depth0 && depth0["popupDetailState-tmpl"]) || alias2).call(alias1,(depth0 != null ? depth0.schedule : depth0),{"name":"popupDetailState-tmpl","hash":{},"data":data}))
+    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"담당자\">"
+    			+ "<i class=\"fas fa-user-tie fa-fw align-middle\"></i>"
+    			+ "<span class=\"" + escapedCssPrefix + "content\"> "
+    				+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
+  				+ "</span>"
+  			+ "</div>\n"
+  			+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객메모\">"
+  				+ "<i class=\"far fa-bookmark fa-fw align-middle\"></i>"
+  				+ "<span class=\"" + escapedCssPrefix + "content\"> "
+	    			+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.etc : stack1), depth0))
 	    		+ "</span>"
     		+ "</div>\n"
 	    	+ ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.calendar : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + "</div>\n"
 	    + "<div class=\"" + escapedCssPrefix + "section-button\">\n"
 	    	+ "<button class=\"" + escapedCssPrefix + "popup-edit\">"
-	    		+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-edit\"></span>"
 	    		+ "<span class=\"" + escapedCssPrefix + "content\">"
+	    			+ "<i class=\"fas fa-edit fa-fw align-middle\"></i>"
 	    			+ alias4(((helper = (helper = helpers["popupEdit-tmpl"] || (depth0 != null ? depth0["popupEdit-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupEdit-tmpl","hash":{},"data":data}) : helper)))
 	    		+ "</span>"
     		+ "</button>\n"
-    		+ "<div class=\"" + escapedCssPrefix + "popup-vertical-line\"></div>\n"
-    		+ "<button class=\"" + escapedCssPrefix + "popup-delete\">"
-    			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-delete\"></span>"
+    		+ "<button class=\"detailPopupLabel\">"
     			+ "<span class=\"" + escapedCssPrefix + "content\">"
+    				+ "<span class=\"badge badge-" + (status === "NOSHOW" ? "danger" : (status === "RESERVED"? "success" : (status === "CANCELED" ? "secondary" : "light"))) + "\">" + (status === "NOSHOW" ? "노쇼" : (status === "RESERVED"? "정상" : (status === "CANCELED" ? "취소" : "삭제"))) + "</span>"
+	    		+ "</span>"
+    		+ "</button>\n"
+    		+ "<button class=\"" + escapedCssPrefix + "popup-delete\">"
+    			+ "<span class=\"" + escapedCssPrefix + "content\">"
+    				+ "<i class=\"fas fa-trash fa-fw align-middle\"></i>"
 	    			+ alias4(((helper = (helper = helpers["popupDelete-tmpl"] || (depth0 != null ? depth0["popupDelete-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupDelete-tmpl","hash":{},"data":data}) : helper)))
 	    		+ "</span>"
     		+ "</button>\n"

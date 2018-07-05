@@ -59,6 +59,23 @@
       },
       endDatePlaceholder:function(){
         return "종료시간";
+      },
+      popupDetailDate:function(isAllDay, start, end){
+        var startDate = moment(start.toDate()), endDate = moment(end.toDate());
+        var isSameDate = startDate.isSame(endDate, 'day');
+        var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm a';
+
+        if (isAllDay) {
+            return startDate.format('YYYY.MM.DD') + (isSameDate ? '' : ' - ' + endDate.format('YYYY.MM.DD'));
+        }
+
+        return (startDate.format('YYYY.MM.DD hh:mm a') + ' - ' + endDate.format(endFormat));
+      },
+      popupEdit: function(){
+        return "수정";
+      },
+      popupDelete: function(){
+        return "삭제";
       }
     },
     month:{
