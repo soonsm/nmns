@@ -56,10 +56,9 @@ let sessionStore = new DynamoStore({
     touchAfter: 0,
     autoCreate: autoCreateValue
 });
-let sessionMiddleware = session({secret: "rilahhuma", resave: false, saveUninitialized: false,
-    store: sessionStore });
 
-app.use(sessionMiddleware);
+app.use(session({secret: "rilahhuma", resave: false, saveUninitialized: false,
+    store: sessionStore }));
 app.use(flash());
 
 //Passport configure

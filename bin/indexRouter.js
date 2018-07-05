@@ -9,9 +9,7 @@ module.exports = function(passport){
 
 
     router.get('/index', function (req, res) {
-        console.log('index cookie', req.cookies.errorMessage);
-        res.clearCookie('errorMessage');
-        res.marko(require('../client/template/index'), {type:"signin", email:req.cookies.email, message:req.cookies.errorMessage});
+        res.marko(require('../client/template/index'), {type:"signin", email:req.cookies.email, message:req.session.errorMessage});
     });
 
     router.post("/signup", async function(req, res){
@@ -107,7 +105,7 @@ module.exports = function(passport){
         passport.authenticate('local', (err,user,info)=>{
             req.logIn(user, function(err) {
                 if (err) {
-                    res.cookie('errorMessage', info.message);
+                    req.session.errorMessage = info.message;
                     res.redirect("/index");
                     return;
                 }
@@ -120,6 +118,9 @@ module.exports = function(passport){
 
     router.get("/signout", (req,res) => {
         req.logout();
+        req.session.destroy(function(err){
+            console.log('fail to destroy session: ', err);
+        });
         res.redirect('/');
     })
 
