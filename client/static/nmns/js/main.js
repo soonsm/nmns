@@ -526,7 +526,7 @@ console.log("aaa");
       drawSchedule([origin]);
       refreshScheduleVisibility();
     }else{
-      delete origin.id;
+      //delete origin.id;
       if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
       if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
       NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);

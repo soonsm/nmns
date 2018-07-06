@@ -14324,7 +14324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-	
+
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
@@ -14602,7 +14602,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 				buttons:{
 					showClose:true
-				}
+				},
+				debug:true
 	    });
 	    $("#creationPopupEndDate").datetimepicker({
 	    	icons:{
@@ -19522,12 +19523,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	            $(".detailPopupLabel .dropdown-menu a").off("click touch").on("click touch", function(e){
 	            	console.log(eventData);
+	            	console.log("aaaa");
 	            	if($(this).data("badge") === "light"){//delete
 	            		creationHandler.fire("beforeDeleteSchedule", eventData);
 	            	}else{
 	            		var status = $(this).data("badge");
 	            		eventData.schedule.status = (status === "success"? "RESERVED" : (status === "secondary"? "CANCELED" : (status === "danger"? "NOSHOW": "RESERVED")));
-	            		creationHandler.fire("beforeUpdateSchedule", eventData.schedule);
+	            		creationHandler.fire("beforeUpdateSchedule", eventData);
 	            	}
 	            });
 	            // NMNS CUSTOMIZING END
@@ -22111,6 +22113,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar: {id: schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: newStartDate,
 	        end: new TZDate(newStartDate.getTime() + duration)
 	    });
