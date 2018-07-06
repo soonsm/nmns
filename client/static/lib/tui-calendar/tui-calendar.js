@@ -14432,8 +14432,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        top: parentRect.top
 	    };
 	    var pos;
-	
 	    pos = this._calcRenderingData(layerSize, windowSize, guideBound);
+	
 	    pos.x -= parentBounds.left;
 	    pos.y -= (parentBounds.top + 6);
 	    this.layer.setPosition(pos.x, pos.y);
@@ -14505,9 +14505,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        arrowDirection = 'arrow-top';
 	    }
 	
-	    if (x > 0 && (x + layerSize.width > parentSize.right)) {
-	        x = parentSize.right - layerSize.width;
-	    }
+	    if (x > 0 && (x + layerSize.width > parentSize.right)) {//NMNS CUSTOMIZING START
+	        x = parentSize.right - layerSize.width - 17;
+	    }//NMNS CUSTOMIZING END
 	
 	    if (x < 0) {
 	        x = 0;
