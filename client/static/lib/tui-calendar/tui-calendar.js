@@ -5961,7 +5961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._controller.setCalendars(calendars);
 	    this.render();
 	};
-	
+	//NMNS CUSTOMIZING START
 	/**
 	 * Get calendar list
 	 * @returns {Array.<Object>} calendars - calendar list
@@ -5969,7 +5969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Calendar.prototype.getCalendars = function() {
 	    return this._controller.getCalendars();
 	};
-	
+	//NMNS CUSTOMIZING END
 	/**
 	 * Open schedule creation popup
 	 * @param {Schedule} schedule - preset schedule data
@@ -6894,7 +6894,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!util.isUndefined(options.isFocused)) {
 	        schedule.set('isFocused', options.isFocused);
 	    }
-	
+	//NMNS CUSTOMIZING START
 			if (options.raw && options.raw.contents){
 				schedule.setRaw('contents', options.raw.contents);
 			}
@@ -6906,6 +6906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			if (options.raw && options.raw.etc){
 				schedule.setRaw('etc', options.raw.etc);
 			}
+			//NMNS CUSTOMIZING END
 	    this._removeFromMatrix(schedule);
 	    this._addToMatrix(schedule);
 	
@@ -7092,7 +7093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Base.prototype.setCalendars = function(calendars) {
 	    this.calendars = calendars;
 	};
-	
+	//NMNS CUSTOMIZING START
 	/**
 	 * Get calendar list
 	 * @return {Array.<Calendar>} calendars - calendar list
@@ -7100,7 +7101,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Base.prototype.getCalendars = function() {
 	    return this.calendars;
 	};
-	
+	//NMNS CUSTOMIZING END
 	// mixin
 	util.CustomEvents.mixin(Base);
 	
@@ -7557,6 +7558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this._dirty = true;
 	    },
+	    //NMNS CUSTOMIZING START
 	    /**
 	     * Set raw property value with dirty flagging.
 	     * @param {string} propName Property name in raw object.
@@ -7594,7 +7596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this._dirty = true;
 	    },
-	
+	//NMNS CUSTOMIZING END
 	    /**
 	     * Check dirty flag.
 	     * @returns {boolean} Property is changed.
@@ -14091,6 +14093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether 
 	 */
 	ScheduleCreationPopup.prototype._selectDropdownMenuItem = function(target) {
+		//NMNS CUSTOMIZING START
 	    var itemClassName = config.classname('dropdown-item');
 	    var selectedItem = domutil.hasClass(target, itemClassName) ? target : domutil.closest(target, '.' + itemClassName);
 	    if (!selectedItem) {
@@ -14102,7 +14105,7 @@ return /******/ (function(modules) { // webpackBootstrap
           return cal.id === selectedCalendarId;
       });*/
       $("#creationPopupManager").html($(selectedItem).html());
-      
+      //NMNS CUSTOMIZING END
 	    return true;
 	};
 	
@@ -14112,6 +14115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether event target is allday section or not
 	 */
 	ScheduleCreationPopup.prototype._toggleIsAllday = function(target) {
+		//NMNS CUSTOMIZING START
 	    /*var className = config.classname('section-allday');
 	    var alldaySection = domutil.hasClass(target, className) ? target : domutil.closest(target, '.' + className);
 	    var checkbox;
@@ -14124,6 +14128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    return false;*/
+	  //NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -14155,6 +14160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether save button is clicked or not
 	 */
 	ScheduleCreationPopup.prototype._onClickSaveSchedule = function(target) {
+		//NMNS CUSTOMIZING START
 			if (!$(target).is("#creationPopupSave")) {
 	        return false;
 	    }else if(!this.validator){
@@ -14297,7 +14303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				      status: "RESERVED"
 	        });
 	    }
-	
+	//NMNS CUSTOMIZING END
 	    this.hide();
 	
 	    return true;
@@ -14322,16 +14328,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
+	        //NMNS CUSTOMIZING START
 	        this._viewModel = viewModel = this._makeEditModeData(viewModel);
+	        //NMNS CUSTOMIZING END
 	    } else {
 	        this.guide = viewModel.guide;
 	        guideElements = this._getGuideElements(this.guide);
 	        boxElement = guideElements.length ? guideElements[0] : null;
 	    }
 	    layer.setContent(tmpl(viewModel));
+	    //NMNS CUSTOMIZING START
 	    layer.show();
 	    this._createDatepicker(viewModel.start, viewModel.end);
 			document.getElementById("creationPopupForm").onsubmit = function(){return false;};
+			//NMNS CUSTOMIZING END
 	    this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 	
 	    util.debounce(function() {
@@ -14345,6 +14355,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {object} - edit mode view model
 	 */
 	ScheduleCreationPopup.prototype._makeEditModeData = function(viewModel) {
+		//NMNS CUSTOMIZING START
 	    var schedule = viewModel.schedule;
 	    var title, isPrivate, location, startDate, endDate, isAllDay, state, contact, etc, contents, status;
 	    var raw = schedule.raw || {};
@@ -14395,7 +14406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        zIndex: this.layer.zIndex + 5,
 	        isEditMode: this._isEditMode
-	    };
+	    };//NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -14545,6 +14556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {TZDate} end - end date
 	 */
 	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
+		//NMNS CUSTOMIZING START
 	    $("#creationPopupStartDate").datetimepicker({
 	    	icons:{
 	    		up: "fas fa-chevron-up",
@@ -14642,6 +14654,7 @@ return /******/ (function(modules) { // webpackBootstrap
       $("#creationPopupEndDate").on("change.datetimepicker", function (e) {
           $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
       });
+      //NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -14924,6 +14937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return container.escapeExpression(((helper = (helper = helpers["popupSave-tmpl"] || (depth0 != null ? depth0["popupSave-tmpl"] : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"popupSave-tmpl","hash":{},"data":data}) : helper)));
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+	    //NMNS CUSTOMIZING START
 	    var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 	    console.log("helpers");
 	    console.log(helpers);
@@ -15036,7 +15050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  + "</div>\n"
 	+ "</div>\n";
 		console.log(result);
-		return result;
+		return result;//NMNS CUSTOMIZING END
 	},"useData":true});
 
 /***/ },
@@ -15312,6 +15326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Handlebars = __webpack_require__(8);
 	module.exports = (Handlebars['default'] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+	    //NMNS CUSTOMIZING START
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 	  return 
 	  	"<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
@@ -15319,9 +15334,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			+ "<span class=\"" + escapedCssPrefix + "content\">"
 				+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
 	    + "</span>"
-    + "</div>\n";
+    + "</div>\n";//NMNS CUSTOMIZING END
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+	    //NMNS CUSTOMIZING START
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 			console.log("depth0", depth0);
 			console.log("stack1", stack1);
@@ -15397,7 +15413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+ "</div>\n"
 	+ "</div>\n";
 	console.log(result);
-	return result;
+	return result;//NMNS CUSTOMIZING END
 	},"useData":true});
 
 /***/ },
@@ -15843,6 +15859,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar: {id:schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: newStarts,
 	        end: newEnds
 	    });
@@ -17050,6 +17069,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id:schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: schedule.getStarts(),
 	        end: newEnds
 	    });
@@ -18489,6 +18511,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id : schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: newStarts,
 	        end: newEnds
 	    });
@@ -19087,6 +19112,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id:schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: schedule.getStarts(),
 	        end: newEnds
 	    });
@@ -21739,6 +21767,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id: schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: new TZDate(Number(schedule.getStarts())),
 	        end: newEnd
 	    });
