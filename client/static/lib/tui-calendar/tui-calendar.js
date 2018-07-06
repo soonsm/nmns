@@ -14225,8 +14225,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			    startDate = new TZDate(startDate);
 			    endDate = new TZDate(endDate);
 	    }
-	
-	
+
 	    if (manager) {
 	        calendarId = manager.id;
 	    }
@@ -14252,11 +14251,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                contact: contact,
 	                etc: etc,
 	                status : this._viewModel.status,
+	                color: manager.color,
+			            bgColor: manager.bgColor,
+			            borderColor: manager.borderColor,
+			            dragBgColor: manager.bgColor
 	            },
               history : this._viewModel,
 	            start: startDate,
 	            end: endDate,
-	            calendar: this._selectedCal,
+	            calendar: manager,
 	            triggerEventName: 'click'
 	        });
 	    } else {
@@ -14602,8 +14605,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 				buttons:{
 					showClose:true
-				},
-				debug:true
+				}
 	    });
 	    $("#creationPopupEndDate").datetimepicker({
 	    	icons:{
@@ -14904,13 +14906,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 		var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 		var test = 
-		  "<a href=\"#\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
+		  "<button type=\"button\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
 		    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper))) + "\">\n"
 			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(((helper = (helper = helpers.bgColor || (depth0 != null ? depth0.bgColor : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"bgColor","hash":{},"data":data}) : helper))) + "\"></span>\n"
 			+ "<span class=\"" + escapedCssPrefix + "content\">"
 		    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
 		    + "</span>\n"
-	    + "</a>\n";
+	    + "</button>\n";
 		return test;
 	},"5":function(container,depth0,helpers,partials,data) {
 	    var helper;

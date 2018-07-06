@@ -98,6 +98,7 @@
     return function(res){
       if(res && res.type === "response"){
         if(res.status){//success
+          alert("정상이래!");
           if(successCallback){
             successCallback(res);
           }
@@ -136,17 +137,18 @@
   }));
   
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
-    var html = "";
-    e.data.forEach(function(item){
-      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-      html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
-    });
-    $("#managerList").html(html);
     e.data.forEach(function(item){
       item.checked = true;
       item.bgColor = item.color;
       item.borderColor = item.color;
+      item.color = getColorFromBackgroundColor(item.bgColor);
     });
+    var html = "";
+    e.data.forEach(function(item){
+      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
+      html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"'></span><small>"+item.name+"</small></label></div>";
+    });
+    $("#managerList").html(html);
     NMNS.calendar.setCalendars(e.data);
     if(NMNS.needInit){
       delete NMNS.needInit;
@@ -168,9 +170,15 @@
     beforeUpdateSchedule:function(e){
       NMNS.history.push(e.history || e.schedule);
       var id = e.schedule.id;
-      delete e.schedule.id;
-      console.log(e);
-      NMNS.calendar.updateSchedule(id, e.calendar.id, e.schedule);
+      if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
+        NMNS.calendar.deleteSchedule(id, e.history.selectedCal.id);
+        e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
+        e.schedule.dueDateClass = '';
+        NMNS.calendar.createSchedules([e.schedule]);
+      }else{
+        delete e.schedule.id;
+        NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
+      }
       e.schedule.id = id;
       e.schedule.start = moment(e.schedule.start.toDate()).format("YYYYMMDDHHmm");
       e.schedule.end = moment(e.schedule.end.toDate()).format("YYYYMMDDHHmm");
@@ -184,7 +192,6 @@
       e.schedule.end = moment((e.schedule.end instanceof Date)? e.schedule.end : e.schedule.end.toDate()).format("YYYYMMDDHHmm");
       e.schedule.name = e.schedule.title;
       e.schedule.type = "R";
-      console.log(e.schedule);
       NMNS.socket.emit("update reserv", e.schedule);
     }
   });
@@ -463,10 +470,10 @@ console.log("aaa");
         if(typeof schedule.end === "string") schedule.end = moment(schedule.end, "YYYYMMDDHHmm").toDate();
         return schedule;
       }
-      var manager = findManager(schedule.manager || schedule.calendarId);
+      var manager = findManager(schedule.manager || schedule.calendarId) || {};
       return {
         id:schedule.id,
-        calendarId:manager?manager.id:"A1",//schedule.manager,
+        calendarId: manager.id || "A1",//schedule.manager,
         title:schedule.name || schedule.title,//?schedule.name:(schedule.contact?schedule.contact:schedule.content),
         start: (typeof schedule.start === "string"? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
         end: (typeof schedule.end === "string"? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
@@ -482,10 +489,10 @@ console.log("aaa");
         isPrivate:false,
         customStyle:"",
         location:"",
-        bgColor:manager?manager.color:"#b2dfdb",
-        borderColor:manager?manager.color:"#b2dfdb",
-        color:"#ffffff",
-        dragBgColor:manager?manager.color:"#b2dfdb",
+        bgColor: manager.bgColor || "#b2dfdb",
+        borderColor: manager.borderColor || "#b2dfdb",
+        color : manager.color || "#b2dfdb",
+        dragBgColor: manager.bgColor || "#b2dfdb",
         raw:{
           contact:schedule.contact,
           contents:schedule.contents,
