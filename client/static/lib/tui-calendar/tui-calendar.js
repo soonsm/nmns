@@ -17743,13 +17743,13 @@ console.log(viewModel);
 	    eventData = getScheduleDataFunc(clickEventData.originEvent);
 	
 	    this._requestOnClick = true;
-	    setTimeout(function() {
-	        if (self._requestOnClick) {
-	            self.fire('timeCreationClick', eventData);
-	            self._createSchedule(eventData);
-	        }
-	        self._requestOnClick = false;
-	    }, CLICK_DELAY);
+	    //NMNS CUSTOMIZING START
+      if (self._requestOnClick) {
+          self.fire('timeCreationClick', eventData);
+          self._createSchedule(eventData);
+      }
+      self._requestOnClick = false;
+      //NMNS CUSTOMIZING END
 	    this._dragStart = this._getScheduleDataFunc = null;
 	};
 	
@@ -20891,21 +20891,21 @@ console.log(viewModel);
 	    eventData = getMousePosDate(this.monthView)(e.originEvent);
 	
 	    this._requestOnClick = true;
-	    setTimeout(function() {
-	        if (self._requestOnClick) {
-	            self.fire('monthCreationClick', eventData);
-	
-	            range = self._adjustStartAndEndTime(new TZDate(Number(eventData.date)), new TZDate(Number(eventData.date)));
-	
-	            self._createSchedule({
-	                start: range.start,
-	                end: range.end,
-	                isAllDay: false,
-	                triggerEvent: eventData.triggerEvent
-	            });
-	        }
-	        self._requestOnClick = false;
-	    }, CLICK_DELAY);
+	    //NMNS CUSTOMIZING START
+      if (self._requestOnClick) {
+          self.fire('monthCreationClick', eventData);
+
+          range = self._adjustStartAndEndTime(new TZDate(Number(eventData.date)), new TZDate(Number(eventData.date)));
+
+          self._createSchedule({
+              start: range.start,
+              end: range.end,
+              isAllDay: false,
+              triggerEvent: eventData.triggerEvent
+          });
+      }
+      self._requestOnClick = false;
+      //NMNS CUSTOMIZING END
 	};
 	
 	/**

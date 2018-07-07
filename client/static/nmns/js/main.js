@@ -36,6 +36,9 @@
         var template = "<span class='tui-full-calendar-weekday-grid-date'>"+date.getDate() + "</span>";
         return template;
       },
+      allday:function(schedule){
+        return getTimeSchedule(schedule, schedule.isAllDay);
+      },
       time:function(schedule){
         return getTimeSchedule(schedule, schedule.isAllDay);
       },
