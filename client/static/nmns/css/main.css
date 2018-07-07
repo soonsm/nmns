@@ -37,7 +37,7 @@ div.tui-full-calendar-timegrid-container{
 }
 @media (min-width: 992px){
   #mainContents{
-    padding-left: 15px;
+    border-left: 15px solid #f8f9fa;
   }
 }
 button.calendarType{
@@ -57,7 +57,7 @@ button.moveDate:focus{
   max-width:230px;
 }
 #managerList div:first-child{
-  margin-top:.5rem;
+  margin-top:.7rem;
 }
 #managerList .lnbManagerItem{
   line-height:.8rem;

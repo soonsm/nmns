@@ -2,7 +2,6 @@
 (function($) {
   NMNS.needInit = true;
   NMNS.history = [];
-  
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
@@ -37,10 +36,10 @@
         return template;
       },
       allday:function(schedule){
-        return getTimeSchedule(schedule, true);
+        return getTimeSchedule(schedule, schedule.isAllDay);
       },
       time:function(schedule){
-        return getTimeSchedule(schedule, false);
+        return getTimeSchedule(schedule, schedule.isAllDay);
       },
       alldayTitle:function(){
         return "<span class='tui-full-calendar-left-content'>하루종일</span>";
@@ -83,8 +82,8 @@
     },
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
-      hourStart:8,
-      hourEnd:21
+      hourStart:9,
+      hourEnd:23
     },
     theme:{
       'week.currentTime.color': '#009688',
@@ -98,7 +97,6 @@
     return function(res){
       if(res && res.type === "response"){
         if(res.status){//success
-          alert("정상이래!");
           if(successCallback){
             successCallback(res);
           }
@@ -128,6 +126,7 @@
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
+    //영업시간에 따라 mainCalendar Height 조정 NMNS.weekHeight에 반영
   }));
   
   NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
@@ -162,7 +161,7 @@
     },
     clickDayname:function(e){
       console.log("clickDayname", e);
-      NMNS.calendar.setOptions({week:{hourStart:9, hourEnd:23}});
+      NMNS.calendar.setOptions({week:{hourStart:8, hourEnd:20}});
     },
     beforeCreateSchedule:function(e){
       saveNewSchedule(e);
@@ -180,8 +179,8 @@
         NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
       }
       e.schedule.id = id;
-      e.schedule.start = moment(e.schedule.start.toDate()).format("YYYYMMDDHHmm");
-      e.schedule.end = moment(e.schedule.end.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.start = moment(e.schedule.start.toDate? e.schedule.start.toDate()  : e.schedule.start).format("YYYYMMDDHHmm");
+      e.schedule.end = moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm");
       NMNS.socket.emit("update reserv", e.schedule);
     },
     beforeDeleteSchedule:function(e){
@@ -193,30 +192,20 @@
       e.schedule.name = e.schedule.title;
       e.schedule.type = "R";
       NMNS.socket.emit("update reserv", e.schedule);
+    },
+    afterRenderSchedule:function(e){
+      $("#mainCalendar").height(($(".tui-full-calendar-layout").height() + 7) > $("footer").position().top - 200 ? ($("footer").position().top - 200): ($(".tui-full-calendar-layout").height() + 7)+ "px");
     }
   });
   
   function getTimeSchedule(schedule, isAllDay){
     var html = "";
-    var start = moment(schedule.start.toUTCString());
     if (!isAllDay) {
-      html+='<strong>' + start.format('HH:mm') + '</strong> ';
+      html+='<strong>' + moment(schedule.start.toDate()).format('HH:mm') + '</strong> ';
+    }else{
+      html+='<span class="calendar-font-icon far fa-clock"></span>';
     }
-    if (schedule.isPrivate) {
-      html+='<span class="calendar-font-icon fas fa-lock"></span>';
-      html+=' Private';
-    } else {
-      if (schedule.isReadOnly) {
-        html += '<span class="calendar-font-icon fas fa-ban"></span>';
-      } else if (schedule.recurrenceRule) {
-        html += '<span class="calendar-font-icon fas fa-redo-alt"></span>';
-      } else if (schedule.attendees.length) {
-        html += '<span class="calendar-font-icon fas fa-user"></span>';
-      } else if (schedule.location) {
-        html += '<span class="calendar-font-icon fas fa-map-marker-alt"></span>';
-      }
-      html += ' ' + schedule.title;
-    }
+    html += ' ' + schedule.title;
     return html;
   }
   
@@ -230,11 +219,9 @@
     switch (action) {
       case 'toggle-daily':
         viewName = 'day';
-        $("#mainCalendar").height("auto");
         break;
       case 'toggle-weekly':
         viewName = 'week';
-        $("#mainCalendar").height("auto");
         break;
       case 'toggle-monthly':
         var width = $(window).width();
@@ -338,10 +325,11 @@ console.log("aaa");
         start: start,
         end: end
     });
+    $("#creationPopupName").focus();
   }
   function saveNewSchedule(scheduleData) {
     scheduleData.id = NMNS.email + generateRandom();
-    
+    console.log(scheduleData);
     NMNS.calendar.createSchedules([scheduleData]);
     
     NMNS.history.push(scheduleData);
@@ -350,14 +338,19 @@ console.log("aaa");
     NMNS.socket.emit("add reserv", scheduleData);
   }
 
+  function findManager(managerId){
+    return NMNS.calendar.getCalendars().find(function(manager){
+      return (manager.id === managerId);
+    });
+  }
+
   function onChangeManagers(e) {
-    var managerId = $(e.target).parents(".lnbManagerItem").data("value");
     var checked = e.target.checked;
     var viewAll = document.querySelector('.lnbManagerItem input');
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
     var allCheckedCalendars = true;
 
-    if (managerId === 'all') {
+    if ($(e.target).is("#managerCheckAll")) {
       allCheckedCalendars = checked;
 
       managerElements.forEach(function(input) {
@@ -370,6 +363,7 @@ console.log("aaa");
         manager.checked = checked;
       });
     } else {
+      var managerId = $(e.target).parents(".lnbManagerItem").data("value");
       findManager(managerId).checked = checked;
       allCheckedCalendars = managerElements.every(function(input) {
         return input.checked;
@@ -452,10 +446,9 @@ console.log("aaa");
     $('#managerElements').on('change', onChangeManagers);
 
     $('#btn-save-schedule').on('touch click', onNewSchedule);
-    $('#btn-new-schedule').on('touch click', createNewSchedule);
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
-
+    $(".addReservLink").on("touch click", createNewSchedule);
     window.addEventListener('resize', resizeThrottled);
   }
 
@@ -503,12 +496,6 @@ console.log("aaa");
     }), true);
   }
 
-  function findManager(managerId){
-    return NMNS.calendar.getCalendars().find(function(manager){
-      return (manager.id === managerId);
-    });
-  }
-
   window.cal = NMNS.calendar;
 
   setDropdownCalendarType();
@@ -519,6 +506,7 @@ console.log("aaa");
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
+    console.log(origin);
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
     delete origin.id;
     NMNS.calendar.deleteSchedule(e.data.id, origin.manager);

@@ -65,35 +65,35 @@
   <div id="mainRow" class="row col px-0 mx-auto">
     <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded px-0">
       <ul class="list-group">
-        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 추가</span>
           </div>
         </a>
-        <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-search fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 조회</span>
           </div>
         </a>
-        <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#reservModal">
+        <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#reservModal">
           <div class="d-flex w-100 align-items-center">
             <span class="far fa-calendar-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">예약 추가</span>
           </div>
         </a>
-        <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0" data-toggle="modal" data-target="#taskModal">
+        <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal">
           <div class="d-flex w-100 align-items-center">
             <span class="far fa-calendar-check fa-fw mr-3"></span>
             <span class="menu-collapsed">일정 추가</span>
           </div>
         </a>
-        <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0">
+        <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0 pb-1">
           <div class="border-bottom">
               <div class="lnbManagerItem">
                   <label>
-                      <input id="managerCheckAll" value="all" checked="" type="checkbox">
+                      <input id="managerCheckAll" value="all" checked type="checkbox">
                       <label for="managerCheckAll"></label>
                       <label for="managerCheckAll"><small>모든 담당자 보기</small></label>
                   </label>
@@ -104,8 +104,8 @@
         </li>
       </ul>
     </div>
-    <div id="mainContents" class="col bg-light pr-0">
-      <div id="mainCalendarTools" class="text-center align-middle">
+    <div id="mainContents" class="col px-0">
+      <div id="mainCalendarTools" class="text-center align-middle bg-light">
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button"><i class="fas fa-chevron-left"></i></button>
         <span id="renderRange" class="align-middle mx-2"></span>
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button"><i class="fas fa-chevron-right"></i></button>
@@ -130,7 +130,7 @@
     
   </div>
   <!-- Footer -->
-  <footer class="footer text-center px-0 bg-light mt-5">
+  <footer class="footer text-center px-0 bg-light mt-5 fixed-bottom">
     <div class="py-2 text-center text-secondary container">
       <small>Copyright &copy; nomorenoshow.com 2018</small><small class="godo text-transparent"> </small>
     </div>
