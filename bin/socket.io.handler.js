@@ -16,12 +16,9 @@ const AddManager = 'add manager';
 const UpdateManager = 'update manager';
 const DelManager = 'delete manager';
 
-const holidays= [
-
-];
-
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
+
     io.use(passportSocketIo.authorize({
         key: 'connect.sid',
         secret: 'rilahhuma',
@@ -29,7 +26,6 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         passport: passport,
         cookieParser: cookieParser
     }));
-
 
     io.on('connection', async function (socket) {
         var email = socket.request.user.email;
@@ -62,8 +58,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 resultData = await db.getReservationList(email, data.start, data.end);
             }
 
+            let response = makeResponse(status, resultData, message);
+            response.holiday = getHolidays(data.start, data.end);
 
-            socket.emit(GetReservationList, makeResponse(status, resultData, message));
+            socket.emit(GetReservationList, response);
         });
 
         socket.on(UpdateReservation, async function (newReservation) {
@@ -342,6 +340,80 @@ const makeResponse = function (status, data, message) {
         data: data
     };
 }
+
+const getHolidays = (function(){
+    const holidays= [];
+
+    const push =function (date, title){
+        holidays.push({
+            date: date,
+            title: title
+        })
+    }
+
+    push('2018-01-01','새해');
+    push('2018-02-15','설날');
+    push('2018-02-16','설날');
+    push('2018-02-17','설날');
+    push('2018-03-01','삼일절');
+    push('2018-05-05','어린이날');
+    push('2018-05-22','부처님오신');
+    push('2018-06-06','현충일');
+    push('2018-08-15','광복절');
+    push('2018-09-23','추석');
+    push('2018-09-24','추석');
+    push('2018-09-25','추석');
+    push('2018-10-03','개천절');
+    push('2018-10-09','한글날');
+    push('2018-12-25','크리스마스');
+
+    push('2019-01-01','새해');
+    push('2019-02-04','설날');
+    push('2019-02-05','설날');
+    push('2019-02-06','설날');
+    push('2019-03-01','삼일절');
+    push('2019-05-05','어린이날');
+    push('2019-05-12','부처님오신');
+    push('2019-06-06','현충일');
+    push('2019-08-15','광복절');
+    push('2019-09-12','추석');
+    push('2019-09-13','추석');
+    push('2019-09-14','추석');
+    push('2019-10-03','개천절');
+    push('2019-10-09','한글날');
+    push('2019-12-25','크리스마스');
+
+    push('2020-01-01','새해');
+    push('2020-01-24','설날');
+    push('2020-01-25','설날');
+    push('2020-01-26','설날');
+    push('2020-03-01','삼일절');
+    push('2020-05-05','어린이날');
+    push('2020-04-30','부처님오신');
+    push('2020-06-06','현충일');
+    push('2020-08-15','광복절');
+    push('2020-09-30','추석');
+    push('2020-10-01','추석');
+    push('2020-10-02','추석');
+    push('2020-10-03','개천절');
+    push('2020-10-09','한글날');
+    push('2020-12-25','크리스마스');
+
+    return function(start, end){
+        start = moment(start.substring(0,8)).format('YYYY-MM-DD');
+        end = moment(end.substring(0,8)).format('YYYY-MM-DD');
+
+        let returnHolidays = [];
+        for(let i=0;i<holidays.length;i++){
+            let holiday = holidays[i];
+            if(holiday.date >= start && holiday.date <= end){
+                returnHolidays.push(holiday);
+            }
+        }
+        return returnHolidays;
+    };
+})();
+
 
 //TODO: polling handling
 //TODO: dynamodb session
