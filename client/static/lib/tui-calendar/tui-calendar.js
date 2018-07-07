@@ -2155,8 +2155,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    end: function(date) {
 	        var d = new TZDate(date.getTime());
-	        d.setHours(23, 59, 59, 0);
-	
+	        //NMNS CUSTOMIZING START
+	        d.setHours(23, 50, 0, 0);
+					//NMNS CUSTOMIZING END
 	        return d;
 	    },
 	
@@ -2206,7 +2207,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        endDate.setMonth(endDate.getMonth() + 1);
 	        endDate.setDate(endDate.getDate() - 1);
-	        endDate.setHours(23, 59, 59);
+	        endDate.setHours(23, 50, 0);//NMNS CUSTOMIZING START
+	        //NMNS CUSTOMIZING END
 	
 	        return endDate;
 	    },
@@ -7369,7 +7371,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.start = start;
 	    this.start.setHours(0, 0, 0);
 	    this.end = end || new TZDate(this.start);
-	    this.end.setHours(23, 59, 59);
+	    //NMNS CUSTOMIZING START
+	    this.end.setHours(23, 50, 0);
+	    //NMNS CUSTOMIZING END
 	};
 	
 	Schedule.prototype.setTimePeriod = function(start, end) {
@@ -14218,10 +14222,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (isAllDay) {
 	        startDate.setHours(0);
 	        startDate.setMinutes(0);
-	        startDate.setSeconds(0);
 	        endDate.setHours(23);
-	        endDate.setMinutes(59);
-	        endDate.setSeconds(59);
+	        endDate.setMinutes(50);
+	        
 			    startDate = new TZDate(startDate);
 			    endDate = new TZDate(endDate);
 	    }
@@ -14295,10 +14298,10 @@ return /******/ (function(modules) { // webpackBootstrap
 				      isPrivate:false,
 				      customStyle:"",
 				      location:"",
-				      bgColor:manager?manager.color:"#b2dfdb",
-				      borderColor:manager?manager.color:"#b2dfdb",
-				      color:"#ffffff",
-				      dragBgColor:manager?manager.color:"#b2dfdb",
+				      bgColor:manager?manager.bgColor:"#b2dfdb",
+				      borderColor:manager?manager.borderColor:"#b2dfdb",
+				      color:getColorFromBackgroundColor(manager?manager.bgColor:"#b2dfdb"),
+				      dragBgColor:manager?manager.bgColor:"#b2dfdb",
 	            manager:calendarId,
 	            contents: contents,
               contact: contact,
@@ -14327,7 +14330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-
+console.log(viewModel);
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
@@ -14570,8 +14573,8 @@ return /******/ (function(modules) { // webpackBootstrap
           next: 'fas fa-chevron-right',
           close: 'fas fa-times'
 	    	},
-	    	defaultDate: start.toDate(),
-	    	date: start.toDate(),
+	    	defaultDate: start.toDate ? start.toDate() : start,
+	    	date: start.toDate? start.toDate() : start,
 	    	format: "YYYY-MM-DD HH:mm",
 	    	dayViewHeaderFormat : "YYYY년 M월",
 	    	stepping:10,
@@ -14617,8 +14620,8 @@ return /******/ (function(modules) { // webpackBootstrap
           next: 'fas fa-chevron-right',
           close: 'fas fa-times'
 	    	},
-	    	defaultDate: end.toDate(),
-	    	date: end.toDate(),
+	    	defaultDate: end.toDate? end.toDate() : end,
+	    	date: end.toDate? end.toDate() : end,
 	    	format: "YYYY-MM-DD HH:mm",
 	    	dayViewHeaderFormat : "YYYY년 M월",
 	    	stepping:10,
@@ -15052,7 +15055,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  	+ "</div>\n"
 	  + "</div>\n"
 	+ "</div>\n";
-		console.log(result);
 		return result;//NMNS CUSTOMIZING END
 	},"useData":true});
 
@@ -16400,9 +16402,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dayGridCore = __webpack_require__(80);
 	var DayGridCreationGuide = __webpack_require__(83);
 	var TZDate = __webpack_require__(28).Date;
-	
-	var CLICK_DELAY = 300;
-	
+	//NMNS CUSTOMIZING START
+	var CLICK_DELAY = 1;
+	//NMNS CUSTOMIZING END
 	/**
 	 * @constructor
 	 * @implements {Handler}
@@ -16448,7 +16450,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    dragHandler.on('dragStart', this._onDragStart, this);
 	    dragHandler.on('click', this._onClick, this);
-	    domevent.on(view.container, 'dblclick', this._onDblClick, this);
+	    //NMNS CUSTOMIZING START
+	    //domevent.on(view.container, 'dblclick', this._onDblClick, this);
+	    //NMNS CUSTOMIZING END
 	}
 	
 	/**
@@ -16656,14 +16660,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getScheduleDataFunc = this._retriveScheduleData(this.view, clickEventData.originEvent);
 	    scheduleData = getScheduleDataFunc(clickEventData.originEvent);
 	
-	    this._requestOnClick = true;
-	    setTimeout(function() {
-	        if (self._requestOnClick) {
-	            self.fire('click', scheduleData);
-	            self._createSchedule(scheduleData);
-	        }
-	        self._requestOnClick = false;
-	    }, CLICK_DELAY);
+	    this._requestOnClick = true;//NMNS CUSTOMIZING START
+      if (self._requestOnClick) {
+          self.fire('click', scheduleData);
+          self._createSchedule(scheduleData);
+      }
+      self._requestOnClick = false;//NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -16672,7 +16674,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {object} clickEventData - Drag#Click event handler data.
 	 */
 	DayGridCreation.prototype._onDblClick = function(clickEventData) {
-	    var getScheduleDataFunc, scheduleData;
+		//NMNS CUSTOMIZING START
+	    /*var getScheduleDataFunc, scheduleData;
 	
 	    if (!this.checkExpectedCondition(clickEventData.target)) {
 	        return;
@@ -16685,7 +16688,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this._createSchedule(scheduleData);
 	
-	    this._requestOnClick = false;
+	    this._requestOnClick = false;*/
+	    //NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -17444,9 +17448,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var TimeCreationGuide = __webpack_require__(88);
 	var TZDate = __webpack_require__(28).Date;
 	var timeCore = __webpack_require__(89);
-	
-	var CLICK_DELAY = 300;
-	
+	//NMNS CUSTOMIZING START
+	var CLICK_DELAY = 1;
+	//NMNS CUSTOMIZING END
 	/**
 	 * @constructor
 	 * @implements {Handler}
@@ -17499,7 +17503,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    dragHandler.on('dragStart', this._onDragStart, this);
 	    dragHandler.on('click', this._onClick, this);
-	    domevent.on(timeGridView.container, 'dblclick', this._onDblClick, this);
+	    //NMNS CUSTOMIZING START
+	    //domevent.on(timeGridView.container, 'dblclick', this._onDblClick, this);
+	    //NMNS CUSTOMIZING END
 	}
 	
 	/**
@@ -17752,7 +17758,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {MouseEvent} e - Native MouseEvent
 	 */
 	TimeCreation.prototype._onDblClick = function(e) {
-	    var condResult, getScheduleDataFunc, eventData;
+		//NMNS CUSTOMIZING START
+	   /* var condResult, getScheduleDataFunc, eventData;
 	
 	    condResult = this.checkExpectedCondition(e.target);
 	    if (!condResult) {
@@ -17766,7 +17773,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this._createSchedule(eventData);
 	
-	    this._requestOnClick = false;
+	    this._requestOnClick = false;*/
+	    //NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -18157,6 +18165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @returns {object} - common event data for time.*
 	         */
 	        return util.bind(function(mouseEvent, extend) {
+	        	console.log(mouseEvent, extend);
 	            var mouseY = Point.n(domevent.getMousePosition(mouseEvent, container)).y,
 	                gridY = common.ratio(viewHeight, hourLength, mouseY),
 	                timeY = viewTime + datetime.millisecondsFrom('hour', gridY),
@@ -19524,8 +19533,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	if($(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
 	            });
 	            $(".detailPopupLabel .dropdown-menu a").off("click touch").on("click touch", function(e){
-	            	console.log(eventData);
-	            	console.log("aaaa");
 	            	if($(this).data("badge") === "light"){//delete
 	            		creationHandler.fire("beforeDeleteSchedule", eventData);
 	            	}else{
@@ -20635,9 +20642,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var getMousePosDate = __webpack_require__(103);
 	var Guide = __webpack_require__(104);
 	var TZDate = __webpack_require__(28).Date;
-	
-	var CLICK_DELAY = 300;
-	
+	//NMNS CUSTOMIZING START
+	var CLICK_DELAY = 1;
+	//NMNS CUSTOMIZING END
 	/**
 	 * @constructor
 	 * @param {Drag} dragHandler - Drag handler instance.
@@ -20683,7 +20690,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    dragHandler.on('dragStart', this._onDragStart, this);
 	    dragHandler.on('click', this._onClick, this);
-	    domevent.on(monthView.container, 'dblclick', this._onDblClick, this);
+	    //NMNS CUSTOMIZING START
+	    //domevent.on(monthView.container, 'dblclick', this._onDblClick, this);
+	    //NMNS CUSTOMIZING END
 	}
 	
 	/**
@@ -20842,7 +20851,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {MouseEvent} e - Native MouseEvent
 	 */
 	MonthCreation.prototype._onDblClick = function(e) {
-	    var eventData, range;
+		//NMNS CUSTOMIZING START
+	    /*var eventData, range;
 	
 	    if (!isElementWeekdayGrid(e.target)) {
 	        return;
@@ -20861,7 +20871,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        triggerEvent: eventData.triggerEvent
 	    });
 	
-	    this._requestOnClick = false;
+	    this._requestOnClick = false;*/
+	    //NMNS CUSTOMIZING END
 	};
 	
 	/**

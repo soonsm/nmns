@@ -36,11 +36,8 @@
         var template = "<span class='tui-full-calendar-weekday-grid-date'>"+date.getDate() + "</span>";
         return template;
       },
-      allday:function(schedule){
-        return getTimeSchedule(schedule, true);
-      },
       time:function(schedule){
-        return getTimeSchedule(schedule, false);
+        return getTimeSchedule(schedule, schedule.isAllDay);
       },
       alldayTitle:function(){
         return "<span class='tui-full-calendar-left-content'>하루종일</span>";
@@ -98,7 +95,6 @@
     return function(res){
       if(res && res.type === "response"){
         if(res.status){//success
-          alert("정상이래!");
           if(successCallback){
             successCallback(res);
           }
@@ -198,25 +194,12 @@
   
   function getTimeSchedule(schedule, isAllDay){
     var html = "";
-    var start = moment(schedule.start.toUTCString());
     if (!isAllDay) {
-      html+='<strong>' + start.format('HH:mm') + '</strong> ';
+      html+='<strong>' + moment(schedule.start.toDate()).format('HH:mm') + '</strong> ';
+    }else{
+      html+='<span class="calendar-font-icon far fa-clock"></span>';
     }
-    if (schedule.isPrivate) {
-      html+='<span class="calendar-font-icon fas fa-lock"></span>';
-      html+=' Private';
-    } else {
-      if (schedule.isReadOnly) {
-        html += '<span class="calendar-font-icon fas fa-ban"></span>';
-      } else if (schedule.recurrenceRule) {
-        html += '<span class="calendar-font-icon fas fa-redo-alt"></span>';
-      } else if (schedule.attendees.length) {
-        html += '<span class="calendar-font-icon fas fa-user"></span>';
-      } else if (schedule.location) {
-        html += '<span class="calendar-font-icon fas fa-map-marker-alt"></span>';
-      }
-      html += ' ' + schedule.title;
-    }
+    html += ' ' + schedule.title;
     return html;
   }
   
@@ -341,7 +324,7 @@ console.log("aaa");
   }
   function saveNewSchedule(scheduleData) {
     scheduleData.id = NMNS.email + generateRandom();
-    
+    console.log(scheduleData);
     NMNS.calendar.createSchedules([scheduleData]);
     
     NMNS.history.push(scheduleData);
@@ -455,7 +438,10 @@ console.log("aaa");
     $('#btn-new-schedule').on('touch click', createNewSchedule);
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
-
+    $(".addReservLink").on("touch click", function(){
+      NMNS.calendar.openCreationPopup({isAllDay:false});
+      $("#creationPopupName").focus();
+    });
     window.addEventListener('resize', resizeThrottled);
   }
 
@@ -519,6 +505,7 @@ console.log("aaa");
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
+    console.log(origin);
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
     delete origin.id;
     NMNS.calendar.deleteSchedule(e.data.id, origin.manager);
