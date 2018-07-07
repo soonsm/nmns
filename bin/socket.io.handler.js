@@ -16,6 +16,9 @@ const AddManager = 'add manager';
 const UpdateManager = 'update manager';
 const DelManager = 'delete manager';
 
+const holidays= [
+
+];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
@@ -71,7 +74,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             let message = validationResult.message || '수정완료';
 
             if(status){
-                //validation for id, status
+                //validation for status
                 if(newReservation.status && (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
                     status = false;
                     message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
