@@ -14435,10 +14435,11 @@ console.log(viewModel);
 	        top: parentRect.top
 	    };
 	    var pos;
-	    pos = this._calcRenderingData(layerSize, windowSize, guideBound);
-	
-	    pos.x -= parentBounds.left;
-	    pos.y -= (parentBounds.top + 6);
+	    pos = this._calcRenderingData(layerSize, windowSize, guideBound, parentBounds);
+			//NMNS CUSTOMIZING START
+	    //pos.x -= parentBounds.left;
+	    //pos.y -= (parentBounds.top + 6);
+	    //NMNS CUSTOMIZING END
 	    this.layer.setPosition(pos.x, pos.y);
 	    this._setArrowDirection(pos.arrow);
 	};
@@ -14496,7 +14497,8 @@ console.log(viewModel);
 	 * @param {{top: {number}, left: {number}, right: {number}, bottom: {number}}} guideBound - guide element bound data
 	 * @returns {PopupRenderingData} rendering position of popup and popup arrow
 	 */
-	ScheduleCreationPopup.prototype._calcRenderingData = function(layerSize, parentSize, guideBound) {
+	 //NMNS CUSTOMIZING START
+	ScheduleCreationPopup.prototype._calcRenderingData = function(layerSize, parentSize, guideBound, parentBounds) {
 	    var guideHorizontalCenter = (guideBound.left + guideBound.right) / 2;
 	    var x = guideHorizontalCenter - (layerSize.width / 2);
 	    var y = guideBound.top - layerSize.height + 3;
@@ -14508,18 +14510,22 @@ console.log(viewModel);
 	        arrowDirection = 'arrow-top';
 	    }
 	
-	    if (x > 0 && (x + layerSize.width > parentSize.right)) {//NMNS CUSTOMIZING START
+	    if (x > 0 && (x + layerSize.width > parentSize.right)) {
 	        x = parentSize.right - layerSize.width - 17;
-	    }//NMNS CUSTOMIZING END
+	    }
 	
+			if(parentBounds){
+				x -= parentBounds.left;
+				y -= (parentBounds.top + 6);
+			}
 	    if (x < 0) {
 	        x = 0;
 	    }
 	
-	    if (guideHorizontalCenter - x !== layerSize.width / 2) {
-	        arrowLeft = guideHorizontalCenter - x - ARROW_WIDTH_HALF;
+	    if (guideHorizontalCenter - x - parentBounds.left !== layerSize.width / 2) {
+	        arrowLeft = guideHorizontalCenter - x - parentBounds.left - ARROW_WIDTH_HALF;
 	    }
-	
+	//NMNS CUSTOMIZING END
 	    /**
 	     * @typedef {Object} PopupRenderingData
 	     * @property {number} x - left position

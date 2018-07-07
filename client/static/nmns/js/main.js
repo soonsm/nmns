@@ -2,7 +2,6 @@
 (function($) {
   NMNS.needInit = true;
   NMNS.history = [];
-  
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
@@ -83,8 +82,8 @@
     },
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
-      hourStart:8,
-      hourEnd:21
+      hourStart:9,
+      hourEnd:23
     },
     theme:{
       'week.currentTime.color': '#009688',
@@ -127,6 +126,7 @@
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
+    //영업시간에 따라 mainCalendar Height 조정 NMNS.weekHeight에 반영
   }));
   
   NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
@@ -161,7 +161,7 @@
     },
     clickDayname:function(e){
       console.log("clickDayname", e);
-      NMNS.calendar.setOptions({week:{hourStart:9, hourEnd:23}});
+      NMNS.calendar.setOptions({week:{hourStart:8, hourEnd:20}});
     },
     beforeCreateSchedule:function(e){
       saveNewSchedule(e);
@@ -179,8 +179,8 @@
         NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
       }
       e.schedule.id = id;
-      e.schedule.start = moment(e.schedule.start.toDate()).format("YYYYMMDDHHmm");
-      e.schedule.end = moment(e.schedule.end.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.start = moment(e.schedule.start.toDate? e.schedule.start.toDate()  : e.schedule.start).format("YYYYMMDDHHmm");
+      e.schedule.end = moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm");
       NMNS.socket.emit("update reserv", e.schedule);
     },
     beforeDeleteSchedule:function(e){
@@ -192,6 +192,9 @@
       e.schedule.name = e.schedule.title;
       e.schedule.type = "R";
       NMNS.socket.emit("update reserv", e.schedule);
+    },
+    afterRenderSchedule:function(e){
+      $("#mainCalendar").height(($(".tui-full-calendar-layout").height() + 7) > $("footer").position().top - 200 ? ($("footer").position().top - 200): ($(".tui-full-calendar-layout").height() + 7)+ "px");
     }
   });
   
@@ -216,11 +219,9 @@
     switch (action) {
       case 'toggle-daily':
         viewName = 'day';
-        $("#mainCalendar").height("auto");
         break;
       case 'toggle-weekly':
         viewName = 'week';
-        $("#mainCalendar").height("auto");
         break;
       case 'toggle-monthly':
         var width = $(window).width();
@@ -324,6 +325,7 @@ console.log("aaa");
         start: start,
         end: end
     });
+    $("#creationPopupName").focus();
   }
   function saveNewSchedule(scheduleData) {
     scheduleData.id = NMNS.email + generateRandom();
@@ -336,14 +338,19 @@ console.log("aaa");
     NMNS.socket.emit("add reserv", scheduleData);
   }
 
+  function findManager(managerId){
+    return NMNS.calendar.getCalendars().find(function(manager){
+      return (manager.id === managerId);
+    });
+  }
+
   function onChangeManagers(e) {
-    var managerId = $(e.target).parents(".lnbManagerItem").data("value");
     var checked = e.target.checked;
     var viewAll = document.querySelector('.lnbManagerItem input');
     var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
     var allCheckedCalendars = true;
 
-    if (managerId === 'all') {
+    if ($(e.target).is("#managerCheckAll")) {
       allCheckedCalendars = checked;
 
       managerElements.forEach(function(input) {
@@ -356,6 +363,7 @@ console.log("aaa");
         manager.checked = checked;
       });
     } else {
+      var managerId = $(e.target).parents(".lnbManagerItem").data("value");
       findManager(managerId).checked = checked;
       allCheckedCalendars = managerElements.every(function(input) {
         return input.checked;
@@ -438,13 +446,9 @@ console.log("aaa");
     $('#managerElements').on('change', onChangeManagers);
 
     $('#btn-save-schedule').on('touch click', onNewSchedule);
-    $('#btn-new-schedule').on('touch click', createNewSchedule);
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
-    $(".addReservLink").on("touch click", function(){
-      NMNS.calendar.openCreationPopup({isAllDay:false});
-      $("#creationPopupName").focus();
-    });
+    $(".addReservLink").on("touch click", createNewSchedule);
     window.addEventListener('resize', resizeThrottled);
   }
 
@@ -490,12 +494,6 @@ console.log("aaa");
         }
       }
     }), true);
-  }
-
-  function findManager(managerId){
-    return NMNS.calendar.getCalendars().find(function(manager){
-      return (manager.id === managerId);
-    });
   }
 
   window.cal = NMNS.calendar;
