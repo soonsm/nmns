@@ -18,7 +18,7 @@ const DelManager = 'delete manager';
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
-
+/*
     io.use(passportSocketIo.authorize({
         key: 'connect.sid',
         secret: 'rilahhuma',
@@ -26,17 +26,18 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         passport: passport,
         cookieParser: cookieParser
     }));
-
+*/
     io.on('connection', async function (socket) {
-        var email = socket.request.user.email;
+  //      var email = socket.request.user.email;
 
+        var email = 'ksm@test.com';
         console.log('socket io email:', email);
-
+/*
         if(!email || !socket.request.user.logged_in){
             console.log(`User ${email} is not logged in`);
             return;
         }
-
+*/
         /**
          * Reservation
          */
@@ -114,7 +115,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         socket.on(AddReservation, async function(data){
             console.log(data);
 
-            let validationResult = reservationValidation(email, data);
+            let validationResult = reservationValidationForAdd(email, data);
             let status = validationResult.status;
             let message = validationResult.message || '저장완료';
 
@@ -306,7 +307,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
  * 필수: id, start, end, contact
  * 선택: name, type(default: R), isAllDay, contents, manager, etc
  */
-const reservationValidation = function(email, data){
+const reservationValidationForAdd = function(email, data){
     let status = false, message;
     if(!data.id || !data.start || !data.end || !data.contact){
         message = '예약추가에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
@@ -326,7 +327,7 @@ const reservationValidation = function(email, data){
 }
 
 const reservationValidationForUdate = function(email, data){
-    let status = false; message;
+    let status = false, message;
 
     if(!data.id){
         message = '예약수정에 필요한 필수 데이터가 없습니다.({"id": ${예약키})';
