@@ -67,17 +67,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         socket.on(UpdateReservation, async function (newReservation) {
             console.log('UpdateReservation:', newReservation);
 
-            let validationResult = reservationValidation(email, newReservation);
+            let validationResult = reservationValidationForUdate(email, newReservation);
             let status = validationResult.status;
             let message = validationResult.message || '수정완료';
 
-            if(status){
-                //validation for status
-                if(newReservation.status && (newReservation.status !== 'RESERVED' && newReservation.status !== 'CANCELED' && newReservation.status !== 'DELETED' && newReservation.status !== 'NOSHOW')){
-                    status = false;
-                    message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
-                }
-            }
             if(status){
                 /*
                 TODO: 고객 없으면 추가
@@ -316,7 +309,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 const reservationValidation = function(email, data){
     let status = false, message;
     if(!data.id || !data.start || !data.end || !data.contact){
-        message = '예약추가(수정)에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
+        message = '예약추가에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
     }else if(!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
     }else if(!util.phoneNumberValidation(data.contact)) {
@@ -329,6 +322,29 @@ const reservationValidation = function(email, data){
         status = true;
     }
 
+    return {status: status, message: message};
+}
+
+const reservationValidationForUdate = function(email, data){
+    let status = false; message;
+
+    if(!data.id){
+        message = '예약수정에 필요한 필수 데이터가 없습니다.({"id": ${예약키})';
+    }else if(data.id && !data.id.startsWith(email)){
+        message = 'email 조작이 의심되어 거절합니다.';
+    }else if(data.start && (!moment(data.start, 'YYYYMMDDHHmm').isValid())) {
+        message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}`;
+    }else if(data.end && (!moment(data.end, 'YYYYMMDDHHmm').isValid())) {
+        message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) end:${data.end}`;
+    }else if(data.contact && !util.phoneNumberValidation(data.contact)) {
+        message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
+    }else if(data.type && data.type !== 'R' && data.type !== 'T'){
+        message = `type은 R(예약) 또는 T(일정)만 가능합니다. type:${data.type}`;
+    }else if(data.status && (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')){
+        message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
+    }else{
+        status = true;
+    }
     return {status: status, message: message};
 }
 
