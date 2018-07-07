@@ -36,27 +36,27 @@
       <span class="d-none d-md-block"><if(input.user.name)>${input.user.name}</if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav text-white mr-auto px-2 godo normal w700">
+      <ul class="navbar-nav text-white mr-auto godo normal w700">
         <li class="nav-item mx-0 ">
-          <a id="myPageLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
+          <a id="myPageLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store fa-fw align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
         </li>
         <li class="nav-item mx-0 ">
-          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell align-middle d-none d-md-inline-block"></i> 알림톡 정보</a>
+          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell fa-fw align-middle d-none d-md-inline-block"></i> 알림톡 정보</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus align-middle d-none d-md-inline-block"></i> 노쇼 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus fa-fw align-middle d-none d-md-inline-block"></i> 노쇼 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search align-middle d-none d-md-inline-block"></i> 노쇼 조회</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle d-none d-md-inline-block"></i> 노쇼 조회</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus align-middle d-none d-md-inline-block"></i> 예약 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus fa-fw align-middle d-none d-md-inline-block"></i> 예약 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check align-middle d-none d-md-inline-block"></i> 일정 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check fa-fw align-middle d-none d-md-inline-block"></i> 일정 추가</a>
         </li>
         <li class="nav-item mx-0">
-          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout"><i class="fas fa-sign-out-alt align-middle d-none d-md-inline-block"></i> 로그아웃</a>
+          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout"><i class="fas fa-sign-out-alt fa-fw align-middle d-none d-md-inline-block"></i> 로그아웃</a>
         </li>
       </ul>
     </div>
@@ -118,10 +118,10 @@
           <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-bars fa-rotate-90"></i> 1주
           </button>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="calendarTypeMenuReference">
-            <a class="dropdown-item calendarType" href="#" data-action="toggle-daily"><i class="fas fa-bars"></i> 1일</a>
-            <a class="dropdown-item calendarType" href="#" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90"></i> 1주</a>
-            <a class="dropdown-item calendarType" href="#" data-action="toggle-monthly"><i class="fas fa-th"></i> 1달</a>
+          <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily"><i class="fas fa-bars"></i> 1일</a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90"></i> 1주</a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly"><i class="fas fa-th"></i> 1달</a>
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@
   <!-- Footer -->
   <footer class="footer text-center px-0 bg-light mt-5">
     <div class="py-2 text-center text-secondary container">
-      <small>Copyright &copy; nomorenoshow.com 2018</small>
+      <small>Copyright &copy; nomorenoshow.com 2018</small><small class="godo text-transparent"> </small>
     </div>
   </footer>
 

@@ -61,7 +61,7 @@
         return "종료시간";
       },
       popupDetailDate:function(isAllDay, start, end){
-        var startDate = moment(start.toDate()), endDate = moment(end.toDate());
+        var startDate = moment(start instanceof Date? start : start.toDate()), endDate = moment(end instanceof Date? end : end.toDate());
         var isSameDate = startDate.isSame(endDate, 'day');
         var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm a';
 
@@ -98,6 +98,7 @@
     return function(res){
       if(res && res.type === "response"){
         if(res.status){//success
+          alert("정상이래!");
           if(successCallback){
             successCallback(res);
           }
@@ -136,17 +137,18 @@
   }));
   
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
-    var html = "";
-    e.data.forEach(function(item){
-      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-      html += "<span style='background-color:"+item.color+"; border-color:"+item.color+"'></span><small>"+item.name+"</small></label></div>";
-    });
-    $("#managerList").html(html);
     e.data.forEach(function(item){
       item.checked = true;
       item.bgColor = item.color;
       item.borderColor = item.color;
+      item.color = getColorFromBackgroundColor(item.bgColor);
     });
+    var html = "";
+    e.data.forEach(function(item){
+      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
+      html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"'></span><small>"+item.name+"</small></label></div>";
+    });
+    $("#managerList").html(html);
     NMNS.calendar.setCalendars(e.data);
     if(NMNS.needInit){
       delete NMNS.needInit;
@@ -166,10 +168,17 @@
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
-      NMNS.history.push(e.history);
+      NMNS.history.push(e.history || e.schedule);
       var id = e.schedule.id;
-      delete e.schedule.id;
-      NMNS.calendar.updateSchedule(id, e.calendar.id, e.schedule);
+      if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
+        NMNS.calendar.deleteSchedule(id, e.history.selectedCal.id);
+        e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
+        e.schedule.dueDateClass = '';
+        NMNS.calendar.createSchedules([e.schedule]);
+      }else{
+        delete e.schedule.id;
+        NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
+      }
       e.schedule.id = id;
       e.schedule.start = moment(e.schedule.start.toDate()).format("YYYYMMDDHHmm");
       e.schedule.end = moment(e.schedule.end.toDate()).format("YYYYMMDDHHmm");
@@ -179,6 +188,10 @@
       NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
       e.schedule.status = "DELETED";
+      e.schedule.start = moment((e.schedule.start instanceof Date)? e.schedule.start : e.schedule.start.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.end = moment((e.schedule.end instanceof Date)? e.schedule.end : e.schedule.end.toDate()).format("YYYYMMDDHHmm");
+      e.schedule.name = e.schedule.title;
+      e.schedule.type = "R";
       NMNS.socket.emit("update reserv", e.schedule);
     }
   });
@@ -453,15 +466,17 @@ console.log("aaa");
   function drawSchedule(data){
     NMNS.calendar.createSchedules(data.map(function(schedule){//mapping server data to client data
       if(schedule.raw){
+        if(typeof schedule.start === "string") schedule.start = moment(schedule.start, "YYYYMMDDHHmm").toDate();
+        if(typeof schedule.end === "string") schedule.end = moment(schedule.end, "YYYYMMDDHHmm").toDate();
         return schedule;
       }
-      var manager = findManager(schedule.manager || schedule.calendarId);
+      var manager = findManager(schedule.manager || schedule.calendarId) || {};
       return {
         id:schedule.id,
-        calendarId:manager?manager.id:"A1",//schedule.manager,
+        calendarId: manager.id || "A1",//schedule.manager,
         title:schedule.name || schedule.title,//?schedule.name:(schedule.contact?schedule.contact:schedule.content),
-        start: (typeof schedule.start === "string"? moment(schedule.start?schedule.start:"201806301730", "YYYYMMDDHHmm").toDate() : schedule.start),
-        end: (typeof schedule.end === "string"? moment(schedule.end?schedule.end:"201806302000", "YYYYMMDDHHmm").toDate() : schedule.end),
+        start: (typeof schedule.start === "string"? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
+        end: (typeof schedule.end === "string"? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
         isAllDay:schedule.isAllDay,
         category:(schedule.type === "T"?"task":(schedule.isAllday?"allday":"time")),
         dueDateClass:(schedule.type === "T"?"dueDateClass":""),
@@ -474,10 +489,10 @@ console.log("aaa");
         isPrivate:false,
         customStyle:"",
         location:"",
-        bgColor:manager?manager.color:"#b2dfdb",
-        borderColor:manager?manager.color:"#b2dfdb",
-        color:"#ffffff",
-        dragBgColor:manager?manager.color:"#b2dfdb",
+        bgColor: manager.bgColor || "#b2dfdb",
+        borderColor: manager.borderColor || "#b2dfdb",
+        color : manager.color || "#b2dfdb",
+        dragBgColor: manager.bgColor || "#b2dfdb",
         raw:{
           contact:schedule.contact,
           contents:schedule.contents,
@@ -518,8 +533,10 @@ console.log("aaa");
       drawSchedule([origin]);
       refreshScheduleVisibility();
     }else{
-      delete origin.id;
-      NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal.id, origin);
+      //delete origin.id;
+      if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
+      if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
+      NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
     }
   }));
   

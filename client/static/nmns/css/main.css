@@ -22,6 +22,16 @@ div.tui-full-calendar-timegrid-container{
   min-height:50px;
   line-height:50px;
 }
+#mainCalendarTools .dropdown-menu{
+  min-width:4.2rem;
+  width:4.2rem;
+  border-radius: 0;
+  font-size:.9rem;
+}
+#mainCalendarTools .calendarType{
+  line-height:28px;
+  width:auto;
+}
 #mainContents{
   padding-left:0;
 }
@@ -82,13 +92,13 @@ button.moveDate:focus{
   width: 300px;
   min-width: 300px;
 }
-.dropdown-menu{
+#creationPopup #creationPopupManager + .dropdown-menu{
   margin-top:0;
   padding: .25rem 0;
   border-radius: 0;
   width:234px;
 }
-.dropdown-menu .dropdown-item{
+#creationPopup .dropdown-menu .dropdown-item{
   padding-left:0.5rem;
   font-size:.9rem;
 }
@@ -96,7 +106,7 @@ button.moveDate:focus{
   #creationPopup .tui-full-calendar-popup-container{
     width: 535px;
   }
-  #creationPopupManager + div.dropdown-menu{
+  #creationPopup #creationPopupManager + div.dropdown-menu{
     width:367px;
     margin-left:15px;
     transform: translate3d(0px, 35px, 0px) !important;
@@ -160,6 +170,17 @@ button.moveDate:focus{
   border:none;
   cursor:pointer;
 }
-.detailPopupLabel span span{
+.detailPopupLabel span span, .detailPopupLabel div span{
   font-size:.8rem;
+}
+#detailPopupLabelDropdown:after{
+  display:none;
+}
+.detailPopupLabel .dropdown-menu{
+  min-width:5.5rem;
+  width:5.5rem;
+}
+.detailPopupLabel .dropdown-item{
+  padding-left:1.5rem;
+  font-size:.9rem;
 }

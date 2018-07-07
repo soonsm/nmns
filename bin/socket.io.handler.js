@@ -92,8 +92,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 for(var i=0; i<reservationList.length; i++){
                     let reservation = reservationList[i];
                     if(reservation.id === newReservation.id){
-                        for(let x in newReservation){
-                            reservation[x] = newReservation[x];
+                        for(let x in reservation){
+                          if(newReservation.hasOwnProperty(x)){
+                              reservation[x] = newReservation[x];
+                          }
                         }
                         reservationList[i] = reservation;
                         isItMyReservation = true;

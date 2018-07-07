@@ -85,3 +85,6 @@ a.text-primary {
 .btn.btn-flat{
   border-radius:0;
 }
+.dropdown-item.active, .dropdown-item:active{
+  background-color:$primary;
+}

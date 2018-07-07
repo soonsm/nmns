@@ -5961,7 +5961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._controller.setCalendars(calendars);
 	    this.render();
 	};
-	
+	//NMNS CUSTOMIZING START
 	/**
 	 * Get calendar list
 	 * @returns {Array.<Object>} calendars - calendar list
@@ -5969,7 +5969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Calendar.prototype.getCalendars = function() {
 	    return this._controller.getCalendars();
 	};
-	
+	//NMNS CUSTOMIZING END
 	/**
 	 * Open schedule creation popup
 	 * @param {Schedule} schedule - preset schedule data
@@ -6894,7 +6894,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!util.isUndefined(options.isFocused)) {
 	        schedule.set('isFocused', options.isFocused);
 	    }
-	
+	//NMNS CUSTOMIZING START
 			if (options.raw && options.raw.contents){
 				schedule.setRaw('contents', options.raw.contents);
 			}
@@ -6906,6 +6906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			if (options.raw && options.raw.etc){
 				schedule.setRaw('etc', options.raw.etc);
 			}
+			//NMNS CUSTOMIZING END
 	    this._removeFromMatrix(schedule);
 	    this._addToMatrix(schedule);
 	
@@ -7092,7 +7093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Base.prototype.setCalendars = function(calendars) {
 	    this.calendars = calendars;
 	};
-	
+	//NMNS CUSTOMIZING START
 	/**
 	 * Get calendar list
 	 * @return {Array.<Calendar>} calendars - calendar list
@@ -7100,7 +7101,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Base.prototype.getCalendars = function() {
 	    return this.calendars;
 	};
-	
+	//NMNS CUSTOMIZING END
 	// mixin
 	util.CustomEvents.mixin(Base);
 	
@@ -7557,6 +7558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this._dirty = true;
 	    },
+	    //NMNS CUSTOMIZING START
 	    /**
 	     * Set raw property value with dirty flagging.
 	     * @param {string} propName Property name in raw object.
@@ -7594,7 +7596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this._dirty = true;
 	    },
-	
+	//NMNS CUSTOMIZING END
 	    /**
 	     * Check dirty flag.
 	     * @returns {boolean} Property is changed.
@@ -9928,6 +9930,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	
 	            detailView.render(eventData);
+	            // NMNS CUSTOMIZING START
+	            $(".detailPopupLabel").off("mouseenter").on("mouseenter", function(e){
+	            	if(!$(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel").off("mouseleave").on("mouseleave", function(e){
+	            	if($(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel .dropdown-menu a").off("click touch").on("click touch", function(e){
+	            	if($(this).data("badge") === "light"){//delete
+	            		if(eventData.schedule.isAllDay){
+	            			weekView.handler.creation.allday.fire("beforeDeleteSchedule", eventData);
+	            		}else{
+	            			weekView.handler.creation.time.fire("beforeDeleteSchedule", eventData);
+	            		}
+	            	}else{
+	            		var status = $(this).data("badge");
+	            		eventData.schedule.status = (status === "success"? "RESERVED" : (status === "secondary"? "CANCELED" : (status === "danger"? "NOSHOW": "RESERVED")));
+	            		if(eventData.schedule.isAllDay){
+	            			weekView.handler.move.allday.fire("beforeUpdateSchedule", eventData);
+	            		}else{
+	            			weekView.handler.move.time.fire("beforeUpdateSchedule", eventData);
+	            		}
+	            	}
+            		detailView.hide();
+	            });
+	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
 	            if (eventData.isAllDay) {
@@ -14065,6 +14093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether 
 	 */
 	ScheduleCreationPopup.prototype._selectDropdownMenuItem = function(target) {
+		//NMNS CUSTOMIZING START
 	    var itemClassName = config.classname('dropdown-item');
 	    var selectedItem = domutil.hasClass(target, itemClassName) ? target : domutil.closest(target, '.' + itemClassName);
 	    if (!selectedItem) {
@@ -14076,7 +14105,7 @@ return /******/ (function(modules) { // webpackBootstrap
           return cal.id === selectedCalendarId;
       });*/
       $("#creationPopupManager").html($(selectedItem).html());
-      
+      //NMNS CUSTOMIZING END
 	    return true;
 	};
 	
@@ -14086,6 +14115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether event target is allday section or not
 	 */
 	ScheduleCreationPopup.prototype._toggleIsAllday = function(target) {
+		//NMNS CUSTOMIZING START
 	    /*var className = config.classname('section-allday');
 	    var alldaySection = domutil.hasClass(target, className) ? target : domutil.closest(target, '.' + className);
 	    var checkbox;
@@ -14098,6 +14128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    return false;*/
+	  //NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -14129,6 +14160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {boolean} whether save button is clicked or not
 	 */
 	ScheduleCreationPopup.prototype._onClickSaveSchedule = function(target) {
+		//NMNS CUSTOMIZING START
 			if (!$(target).is("#creationPopupSave")) {
 	        return false;
 	    }else if(!this.validator){
@@ -14193,8 +14225,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			    startDate = new TZDate(startDate);
 			    endDate = new TZDate(endDate);
 	    }
-	
-	
+
 	    if (manager) {
 	        calendarId = manager.id;
 	    }
@@ -14220,11 +14251,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                contact: contact,
 	                etc: etc,
 	                status : this._viewModel.status,
+	                color: manager.color,
+			            bgColor: manager.bgColor,
+			            borderColor: manager.borderColor,
+			            dragBgColor: manager.bgColor
 	            },
               history : this._viewModel,
 	            start: startDate,
 	            end: endDate,
-	            calendar: this._selectedCal,
+	            calendar: manager,
 	            triggerEventName: 'click'
 	        });
 	    } else {
@@ -14271,7 +14306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				      status: "RESERVED"
 	        });
 	    }
-	
+	//NMNS CUSTOMIZING END
 	    this.hide();
 	
 	    return true;
@@ -14292,20 +14327,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-	
+
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
+	        //NMNS CUSTOMIZING START
 	        this._viewModel = viewModel = this._makeEditModeData(viewModel);
+	        //NMNS CUSTOMIZING END
 	    } else {
 	        this.guide = viewModel.guide;
 	        guideElements = this._getGuideElements(this.guide);
 	        boxElement = guideElements.length ? guideElements[0] : null;
 	    }
 	    layer.setContent(tmpl(viewModel));
+	    //NMNS CUSTOMIZING START
 	    layer.show();
 	    this._createDatepicker(viewModel.start, viewModel.end);
 			document.getElementById("creationPopupForm").onsubmit = function(){return false;};
+			//NMNS CUSTOMIZING END
 	    this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 	
 	    util.debounce(function() {
@@ -14319,6 +14358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {object} - edit mode view model
 	 */
 	ScheduleCreationPopup.prototype._makeEditModeData = function(viewModel) {
+		//NMNS CUSTOMIZING START
 	    var schedule = viewModel.schedule;
 	    var title, isPrivate, location, startDate, endDate, isAllDay, state, contact, etc, contents, status;
 	    var raw = schedule.raw || {};
@@ -14369,7 +14409,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        zIndex: this.layer.zIndex + 5,
 	        isEditMode: this._isEditMode
-	    };
+	    };//NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -14519,6 +14559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {TZDate} end - end date
 	 */
 	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
+		//NMNS CUSTOMIZING START
 	    $("#creationPopupStartDate").datetimepicker({
 	    	icons:{
 	    		up: "fas fa-chevron-up",
@@ -14616,6 +14657,7 @@ return /******/ (function(modules) { // webpackBootstrap
       $("#creationPopupEndDate").on("change.datetimepicker", function (e) {
           $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
       });
+      //NMNS CUSTOMIZING END
 	};
 	
 	/**
@@ -14864,13 +14906,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 		var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 		var test = 
-		  "<a href=\"#\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
+		  "<button type=\"button\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\""
 		    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper))) + "\">\n"
 			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(((helper = (helper = helpers.bgColor || (depth0 != null ? depth0.bgColor : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"bgColor","hash":{},"data":data}) : helper))) + "\"></span>\n"
 			+ "<span class=\"" + escapedCssPrefix + "content\">"
 		    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
 		    + "</span>\n"
-	    + "</a>\n";
+	    + "</button>\n";
 		return test;
 	},"5":function(container,depth0,helpers,partials,data) {
 	    var helper;
@@ -14898,6 +14940,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return container.escapeExpression(((helper = (helper = helpers["popupSave-tmpl"] || (depth0 != null ? depth0["popupSave-tmpl"] : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"popupSave-tmpl","hash":{},"data":data}) : helper)));
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+	    //NMNS CUSTOMIZING START
 	    var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 	    console.log("helpers");
 	    console.log(helpers);
@@ -15010,7 +15053,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  + "</div>\n"
 	+ "</div>\n";
 		console.log(result);
-		return result;
+		return result;//NMNS CUSTOMIZING END
 	},"useData":true});
 
 /***/ },
@@ -15286,6 +15329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Handlebars = __webpack_require__(8);
 	module.exports = (Handlebars['default'] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+	    //NMNS CUSTOMIZING START
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 	  return 
 	  	"<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
@@ -15293,9 +15337,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			+ "<span class=\"" + escapedCssPrefix + "content\">"
 				+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
 	    + "</span>"
-    + "</div>\n";
+    + "</div>\n";//NMNS CUSTOMIZING END
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
+	    //NMNS CUSTOMIZING START
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 			console.log("depth0", depth0);
 			console.log("stack1", stack1);
@@ -15340,18 +15385,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    + "<div class=\"" + escapedCssPrefix + "section-button\">\n"
 	    	+ "<button class=\"" + escapedCssPrefix + "popup-edit\">"
 	    		+ "<span class=\"" + escapedCssPrefix + "content\">"
-	    			+ "<i class=\"fas fa-edit fa-fw align-middle\"></i>"
+	    			+ "<i class=\"fas fa-edit fa-fw\"></i>"
 	    			+ alias4(((helper = (helper = helpers["popupEdit-tmpl"] || (depth0 != null ? depth0["popupEdit-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupEdit-tmpl","hash":{},"data":data}) : helper)))
 	    		+ "</span>"
     		+ "</button>\n"
-    		+ "<button class=\"detailPopupLabel\">"
-    			+ "<span class=\"" + escapedCssPrefix + "content\">"
+    		+ "<div class=\"detailPopupLabel dropup d-inline-block text-center\">"
+    			+ "<span id=\"detailPopupLabelDropdown\" class=\"" + escapedCssPrefix + "content dropdown-toggle dropdown-toggle-up\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\" data-reference=\"parent\">"
     				+ "<span class=\"badge badge-" + (status === "NOSHOW" ? "danger" : (status === "RESERVED"? "success" : (status === "CANCELED" ? "secondary" : "light"))) + "\">" + (status === "NOSHOW" ? "노쇼" : (status === "RESERVED"? "정상" : (status === "CANCELED" ? "취소" : "삭제"))) + "</span>"
 	    		+ "</span>"
-    		+ "</button>\n"
+	    		+ "<div class=\"dropdown-menu text-center\" aria-labelledby=\"detailPopupLabelDropdown\">\n"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"light\"><span class=\"badge badge-light\">삭제</span></a>"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"danger\"><span class=\"badge badge-danger\">노쇼</span></a>"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"secondary\"><span class=\"badge badge-secondary\">취소</span></a>"
+	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"success\"><span class=\"badge badge-success\">정상</span></a>"
+    			+ "</div>\n"
+    		+ "</div>\n"
     		+ "<button class=\"" + escapedCssPrefix + "popup-delete\">"
     			+ "<span class=\"" + escapedCssPrefix + "content\">"
-    				+ "<i class=\"fas fa-trash fa-fw align-middle\"></i>"
+    				+ "<i class=\"fas fa-trash fa-fw\"></i>"
 	    			+ alias4(((helper = (helper = helpers["popupDelete-tmpl"] || (depth0 != null ? depth0["popupDelete-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"popupDelete-tmpl","hash":{},"data":data}) : helper)))
 	    		+ "</span>"
     		+ "</button>\n"
@@ -15365,7 +15416,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+ "</div>\n"
 	+ "</div>\n";
 	console.log(result);
-	return result;
+	return result;//NMNS CUSTOMIZING END
 	},"useData":true});
 
 /***/ },
@@ -15811,6 +15862,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar: {id:schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: newStarts,
 	        end: newEnds
 	    });
@@ -17018,6 +17072,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id:schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: schedule.getStarts(),
 	        end: newEnds
 	    });
@@ -18457,6 +18514,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id : schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: newStarts,
 	        end: newEnds
 	    });
@@ -19055,6 +19115,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id:schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: schedule.getStarts(),
 	        end: newEnds
 	    });
@@ -19453,6 +19516,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	
 	            detailView.render(eventData);
+	            // NMNS CUSTOMIZING START
+	            $(".detailPopupLabel").off("mouseenter").on("mouseenter", function(e){
+	            	if(!$(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel").off("mouseleave").on("mouseleave", function(e){
+	            	if($(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
+	            });
+	            $(".detailPopupLabel .dropdown-menu a").off("click touch").on("click touch", function(e){
+	            	console.log(eventData);
+	            	console.log("aaaa");
+	            	if($(this).data("badge") === "light"){//delete
+	            		creationHandler.fire("beforeDeleteSchedule", eventData);
+	            	}else{
+	            		var status = $(this).data("badge");
+	            		eventData.schedule.status = (status === "success"? "RESERVED" : (status === "secondary"? "CANCELED" : (status === "danger"? "NOSHOW": "RESERVED")));
+	            		creationHandler.fire("beforeUpdateSchedule", eventData);
+	            	}
+	            });
+	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
 	            creationHandler.fire('beforeDeleteSchedule', eventData);
@@ -21689,6 +21771,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar : {id: schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: new TZDate(Number(schedule.getStarts())),
 	        end: newEnd
 	    });
@@ -22030,6 +22115,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.fire('beforeUpdateSchedule', {
 	        schedule: schedule,
+	        //NMNS CUSTOMIZING START
+	        calendar: {id: schedule.calendarId},
+	        //NMNS CUSTOMIZING END
 	        start: newStartDate,
 	        end: new TZDate(newStartDate.getTime() + duration)
 	    });
