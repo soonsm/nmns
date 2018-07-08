@@ -3,7 +3,8 @@ const
     router = require('express').Router(),
     emailValidator = require('email-validator'),
     passwordValidator = require('password-validator'),
-    db = require('./webDb');
+    db = require('./webDb'),
+    emailSender = require('./emailSender');
 
 module.exports = function(passport){
 
@@ -74,7 +75,11 @@ module.exports = function(passport){
             return res.marko(require('../client/template/index'), error);
         }
 
-        user = await db.signUp({email: email, password: password});
+        const emailAuthToken = require('js-sha256')(email);
+
+        user = await db.signUp({email: email, password: password, emailAuthToken: emailAuthToken});
+
+        emailSender.sendEmailVerification(email, emailAuthToken);
 
         if(user){
             //로그인처리
@@ -84,7 +89,6 @@ module.exports = function(passport){
             error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
             return res.marko(require('../client/template/index'), error);
         }
-
     });
 
     /**
@@ -131,6 +135,45 @@ module.exports = function(passport){
           //로그인 되지 않은 상태이므로 index page로 이동
           res.redirect("/index");
       }
+    });
+
+    router.get('/auth?email=:email&token=:token', async function(req, res){
+        const email = req.params.email;
+        const token = req.params.token;
+
+        let user = await db.getWebUser(email);
+        if(user && user.emailAuthToken === token){
+            await db.updateWebUser(email, 'authStatus', 'EMAIL_VERIFICATED');
+            //TODO: 이메일 인증이 완료되었다는 페이지로 이동
+            return;
+        }
+
+        //TODO: 잘못된 접근이라는 페이지로 이동
+    });
+
+    router.get('temp_pwd?email=:email', async function(req, res){
+       const email = req.params.email;
+
+       let user = await db.getWebUser(email);
+       if(user){
+           let generator = require('generate-password');
+           let password = generator.generate({
+               length: 10,
+               numbers: true
+           });
+
+           if(await db.updateWebUser(email, 'password', password)){
+
+               emailSender.sendTempPasswordEmail(email, password);
+
+               //TODO: 임시 비밀번호 발급 되었다는 페이지
+           }else{
+               //TODO: DB 업데이트 실패 페이지 이동
+           }
+           return;
+       }
+
+       //TODO: 잘못된 접근이라는 페이지로 이동
     });
 
     return router;

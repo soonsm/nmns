@@ -104,6 +104,8 @@ function del(param) {
 exports.newWebUser = function(user){
     return {
         email: user.email,
+        authStatus: user.authStatus || 'BEFORE_EMAIL_VERIFICATION', //BEFORE_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
+        emailAuthToken: user.emailAuthToken || null,
         password: user.password,
         numOfWrongPassword: 0,
         bizBeginTime: user.bizBeginTime || '0900',
@@ -111,7 +113,7 @@ exports.newWebUser = function(user){
         accountStatus: 0, //0 - 정상, 1 - 비밀번호 오류 초과로 인한 lock
         signUpDate: moment().format('YYYYMMDD'),
         shopName: user.shopName || null ,
-        shopType: user.shopType || null,
+        bizType: user.bizType || null,
         staffList: [],
         alrimTalkInfo : {
             useYn: 'N',
@@ -146,7 +148,7 @@ exports.signUp = async function(newUser){
 exports.getWebUser = async function(email){
     let items =  await query({
         TableName : "WebSecheduler",
-        ProjectionExpression:"email, password",
+        ProjectionExpression:"email, password, authStatus, emailAuthToken",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames:{
             "#key": "email"
@@ -157,6 +159,17 @@ exports.getWebUser = async function(email){
     });
 
     return items[0];
+};
+
+exports.updateWebUser = async function(email, propertyName, propertyValue){
+    return await update({
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email
+        },
+        UpdateExpression: `set ${propertyName} = :${propertyValue}`,
+        ReturnValues:"NONE"
+    });
 }
 
 exports.newReservation = function(reservation){
