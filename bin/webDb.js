@@ -156,23 +156,7 @@ exports.getWebUser = async function(email){
     return items[0];
 };
 
-exports.updateWebUser = async function(email, propertyName, propertyValue){
-    let params = {
-        TableName: "WebSecheduler",
-        Key: {
-            'email': email
-        },
-        UpdateExpression: `set ${propertyName} = :${propertyName}`,
-        ExpressionAttributeValues:{
-        },
-        ReturnValues:"NONE"
-    };
-
-    params.ExpressionAttributeValues[`:${propertyName}`] = propertyValue;
-
-    return await update(params);
-};
-exports.updateWebUserMultipleProperties = async function(email, properties){
+exports.updateWebUser = async function(email, properties){
     let params = {
         TableName: "WebSecheduler",
         Key: {

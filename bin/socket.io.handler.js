@@ -9,6 +9,7 @@ const GetReservationList = 'get reserv', AddReservation = 'add reserv', UpdateRe
 const GetNoShow = 'get noshow', AddNoShow = 'add noshow', DelNoShow = 'delete noshow';
 const GetManagerList = 'get manager', AddManager = 'add manager', UpdateManager = 'update manager', DelManager = 'delete manager';
 const GetShop = 'get info', UpdateShop = 'update info', UpdatePwd = 'update password';
+const GetAlrimTalk = 'get alrim', UpdateAlirmTalk = 'update alrim';
 
 const EVENT_LIST_NO_NEED_VERIFICATION = [GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
@@ -50,6 +51,54 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         };
 
         /**
+         * AlrimTalk
+         */
+        addEvent(GetAlrimTalk, async function(){
+            let status = true, message = null;
+            let resultData = await db.getWebUser(email);
+            if(! resultData){
+                status = false;
+                message = '잘못된 접근입니다.';
+            }
+
+            socket.emit(GetAlrimTalk, makeResponse(status, resultData.alrimTalkInfo, message));
+        });
+
+        addEvent(UpdateAlirmTalk, async function(data){
+            let status = true, message = null;
+            let alrimTalkInfo = user.alrimTalkInfo;
+
+            if(data.useYn && data.useYn !== 'Y' && data.useYn !== 'N'){
+                status = false;
+                message = `useYn은 Y 또는 N 값만 가질 수 있습니다.(${data.useYn})`;
+            }else if(data.callbackPhone && !util.phoneNumberValidation(data.callbackPhone)){
+                status = false;
+                message = `callbackPhone이 전화번호 형식에 맞지 않습니다.(${data.callbackPhone})`;
+            }
+
+            if(status && alrimTalkInfo.useYn === 'N' && data.useYn === 'Y'){
+                //알림톡 미사용 -> 사용으로 변경 할 때
+                if(!alrimTalkInfo.callbackPhone && !data.callbackPhone){
+                    status = false;
+                    message = '알림톡 미사용에서 사용으로 변경 할 때는 DB에 또는 업데이트 요청에 callbackPhone에 전화번호가 있어야 합니다.';
+                }
+            }
+
+            if(status){
+                for(let x in alrimTalkInfo){
+                    alrimTalkInfo[x] = data[x] || alrimTalkInfo[x];
+                }
+                if(!await db.updateWebUser(email, {alrimTalkInfo: alrimTalkInfo})){
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error)';
+                }
+            }
+
+            socket.emit(UpdateAlirmTalk, makeResponse(status, null, message));
+
+        });
+
+        /**
          * Shop & Account
          */
         addEvent(UpdatePwd, async function(data){
@@ -66,7 +115,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 }
 
                 if(status){
-                    if(!await db.updateWebUser(email, 'password', pwd)){
+                    if(!await db.updateWebUser(email, {password: pwd})){
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
@@ -115,7 +164,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 }
 
                 if(status){
-                    if(! await db.updateWebUserMultipleProperties(email, data)){
+                    if(! await db.updateWebUser(email, data)){
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
@@ -356,7 +405,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             const noShowCase = data.noShowCase;
 
             //validation
-            if(!contact || !name){
+            if(!contact){
                 status = false;
                 message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "name":${고객 이름, string, optional},"noShowCase":${매장 코멘트, string, optional}})';
             }else if(!util.phoneNumberValidation(contact)){
