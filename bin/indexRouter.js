@@ -4,6 +4,7 @@ const
     emailValidator = require('email-validator'),
     passwordValidator = require('password-validator'),
     db = require('./webDb'),
+    util = require('./util'),
     emailSender = require('./emailSender');
 
 module.exports = function(passport){
@@ -39,33 +40,10 @@ module.exports = function(passport){
         }
 
         //password strength check
-        var schema = new passwordValidator();
-        schema
-            .is().min(8)                                    // Minimum length 8
-            .is().max(30)                                  // Maximum length 30
-            .has().digits()                                 // Must have digits
-            .has().symbols();                               // Must have symbols
-
-        const passwordFailRules = schema.validate(password, { list: true });
-        if(passwordFailRules && passwordFailRules.length > 0){
-            //password strength check fail
-            let passwordMessages = {
-                min: '길이제한 8글자 이상',
-                max: '길이제한 30글자 이하',
-                digits: '숫자포함',
-                symbols: '특수문자 포함'
-            }
-            let errorMessage = '입력하신 비밀번호는 다음의 조건을 만족해야 합니다.(';
-            for(var i=0; i<passwordFailRules.length; i++){
-                errorMessage += passwordMessages[passwordFailRules[i]];
-                if(i < passwordFailRules.length-1){
-                    errorMessage += ', ';
-                }
-            }
-            errorMessage += ')';
-            error.message = errorMessage;
+        let strenthCheck = util.passwordStrengthCheck(password);
+        if(strenthCheck.result === false){
+            error.message = strenthCheck.message;
             return res.marko(require('../client/template/index'), error);
-
         }
 
         //기존 사용자 체크

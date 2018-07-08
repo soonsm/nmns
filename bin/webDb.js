@@ -132,11 +132,6 @@ exports.newWebUser = function(user){
 
 exports.signUp = async function(newUser){
 
-    if(!newUser || !newUser.email || !newUser.password){
-        //TODO: logging
-        return false;
-    }
-
     let newWebUser = exports.newWebUser(newUser);
 
     return await put({
@@ -148,7 +143,7 @@ exports.signUp = async function(newUser){
 exports.getWebUser = async function(email){
     let items =  await query({
         TableName : "WebSecheduler",
-        ProjectionExpression:"email, password, authStatus, emailAuthToken",
+        ProjectionExpression:"email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpdate, shopName, bizType, alrimTalkInfo",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames:{
             "#key": "email"
@@ -162,15 +157,46 @@ exports.getWebUser = async function(email){
 };
 
 exports.updateWebUser = async function(email, propertyName, propertyValue){
-    return await update({
+    let params = {
         TableName: "WebSecheduler",
         Key: {
             'email': email
         },
-        UpdateExpression: `set ${propertyName} = :${propertyValue}`,
+        UpdateExpression: `set ${propertyName} = :${propertyName}`,
+        ExpressionAttributeValues:{
+        },
         ReturnValues:"NONE"
-    });
-}
+    };
+
+    params.ExpressionAttributeValues[`:${propertyName}`] = propertyValue;
+
+    return await update(params);
+};
+exports.updateWebUserMultipleProperties = async function(email, properties){
+    let params = {
+        TableName: "WebSecheduler",
+        Key: {
+            'email': email
+        },
+        ExpressionAttributeValues:{
+        },
+        ReturnValues:"NONE"
+    };
+    let updateExpression = 'set ';
+    let propertyNames = Object.getOwnPropertyNames(properties);
+    for(let i=0; i<propertyNames.length; i++){
+        let property = propertyNames[i];
+        updateExpression += `${property} = :${property}`;
+        if(i < propertyNames.length-1){
+            updateExpression += ',';
+        }
+
+        params.ExpressionAttributeValues[`:${property}`] = properties[property];
+    }
+    params.UpdateExpression = updateExpression;
+
+    return await update(params);
+};
 
 exports.newReservation = function(reservation){
     return {
