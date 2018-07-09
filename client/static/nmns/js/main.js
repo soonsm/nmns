@@ -148,12 +148,31 @@
       html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
       html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"'></span><small>"+item.name+"</small></label></div>";
     });
+    html += "<div class='lnbManagerItem btn px-0 addManager'><small class='text-secondary'><i class='fas fa-plus'></i> 담당자 추가하기</small></div>";
     $("#managerList").html(html);
     NMNS.calendar.setCalendars(e.data);
     if(NMNS.needInit){
       delete NMNS.needInit;
       setSchedules();
     }
+    $(".addManager").off("touch click").on("touch click", function(){
+      var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
+      $("<div class='lnbManagerItem addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle' data-color='"+color+"' placeholder='담당자 이름'/></label><i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i></div>").insertBefore(this);
+      $(".submitAddManager").off("touch click").on("touch click", function(){
+        submitAddManager(this);
+      });
+      $(".cancelAddManager").off("touch click").on("touch click", function(){
+        cancelAddManager(this);
+      });
+      $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+        if(e.which === 27){
+          cancelAddManager(this);
+        }else if(e.which === 13){
+          submitAddManager(this);
+        }
+      });
+      $(this).prev().find("input[type='text']").focus();
+    });
   }));
   
   NMNS.calendar.on({
@@ -381,16 +400,22 @@ console.log("aaa");
         manager.checked = checked;
       });
     } else {
-      var managerId = $(e.target).parents(".lnbManagerItem").data("value");
-      findManager(managerId).checked = checked;
-      allCheckedCalendars = managerElements.every(function(input) {
-        return input.checked;
-      });
-
-      if (allCheckedCalendars) {
-        viewAll.checked = true;
-      } else {
-        viewAll.checked = false;
+      var manager = $(e.target).parents(".lnbManagerItem");
+      if(manager.is(".addManagerItem")){
+        return;
+      }
+      var managerId = manager.data("value");
+      if(managerId){
+        findManager(managerId).checked = checked;
+        allCheckedCalendars = managerElements.every(function(input) {
+          return input.checked;
+        });
+  
+        if (allCheckedCalendars) {
+          viewAll.checked = true;
+        } else {
+          viewAll.checked = false;
+        }
       }
     }
 
@@ -538,6 +563,33 @@ console.log("aaa");
     });
   };
   
+  function submitAddManager(self){
+    var lnbManagerItem = $(self).parents(".lnbManagerItem");
+    var name = lnbManagerItem.find("input[type='text']");
+    if(!name.val() || name.val().length < 1){
+      alert("담당자 이름을 입력해주세요.");
+      return;
+    }
+    console.log("aa");
+    var id = NMNS.email + generateRandom();
+    lnbManagerItem.data("value", id);
+    lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:"+name.data("color")+"; border-color:"+name.data("color")+"'></span><small>"+name.val()+"</small></label>");
+    var calendars = NMNS.calendar.getCalendars();
+    calendars.push({
+      id : id,
+      checked : true,
+      bgColor : name.data("color"),
+      borderColor : name.data("color"),
+      color : getColorFromBackgroundColor(name.data("color"))
+    });
+    NMNS.calendar.setCalendars(calendars);
+    NMNS.socket.emit("add manager", {id: id, name:name.val(), color:name.data("color")});
+  };
+  
+  function cancelAddManager(self){
+    $(self).parents(".lnbManagerItem").remove();
+  };
+  
   window.cal = NMNS.calendar;
 
   setDropdownCalendarType();
@@ -570,4 +622,14 @@ console.log("aaa");
     }
   }));
   
+  NMNS.socket.on("add manager", socketResponse("담당자 추가하기", function(e){
+    alert("성공!");
+  }, function(e){
+    NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().filter(function(item){
+      return item.id !== e.data.id;
+    }));
+    $(".lnbManagerItem[data-value='"+e.data.id+"']").remove();
+  }));
+  
+  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#6a4a3c", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#ff009c", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#000000"]
 })(jQuery);

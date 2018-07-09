@@ -13031,7 +13031,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    + alias4((helpers["time-scheduleBlock"] || (depth0 && depth0["time-scheduleBlock"]) || alias2).call(alias1,depth0,{"name":"time-scheduleBlock","hash":{},"data":data}))
 	    + ";\n"
 	    + ((stack1 = (helpers.fi || (depth0 && depth0.fi) || alias2).call(alias1,(depth0 != null ? depth0.left : depth0),"!==",0,{"name":"fi","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + "            \">\n            <div data-schedule-id=\""
+	    + "            \" title=\""//NMNS CUSTOMIZING START
+	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.model : depth0)) != null ? stack1.title : stack1), depth0))
+	    + "\">\n            <div data-schedule-id=\""//NMNS CUSTOMIZING END
 	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.model : depth0)) != null ? stack1.id : stack1), depth0))
 	    + "\" data-calendar-id=\""
 	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.model : depth0)) != null ? stack1.calendarId : stack1), depth0))
@@ -18887,7 +18889,9 @@ console.log(viewModel);
 	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
 	    + "time-date-schedule-block\" data-id=\""
 	    + alias4((helpers.stamp || (depth0 && depth0.stamp) || alias2).call(alias1,(depth0 != null ? depth0.model : depth0),{"name":"stamp","hash":{},"data":data}))
-	    + "\" style=\"width: 100%; height: 100%;\">\n    <div class=\""
+	    + "\" style=\"width: 100%; height: 100%;\" title=\""//NMNS CUSTOMIZING START
+	    + alias4(alias5(((stack1 = (depth0 != null ? depth0.model : depth0)) != null ? stack1.title : stack1), depth0))
+	    + "\">\n    <div class=\""//NMNS CUSTOMIZING END
 	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
 	    + "time-schedule "
 	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))

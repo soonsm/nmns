@@ -63,6 +63,16 @@ button.moveDate:focus{
   line-height:.8rem;
   margin-left:.25rem;
 }
+.addManagerItem label{
+  width: calc(100% - 35px);
+}
+.addManagerItem input[type='text']{
+  width: calc(100% - 23px);
+  font-size:.9rem;
+}
+.addManagerItem .submitAddManager, .addManagerItem .cancelAddManager{
+  cursor:pointer;
+}
 /* creation popup */
 .tui-full-calendar-button.tui-full-calendar-popup-close{
   font-size:1.2rem;
