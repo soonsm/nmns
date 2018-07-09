@@ -2142,7 +2142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {TZDate} start date.
 	     */
 	    start: function(date) {
-	        var d = new TZDate(date.getTime());
+	        var d = new TZDate(date);
 	        d.setHours(0, 0, 0, 0);
 	
 	        return d;
@@ -2154,7 +2154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {TZDate} end date.
 	     */
 	    end: function(date) {
-	        var d = new TZDate(date.getTime());
+	        var d = new TZDate(date);
 	        //NMNS CUSTOMIZING START
 	        d.setHours(23, 50, 0, 0);
 					//NMNS CUSTOMIZING END
@@ -15860,7 +15860,8 @@ console.log(viewModel);
 	
 	    newStarts = new TZDate(newStarts.setDate(newStarts.getDate() + dateOffset));
 	    newEnds = new TZDate(newEnds.setDate(newEnds.getDate() + dateOffset));
-	
+			console.log("newStarts", moment(netStart.toDate()).format("YYYYMMDDHHmm"));
+			console.log("newEnds", moment(netEnds.toDate()).format("YYYYMMDDHHmm"));
 	    /**
 	     * @event DayGridMove#beforeUpdateSchedule
 	     * @type {object}
@@ -18519,7 +18520,8 @@ console.log(viewModel);
 	
 	    newStarts = new TZDate(newStarts.getTime() + dateDiff);
 	    newEnds = new TZDate(newEnds.getTime() + dateDiff);
-	
+	console.log("newStarts", moment(newStarts.toDate()).format("YYYYMMDDHHmm"));
+			console.log("newEnds", moment(newEnds.toDate()).format("YYYYMMDDHHmm"));
 	    /**
 	     * @event TimeMove#beforeUpdateSchedule
 	     * @type {object}
@@ -18532,8 +18534,8 @@ console.log(viewModel);
 	        //NMNS CUSTOMIZING START
 	        calendar : {id : schedule.calendarId},
 	        //NMNS CUSTOMIZING END
-	        start: newStarts,
-	        end: newEnds
+	        starts: newStarts.toDate(),
+	        ends: newEnds.toDate()
 	    });
 	};
 	
@@ -20266,7 +20268,11 @@ console.log(viewModel);
 	    + alias4(container.lambda(((stack1 = ((stack1 = (data && data.root)) && stack1.styles)) && stack1.fontSize), depth0))
 	    + ";\n"
 	    + ((stack1 = helpers.unless.call(alias1,(data && data.last),{"name":"unless","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + "        \">\n        <div class=\""
+	    //NMNS CUSTOMIZING START
+	    + "        \" data-date=\""
+	    + alias4(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"date","hash":{},"data":data}) : helper)))
+	    + "\">\n        <div class=\""
+	    //NMNS CUSTOMIZING END
 	    + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
 	    + "weekday-grid-header\">\n            <span style=\"color: "
 	    + alias4(((helper = (helper = helpers.color || (depth0 != null ? depth0.color : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"color","hash":{},"data":data}) : helper)))

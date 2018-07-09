@@ -91,8 +91,8 @@ if(!Array.prototype.find){
   }
 }
 function getColorFromBackgroundColor(background){
-  var o = Math.round(((parseInt(background.substring(1,3)) * 299) +
-                      (parseInt(background.substring(3,5)) * 587) +
-                      (parseInt(background.substring(5,7)) * 114)) / 1000);
+  var o = Math.round(((parseInt(background.substring(1,3), 16) * 299) +
+                      (parseInt(background.substring(3,5), 16) * 587) +
+                      (parseInt(background.substring(5,7), 16) * 114)) / 1000);
   return (o > 125 ? '#212121' : '#ffffff');
 }

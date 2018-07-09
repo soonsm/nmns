@@ -132,6 +132,7 @@
   NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
     console.log(e);
     drawSchedule(e.data);
+    NMNS.holiday = e.holiday;
     refreshScheduleVisibility();
   }));
   
@@ -168,29 +169,49 @@
     },
     beforeUpdateSchedule:function(e){
       NMNS.history.push(e.history || e.schedule);
+      console.log(e);
       var id = e.schedule.id;
-      if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
-        NMNS.calendar.deleteSchedule(id, e.history.selectedCal.id);
-        e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
-        e.schedule.dueDateClass = '';
-        NMNS.calendar.createSchedules([e.schedule]);
+      var newSchedule = {
+        start : e.starts || e.start,
+        end : e.ends || e.end,
+        raw:{
+          contact : e.schedule.raw.contact,
+          contents : e.schedule.raw.contents,
+          etc : e.schedule.raw.etc
+        },
+        isAllDay: e.schedule.isAllDay,
+        title: e.schedule.title,
+        color: e.schedule.color,
+        bgColor: e.schedule.bgColor,
+        borderColor : e.schedule.borderColor,
+        dragBgColor: e.schedule.dragBgColor
+      };
+      NMNS.calendar.deleteSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
+      e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
+      e.schedule.dueDateClass = '';
+      e.schedule.start = e.start;
+      e.schedule.end = e.end;
+      NMNS.calendar.createSchedules([e.schedule]);
+      /*if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
       }else{
-        delete e.schedule.id;
+        console.log(newSchedule);
+        console.log("start", moment(newSchedule.start).format("YYYYMMDDHHmm"));
+        console.log("end", moment(newSchedule.end).format("YYYYMMDDHHmm"));
         NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
-      }
-      e.schedule.id = id;
-      e.schedule.start = moment(e.schedule.start.toDate? e.schedule.start.toDate()  : e.schedule.start).format("YYYYMMDDHHmm");
-      e.schedule.end = moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm");
-      NMNS.socket.emit("update reserv", e.schedule);
+      }*/
+      newSchedule.id = id;
+      newSchedule.start = moment(newSchedule.start.toDate? newSchedule.start.toDate(): newSchedule.start).format("YYYYMMDDHHmm");
+      newSchedule.end = moment(newSchedule.end.toDate? newSchedule.end.toDate() : newSchedule.end).format("YYYYMMDDHHmm");
+      NMNS.socket.emit("update reserv", newSchedule);
     },
     beforeDeleteSchedule:function(e){
       NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
       e.schedule.status = "DELETED";
-      e.schedule.start = moment((e.schedule.start instanceof Date)? e.schedule.start : e.schedule.start.toDate()).format("YYYYMMDDHHmm");
+      /*e.schedule.start = moment((e.schedule.start instanceof Date)? e.schedule.start : e.schedule.start.toDate()).format("YYYYMMDDHHmm");
       e.schedule.end = moment((e.schedule.end instanceof Date)? e.schedule.end : e.schedule.end.toDate()).format("YYYYMMDDHHmm");
       e.schedule.name = e.schedule.title;
-      e.schedule.type = "R";
+      e.schedule.type = "R";*/
       NMNS.socket.emit("update reserv", e.schedule);
     },
     afterRenderSchedule:function(e){
@@ -333,9 +354,10 @@ console.log("aaa");
     NMNS.calendar.createSchedules([scheduleData]);
     
     NMNS.history.push(scheduleData);
-    scheduleData.start = moment(scheduleData.start.toDate()).format("YYYYMMDDHHmm");
-    scheduleData.end = moment(scheduleData.end.toDate()).format("YYYYMMDDHHmm");
-    NMNS.socket.emit("add reserv", scheduleData);
+    var serverSchedule = $.extend({}, scheduleData);
+    serverSchedule.start = moment(serverSchedule.start.toDate()).format("YYYYMMDDHHmm");
+    serverSchedule.end = moment(serverSchedule.end.toDate()).format("YYYYMMDDHHmm");
+    NMNS.socket.emit("add reserv", serverSchedule);
   }
 
   function findManager(managerId){
@@ -392,6 +414,9 @@ console.log("aaa");
       var span = input.nextElementSibling;
       span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
     });
+    if(NMNS.holiday){
+      drawHoliday(NMNS.holiday);
+    }
   }
 
   function setDropdownCalendarType() {
@@ -415,8 +440,7 @@ console.log("aaa");
     var html = [];
     if (viewName === 'day') {
         html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM.DD'));
-    } else if (viewName === 'month' &&
-        (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
+    } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
         html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM'));
     } else {
         html.push(moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY.MM.DD'));
@@ -494,8 +518,30 @@ console.log("aaa");
         }
       }
     }), true);
-  }
+  };
 
+  function drawHoliday(holiday){
+    holiday.forEach(function(item){
+      if(NMNS.calendar.getViewName() === "month"){
+        var dayname = $(".tui-full-calendar-near-month-day[data-date='"+item.date+"']");
+        if(dayname.length){
+          dayname.addClass("tui-full-calendar-holiday");
+          dayname.find("div span").css("color", "#ff4040");
+          var name = dayname.find(".tui-full-calendar-weekday-grid-date").parent();
+          name.text(name.text() + " [" + item.title + "]");
+        }
+      }else{
+        var dayname = $(".tui-full-calendar-dayname[data-date='"+item.date+"']");
+        if(dayname.length){
+          dayname.addClass("tui-full-calendar-holiday");
+          dayname.children("span").css("color", "#ff4040");
+          var name = dayname.find(".tui-full-calendar-dayname-name");
+          name.text(name.text() + " [" + item.title + "]");
+        }
+      }
+    });
+  };
+  
   window.cal = NMNS.calendar;
 
   setDropdownCalendarType();
