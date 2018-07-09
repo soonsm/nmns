@@ -33,29 +33,29 @@
     <a class="navbar-brand js-scroll-trigger" href="/">No More No Show</a>
     <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fa fa-bars d-block d-md-none"></i>
-      <span class="d-none d-md-block"><if(input.user.name)>${input.user.name}</if><else>${input.user.email}</else></span>
+      <span class="d-none d-md-block"><if(input.user.shopName)>${input.user.shopName}<small class="d-none d-lg-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav text-white mr-auto godo normal w700">
-        <li class="nav-item mx-0 ">
-          <a id="myPageLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store fa-fw align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
+        <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
+          <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store fa-fw align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
         </li>
-        <li class="nav-item mx-0 ">
+        <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
           <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell fa-fw align-middle d-none d-md-inline-block"></i> 알림톡 정보</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus fa-fw align-middle d-none d-md-inline-block"></i> 노쇼 추가</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle d-none d-md-inline-block"></i> 노쇼 조회</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus fa-fw align-middle d-none d-md-inline-block"></i> 예약 추가</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none">
+        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check fa-fw align-middle d-none d-md-inline-block"></i> 일정 추가</a>
         </li>
-        <li class="nav-item mx-0">
+        <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
           <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout"><i class="fas fa-sign-out-alt fa-fw align-middle d-none d-md-inline-block"></i> 로그아웃</a>
         </li>
       </ul>
@@ -65,7 +65,7 @@
   <div id="mainRow" class="row col px-0 mx-auto">
     <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded px-0">
       <ul class="list-group">
-        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 추가</span>
@@ -126,6 +126,93 @@
         </div>
       </div>
       <div id="mainCalendar"></div>
+    </div>
+    
+    <div id="infoModal" class="modal fade" tabIndex="-1" role="dialog" aria-labelledby="#infoModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="infoModalTitle">내 매장 정보</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="infoForm">
+              <div class="form-group">
+                <div class="row mb-2">
+                  <label for="infoEmail" class="col-3 col-form-label col-form-label-sm">이메일</label>
+                  <div class="col-9 py-1 px-0">
+                    <span id="infoEmail"></span>
+                    <span id="infoAuthStatus" class="pl-2"></span>
+                    <span id="infoAccountStatus" class="pl-2"></span>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="infoShopName" class="col-3 col-form-label col-form-label-sm">매장이름</label>
+                  <div class="col-9 pl-0">
+                    <input id="infoShopName" type="text" placeholder="매장이름" class="form-control form-control-sm rounded-0"/>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="infoBizStartTime" class="col-3 col-form-label col-form-label-sm">매장운영시간</label>
+                  <div class="col-4 px-0">
+                    <div id="infoBizStartTimePicker" class="input-group input-group-sm" data-target-input="nearest">
+                      <div class="input-group-prepend" data-target="#infoBizStartTimePicker" data-toggle="datetimepicker">
+                        <i id="infoBizStartTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
+                      </div>
+                      <input id="infoBizStartTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizStartTimePicker" aria-describedby="infoBizStartTimeIcon"/>
+                    </div>
+                  </div>
+                  <span class="px-2 pt-1">—</span>
+                  <div class="col-4 px-0">
+                    <div id="infoBizEndTimePicker" class="input-group input-group-sm" data-target-input="nearest">
+                      <div class="input-group-prepend" data-target="#infoBizEndTimePicker" data-toggle="datetimepicker">
+                        <i id="infoBizEndTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
+                      </div>
+                      <input id="infoBizEndTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizEndTimePicker" aria-describedby="infoBizEndTimeIcon"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="infoBizType" class="col-3 col-form-label col-form-label-sm">업종</label>
+                  <div class="col-9 col-md-4 px-0">
+                    <input id="infoBizType" type="text" placeholder="업종" class="form-control form-control-sm rounded-0"/>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="infoManagerList" class="col-form-label col-form-label-sm">담당자 관리</label>
+                  <div id="infoManagerList" class="col-6"></div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
+            <button type="button" id="infoModalSave" class="btn btn-primary btn-flat">저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="alrimModal" class="modal fade" tabIndex="-1" role="dialog" aria-labelledby="#alrimModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="alrimModalTitle">알림톡 정보</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>알림톡 정보다!!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
+            <button type="button" id="alrimModalSave" class="btn btn-primary btn-flat">저장</button>
+          </div>
+        </div>
+      </div>
     </div>
     
   </div>

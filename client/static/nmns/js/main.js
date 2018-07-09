@@ -82,8 +82,8 @@
     },
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
-      hourStart:9,
-      hourEnd:23
+      hourStart:NMNS.info?parseInt(NMNS.info.bizStartTime.substring(0,2)) : 9,
+      hourEnd:NMNS.info?parseInt(NMNS.info.bizEndTime.substring(0,2)):23
     },
     theme:{
       'week.currentTime.color': '#009688',
@@ -126,7 +126,11 @@
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
-    //영업시간에 따라 mainCalendar Height 조정 NMNS.weekHeight에 반영
+    NMNS.info = e.data;
+    if(NMNS.calendar){
+      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizStartTime?parseInt(NMNS.info.bizStartTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2)):23)}});
+    }
+    NMNS.email = e.data.email || NMNS.email;
   }));
   
   NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
@@ -181,7 +185,7 @@
     },
     clickDayname:function(e){
       console.log("clickDayname", e);
-      NMNS.calendar.setOptions({week:{hourStart:8, hourEnd:20}});
+
     },
     beforeCreateSchedule:function(e){
       saveNewSchedule(e);
@@ -476,6 +480,123 @@ console.log("aaa");
     getSchedule(NMNS.calendar.getDateRangeStart(), NMNS.calendar.getDateRangeEnd());
   }
 
+  function initAlrimModal(){
+    $("#alrimUseYn").checked = (NMNS.info.alrimTalkInfo.useYn === "Y");
+    $("#alrimCallbackPhone").val(NMNS.info.alrimTalkInfo.callbackPhone || "");
+    $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
+    $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
+  }
+
+  function generateAuthStatusBadge(authStatus){
+    switch(authStatus){
+      case "BEFORE_VERIFICATION":
+        return "<span class='badge badge-danger'>이메일 미인증</span>";
+      case "EMAIL_VERIFICATED":
+        return "<span class='badge badge-success'>인증</span>";
+    }
+    $("#infoAccountStatus").removeClass("pl-2");
+    return "";
+  }
+
+  function generateAccountStatusBadge(accountStatus){
+    switch(accountStatus){
+      case 1:
+        return "<span class='badge badge-danger'>잠김</span>";
+    }
+    return "";
+  }
+  
+  function generateManagerList(managerList){
+    var html = "";
+    managerList.forEach(function(item){
+      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>"
+    });
+    return html;
+  }
+  
+  function initInfoModal(){
+    console.log(NMNS.info);
+    NMNS.info.authStatus = "BEFORE_VERIFICATION";
+    NMNS.info.accountStatus = 1;
+    console.log(generateAuthStatusBadge(NMNS.info.authStatus));
+    $("#infoEmail").text(NMNS.email);
+    $("#infoAuthStatus").html(generateAuthStatusBadge(NMNS.info.authStatus));
+    $("#infoAccountStatus").html(generateAccountStatusBadge(NMNS.info.accountStatus));
+    NMNS.infoModal = NMNS.infoModal || {};
+    if(NMNS.infoModal.start){
+      $("#infoBizStartTime").datetimepicker("destroy");
+      $("#infoBizEndTime").datetimepicker("destroy");
+    }
+    NMNS.infoModal.start = $("#infoBizStartTimePicker").datetimepicker({
+      format: "HH:mm",
+      icons:{
+        time: "fas fa-clock",
+        up: "fas fa-chevron-up",
+        down: "fas fa-chevron-down",
+        close: "fas fa-times"
+      },
+      defaultDate: moment(NMNS.info.bizStartTime || "0900", "HHmm"),
+      date: moment(NMNS.info.bizStartTime || "0900", "HHmm"),
+      locale:"ko",
+      viewMode: "times",
+      buttons:{
+        showClose:true
+      },
+      allowInputToggle:true,
+      tooltips:{
+        close:"닫기",
+        pickHour:"시 선택",
+        incrementHour:"시 증가",
+        decrementHour:"시 감소",
+        pickMinute:"분 선택",
+        incrementMinute:"분 증가",
+        decrementMinute:"분 감소"
+      },
+      stepping:10
+    });
+    NMNS.infoModal.end = $("#infoBizEndTimePicker").datetimepicker({
+      format: "HH:mm",
+      icons:{
+        time: "fas fa-clock",
+        up: "fas fa-chevron-up",
+        down: "fas fa-chevron-down",
+        close: "fas fa-times"
+      },
+      defaultDate: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
+      date: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
+      locale:"ko",
+      viewMode: "times",
+      buttons:{
+        showClose:true
+      },
+      allowInputToggle:true,
+      tooltips:{
+        close:"닫기",
+        pickHour:"시 선택",
+        incrementHour:"시 증가",
+        decrementHour:"시 감소",
+        pickMinute:"분 선택",
+        incrementMinute:"분 증가",
+        decrementMinute:"분 감소"
+      },
+      stepping:10
+    });
+    $("#infoShopName").val(NMNS.info.shopName);
+    $("#infoBizType").val(NMNS.info.BizType);
+    $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));
+  }
+  function initModal(self){
+    if(!NMNS.info){
+      NMNS.socket.emit("get info", {});
+    }else{
+      if($(self).is("#infoLink")){
+        initInfoModal(NMNS.info);
+      }else if($(self).is("#alrimLink")){
+        initAlrimModal(NMNS.info);
+      }
+    }
+  }
+  
   var resizeThrottled = tui.util.throttle(function() {
     NMNS.calendar.render();
   }, 50);
@@ -494,6 +615,10 @@ console.log("aaa");
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
     $(".addReservLink").on("touch click", createNewSchedule);
+    
+    $("#infoLink").on("touch click", initInfoModal);
+    $("#alrimLink").on("touch click", initAlrimModal);
+    
     window.addEventListener('resize', resizeThrottled);
   }
 

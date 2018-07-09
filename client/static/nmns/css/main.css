@@ -68,7 +68,7 @@ button.moveDate:focus{
 }
 .addManagerItem input[type='text']{
   width: calc(100% - 23px);
-  font-size:.9rem;
+  font-size:.8rem;
 }
 .addManagerItem .submitAddManager, .addManagerItem .cancelAddManager{
   cursor:pointer;
@@ -193,4 +193,24 @@ button.moveDate:focus{
 .detailPopupLabel .dropdown-item{
   padding-left:1.5rem;
   font-size:.9rem;
+}
+
+/* infoForm */
+#infoForm{
+  font-size:.9rem;
+}
+#infoForm #infoManagerList .infoManagerItem label{
+  width: calc(100% - 21px);
+}
+#infoForm #infoManagerList input[type='text']{
+  width: calc(100% - 22px);
+  font-size:.8rem;
+  display:inline-block;
+}
+.modal-header h5{
+  margin-bottom:0;
+}
+#infoManagerList{
+  max-height:183px;
+  overflow-y:auto;
 }
