@@ -15054,6 +15054,7 @@ console.log(viewModel);
 			+ "<span class=\"fas fa-times\"></span>"
 		+ "</button>\n"
 		+ "<div class=\"text-right\">"
+			+ "<button id=\"creationPopupClose\" class=\"btn btn-flat btn-light mr-2 " + escapedCssPrefix + "popup-close\">닫기</button>"
 			+ "<button id=\"creationPopupSave\" class=\"btn btn-primary btn-flat\">저장</button>"
 		+ "</div>\n"
 	  + "</form>\n"
