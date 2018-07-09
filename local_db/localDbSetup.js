@@ -74,9 +74,10 @@ var params = {
     Key: {
         'email': 'ksm@test.com'
     },
-    UpdateExpression: "set password = :reservation",
+    UpdateExpression: "set password = :reservation, authStatus = :authStatus",
     ExpressionAttributeValues:{
-        ":reservation":'rlatmdals1#'
+        ":reservation":'rlatmdals1#',
+        ":authStatus":'BEFORE_EMAIL_VERIFICATION'
     },
     ReturnValues:"UPDATED_NEW"
 };
