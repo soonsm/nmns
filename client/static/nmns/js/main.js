@@ -169,11 +169,10 @@
     },
     beforeUpdateSchedule:function(e){
       NMNS.history.push(e.history || e.schedule);
-      console.log(e);
       var id = e.schedule.id;
       var newSchedule = {
-        start : e.starts || e.start,
-        end : e.ends || e.end,
+        start : e.start,
+        end : e.end,
         raw:{
           contact : e.schedule.raw.contact,
           contents : e.schedule.raw.contents,
@@ -186,19 +185,16 @@
         borderColor : e.schedule.borderColor,
         dragBgColor: e.schedule.dragBgColor
       };
-      NMNS.calendar.deleteSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
-      e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
-      e.schedule.dueDateClass = '';
       e.schedule.start = e.start;
       e.schedule.end = e.end;
-      NMNS.calendar.createSchedules([e.schedule]);
-      /*if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
+      if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
+        NMNS.calendar.deleteSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
+        e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
+        e.schedule.dueDateClass = '';
+        NMNS.calendar.createSchedules([e.schedule]);
       }else{
-        console.log(newSchedule);
-        console.log("start", moment(newSchedule.start).format("YYYYMMDDHHmm"));
-        console.log("end", moment(newSchedule.end).format("YYYYMMDDHHmm"));
         NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
-      }*/
+      }
       newSchedule.id = id;
       newSchedule.start = moment(newSchedule.start.toDate? newSchedule.start.toDate(): newSchedule.start).format("YYYYMMDDHHmm");
       newSchedule.end = moment(newSchedule.end.toDate? newSchedule.end.toDate() : newSchedule.end).format("YYYYMMDDHHmm");

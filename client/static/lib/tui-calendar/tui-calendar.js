@@ -2142,7 +2142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {TZDate} start date.
 	     */
 	    start: function(date) {
-	        var d = new TZDate(date);
+	        var d = new TZDate(date.getTime());
 	        d.setHours(0, 0, 0, 0);
 	
 	        return d;
@@ -2154,7 +2154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {TZDate} end date.
 	     */
 	    end: function(date) {
-	        var d = new TZDate(date);
+	        var d = new TZDate(date.getTime());
 	        //NMNS CUSTOMIZING START
 	        d.setHours(23, 50, 0, 0);
 					//NMNS CUSTOMIZING END
@@ -15860,8 +15860,7 @@ console.log(viewModel);
 	
 	    newStarts = new TZDate(newStarts.setDate(newStarts.getDate() + dateOffset));
 	    newEnds = new TZDate(newEnds.setDate(newEnds.getDate() + dateOffset));
-			console.log("newStarts", moment(netStart.toDate()).format("YYYYMMDDHHmm"));
-			console.log("newEnds", moment(netEnds.toDate()).format("YYYYMMDDHHmm"));
+			
 	    /**
 	     * @event DayGridMove#beforeUpdateSchedule
 	     * @type {object}
@@ -18172,7 +18171,6 @@ console.log(viewModel);
 	         * @returns {object} - common event data for time.*
 	         */
 	        return util.bind(function(mouseEvent, extend) {
-	        	console.log(mouseEvent, extend);
 	            var mouseY = Point.n(domevent.getMousePosition(mouseEvent, container)).y,
 	                gridY = common.ratio(viewHeight, hourLength, mouseY),
 	                timeY = viewTime + datetime.millisecondsFrom('hour', gridY),
@@ -18520,8 +18518,7 @@ console.log(viewModel);
 	
 	    newStarts = new TZDate(newStarts.getTime() + dateDiff);
 	    newEnds = new TZDate(newEnds.getTime() + dateDiff);
-	console.log("newStarts", moment(newStarts.toDate()).format("YYYYMMDDHHmm"));
-			console.log("newEnds", moment(newEnds.toDate()).format("YYYYMMDDHHmm"));
+	
 	    /**
 	     * @event TimeMove#beforeUpdateSchedule
 	     * @type {object}
@@ -18534,8 +18531,8 @@ console.log(viewModel);
 	        //NMNS CUSTOMIZING START
 	        calendar : {id : schedule.calendarId},
 	        //NMNS CUSTOMIZING END
-	        starts: newStarts.toDate(),
-	        ends: newEnds.toDate()
+	        start: newStarts.toDate(),
+	        end: newEnds.toDate()
 	    });
 	};
 	
