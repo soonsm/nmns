@@ -5,44 +5,182 @@ const moment = require('moment');
 const util = require('./util');
 const passportSocketIo = require('passport.socketio');
 
-const GetReservationList = 'get reserv';
-const AddReservation = 'add reserv';
-const UpdateReservation = 'update reserv';
-const GetNoShow = 'get noshow';
-const AddNoShow = 'add noshow';
-const DelNoShow = 'delete noshow';
-const GetManagerList = 'get manager';
-const AddManager = 'add manager';
-const UpdateManager = 'update manager';
-const DelManager = 'delete manager';
+const GetReservationList = 'get reserv', AddReservation = 'add reserv', UpdateReservation = 'update reserv';
+const GetNoShow = 'get noshow', AddNoShow = 'add noshow', DelNoShow = 'delete noshow';
+const GetManagerList = 'get manager', AddManager = 'add manager', UpdateManager = 'update manager', DelManager = 'delete manager';
+const GetShop = 'get info', UpdateShop = 'update info', UpdatePwd = 'update password';
+const GetAlrimTalk = 'get alrim', UpdateAlirmTalk = 'update alrim';
+
+const EVENT_LIST_NO_NEED_VERIFICATION = [GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
-/*
-    io.use(passportSocketIo.authorize({
-        key: 'connect.sid',
-        secret: 'rilahhuma',
-        store: sessionStore,
-        passport: passport,
-        cookieParser: cookieParser
-    }));
-*/
+
+    // io.use(passportSocketIo.authorize({
+    //     key: 'connect.sid',
+    //     secret: 'rilahhuma',
+    //     store: sessionStore,
+    //     passport: passport,
+    //     cookieParser: cookieParser
+    // }));
+
     io.on('connection', async function (socket) {
-  //      var email = socket.request.user.email;
+        // const user = socket.request.user;
+        // const email = user.email;
 
         var email = 'ksm@test.com';
+        var user = await db.getWebUser(email);
+        user.authStatus = 'EMAIL_VERIFICATED';
         console.log('socket io email:', email);
-/*
-        if(!email || !socket.request.user.logged_in){
-            console.log(`User ${email} is not logged in`);
-            return;
-        }
-*/
+
+        // if(!email || !socket.request.user.logged_in){
+        //     console.log(`User ${email} is not logged in`);
+        //     return;
+        // }
+
+        const addEvent = function(eventName, fn){
+          socket.on(eventName, function(data){
+              if(EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)){
+                  fn(data);
+              }else if(user.authStatus !== 'EMAIL_VERIFICATED'){
+                  socket.emit(GetReservationList, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
+              }else{
+                  fn(data);
+              }
+          });
+        };
+
+        /**
+         * AlrimTalk
+         */
+        addEvent(GetAlrimTalk, async function(){
+            let status = true, message = null;
+            let resultData = await db.getWebUser(email);
+            if(! resultData){
+                status = false;
+                message = '잘못된 접근입니다.';
+            }
+
+            socket.emit(GetAlrimTalk, makeResponse(status, resultData.alrimTalkInfo, message));
+        });
+
+        addEvent(UpdateAlirmTalk, async function(data){
+            let status = true, message = null;
+            let alrimTalkInfo = user.alrimTalkInfo;
+
+            if(data.useYn && data.useYn !== 'Y' && data.useYn !== 'N'){
+                status = false;
+                message = `useYn은 Y 또는 N 값만 가질 수 있습니다.(${data.useYn})`;
+            }else if(data.callbackPhone && !util.phoneNumberValidation(data.callbackPhone)){
+                status = false;
+                message = `callbackPhone이 전화번호 형식에 맞지 않습니다.(${data.callbackPhone})`;
+            }
+
+            if(status && alrimTalkInfo.useYn === 'N' && data.useYn === 'Y'){
+                //알림톡 미사용 -> 사용으로 변경 할 때
+                if(!alrimTalkInfo.callbackPhone && !data.callbackPhone){
+                    status = false;
+                    message = '알림톡 미사용에서 사용으로 변경 할 때는 DB에 또는 업데이트 요청에 callbackPhone에 전화번호가 있어야 합니다.';
+                }
+            }
+
+            if(status){
+                for(let x in alrimTalkInfo){
+                    alrimTalkInfo[x] = data[x] || alrimTalkInfo[x];
+                }
+                if(!await db.updateWebUser(email, {alrimTalkInfo: alrimTalkInfo})){
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error)';
+                }
+            }
+
+            socket.emit(UpdateAlirmTalk, makeResponse(status, null, message));
+
+        });
+
+        /**
+         * Shop & Account
+         */
+        addEvent(UpdatePwd, async function(data){
+            let status = true, message = null;
+            let pwd = data.password;
+            if(!pwd){
+                status = false;
+                message = '비밀번호 변경에 필요한 데이터가 없습니다.({"password":${변경할 패스워드, string}})';
+            }else{
+                let strengthCheck = util.passwordStrengthCheck(pwd);
+                if(strengthCheck.result === false){
+                    status = false;
+                    message = strengthCheck.message;
+                }
+
+                if(status){
+                    if(!await db.updateWebUser(email, {password: pwd})){
+                        status = false;
+                        message = '시스템 오류입니다.(DB Update Error)';
+                    }
+                }
+            }
+            socket.emit(UpdatePwd, makeResponse(status, null, message));
+        });
+
+        addEvent(GetShop, async function(){
+            let status = true, message = null;
+            let resultData = await db.getWebUser(email);
+            if(! resultData){
+                status = false;
+                message = '잘못된 접근입니다.';
+            }
+
+            socket.emit(GetShop, makeResponse(status, resultData, message));
+        });
+
+        addEvent(UpdateShop, async function(params){
+            let status = true, message = null, data={};
+
+            /**
+             * Update 가능 properties
+             * bizBeginTime, bizEndTime, shopName, bizType
+             */
+            let updateProperties = ['bizBeginTime', 'bizEndTime', 'shopName', 'bizType'];
+            for(let i=0; i<updateProperties.length; i++){
+                let property = updateProperties[i];
+                if(params.hasOwnProperty(property)){
+                    data[property] = params[property];
+                }
+            }
+            let user = await db.getWebUser(email);
+            if(!user){
+                status = false;
+                message = '잘못된 접근입니다';
+            }
+            if(status){
+                if(data.bizBeginTime && !moment(data.bizBeginTime, 'HHmm').isValid()){
+                    status = false;
+                    message = 'bizBeginTime 시간 포맷이 올바르지 않습니다.(HHmm):'+data.bizBeginTime;
+                }else if(data.bizEndTime && !moment(data.bizEndTime, 'HHmm').isValid()){
+                    status = false;
+                    message = 'bizEndTime 시간 포맷이 올바르지 않습니다.(HHmm):'+data.bizEndTime;
+                }
+
+                if(status){
+                    if(! await db.updateWebUser(email, data)){
+                        status = false;
+                        message = '시스템 오류입니다.(DB Update Error)';
+                    }
+                }
+            }
+
+            socket.emit(UpdateShop, makeResponse(status, null, message));
+
+        });
+
         /**
          * Reservation
          */
 
-        socket.on(GetReservationList, async function (data) {
+
+        addEvent(GetReservationList, async function (data) {
             let status = true;
             let message = null;
             let resultData = null;
@@ -65,7 +203,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(GetReservationList, response);
         });
 
-        socket.on(UpdateReservation, async function (newReservation) {
+        addEvent(UpdateReservation, async function (newReservation) {
             console.log('UpdateReservation:', newReservation);
 
             let validationResult = reservationValidationForUdate(email, newReservation);
@@ -97,7 +235,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 if(isItMyReservation){
                     if(!await db.updateReservation(email, reservationList)){
                         status = false;
-                        message = '시스템 오류입니다.(DB Update Error';
+                        message = '시스템 오류입니다.(DB Update Error)';
                     }
                     if(newReservation.status === 'NOSHOW'){
                         //noShow 입력
@@ -112,7 +250,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(UpdateReservation, makeResponse(status, {id: newReservation.id}, message));
         });
 
-        socket.on(AddReservation, async function(data){
+        addEvent(AddReservation, async function(data){
             console.log(data);
 
             let validationResult = reservationValidationForAdd(email, data);
@@ -134,7 +272,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(AddReservation, makeResponse(status, {id: data.id}, message));
         });
 
-        socket.on(GetManagerList, async function () {
+        addEvent(GetManagerList, async function () {
             let managerList = await db.getStaffList(email);
             socket.emit(GetManagerList, makeResponse(true, managerList));
         });
@@ -143,7 +281,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Manager
          */
 
-        socket.on(AddManager, async (staff)=>{
+        addEvent(AddManager, async (staff)=>{
             let status = true, message = null;
             let name = staff.name;
             let id = staff.id;
@@ -163,7 +301,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(AddManager, makeResponse(status, {id: id}, message));
         });
 
-        socket.on(UpdateManager, async (newStaff)=>{
+        addEvent(UpdateManager, async (newStaff)=>{
             let status = true, message = null;
             let name = newStaff.name;
             let color = newStaff.color;
@@ -198,7 +336,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             socket.emit(UpdateManager, makeResponse(status, {id: id}, message));
         });
-        socket.on(DelManager, async (newStaff)=>{
+        addEvent(DelManager, async (newStaff)=>{
             let status = true, message = null;
             let id = newStaff.id;
 
@@ -236,7 +374,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * NoShow
          */
 
-        socket.on(GetNoShow, async function (data) {
+        addEvent(GetNoShow, async function (data) {
             let status = true, message = null, resultData = null;
             let contact = data.contact;
             let mine = data.mine;
@@ -260,14 +398,14 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(GetNoShow, makeResponse(status, resultData, message));
         });
 
-        socket.on(AddNoShow, async function (data) {
-            let status = true, message = null, resultData = null;
+        addEvent(AddNoShow, async function (data) {
+            let status = true, message = null, resultData;
             const contact = data.contact;
             const name = data.name;
             const noShowCase = data.noShowCase;
 
             //validation
-            if(!contact || !name){
+            if(!contact){
                 status = false;
                 message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "name":${고객 이름, string, optional},"noShowCase":${매장 코멘트, string, optional}})';
             }else if(!util.phoneNumberValidation(contact)){
@@ -279,7 +417,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(AddNoShow, makeResponse(status, resultData, message));
         });
 
-        socket.on(DelNoShow, async function (data) {
+        addEvent(DelNoShow, async function (data) {
             let status = true, message = null;
             const contact = data.contact;
 
