@@ -82,7 +82,7 @@
     },
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
-      hourStart:NMNS.info?parseInt(NMNS.info.bizStartTime.substring(0,2)) : 9,
+      hourStart:NMNS.info?parseInt(NMNS.info.bizBeginTime.substring(0,2)) : 9,
       hourEnd:NMNS.info?parseInt(NMNS.info.bizEndTime.substring(0,2)):23
     },
     theme:{
@@ -128,7 +128,7 @@
     console.log(e);
     NMNS.info = e.data;
     if(NMNS.calendar){
-      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizStartTime?parseInt(NMNS.info.bizStartTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2)):23)}});
+      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2)):23)}});
     }
     NMNS.email = e.data.email || NMNS.email;
   }));
@@ -147,13 +147,8 @@
       item.borderColor = item.color;
       item.color = getColorFromBackgroundColor(item.bgColor);
     });
-    var html = "";
-    e.data.forEach(function(item){
-      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-      html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"'></span><small>"+item.name+"</small></label></div>";
-    });
-    html += "<div class='lnbManagerItem btn px-0 addManager'><small class='text-secondary'><i class='fas fa-plus'></i> 담당자 추가하기</small></div>";
-    $("#managerList").html(html);
+    
+    $("#lnbManagerList").html(generateLnbManagerList(e.data));
     NMNS.calendar.setCalendars(e.data);
     if(NMNS.needInit){
       delete NMNS.needInit;
@@ -161,21 +156,31 @@
     }
     $(".addManager").off("touch click").on("touch click", function(){
       var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
-      $("<div class='lnbManagerItem addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle' data-color='"+color+"' placeholder='담당자 이름'/></label><i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i></div>").insertBefore(this);
-      $(".submitAddManager").off("touch click").on("touch click", function(){
-        submitAddManager(this);
-      });
-      $(".cancelAddManager").off("touch click").on("touch click", function(){
+      var list = $(this).prev();
+      var clazz = list.attr("id") === "lnbManagerList"? "lnbManagerItem" : "infoManagerItem";
+      list.append($("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>"));
+      if(clazz === "lnbManagerItem"){
+        $(".lnbManagerItem .submitAddManager").off("touch click").on("touch click", function(){
+          submitAddManager(this);
+        });
+        $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+          if(e.which === 27){
+            cancelAddManager(this);
+          }else if(e.which === 13){
+            submitAddManager(this);
+          }
+        });
+      }else{
+        $(".infoManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+          if(e.which === 27){
+            cancelAddManager(this);
+          }
+        });
+      }
+      $("."+ clazz + " .cancelAddManager").off("touch click").on("touch click", function(){
         cancelAddManager(this);
       });
-      $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
-        if(e.which === 27){
-          cancelAddManager(this);
-        }else if(e.which === 13){
-          submitAddManager(this);
-        }
-      });
-      $(this).prev().find("input[type='text']").focus();
+      list.find("div:last-child input[type='text']").focus();
     });
   }));
   
@@ -227,10 +232,6 @@
       NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
       e.schedule.status = "DELETED";
-      /*e.schedule.start = moment((e.schedule.start instanceof Date)? e.schedule.start : e.schedule.start.toDate()).format("YYYYMMDDHHmm");
-      e.schedule.end = moment((e.schedule.end instanceof Date)? e.schedule.end : e.schedule.end.toDate()).format("YYYYMMDDHHmm");
-      e.schedule.name = e.schedule.title;
-      e.schedule.type = "R";*/
       NMNS.socket.emit("update reserv", e.schedule);
     },
     afterRenderSchedule:function(e){
@@ -388,7 +389,7 @@ console.log("aaa");
   function onChangeManagers(e) {
     var checked = e.target.checked;
     var viewAll = document.querySelector('.lnbManagerItem input');
-    var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
+    var managerElements = Array.prototype.slice.call(document.querySelectorAll('#lnbManagerList input'));
     var allCheckedCalendars = true;
 
     if ($(e.target).is("#managerCheckAll")) {
@@ -427,7 +428,7 @@ console.log("aaa");
   }
 
   function refreshScheduleVisibility() {
-    var managerElements = Array.prototype.slice.call(document.querySelectorAll('#managerList input'));
+    var managerElements = Array.prototype.slice.call(document.querySelectorAll('#lnbManagerList input'));
 
     NMNS.calendar.getCalendars().forEach(function(manager) {
       NMNS.calendar.toggleSchedules(manager.id, !manager.checked, false);
@@ -509,81 +510,180 @@ console.log("aaa");
   function generateManagerList(managerList){
     var html = "";
     managerList.forEach(function(item){
-      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>"
+      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"' data-name='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>"
     });
     return html;
   }
   
-  function initInfoModal(){
-    console.log(NMNS.info);
-    NMNS.info.authStatus = "BEFORE_VERIFICATION";
-    NMNS.info.accountStatus = 1;
-    console.log(generateAuthStatusBadge(NMNS.info.authStatus));
+  function generateLnbManagerList(managerList){
+    var html = "";
+    managerList.forEach(function(item){
+      html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
+      html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"'></span><small>"+item.name+"</small></label></div>";
+    });
+    return html;
+  }
+  
+  function submitInfoModal(){
+    //validation start
+    if($(".addManagerItem input[type='text']").length){//추가하는것이 있을 경우 이름이 비어있는지 확인
+      var cont = true;
+      $(".infoManagerItem input[type='text']").each(function(){
+        if(!$(this).val().length){
+          cont = false;
+          $(this).focus();
+        }
+      });
+      if(!cont){
+        alert("담당자의 이름을 입력해주세요.");
+        return;
+      }
+    }
+    var beginTime = moment($("#infoBizBeginTime").val(), "HH:mm");
+    if(!beginTime.isValid()){
+      alert("매장 운영 시작시간이 올바르지 않습니다.");
+      $("#infoBizBeginTime").focus();
+      return;
+    }
+    var endTime = moment($("#infoBizEndTime").val(), "HH:mm");
+    if(!endTime.isValid()){
+      alert("매장 운영 종료시간이 올바르지 않습니다.");
+      $("#infoBizEndTime").focus();
+      return;
+    }
+    //validation end
+    //update info start
+    var parameters = {};
+    if(beginTime.format("HHmm") !== (NMNS.info.bizBeginTime || "0900") || endTime.format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
+      NMNS.history.push({id:"bizTime", beginTime:beginTime.format("HHmm"), endTime:endTime.format("HHmm")});
+      parameters.bizBeginTime = beginTime.format("HHmm");
+      parameters.bizEndTime = endTime.format("HHmm");
+    }
+    if($("#infoShopName").val() !== (NMNS.info.shopName || "")){
+      parameters.shopName = $("#infoShopName").val();
+    }
+    if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
+      parameters.bizType = $("#infoBizType").val();
+    }
+    if(Object.keys(parameters).length){
+      NMNS.socket.emit("update info", {shopName:$("#infoShopName").val(), bizBeginTime:beginTime.format("HHmm"), bizEndTime:endTime.format("HHmm"), bizType:$("#infoBizType").val()});
+    }
+    //update info end
+    //update manager start
+    var diff = false;
+    $(".infoManagerItem").each(function(){
+      if($(this).hasClass("addManagerItem")){//추가
+        diff = true;
+        submitAddManager($(this).find("input[type='text']")[0]);
+      }else{
+        var input = $(this).find("input[type='text']");
+        var manager = findManager(input.data("id"));
+        if($(this).data("delete")){//삭제
+          diff = true;
+          NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target){return item.id === target;}));
+          NMNS.history.push({id:manager.id, color:manager.bgColor, name:manager.name});
+          NMNS.socket.emit("delete manager", {id:manager.id});
+        }else if(manager){
+          if(input.data("color") !== manager.bgColor || input.val() !== manager.name){//수정
+            diff = true;
+            var color = input.data("color");
+            NMNS.calendar.setCalendar(manager.id, {color:getColorFromBackgroundColor(color), bgColor:color, borderColor:color, name:input.val()}, true);
+            NMNS.history.push({id:manager.id, color:manager.bgColor, name:manager.name});
+            NMNS.socket.emit("update manager", {id:manager.id, color:color, name:input.val()});
+          }
+        }
+      }
+    });
+    if(diff){
+      $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
+      refreshScheduleVisibility();
+    }
+    //update manager end
+    if(diff || Object.keys(parameters).length){
+      alert("변경된 정보를 전송하였습니다.");
+    }else{
+      alert("변경된 내역이 없습니다.");
+    }
+    $("#infoModal").modal("hide");
+  }
+  
+  function refreshInfoModal(){
     $("#infoEmail").text(NMNS.email);
     $("#infoAuthStatus").html(generateAuthStatusBadge(NMNS.info.authStatus));
     $("#infoAccountStatus").html(generateAccountStatusBadge(NMNS.info.accountStatus));
-    NMNS.infoModal = NMNS.infoModal || {};
-    if(NMNS.infoModal.start){
-      $("#infoBizStartTime").datetimepicker("destroy");
-      $("#infoBizEndTime").datetimepicker("destroy");
-    }
-    NMNS.infoModal.start = $("#infoBizStartTimePicker").datetimepicker({
-      format: "HH:mm",
-      icons:{
-        time: "fas fa-clock",
-        up: "fas fa-chevron-up",
-        down: "fas fa-chevron-down",
-        close: "fas fa-times"
-      },
-      defaultDate: moment(NMNS.info.bizStartTime || "0900", "HHmm"),
-      date: moment(NMNS.info.bizStartTime || "0900", "HHmm"),
-      locale:"ko",
-      viewMode: "times",
-      buttons:{
-        showClose:true
-      },
-      allowInputToggle:true,
-      tooltips:{
-        close:"닫기",
-        pickHour:"시 선택",
-        incrementHour:"시 증가",
-        decrementHour:"시 감소",
-        pickMinute:"분 선택",
-        incrementMinute:"분 증가",
-        decrementMinute:"분 감소"
-      },
-      stepping:10
-    });
-    NMNS.infoModal.end = $("#infoBizEndTimePicker").datetimepicker({
-      format: "HH:mm",
-      icons:{
-        time: "fas fa-clock",
-        up: "fas fa-chevron-up",
-        down: "fas fa-chevron-down",
-        close: "fas fa-times"
-      },
-      defaultDate: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
-      date: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
-      locale:"ko",
-      viewMode: "times",
-      buttons:{
-        showClose:true
-      },
-      allowInputToggle:true,
-      tooltips:{
-        close:"닫기",
-        pickHour:"시 선택",
-        incrementHour:"시 증가",
-        decrementHour:"시 감소",
-        pickMinute:"분 선택",
-        incrementMinute:"분 증가",
-        decrementMinute:"분 감소"
-      },
-      stepping:10
-    });
     $("#infoShopName").val(NMNS.info.shopName);
-    $("#infoBizType").val(NMNS.info.BizType);
-    $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));
+    $("#infoBizType").val(NMNS.info.bizType);
+  }
+  
+  function initInfoModal(){
+    if(!NMNS.initedInfoModal){//first init
+      NMNS.initedInfoModal = true;
+    
+      $("#infoBizBeginTimePicker").datetimepicker({
+        format: "HH:mm",
+        icons:{
+          time: "fas fa-clock",
+          up: "fas fa-chevron-up",
+          down: "fas fa-chevron-down",
+          close: "fas fa-times"
+        },
+        defaultDate: moment(NMNS.info.bizBeginTime || "0900", "HHmm"),
+        date: moment(NMNS.info.bizBeginTime || "0900", "HHmm"),
+        locale:"ko",
+        viewMode: "times",
+        buttons:{
+          showClose:true
+        },
+        allowInputToggle:true,
+        tooltips:{
+          close:"닫기",
+          pickHour:"시 선택",
+          incrementHour:"시 증가",
+          decrementHour:"시 감소",
+          pickMinute:"분 선택",
+          incrementMinute:"분 증가",
+          decrementMinute:"분 감소"
+        },
+        stepping:10
+      });
+      $("#infoBizEndTimePicker").datetimepicker({
+        format: "HH:mm",
+        icons:{
+          time: "fas fa-clock",
+          up: "fas fa-chevron-up",
+          down: "fas fa-chevron-down",
+          close: "fas fa-times"
+        },
+        defaultDate: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
+        date: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
+        locale:"ko",
+        viewMode: "times",
+        buttons:{
+          showClose:true
+        },
+        allowInputToggle:true,
+        tooltips:{
+          close:"닫기",
+          pickHour:"시 선택",
+          incrementHour:"시 증가",
+          decrementHour:"시 감소",
+          pickMinute:"분 선택",
+          incrementMinute:"분 증가",
+          decrementMinute:"분 감소"
+        },
+        stepping:10
+      });
+      new PerfectScrollbar("#infoManagerList");
+      refreshInfoModal();//setting data
+      $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
+      $("#refreshInfoModal").off("touch click").on("touch click", refreshInfoModal);
+    }
+    $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));//담당자 정보는 바깥에서 변경될 수 있으므로 리프레시
+    $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
+      var item = $(this).parents(".infoManagerItem");
+      item.hide();
+      item.attr("data-delete", "true");
+    });
   }
   function initModal(self){
     if(!NMNS.info){
@@ -689,15 +789,16 @@ console.log("aaa");
   };
   
   function submitAddManager(self){
-    var lnbManagerItem = $(self).parents(".lnbManagerItem");
+    var lnbManagerItem = $(self).parents(".addManagerItem");
     var name = lnbManagerItem.find("input[type='text']");
     if(!name.val() || name.val().length < 1){
       alert("담당자 이름을 입력해주세요.");
       return;
     }
-    console.log("aa");
+    
     var id = NMNS.email + generateRandom();
-    lnbManagerItem.data("value", id);
+    lnbManagerItem.attr("data-value", id);
+    lnbManagerItem.removeClass("addManagerItem");
     lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:"+name.data("color")+"; border-color:"+name.data("color")+"'></span><small>"+name.val()+"</small></label>");
     var calendars = NMNS.calendar.getCalendars();
     calendars.push({
@@ -712,7 +813,7 @@ console.log("aaa");
   };
   
   function cancelAddManager(self){
-    $(self).parents(".lnbManagerItem").remove();
+    $(self).parents(".addManagerItem").remove();
   };
   
   window.cal = NMNS.calendar;
@@ -757,4 +858,10 @@ console.log("aaa");
   }));
   
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#6a4a3c", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#ff009c", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#000000"]
+  
+  $("#infoModal").on("hide.bs.modal", function(e){
+    if(document.activeElement.tagName === "INPUT"){
+      return false;
+    }
+  });
 })(jQuery);

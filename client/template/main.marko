@@ -24,6 +24,8 @@
   <!-- fonts -->
   <link href="/nmns/css/ko_font.min.css" rel="stylesheet">
   <link href="/nmns/css/en_font.min.css" rel="stylesheet">
+  
+  <link href="/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -99,7 +101,12 @@
                   </label>
               </div>
           </div>
-          <div id="managerList" class="lnb-calendars-d1">
+          <div id="lnbManagerList" class="lnb-calendars-d1">
+          </div>
+          <div class="lnbManagerItem btn pl-2 pt-0 addManager">
+            <small class="text-secondary align-top">
+              <i class="fas fa-plus"></i> 담당자 추가하기
+            </small>
           </div>
         </li>
       </ul>
@@ -130,7 +137,7 @@
     
     <div id="infoModal" class="modal fade" tabIndex="-1" role="dialog" aria-labelledby="#infoModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+        <div class="modal-content rounded-0">
           <div class="modal-header">
             <h5 id="infoModalTitle">내 매장 정보</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -155,39 +162,47 @@
                   </div>
                 </div>
                 <div class="row mb-2">
-                  <label for="infoBizStartTime" class="col-3 col-form-label col-form-label-sm">매장운영시간</label>
-                  <div class="col-4 px-0">
-                    <div id="infoBizStartTimePicker" class="input-group input-group-sm" data-target-input="nearest">
-                      <div class="input-group-prepend" data-target="#infoBizStartTimePicker" data-toggle="datetimepicker">
-                        <i id="infoBizStartTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
+                  <label for="infoBizBeginTime" class="col-3 col-form-label col-form-label-sm">매장운영시간</label>
+                  <div class="col-9 pl-0">
+                    <div class="col-5 px-0 d-inline-block">
+                      <div id="infoBizBeginTimePicker" class="input-group input-group-sm" data-target-input="nearest">
+                        <div class="input-group-prepend" data-target="#infoBizBeginTimePicker" data-toggle="datetimepicker">
+                          <i id="infoBizBeginTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
+                        </div>
+                        <input id="infoBizBeginTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizBeginTimePicker" aria-describedby="infoBizBeginTimeIcon"/>
                       </div>
-                      <input id="infoBizStartTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizStartTimePicker" aria-describedby="infoBizStartTimeIcon"/>
                     </div>
-                  </div>
-                  <span class="px-2 pt-1">—</span>
-                  <div class="col-4 px-0">
-                    <div id="infoBizEndTimePicker" class="input-group input-group-sm" data-target-input="nearest">
-                      <div class="input-group-prepend" data-target="#infoBizEndTimePicker" data-toggle="datetimepicker">
-                        <i id="infoBizEndTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
+                    <span class="px-2 pt-1">—</span>
+                    <div class="col-5 px-0 d-inline-block">
+                      <div id="infoBizEndTimePicker" class="input-group input-group-sm" data-target-input="nearest">
+                        <div class="input-group-prepend" data-target="#infoBizEndTimePicker" data-toggle="datetimepicker">
+                          <i id="infoBizEndTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
+                        </div>
+                        <input id="infoBizEndTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizEndTimePicker" aria-describedby="infoBizEndTimeIcon"/>
                       </div>
-                      <input id="infoBizEndTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizEndTimePicker" aria-describedby="infoBizEndTimeIcon"/>
                     </div>
                   </div>
                 </div>
                 <div class="row mb-2">
                   <label for="infoBizType" class="col-3 col-form-label col-form-label-sm">업종</label>
-                  <div class="col-9 col-md-4 px-0">
+                  <div class="col-9 col-md-4 pl-0">
                     <input id="infoBizType" type="text" placeholder="업종" class="form-control form-control-sm rounded-0"/>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="infoManagerList" class="col-form-label col-form-label-sm">담당자 관리</label>
-                  <div id="infoManagerList" class="col-6"></div>
+                  <div id="infoManagerList" class="col-9 col-sm-8"></div>
+                  <div class="pl-4 btn addManager">
+                    <p class="text-secondary align-top mb-0">
+                      <i class="fas fa-plus"></i> 담당자 추가하기
+                    </p>
+                  </div>
                 </div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
+            <button type="button" id="infoModalRefresh" class="btn btn-light btn-flat">초기화</button>
             <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
             <button type="button" id="infoModalSave" class="btn btn-primary btn-flat">저장</button>
           </div>
@@ -249,6 +264,7 @@
   <script>
     var NMNS = {email:"${input.user.email}"};
   </script>
+  <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
   <script src="/nmns/js/main.js"></script>
 </body>
 </html>

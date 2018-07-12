@@ -5494,7 +5494,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        model.borderColor = ownColor.borderColor;
 	    });
 	
-	    if (silent) {
+      //NMNS CUSTOMIZING START
+	    if (!silent) {//NMNS CUSTOMIZING END
 	        this.render();
 	    }
 	};
@@ -5964,6 +5965,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.render();
 	};
 	//NMNS CUSTOMIZING START
+	/**
+	 * Set calendar list
+	 * @param {Array.<Object>} calendars - calendar list
+	 */
+	Calendar.prototype.setCalendar = function(calendarId, data, silent) {
+	    this._controller.setCalendar(calendarId, data);
+	    if(!silent){
+	    	this.render();
+	    }
+	};
 	/**
 	 * Get calendar list
 	 * @returns {Array.<Object>} calendars - calendar list
@@ -7096,6 +7107,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.calendars = calendars;
 	};
 	//NMNS CUSTOMIZING START
+	/**
+	 * Set calendar
+	 * @param {Array.<Calendar>} calendars - calendar list
+	 */
+	Base.prototype.setCalendar = function(calendarId, calendar) {
+		var self = this;
+	    this.calendars.forEach(function(item, index){
+	    	if(item.id === calendarId){
+	    		self.calendars[index] = calendar;
+	    	}
+	    });
+	};
 	/**
 	 * Get calendar list
 	 * @return {Array.<Calendar>} calendars - calendar list
@@ -23010,4 +23033,4 @@ console.log(viewModel);
 /******/ ])
 });
 ;
-//# sourceMappingURL=tui-calendar.js.map
+// sourceMappingURL=tui-calendar.js.map

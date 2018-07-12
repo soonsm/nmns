@@ -56,10 +56,10 @@ button.moveDate:focus{
 #sidebarContainer{
   max-width:230px;
 }
-#managerList div:first-child{
+#lnbManagerList div:first-child{
   margin-top:.7rem;
 }
-#managerList .lnbManagerItem{
+#lnbManagerList .lnbManagerItem, #lnbManagerList + .lnbManagerItem{
   line-height:.8rem;
   margin-left:.25rem;
 }
@@ -70,7 +70,11 @@ button.moveDate:focus{
   width: calc(100% - 23px);
   font-size:.8rem;
 }
-.addManagerItem .submitAddManager, .addManagerItem .cancelAddManager{
+.addManagerItem input[type='text']:focus{
+  border-color:#ced4da;
+  box-shadow:none;
+}
+.addManagerItem .submitAddManager, .addManagerItem .cancelAddManager, .infoManagerItem .deleteManager{
   cursor:pointer;
 }
 /* creation popup */
@@ -211,6 +215,26 @@ button.moveDate:focus{
   margin-bottom:0;
 }
 #infoManagerList{
-  max-height:183px;
+  max-height:142px;
   overflow-y:auto;
+}
+#infoManagerList div input[type="checkbox"].tui-full-calendar-checkbox-round + span{
+  margin-right:6px;
+}
+#infoManagerList + div p{
+  font-size:.8rem;
+}
+#infoManagerList:before{
+  content: "";
+  top:0;
+  position:fixed;
+  background:linear-gradient(to bottom, rgba(251, 251, 251, 1) 0%, rgba(251, 251, 251, 0) 100%);
+  height:30px;
+}
+#infoManagerList:after{
+  content: "";
+  bottom:0;
+  position:fixed;
+  background:linear-gradient(to bottom, rgba(251, 251, 251, 1) 0%, rgba(251, 251, 251, 0) 100%);
+  height:30px;
 }
