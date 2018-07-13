@@ -199,37 +199,22 @@
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
-      NMNS.history.push(e.history || e.schedule);
-      var id = e.schedule.id;
-      var newSchedule = {
-        start : e.start,
-        end : e.end,
-        raw:{
-          contact : e.schedule.raw.contact,
-          contents : e.schedule.raw.contents,
-          etc : e.schedule.raw.etc
-        },
-        isAllDay: e.schedule.isAllDay,
-        title: e.schedule.title,
-        color: e.schedule.color,
-        bgColor: e.schedule.bgColor,
-        borderColor : e.schedule.borderColor,
-        dragBgColor: e.schedule.dragBgColor
-      };
+      NMNS.history.push(e.history || $.extend(true, {}, e.schedule));
       e.schedule.start = e.start;
       e.schedule.end = e.end;
+      
       if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
-        NMNS.calendar.deleteSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
+        NMNS.calendar.deleteSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
         e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
         e.schedule.dueDateClass = '';
         NMNS.calendar.createSchedules([e.schedule]);
       }else{
-        NMNS.calendar.updateSchedule(id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
+        NMNS.calendar.updateSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
       }
-      newSchedule.id = id;
-      newSchedule.start = moment(newSchedule.start.toDate? newSchedule.start.toDate(): newSchedule.start).format("YYYYMMDDHHmm");
-      newSchedule.end = moment(newSchedule.end.toDate? newSchedule.end.toDate() : newSchedule.end).format("YYYYMMDDHHmm");
-      NMNS.socket.emit("update reserv", newSchedule);
+
+      e.schedule.start = moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm");
+      e.schedule.end = moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm");
+      NMNS.socket.emit("update reserv", e.schedule);
     },
     beforeDeleteSchedule:function(e){
       NMNS.history.push(e.schedule);
@@ -950,7 +935,6 @@ console.log("aaa");
       drawSchedule([origin]);
       refreshScheduleVisibility();
     }else{
-      //delete origin.id;
       if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
       if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
       NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
