@@ -166,6 +166,7 @@
         $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
           if(e.which === 27){
             cancelAddManager(this);
+            list.find("div:last-child input[type='text']").focus();
           }else if(e.which === 13){
             submitAddManager(this);
           }
@@ -174,11 +175,13 @@
         $(".infoManagerItem input[type='text']").off("keyup").on("keyup", function(e){
           if(e.which === 27){
             cancelAddManager(this);
+            list.find("div:last-child input[type='text']").focus();
           }
         });
       }
       $("."+ clazz + " .cancelAddManager").off("touch click").on("touch click", function(){
         cancelAddManager(this);
+        list.find("div:last-child input[type='text']").focus();
       });
       list.find("div:last-child input[type='text']").focus();
     });
@@ -481,13 +484,6 @@ console.log("aaa");
     getSchedule(NMNS.calendar.getDateRangeStart(), NMNS.calendar.getDateRangeEnd());
   }
 
-  function initAlrimModal(){
-    $("#alrimUseYn").checked = (NMNS.info.alrimTalkInfo.useYn === "Y");
-    $("#alrimCallbackPhone").val(NMNS.info.alrimTalkInfo.callbackPhone || "");
-    $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
-    $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
-  }
-
   function generateAuthStatusBadge(authStatus){
     switch(authStatus){
       case "BEFORE_VERIFICATION":
@@ -524,9 +520,88 @@ console.log("aaa");
     return html;
   }
   
+  function refreshAlrimModal(){
+    if(NMNS.info.alrimTalkInfo.useYn === "Y"){
+      $("#alrimUseYn").prop("checked", true);
+      $("#alrimScreen").hide();
+    }else{
+      $("#alrimUseYn").prop("checked", false);
+      $("#alrimScreen").show();
+    }
+    $("#alrimCallbackPhone").val(NMNS.info.alrimTalkInfo.callbackPhone || "");
+    $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
+    $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
+    $("#noticeByteCount").text(getByteLength($("#alrimNotice").val()));
+  }
+
+  function submitAlrimModal(){
+    if(getByteLength($("#alrimNotice").val()) > 1500){
+      alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요!");
+      $("#alrimNotice").focus();
+      return;
+    }
+    if($("#alrimUseYn").prop("checked") && $("#alrimCallbackPhone").val() === ""){
+      alert("알림톡을 사용하시려면 반드시 휴대폰번호를 입력해주세요!");
+      $("#alrimCallbackPhone").focus();
+      return;
+    }
+    var parameters = {}, history = {id:"alrimInfo"};
+    if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
+      history.useYn = NMNS.info.alrimTalkInfo.useYn;
+      parameters.useYn = $("#alrimUseYn").prop("checked")?"Y":"N";
+      NMNS.info.alrimTalkInfo.useYn = parameters.useYn;
+    }
+    if($("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")){
+      history.callbackPhone = NMNS.info.alrimTalkInfo.callbackPhone;
+      parameters.callbackPhone = $("#alrimCallbackPhone").val();
+      NMNS.info.alrimTalkInfo.callbackPhone = parameters.callbackPhone;
+    }
+    if($("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")){
+      history.cancelDue = NMNS.info.alrimTalkInfo.cancelDue;
+      parameters.cancelDue = $("#alrimCancelDue").val();
+      NMNS.info.alrimTalkInfo.cancelDue = parameters.cancelDue;
+    }
+    if($("#alrimNotice").val() !== (NMNS.info.alrimTalkInfo.notice || "")){
+      history.notice = NMNS.info.alrimTalkInfo.notice;
+      parameters.notice = $("#alrimNotice").val();
+      NMNS.info.alrimTalkInfo.notice = parameters.notice;
+    }
+    if(Object.keys(parameters).length){
+      NMNS.history.push(history);
+      NMNS.socket.emit("update alrim", parameters);
+      alert("변경된 정보를 전송하였습니다.");
+    }else{
+      alert("변경된 내역이 없습니다.");
+    }
+    $("#alrimModal").modal("hide");
+  }
+
+  function initAlrimModal(){
+    if(!NMNS.initedAlrimModal){
+      NMNS.initedAlrimModal = true;
+      $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e){
+        $("#noticeByteCount").text(getByteLength($(this).val()));
+        $(this).height(0).height(this.scrollHeight>150?150:(this.scrollHeight<60?60:this.scrollHeight));
+      });
+      $("#alrimUseYn").off("change").on("change", function(){
+        if($(this).prop("checked")){
+          $("#alrimScreen").hide();
+        }else{
+          $("#alrimScreen").show();
+        }
+      });
+      $("#alrimModalRefresh").off("touch click").on("touch click", refreshAlrimModal);
+      $("#alrimModalSave").off("touch click").on("touch click", submitAlrimModal);
+      $("#alrimCallbackPhone").off("blur").on("blur", function(){
+        $(this).val($(this).val().replace(/\D/g,''));
+      });
+    }
+    refreshAlrimModal();
+  }
+  
   function submitInfoModal(){
     //validation start
-    if($(".addManagerItem input[type='text']").length){//추가하는것이 있을 경우 이름이 비어있는지 확인
+    if($(".infoManagerItem input[type='text']").length){//추가하는것이 있을 경우 이름이 비어있는지 확인
       var cont = true;
       $(".infoManagerItem input[type='text']").each(function(){
         if(!$(this).val().length){
@@ -538,6 +613,9 @@ console.log("aaa");
         alert("담당자의 이름을 입력해주세요.");
         return;
       }
+    }else{
+      alert("담당자는 최소 1명 이상이 있어야 합니다.");
+      return;
     }
     var beginTime = moment($("#infoBizBeginTime").val(), "HH:mm");
     if(!beginTime.isValid()){
@@ -685,6 +763,7 @@ console.log("aaa");
       if(!NMNS.infoModalScroll){
         NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
       } 
+
       refreshInfoModal();//setting data
       $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
       $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoModal);
@@ -821,7 +900,7 @@ console.log("aaa");
     var lnbManagerItem = $(self).parents(".addManagerItem");
     var name = lnbManagerItem.find("input[type='text']");
     if(!name.val() || name.val().length < 1){
-      alert("담당자 이름을 입력해주세요.");
+      alert("담당자 이름을 입력���주세요.");
       return;
     }
     
@@ -886,7 +965,7 @@ console.log("aaa");
   NMNS.socket.on("delete manager", socketResponse("담당자 삭제하기", function(e){
     NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
   }, function(e){
-    var manager = NMNS.history.find(e.data.id, function(item, target){return item.id === target});
+    var manager = NMNS.history.find(function(item){return item.id === e.data.id});
     if(manager){
       var calendars = NMNS.calendar.getCalendars();
       calendars.push(manager);
@@ -901,7 +980,7 @@ console.log("aaa");
     console.log(e);
     NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
   }, function(e){
-    var manager = NMNS.history.find(e.data.id, function(item, target){return item.id === target});
+    var manager = NMNS.history.find(function(item){return item.id === e.data.id});
     if(manager){
       NMNS.calendar.setCalendar(e.data.id, manager);
       $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
@@ -910,10 +989,10 @@ console.log("aaa");
     }
   }));
   
-  NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function(e){
+  NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function(){
     NMNS.history.remove("info", function(item, target){return item.id === target});
   }, function(e){
-    var history = NMNS.history.find("info", function(item, target){return item.id === target});
+    var history = NMNS.history.find(function(item){return item.id === "info"});
     if(history.bizBeginTime || history.bizEndTime){
       NMNS.calendar.setOptions({week:{hourStart:history.bizBeginTime?history.bizBeginTime.substring(0, 2):NMNS.info.bizBeginTime.substring(0,2), hourEnd : history.bizEndTime?history.bizEndTime.substring(0,2):NMNS.info.bizEndTime.substring(0,2)}});
     }
@@ -921,6 +1000,17 @@ console.log("aaa");
     NMNS.info.bizType = history.bizType;
     NMNS.history.remove("info", function(item, target){return item.id === target});
   }));
+  
+  NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function(){
+    NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
+  }, function(){
+    var history = NMNS.history.find(function(item){return item.id === "alrimInfo"});
+    Object.keys(history).forEach(function(key){
+      NMNS.info.alrimTalkInfo[key] = history[key];
+    });
+    NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
+  }));
+  
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#6a4a3c", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#ff009c", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#000000"]
   
   $("#infoModal").on("hide.bs.modal", function(){

@@ -40,25 +40,25 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav text-white mr-auto godo normal w700">
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store fa-fw align-middle d-none d-md-inline-block"></i> 내 매장 정보</a>
+          <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store fa-fw align-middle d-none d-sm-inline-block"></i> 내 매장 정보</a>
         </li>
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell fa-fw align-middle d-none d-md-inline-block"></i> 알림톡 정보</a>
+          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell fa-fw align-middle d-none d-sm-inline-block"></i> 알림톡 정보</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus fa-fw align-middle d-none d-md-inline-block"></i> 노쇼 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus fa-fw align-middle d-none d-sm-inline-block"></i> 노쇼 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle d-none d-md-inline-block"></i> 노쇼 조회</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle d-none d-sm-inline-block"></i> 노쇼 조회</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus fa-fw align-middle d-none d-md-inline-block"></i> 예약 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus fa-fw align-middle d-none d-sm-inline-block"></i> 예약 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check fa-fw align-middle d-none d-md-inline-block"></i> 일정 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check fa-fw align-middle d-none d-sm-inline-block"></i> 일정 추가</a>
         </li>
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout"><i class="fas fa-sign-out-alt fa-fw align-middle d-none d-md-inline-block"></i> 로그아웃</a>
+          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout"><i class="fas fa-sign-out-alt fa-fw align-middle d-none d-sm-inline-block"></i> 로그아웃</a>
         </li>
       </ul>
     </div>
@@ -191,8 +191,8 @@
                 </div>
                 <div class="form-group">
                   <label for="infoManagerList" class="col-form-label col-form-label-sm">담당자 관리</label>
-                  <div id="infoManagerList" class="col-12 col-sm-8"></div>
-                  <div class="ml-4 px-0 btn addManager">
+                  <div id="infoManagerList" class="col-12 col-sm-8 pr-4"></div>
+                  <div class="ml-3 px-0 btn addManager">
                     <p class="text-secondary align-top mb-0">
                       <i class="fas fa-plus"></i> 담당자 추가하기
                     </p>
@@ -249,9 +249,51 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>알림톡 정보다!!</p>
+            <form id="alrimForm">
+              <div class="form-group">
+                <div class="row mb-2">
+                  <div class="col-12">
+                    <input type="checkbox" id="alrimUseYn">
+                    <label for="alrimUseYn"></label>
+                    <label for="alrimUseYn">알림톡 사용여부</label>
+                  </div>
+                </div>
+                <div>
+                  <div id="alrimScreen"></div>
+                  <div class="row">
+                    <label for="alrimCallbackPhone" class="col-12 col-sm-4 col-form-label col-form-label-sm">휴대폰번호</label>
+                    <div class="col-12 col-sm-8 pl-sm-0">
+                      <input id="alrimCallbackPhone" name="callbackPhone" type="text" placeholder="휴대폰번호" class="form-control form-control-sm rounded-0"/>
+                    </div>
+                  </div>
+                  <div class="row col-12 mb-3 text-secondary">
+                    <small>고객이 예약취소 버튼을 눌렀을때 알림톡을 보내드릴 휴대폰번호입니다.</small>
+                  </div>
+                  <div class="row">
+                    <label for="alrimNotice" class="col-12 col-form-label col-form-label-sm">알림 안내문구</label>
+                    <div class="col-12">
+                      <textarea id="alrimNotice" name="notice" placeholder="예) 예약해주셔서 감사합니다. 예약시간을 꼭 지켜주세요!" class="form-control form-control-sm rounded-0"/>
+                    </div>
+                  </div>
+                  <div class="row col-12 mb-3 mx-0 px-0 text-secondary">
+                    <small>고객에게 보낼 알림톡에 들어갈 안내문구입니다. 현재 <span id="noticeByteCount"></span> / 최대 1500 바이트까지</small>
+                  </div>
+                  <div class="row">
+                    <label for="alrimCancelDue" class="col-12 col-sm-4 col-form-label col-form-label-sm">예약취소 가능시간</label>
+                    <div class="col-12 col-sm-8 pl-sm-0">
+                      <input id="alrimCancelDue" name="cancelDue" type="text" placeholder="예) 3시간" class="form-control form-control-sm rounded-0"/>
+                    </div>
+                  </div>
+                  <div class="row col-12 text-secondary">
+                    <small>고객에게 보낸 알림톡 안에 별도의 안내문구로 추가됩니다. 이 시간 이후에도 예약취소 기능은 작동합니다. 비어있으면 별도의 안내문구가 추가되지 않습니다.
+                    <br/>예) "- 예약취소는 <b>3시간</b> 전까지 가능합니다."라는 문구로 표기됩니다.</small>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
           <div class="modal-footer">
+            <button type="button" id="alrimModalRefresh" class="btn btn-light btn-flat border">초기화</button>
             <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
             <button type="button" id="alrimModalSave" class="btn btn-primary btn-flat">저장</button>
           </div>

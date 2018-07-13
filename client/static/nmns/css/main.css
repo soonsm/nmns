@@ -69,6 +69,7 @@ button.moveDate:focus{
 .addManagerItem input[type='text']{
   width: calc(100% - 23px);
   font-size:.8rem;
+  display:inline-block;
 }
 .addManagerItem input[type='text']:focus{
   border-color:#ced4da;
@@ -216,13 +217,12 @@ button.moveDate:focus{
 }
 #infoManagerList{
   max-height:142px;
-  max-width:300px;
   overflow-y:auto;
 }
 #infoManagerList div input[type="checkbox"].tui-full-calendar-checkbox-round + span{
   margin-right:6px;
 }
-#infoManagerList + div p{
+#infoModal .addManager p{
   font-size:.8rem;
 }
 #infoModalColorPicker{
@@ -241,4 +241,21 @@ button.moveDate:focus{
 }
 #infoModal .infoBizTime{
   width:calc(50% - 14px);
+}
+#infoModal .scroll-wrapper{
+  max-width:300px;
+}
+/*alrim modal*/
+#alrimNotice{
+  height:130px;
+}
+#alrimScreen{
+  position:absolute;
+  z-index:1;
+  left:0;
+  width:100%;
+  height:calc(100% - 55px);
+  background-color:white;
+  opacity: .6;
+  display:none;
 }
