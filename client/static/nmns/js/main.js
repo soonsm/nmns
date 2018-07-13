@@ -510,7 +510,7 @@ console.log("aaa");
   function generateManagerList(managerList){
     var html = "";
     managerList.forEach(function(item){
-      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"' data-name='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>"
+      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"' data-name='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>"
     });
     return html;
   }
@@ -553,20 +553,28 @@ console.log("aaa");
     }
     //validation end
     //update info start
-    var parameters = {};
+    var parameters = {}, history = {id:"info"};
     if(beginTime.format("HHmm") !== (NMNS.info.bizBeginTime || "0900") || endTime.format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
-      NMNS.history.push({id:"bizTime", beginTime:beginTime.format("HHmm"), endTime:endTime.format("HHmm")});
+      history.hourStart = NMNS.info.bizBeginTime || "0900";
+      history.hourEnd = NMNS.info.bizEndTime || "2300";
       parameters.bizBeginTime = beginTime.format("HHmm");
       parameters.bizEndTime = endTime.format("HHmm");
+      NMNS.info.bizBeginTime = parameters.bizBeginTime || "0900";
+      NMNS.info.bizEndTime = parameters.bizEndTime || "2300";
+      NMNS.calendar.setOptions({week:{hourStart:(parameters.bizBeginTime?parseInt(parameters.bizBeginTime.substring(0,2)):NMNS.calendar.getOptions().week.hourStart), hourEnd:(parameters.bizEndTime?parseInt(parameters.bizEndTime.substring(0,2)):NMNS.calendar.getOptions().week.hourEnd)}});
     }
     if($("#infoShopName").val() !== (NMNS.info.shopName || "")){
+      history.shopName = NMNS.info.shopName;
       parameters.shopName = $("#infoShopName").val();
+      NMNS.info.shopName = parameters.shopName;
     }
     if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
+      history.bizType = NMNS.info.bizType;
       parameters.bizType = $("#infoBizType").val();
+      NMNS.info.bizType = parameters.bizType;
     }
     if(Object.keys(parameters).length){
-      NMNS.socket.emit("update info", {shopName:$("#infoShopName").val(), bizBeginTime:beginTime.format("HHmm"), bizEndTime:endTime.format("HHmm"), bizType:$("#infoBizType").val()});
+      NMNS.socket.emit("update info", parameters);
     }
     //update info end
     //update manager start
@@ -578,16 +586,17 @@ console.log("aaa");
       }else{
         var input = $(this).find("input[type='text']");
         var manager = findManager(input.data("id"));
-        if($(this).data("delete")){//삭제
+        if($(this).data("delete") && manager){//삭제
           diff = true;
           NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target){return item.id === target;}));
-          NMNS.history.push({id:manager.id, color:manager.bgColor, name:manager.name});
+          NMNS.history.push({id:manager.id, bgColor:manager.bgColor, borderColor:manager.borderColor, color:manager.color, name:manager.name});
           NMNS.socket.emit("delete manager", {id:manager.id});
         }else if(manager){
           if(input.data("color") !== manager.bgColor || input.val() !== manager.name){//수정
             diff = true;
             var color = input.data("color");
             NMNS.calendar.setCalendar(manager.id, {color:getColorFromBackgroundColor(color), bgColor:color, borderColor:color, name:input.val()}, true);
+            NMNS.calendar.setCalendarColor(manager.id, {color:getColorFromBackgroundColor(color), bgColor:color, borderColor:color}, true);
             NMNS.history.push({id:manager.id, color:manager.bgColor, name:manager.name});
             NMNS.socket.emit("update manager", {id:manager.id, color:color, name:input.val()});
           }
@@ -673,16 +682,36 @@ console.log("aaa");
         },
         stepping:10
       });
-      new PerfectScrollbar("#infoManagerList");
+      if(!NMNS.infoModalScroll){
+        NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
+      } 
       refreshInfoModal();//setting data
       $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
-      $("#refreshInfoModal").off("touch click").on("touch click", refreshInfoModal);
+      $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoModal);
+      $("#infoModalColorPickerClose").off("touch click").on("touch click", function(){
+        $("#infoModalColorPicker").hide(300);
+      });
+      $(".infoModalColor").off("touch click").on("touch click", function(){
+        var colorPicker = $("#infoModalColorPicker");
+        var target = $(".infoManagerItem input[data-id='"+colorPicker.data("target")+"']");
+        if(target.length){
+          target.data("color", $(this).attr("data-color"));
+          target.prev().css("background-color", $(this).data("color")).css("border-color", $(this).data("color"));
+        }
+      });
     }
     $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));//담당자 정보는 바깥에서 변경될 수 있으므로 리프레시
     $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
       var item = $(this).parents(".infoManagerItem");
       item.hide();
       item.attr("data-delete", "true");
+    });
+    $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
+      var colorPicker = $("#infoModalColorPicker");
+      colorPicker.css("left", ($("#infoManagerList").position().left + $(this).position().left) + "px")
+        .css("top", ($("#infoManagerList").position().top + $(this).position().top + 74) + "px")
+        .data("target", $(this).next().data("id"))
+        .show(300);
     });
   }
   function initModal(self){
@@ -826,7 +855,6 @@ console.log("aaa");
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
-    console.log(origin);
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
     delete origin.id;
     NMNS.calendar.deleteSchedule(e.data.id, origin.manager);
@@ -848,20 +876,69 @@ console.log("aaa");
     }
   }));
   
-  NMNS.socket.on("add manager", socketResponse("담당자 추가하기", function(e){
-    alert("성공!");
-  }, function(e){
+  NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e){
     NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().filter(function(item){
       return item.id !== e.data.id;
     }));
     $(".lnbManagerItem[data-value='"+e.data.id+"']").remove();
   }));
   
+  NMNS.socket.on("delete manager", socketResponse("담당자 삭제하기", function(e){
+    NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+  }, function(e){
+    var manager = NMNS.history.find(e.data.id, function(item, target){return item.id === target});
+    if(manager){
+      var calendars = NMNS.calendar.getCalendars();
+      calendars.push(manager);
+      NMNS.calendar.setCalendars(NMNS.calendar.getCalendars());
+      $("#lnbManagerList").html(generateLnbManagerList(calendars));
+      refreshScheduleVisibility();
+      NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+    }
+  }));
+  
+  NMNS.socket.on("update manager", socketResponse("담당자 변경하기", function(e){
+    console.log(e);
+    NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+  }, function(e){
+    var manager = NMNS.history.find(e.data.id, function(item, target){return item.id === target});
+    if(manager){
+      NMNS.calendar.setCalendar(e.data.id, manager);
+      $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
+      refreshScheduleVisibility();
+      NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+    }
+  }));
+  
+  NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function(e){
+    NMNS.history.remove("info", function(item, target){return item.id === target});
+  }, function(e){
+    var history = NMNS.history.find("info", function(item, target){return item.id === target});
+    if(history.bizBeginTime || history.bizEndTime){
+      NMNS.calendar.setOptions({week:{hourStart:history.bizBeginTime?history.bizBeginTime.substring(0, 2):NMNS.info.bizBeginTime.substring(0,2), hourEnd : history.bizEndTime?history.bizEndTime.substring(0,2):NMNS.info.bizEndTime.substring(0,2)}});
+    }
+    NMNS.info.shopName = history.shopName || NMNS.info.shopName;
+    NMNS.info.bizType = history.bizType;
+    NMNS.history.remove("info", function(item, target){return item.id === target});
+  }));
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#6a4a3c", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#ff009c", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#000000"]
   
-  $("#infoModal").on("hide.bs.modal", function(e){
+  $("#infoModal").on("hide.bs.modal", function(){
     if(document.activeElement.tagName === "INPUT"){
       return false;
+    }
+  });
+  $("#infoModal").on("shown.bs.modal", function(){
+    if(NMNS.infoModalScroll){
+      NMNS.infoModalScroll.update();
+    }
+  });
+  $("#infoModal").on("touch click", function(e){
+    if($("#infoModalColorPicker").is(":visible")){
+      var target = $(e.target);
+      if(!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length){
+        $("#infoModalColorPicker").hide(300);
+      }
     }
   });
 })(jQuery);
