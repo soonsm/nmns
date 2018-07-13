@@ -92,3 +92,7 @@ a.text-primary {
 .dropdown-item.active, .dropdown-item:active{
   background-color:$primary;
 }
+
+#noShowModal .nav-pills .nav-link.active, #noShowModal .nav-pills .show > .nav-link{
+  background-color:$primary;
+}

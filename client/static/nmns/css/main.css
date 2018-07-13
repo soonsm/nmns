@@ -259,3 +259,24 @@ button.moveDate:focus{
   opacity: .6;
   display:none;
 }
+/* noShow modal */
+.nav-pills a{
+  color:#212121;
+}
+#noShowModal #noShowSearchAdd{
+  font-size:.9rem;
+}
+#noShowModal .noShowScheduleDate{
+  width:calc(50% - 15px);
+}
+#noShowModal #noShowScheduleName{
+  width:calc(60% - 68px);
+}
+@media(min-width:576px){
+  #noShowModal #noShowScheduleName{
+    width:calc(60% - 51px);
+  }
+}
+#noShowModal #noShowScheduleContact{
+  width:calc(40% - 27px);
+}
