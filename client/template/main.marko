@@ -49,7 +49,7 @@
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus fa-fw align-middle d-none d-sm-inline-block"></i> 노쇼 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle d-none d-sm-inline-block"></i> 노쇼 조회</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle d-none d-sm-inline-block"></i> 노쇼 찾기</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#" data-toggle="modal" data-target="#reservModal"><i class="fas fa-calendar-plus fa-fw align-middle d-none d-sm-inline-block"></i> 예약 추가</a>
@@ -76,7 +76,7 @@
         <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-search fa-fw mr-3"></span>
-            <span class="menu-collapsed">노쇼 조회</span>
+            <span class="menu-collapsed">노쇼 찾기</span>
           </div>
         </a>
         <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#reservModal">
@@ -153,6 +153,12 @@
                     <span id="infoEmail"></span>
                     <span id="infoAuthStatus" class="pl-2"></span>
                     <span id="infoAccountStatus" class="pl-2"></span>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <label for="infoPassword" class="col-12 col-sm-3 col-form-label col-form-label-sm">비밀번호</label>
+                  <div class="col-12 col-sm-9 pl-sm-0">
+                    <input id="infoPassword" type="password" placeholder="비밀번호(변경)" class="form-control form-control-sm rounded-0"/>
                   </div>
                 </div>
                 <div class="row mb-2">

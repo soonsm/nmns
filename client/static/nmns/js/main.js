@@ -491,7 +491,7 @@ console.log("aaa");
       case "EMAIL_VERIFICATED":
         return "<span class='badge badge-success'>인증</span>";
     }
-    $("#infoAccountStatus").removeClass("pl-2");
+    $("#infoAccountStatus").removeClass("pl-2");//no auth status badge
     return "";
   }
 
@@ -645,6 +645,9 @@ console.log("aaa");
       history.shopName = NMNS.info.shopName;
       parameters.shopName = $("#infoShopName").val();
       NMNS.info.shopName = parameters.shopName;
+    }
+    if($("#infoPassword").val() !== ""){
+      parameters.password = $("#infoPassword").val();
     }
     if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
       history.bizType = NMNS.info.bizType;
@@ -1023,10 +1026,13 @@ console.log("aaa");
     if(moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizBeginTime || "0900")){
       changed = true;
     }
-    if(!changed && moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
+    if(!changed && moment($("#infoBizEndTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
       changed = true;
     }
     if(!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")){
+      changed = true;
+    }
+    if(!changed && $("#infoPassword").val() !== ""){
       changed = true;
     }
     if(!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")){
@@ -1051,7 +1057,7 @@ console.log("aaa");
         }
       });
     }
-    if(changed && !confirm("저장되지 않은 변경된 내역이 있습니다. 창을 닫으시겠어요?")){
+    if(changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")){
       return false;
     }
   });
@@ -1085,7 +1091,7 @@ console.log("aaa");
     if(!changed && $("#alrimNotice").val() !== (NMNS.info.alrimTalkInfo.notice || "")){
       changed = true;
     }
-    if(changed && !confirm("저장되지 않은 변경된 내역이 있습니다. 창을 닫으시겠어요?")){
+    if(changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")){
       return false;
     }
   });
