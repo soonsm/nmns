@@ -115,7 +115,7 @@
       }else{
         console.log(res);
       }
-    }
+    };
   };
   NMNS.socket = io();
   NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
@@ -230,11 +230,11 @@
   function getTimeSchedule(schedule, isAllDay){
     var html = "";
     if (!isAllDay) {
-      html+='<strong>' + moment(schedule.start.toDate()).format('HH:mm') + '</strong> ';
+      html+="<strong>" + moment(schedule.start.toDate()).format("HH:mm") + "</strong> ";
     }else{
-      html+='<span class="calendar-font-icon far fa-clock"></span>';
+      html+="<span class='calendar-font-icon far fa-clock'></span> ";
     }
-    html += ' ' + schedule.title;
+    html += schedule.title + (schedule.raw.contact?"<br/><span class='fas fa-phone'></span> " + schedule.raw.contact : "") + (schedule.raw.contents?"<br/><span class='fas fa-list'></span> " + schedule.raw.contents : "");
     return html;
   }
   
@@ -491,7 +491,7 @@ console.log("aaa");
   function generateManagerList(managerList){
     var html = "";
     managerList.forEach(function(item){
-      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"' data-name='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>"
+      html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:"+item.bgColor+"; border-color:"+item.bgColor+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='"+item.id+"' data-color='"+item.bgColor+"' placeholder='담당자 이름' value='"+item.name+"' data-name='"+item.name+"'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>";
     });
     return html;
   }
@@ -521,7 +521,7 @@ console.log("aaa");
 
   function submitAlrimModal(){
     if(getByteLength($("#alrimNotice").val()) > 1500){
-      alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요!");
+      alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요 :)");
       $("#alrimNotice").focus();
       return;
     }
@@ -780,18 +780,7 @@ console.log("aaa");
     }
     refreshInfoModal();//setting data
   }
-  function initModal(self){
-    if(!NMNS.info){
-      NMNS.socket.emit("get info", {});
-    }else{
-      if($(self).is("#infoLink")){
-        initInfoModal(NMNS.info);
-      }else if($(self).is("#alrimLink")){
-        initAlrimModal(NMNS.info);
-      }
-    }
-  }
-  
+
   var resizeThrottled = tui.util.throttle(function() {
     NMNS.calendar.render();
   }, 50);
@@ -857,9 +846,9 @@ console.log("aaa");
           etc:schedule.etc,
           status: schedule.status
         }
-      }
+      };
     }), true);
-  };
+  }
 
   function drawHoliday(holiday){
     holiday.forEach(function(item){
@@ -881,7 +870,7 @@ console.log("aaa");
         }
       }
     });
-  };
+  }
   
   function submitAddManager(self){
     var lnbManagerItem = $(self).parents(".addManagerItem");
@@ -905,11 +894,11 @@ console.log("aaa");
     });
     NMNS.calendar.setCalendars(calendars);
     NMNS.socket.emit("add manager", {id: id, name:name.val(), color:name.data("color")});
-  };
+  }
   
   function cancelAddManager(self){
     $(self).parents(".addManagerItem").remove();
-  };
+  }
   
   window.cal = NMNS.calendar;
 
@@ -998,8 +987,8 @@ console.log("aaa");
     NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
     NMNS.initedAlrimModal = false;
   }));
-  
-  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#6a4a3c", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#ff009c", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#000000"]
+
+  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   
   $("#infoModal").on("hide.bs.modal", function(){
     if(document.activeElement.tagName === "INPUT"){
