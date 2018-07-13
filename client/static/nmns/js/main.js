@@ -700,6 +700,18 @@ console.log("aaa");
     $("#infoAccountStatus").html(generateAccountStatusBadge(NMNS.info.accountStatus));
     $("#infoShopName").val(NMNS.info.shopName);
     $("#infoBizType").val(NMNS.info.bizType);
+    $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));
+    $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
+      var item = $(this).parents(".infoManagerItem");
+      item.hide();
+      item.attr("data-delete", "true");
+    });
+    $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
+      $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + $(this).position().left) + "px")
+        .css("top", ($("#infoManagerList").position().top + $(this).position().top + 74) + "px")
+        .data("target", $(this).next().data("id"))
+        .show(300);
+    });
   }
   
   function initInfoModal(){
@@ -764,7 +776,6 @@ console.log("aaa");
         NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
       } 
 
-      refreshInfoModal();//setting data
       $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
       $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoModal);
       $("#infoModalColorPickerClose").off("touch click").on("touch click", function(){
@@ -779,19 +790,7 @@ console.log("aaa");
         }
       });
     }
-    $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));//담당자 정보는 바깥에서 변경될 수 있으므로 리프레시
-    $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
-      var item = $(this).parents(".infoManagerItem");
-      item.hide();
-      item.attr("data-delete", "true");
-    });
-    $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
-      var colorPicker = $("#infoModalColorPicker");
-      colorPicker.css("left", ($("#infoManagerList").position().left + $(this).position().left) + "px")
-        .css("top", ($("#infoManagerList").position().top + $(this).position().top + 74) + "px")
-        .data("target", $(this).next().data("id"))
-        .show(300);
-    });
+    refreshInfoModal();//setting data
   }
   function initModal(self){
     if(!NMNS.info){
@@ -900,7 +899,7 @@ console.log("aaa");
     var lnbManagerItem = $(self).parents(".addManagerItem");
     var name = lnbManagerItem.find("input[type='text']");
     if(!name.val() || name.val().length < 1){
-      alert("담당자 이름을 입력���주세요.");
+      alert("담당자 이름을 입력해주세요.");
       return;
     }
     
@@ -999,6 +998,7 @@ console.log("aaa");
     NMNS.info.shopName = history.shopName || NMNS.info.shopName;
     NMNS.info.bizType = history.bizType;
     NMNS.history.remove("info", function(item, target){return item.id === target});
+    NMNS.initedInfoModal = false;
   }));
   
   NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function(){
@@ -1009,12 +1009,49 @@ console.log("aaa");
       NMNS.info.alrimTalkInfo[key] = history[key];
     });
     NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
+    NMNS.initedAlrimModal = false;
   }));
   
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#6a4a3c", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#ff009c", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#000000"]
   
   $("#infoModal").on("hide.bs.modal", function(){
     if(document.activeElement.tagName === "INPUT"){
+      return false;
+    }
+    var changed = false;
+    
+    if(moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizBeginTime || "0900")){
+      changed = true;
+    }
+    if(!changed && moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
+      changed = true;
+    }
+    if(!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")){
+      changed = true;
+    }
+    if(!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")){
+      changed = true;
+    }
+    if(!changed){
+      $(".infoManagerItem").each(function(){
+        if(!changed){
+          if($(this).hasClass("addManagerItem")){//추가
+            changed = true;
+          }else{
+            var input = $(this).find("input[type='text']");
+            var manager = findManager(input.data("id"));
+            if($(this).data("delete") && manager){//삭제
+              changed = true;
+            }else if(manager){
+              if(input.data("color") !== manager.bgColor || input.val() !== manager.name){//수정
+                changed = true;
+              }
+            }
+          }
+        }
+      });
+    }
+    if(changed && !confirm("저장되지 않은 변경된 내역이 있습니다. 창을 닫으시겠어요?")){
       return false;
     }
   });
@@ -1029,6 +1066,27 @@ console.log("aaa");
       if(!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length){
         $("#infoModalColorPicker").hide(300);
       }
+    }
+  });
+  $("#alrimModal").on("hide.bs.modal", function(){
+    if(document.activeElement.tagName === "INPUT"){
+      return false;
+    }
+    var changed = false;
+    if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
+      changed = true;
+    }
+    if(!changed && $("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")){
+      changed = true;
+    }
+    if(!changed && $("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")){
+      changed = true;
+    }
+    if(!changed && $("#alrimNotice").val() !== (NMNS.info.alrimTalkInfo.notice || "")){
+      changed = true;
+    }
+    if(changed && !confirm("저장되지 않은 변경된 내역이 있습니다. 창을 닫으시겠어요?")){
+      return false;
     }
   });
 })(jQuery);
