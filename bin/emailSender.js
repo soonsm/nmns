@@ -11,21 +11,25 @@ const transporter = nodemailer.createTransport({
 });
 
 function sendMail(mailOptions){
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
+    return new Promise((resolve) => {
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log('Email send fail: ', error);
+                resolve(false);
+            } else {
+                console.log('Email sent: ' + info.response);
+                resolve(true);
+            }
+        });
     });
+
 };
 
-exports.sendEmailVerification = function(email, token){
+exports.sendEmailVerification = async function(email, token){
 
     const authLinkParams=`auth?email=${email}&token=${token}`;
 
-    sendMail({
+    return await sendMail({
         from: srcEmail,
         to: email,
         subject: 'NoMoreNoShow Email 인증 메일입니다.',
@@ -33,8 +37,8 @@ exports.sendEmailVerification = function(email, token){
     });
 };
 
-exports.sendTempPasswordEmail = function(email, pwd){
-    sendMail({
+exports.sendTempPasswordEmail = async function(email, pwd){
+    return await sendMail({
         from: srcEmail,
         to: email,
         subject: 'NoMoreNoShow 임시 비밀번호 발급 이메일입니다.',
