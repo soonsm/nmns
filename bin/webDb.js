@@ -408,7 +408,7 @@ exports.getNoShow = async function (phoneNumber) {
 };
 
 exports.addToNoShowList = async function (email, phone, noShowCase, name) {
-    let noShow = await exports.getNoShow(phone);
+    let noShow = (await exports.getNoShow(phone))[0];
     if (!noShow) {
         noShow = exports.newNoShow(phone, noShowCase, name);
     } else {

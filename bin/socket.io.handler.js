@@ -414,22 +414,36 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetNoShow, async function (data) {
             let status = true, message = null, resultData = null;
             let contact = data.contact;
-            let mine = data.mine;
+            let mineOnly = data.mineOnly || false;
 
             console.log(data);
 
-            if((mine !== true && mine !== false)|| !contact){
+            if(!contact || (mineOnly !== false && mineOnly !== true)){
                 status=false;
-                message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "mine":${내 노쇼만 볼것인지 여부, boolean}})';
+                message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "mineOnly":${내 노쇼만 볼것인지 여부, boolean, Optional}})';
             }else if(!util.phoneNumberValidation(contact)){
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
                 status = false;
             }
 
-            if (mine === true) {
+            if(status){
                 resultData = await db.getMyNoShow(email, contact);
-            } else {
-                resultData = await db.getNoShow(contact);
+                if(resultData.length < 1){
+                    if(!mineOnly){
+                        resultData = await db.getNoShow(contact);
+                        if(resultData[0]){
+                            resultData[0].mine = false;
+                        }
+                    }
+                }else{
+                    resultData[0].mine = true;
+                }
+
+                if(resultData[0]){
+                    resultData[0].contact = contact;
+                    resultData[0].lastNoShowDate = moment(resultData[0].lastNoShowDate).format('YYYY-MM-DD');
+                    delete resultData[0].noShowKey;
+                }
             }
 
             socket.emit(GetNoShow, makeResponse(status, resultData, message));
