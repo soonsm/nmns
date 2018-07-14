@@ -837,7 +837,7 @@ console.log("aaa");
       });
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
         $("#noShowSearchList").append(
-          "<div class='row px-0 col-12'><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowContact'></div><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowDate'></div><div class='col-1'></div><div class='col-2'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value=''></option><option value='지각'>지각</option><option value='잠수'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1'><i class='fas fa-check noShowSearchAddSubmit'></i><i class='fas fa-trash noShowSearchAddCancel'></i></div></div>"
+          "<div class='row px-0 col-12 mt-1'><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowContact' placeholder='고객 전화번호'></div><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowDate'></div><div class='col-lg-1 d-none d-lg-inline-flex'></div><div class='col-lg-2 col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value=''></option><option value='지각'>지각</option><option value='잠수'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit'></i>  <i class='fas fa-trash noShowSearchAddCancel'></i></div></div>"
         );
         $("#noShowSearchList div:last-child input:first-child").focus();
       });
@@ -1056,20 +1056,22 @@ console.log("aaa");
 
   NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
     var html = "";
+    console.log(e);
     e.data.forEach(function(item){
       var badge = "";
       e.data.noShowCaseList.forEach(function(item2){
-        badge += "<span class='badge badge-light'>" + item2 + "</span>";
+        badge += "<span class='badge badge-light'>" + (item2||"") + "</span>";
       });
-      html += "<div class='row col-12 px-0'><span class='col-4'>"+item.contact+"</span><span class='col-4'>"+item.lastNoShowDate+"</span><span class='col-1'>"+item.noShowCount+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+item.isMine?"<i class='fas fa-trash' title='삭제'></i>":""+"</span></div>";
+      html += "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(item.contact||"")+"</span><span class='col-4'>"+(item.lastNoShowDate||"")+"</span><span class='col-1'>"+(item.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(item.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
     });
     $("#noShowSearchList").html(html);
   }));
 
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
    var html = "";
+   console.log(e);
    e.data.forEach(function(item){
-     html += "<div class='row col-12 px-0' data-id='"+item.id+"' data-manager='"+item.manager+"'" + item.contents?" title='"+item.contents+"'":""+"><span class='col-4'>"+moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD")+"</span><span class='col-3'>"+item.name+"</span><span class='col-4'>"+item.contact+"</span><span class='col-1'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
+     html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+(item.contact?(item.contact.length===11?(item.contact.substring(0,3)+"-"+item.contact.substring(3,7)+"-"+item.contact.substring(7)):(item.contact.length===10?(item.contact.substring(0,3)+"-"+item.contact.substring(3,6)+"-"+item.contact.substring(6)):item.contact)):"")+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
    });
    $("#noShowScheduleList").html(html);
   }));

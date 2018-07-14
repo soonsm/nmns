@@ -308,7 +308,7 @@
     </div>
     
     <div id="noShowModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content rounded-0">
           <div class="modal-header p-0 mx-0">
             <ul id="noShowTabList" class="nav nav-pills d-inline-flex" role="tabList">
@@ -334,13 +334,13 @@
                 </div>
                 <div class="row col-12 px-0">
                   <div class="col-12 border-left border-right border-top row text-center px-0">
-                    <span class="col-4 px-0">전화번호</span>
-                    <span class="col-4 px-0">최근노쇼</span>
-                    <span class="col-1 px-0">횟수</span>
-                    <span class="col-2 px-0">유형</span>
+                    <span class="col-4 pr-0">전화번호</span>
+                    <span class="col-4 pr-0">마지막 <span class="d-none d-sm-inline-block">노쇼</span>날짜</span>
+                    <span class="col-1 pr-0">횟수</span>
+                    <span class="col-2 pr-0">유형</span>
                     <span class="col-1 px-0"></span>
                   </div>
-                  <div id="noShowSearchList" class="col-12 border text-left"></div>
+                  <div id="noShowSearchList" class="col-12 border text-left px-0"></div>
                 </div>
                 <div id="noShowSearchAdd" class="ml-3 px-0 btn">
                   <p class="text-secondary align-top mb-0">
@@ -379,14 +379,15 @@
                   </div>
                 </div>
                 <div class="row col-12 px-0">
-                  <div class="col-12 border-left border-right border-top row text-center px-0">
-                    <span class="col-4 px-0">날짜</span>
-                    <span class="col-3 px-0">고객이름</span>
-                    <span class="col-4 px-0">전화번호</span>
+                  <div class="col-12 border-left border-right border-top row text-left px-0">
+                    <span class="col-3 col-lg-2 pr-0">날짜</span>
+                    <span class="col-4 col-lg-3 pr-0">고객이름</span>
+                    <span class="col-4 col-lg-3 pr-0">전화번호</span>
+                    <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
                     <span class="col-1 px-0">상태</span>
                   </div>
                 </div>
-                <div id="noShowScheduleList" class="row col-12 border"></div>
+                <div id="noShowScheduleList" class="row col-12 border px-0"></div>
               </div>
             </div>
           </div>
