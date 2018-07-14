@@ -3,15 +3,17 @@
 const db = require('./webDb');
 const moment = require('moment');
 const util = require('./util');
+const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
 
-const GetReservationList = 'get reserv', AddReservation = 'add reserv', UpdateReservation = 'update reserv';
+const GetReservationList = 'get reserv', GetReservationSummaryList = 'get summary', AddReservation = 'add reserv', UpdateReservation = 'update reserv';
 const GetNoShow = 'get noshow', AddNoShow = 'add noshow', DelNoShow = 'delete noshow';
 const GetManagerList = 'get manager', AddManager = 'add manager', UpdateManager = 'update manager', DelManager = 'delete manager';
 const GetShop = 'get info', UpdateShop = 'update info', UpdatePwd = 'update password';
 const GetAlrimTalk = 'get alrim', UpdateAlirmTalk = 'update alrim';
+const SendVerification = 'send verification';
 
-const EVENT_LIST_NO_NEED_VERIFICATION = [GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
+const EVENT_LIST_NO_NEED_VERIFICATION = [SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
@@ -49,6 +51,18 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
               }
           });
         };
+
+        addEvent(SendVerification, async function(){
+            let status = true, message = `인증 이메일이 ${email}로 전송되었습니다.`;
+
+            const emailAuthToken = require('js-sha256')(email);
+            if(!(await emailSender.sendEmailVerification(email, emailAuthToken))){
+                status = false;
+                message = '인증 이메일 전송이 실패하였습니다.';
+            }
+
+            socket.emit(SendVerification, makeResponse(status, null, message));
+        });
 
         /**
          * AlrimTalk
@@ -179,6 +193,29 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Reservation
          */
 
+        addEvent(GetReservationSummaryList, async function(data){
+            let status = true, message = null, resultData = null;
+            let params = data || {};
+
+            if(params.start && !moment(params.start, 'YYYYMMDDHHmm').isValid()){
+                status = false;
+                message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.start}`;
+            }
+            if(params.end && !moment(params.end, 'YYYYMMDDHHmm').isValid()){
+                status = false;
+                message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.end}`;
+            }
+            if(params.contact  && !util.phoneNumberValidation(params.contact)){
+                status = false;
+                message = `휴대전화번호 형식이 올바르지 않습니다.(${params.contact})`;
+            }
+            if(status){
+                resultData = await db.getReservationSummaryList(email, params);
+            }
+
+            socket.emit(GetReservationSummaryList, makeResponse(status, resultData, message));
+
+        });
 
         addEvent(GetReservationList, async function (data) {
             let status = true;
