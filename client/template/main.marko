@@ -349,8 +349,16 @@
                 </div>
               </div>
               <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0">
+  	    			    <a href="#" class="dropdown-item" data-status="RESERVED"><span class="badge badge-success">정상</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="CANCELED"><span class="badge badge-secondary">취소</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각"><span class="badge badge-danger">노쇼(지각)</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수"><span class="badge badge-danger">노쇼(잠수)</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소"><span class="badge badge-danger">노쇼(직전취소)</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="기타"><span class="badge badge-danger">노쇼(기타)</span></a>
+    			      </div>
                 <div class="row col-12 px-0">
-                  <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">예약기간</label>
+                  <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>
                   <div class="row col-12 col-sm-10 px-0 mb-2">
                     <div class="px-0 d-inline-block noShowScheduleDate">
                       <div id="noShowScheduleStartDatePicker" class="input-group input-group-sm" data-target-input="nearest">

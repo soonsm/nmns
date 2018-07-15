@@ -65,19 +65,19 @@ a.text-primary {
 }
 
 .border-bottom {
-  border-bottom:1px solid $divider !important;
+  border-bottom: 0.05rem solid $divider !important;
 }
 .border-left {
-  border-left:1px solid $divider !important;
+  border-left: 0.05rem solid $divider !important;
 }
 .border-right {
-  border-right:1px solid $divider !important;
+  border-right: 0.05rem solid $divider !important;
 }
 .border-top {
-  border-top:1px solid $divider !important;
+  border-top: 0.05rem solid $divider !important;
 }
 .border{
-  border:1px solid $divider !important;
+  border: 0.05rem solid $divider !important;
 }
 .list-group-item{
   border:1px solid $divider;
@@ -95,4 +95,8 @@ a.text-primary {
 
 #noShowModal .nav-pills .nav-link.active, #noShowModal .nav-pills .show > .nav-link{
   background-color:$primary;
+}
+
+.form-control, .form-control-sm, div.rounded-0{
+  border-width: 0.05rem;
 }

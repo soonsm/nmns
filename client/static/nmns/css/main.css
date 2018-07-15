@@ -3,7 +3,7 @@ div.tui-full-calendar-weekday-grid{
   overflow-y:auto;
 }
 div.tui-full-calendar-weekday-schedules{
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 div.tui-full-calendar-dayname-container{
   overflow-y: auto;
@@ -80,6 +80,9 @@ button.moveDate:focus{
 }
 .addManagerItem .submitAddManager, .addManagerItem .cancelAddManager, .infoManagerItem .deleteManager{
   cursor:pointer;
+}
+.tui-full-calendar-weekday-schedule{
+  overflow-y:hidden;
 }
 /* creation popup */
 .tui-full-calendar-button.tui-full-calendar-popup-close{
@@ -301,4 +304,22 @@ button.moveDate:focus{
 }
 #noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit{
   cursor:pointer;
+}
+#noShowScheduleList .badge{
+  vertical-align:text-top;
+  cursor:pointer;
+}
+#noShowScheduleDropdown{
+  left:auto;
+  right:1rem;
+  min-width:0;
+  text-align:right;
+  padding:0;
+}
+#noShowScheduleDropdown .dropdown-item{
+  padding:.05rem 1rem;
+  font-size:.9rem;
+}
+#noShowScheduleDropdown a:last-chlid{
+  padding-bottom:.3rem;
 }
