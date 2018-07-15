@@ -15402,12 +15402,6 @@ return /******/ (function(modules) { // webpackBootstrap
     				+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contents : stack1), depth0))
   				+ "</span>"
   			+ "</div>\n"
-    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"담당자\">"
-    			+ "<i class=\"fas fa-user-tie fa-fw align-middle\"></i>"
-    			+ "<span class=\"" + escapedCssPrefix + "content\"> "
-    				+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
-  				+ "</span>"
-  			+ "</div>\n"
   			+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객메모\">"
   				+ "<i class=\"far fa-bookmark fa-fw align-middle\"></i>"
   				+ "<span class=\"" + escapedCssPrefix + "content\"> "

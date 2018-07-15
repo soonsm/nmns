@@ -62,13 +62,13 @@
       popupDetailDate:function(isAllDay, start, end){
         var startDate = moment(start instanceof Date? start : start.toDate()), endDate = moment(end instanceof Date? end : end.toDate());
         var isSameDate = startDate.isSame(endDate, 'day');
-        var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm a';
+        var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'h:mm a';
 
         if (isAllDay) {
             return startDate.format('YYYY.MM.DD') + (isSameDate ? '' : ' - ' + endDate.format('YYYY.MM.DD'));
         }
 
-        return (startDate.format('YYYY.MM.DD hh:mm a') + ' - ' + endDate.format(endFormat));
+        return (startDate.format('YYYY.MM.DD h:mm a') + ' - ' + endDate.format(endFormat));
       },
       popupEdit: function(){
         return "수정";
@@ -91,7 +91,7 @@
       'week.currentTimeLineBullet.backgroundColor': '#009688',
       'week.currentTimeLineToday.border': '1px solid #009688',
       "common.border": ".05rem solid #e5e5e5",
-      "common.saturday.color": "#0d47a1"
+      "common.saturday.color": "#304ffe"
     }
   });
 
@@ -944,7 +944,7 @@
         location:"",
         bgColor: manager.bgColor || "#b2dfdb",
         borderColor: manager.borderColor || "#b2dfdb",
-        color : manager.color || "#b2dfdb",
+        color : manager.color || getColorFromBackgroundColor("#b2dfdb"),
         dragBgColor: manager.bgColor || "#b2dfdb",
         raw:{
           contact:schedule.contact,
