@@ -52,6 +52,9 @@ button.moveDate{
 button.moveDate:focus{
   box-shadow:none;
 }
+.bootstrap-datetimepicker-widget{
+  border-radius:0;
+}
 /* side bar */
 #sidebarContainer{
   max-width:230px;
@@ -292,4 +295,10 @@ button.moveDate:focus{
 }
 #noShowModal #noShowScheduleContact{
   width:calc(40% - 27px);
+}
+#noShowModal .bootstrap-datetimepicker-widget{
+  margin-left:1rem;
+}
+#noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit{
+  cursor:pointer;
 }

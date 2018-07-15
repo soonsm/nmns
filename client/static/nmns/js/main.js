@@ -590,7 +590,7 @@ console.log("aaa");
       $("#alrimModalRefresh").off("touch click").on("touch click", refreshAlrimModal);
       $("#alrimModalSave").off("touch click").on("touch click", submitAlrimModal);
       $("#alrimCallbackPhone").off("blur").on("blur", function(){
-        $(this).val($(this).val().replace(/\D/g,''));
+        filterNonNumericCharacter($(this));
       });
     }
     refreshAlrimModal();
@@ -796,6 +796,39 @@ console.log("aaa");
   function initNoShowModal(){
     if(!NMNS.initedNoShowModal){
       NMNS.initedNoShowModal = true;
+      var datetimepickerOption = {
+        format: "YYYY-MM-DD",
+        icons:{
+          previous: "fas fa-chevron-left",
+          next: "fas fa-chevron-right",
+          date: "far fa-calendar",
+          close: "fas fa-times"
+        },
+        dayViewHeaderFormat:"YYYY년 M월",
+        defaultDate: moment(new Date()),
+        date: moment(new Date()),
+        locale:"ko",
+        viewMode: "days",
+        buttons:{
+          showClose:true
+        },
+        allowInputToggle:true,
+        tooltips:{
+          close:"닫기",
+          selectMonth:"월 선택",
+          prevMonth:"전달",
+          nextMonth:"다음달",
+          selectYear:"연도 선택",
+          prevYear:"작년",
+          nextYear:"내년",
+          selectDecade:"",
+          prevDecade:"이전",
+          nextDecade:"다음",
+          prevCentury:"이전",
+          nextCentury:"다음"
+        }
+      };
+      
       if(!NMNS.noShowModalSearchScroll){
         NMNS.noShowModalSearchScroll = new PerfectScrollbar("#noShowSearchList");
       }
@@ -833,16 +866,37 @@ console.log("aaa");
         if($("#noShowScheduleContact").val() !== ""){
           parameters.contact = $("#noShowScheduleContact").val();
         }
+        $("#noShowScheduleList").html("");//깜빡임 효과
         NMNS.socket.emit("get summary", parameters);
       });
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
-        $("#noShowSearchList").append(
-          "<div class='row px-0 col-12 mt-1'><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowContact' placeholder='고객 전화번호'></div><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowDate'></div><div class='col-lg-1 d-none d-lg-inline-flex'></div><div class='col-lg-2 col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value=''></option><option value='지각'>지각</option><option value='잠수'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit'></i>  <i class='fas fa-trash noShowSearchAddCancel'></i></div></div>"
-        );
-        $("#noShowSearchList div:last-child input:first-child").focus();
+        var id=generateRandom();
+        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm' data-target-input='nearest'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0' data-target='#noShowSearchAddDatePicker"+id+"' data-toggle='datetimepicker'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0 datetimepicker-input' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"' data-target='#noShowSearchAddDatePicker"+id+"'></div><div class='col-lg-1 d-none d-lg-inline-flex'></div><div class='col-lg-2 col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value=''></option><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2'></i></div></div>");
+        newRow.find("#noShowSearchAddDatePicker"+id).datetimepicker(datetimepickerOption);
+        newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function(){
+          filterNonNumericCharacter($(this));
+        });
+        newRow.find(".noShowSearchAddSubmit").off("touch click").on("touch click", function(){
+          submitAddNoShow($(this));
+        });
+        newRow.find(".noShowSearchAddCancel").off("touch click").on("touch click", function(){
+          cancelAddNoShow($(this));
+        });
+        $("#noShowSearchList").append(newRow);
+        newRow.find("div:first-child input").focus();
       });
       $("#noShowSearchContact").off("blur").on("blur", function(){
-        $(this).val($(this).val().replace(/\D/g,''));
+        filterNonNumericCharacter($(this));
+      });
+      $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
+      $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
+      $("#noShowScheduleContact").off("blur").on("blur", function(){
+        filterNonNumericCharacter($(this));
+      });
+      $("#noShowScheduleContact").off("keyup").on("keyup", function(e){
+        if(e.which === 13){
+          $("#noShowScheduleSearch").trigger("click");
+        }
       });
     }
   }
@@ -936,6 +990,29 @@ console.log("aaa");
         }
       }
     });
+  }
+  
+  function submitAddNoShow(self){
+    var row = self.parentsUntil("#noShowSearchList", ".row");
+    if(row.find("input[name='noShowSearchAddContact']").val() === ""){
+      alert("전화번호를 입력해주세요!");
+      row.find("input[name='noShowSearchAddContact']").focus();
+      return;
+    }
+    if(!moment(row.find("input[name='noShowSearchAddDate']").val(), "YYYY-MM-DD").isValid()){
+      alert("노쇼 날짜를 올바르게 입력해주세요!");
+      row.find("input[name='noShowSearchAddDate']").focus();
+      return;
+    }
+    var parameters = {id:row.data("id"), contact:row.find("input[name='noShowSearchAddContact']").val(), date:moment(row.find("input[name='noShowSearchAddDate']").val(), "YYYY-MM-DD").format("YYYYMMDD"), noShowCase:row.find("select").val()};
+    NMNS.socket.emit("add noshow", parameters);
+    self.off("touch click").on("touch click", function(){
+      alert("저장 요청중입니다..!");
+    });
+  }
+  
+  function cancelAddNoShow(self){
+    self.parentsUntil("#noShowSearchList", ".row").remove();
   }
   
   function submitAddManager(self){
@@ -1059,8 +1136,8 @@ console.log("aaa");
     console.log(e);
     e.data.forEach(function(item){
       var badge = "";
-      e.data.noShowCaseList.forEach(function(item2){
-        badge += "<span class='badge badge-light'>" + (item2||"") + "</span>";
+      item.noShowCaseList.forEach(function(item2){
+        badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
       });
       html += "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(item.contact||"")+"</span><span class='col-4'>"+(item.lastNoShowDate||"")+"</span><span class='col-1'>"+(item.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(item.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
     });
@@ -1070,12 +1147,30 @@ console.log("aaa");
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
    var html = "";
    console.log(e);
-   e.data.forEach(function(item){
-     html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+(item.contact?(item.contact.length===11?(item.contact.substring(0,3)+"-"+item.contact.substring(3,7)+"-"+item.contact.substring(7)):(item.contact.length===10?(item.contact.substring(0,3)+"-"+item.contact.substring(3,6)+"-"+item.contact.substring(6)):item.contact)):"")+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
-   });
+   if(e.data.length===0){
+     html = "<div class='row col-12 px-0 mt-1'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>"
+   }else{
+     e.data.forEach(function(item){
+       html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+(item.contact?(item.contact.length===11?(item.contact.substring(0,3)+"-"+item.contact.substring(3,7)+"-"+item.contact.substring(7)):(item.contact.length===10?(item.contact.substring(0,3)+"-"+item.contact.substring(3,6)+"-"+item.contact.substring(6)):item.contact)):"")+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
+     });
+   }
    $("#noShowScheduleList").html(html);
   }));
 
+  NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e){
+    var html, badge = "";
+    console.log(e);
+    e.data.noShowCaseList.forEach(function(item2){
+      badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
+    });
+    html = "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(e.data.contact||"")+"</span><span class='col-4'>"+(e.data.lastNoShowDate?e.data.lastNoShowDate.substring(0,4)+"-"+e.data.lastModifiedDate.substring(4,6)+"-"+e.data.lastNoShowDate.substring(6):"")+"</span><span class='col-1'>"+(e.data.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(e.data.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
+    $(html).insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
+    $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"']").remove();
+  }, function(e){
+    $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"'] .noShowSearchAddSubmit").off("touch click").on("touch click", function(){
+      submitAddNoShow($(this));
+    });
+  }));
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   
   $("#infoModal").on("hide.bs.modal", function(){

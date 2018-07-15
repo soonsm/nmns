@@ -96,3 +96,6 @@ function getColorFromBackgroundColor(background){
                       (parseInt(background.substring(5,7), 16) * 114)) / 1000);
   return (o > 125 ? '#212121' : '#ffffff');
 }
+function filterNonNumericCharacter(obj){
+  obj.val(obj.val().replace(/\D/g,''));
+}
