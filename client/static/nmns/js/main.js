@@ -199,10 +199,12 @@
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
-      NMNS.history.push(e.history || $.extend(true, {}, e.schedule));
-      e.schedule.start = e.start;
-      e.schedule.end = e.end;
-      
+      var history = $.extend(true, {}, e.schedule);
+      NMNS.history.push(e.history || history);
+      e.schedule.start = e.start || e.schedule.start;
+      e.schedule.end = e.end || e.schedule.end;
+      e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
+      console.log(e);
       if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
         NMNS.calendar.deleteSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
         e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
@@ -211,10 +213,16 @@
       }else{
         NMNS.calendar.updateSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
       }
-
-      e.schedule.start = moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm");
-      e.schedule.end = moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm");
-      NMNS.socket.emit("update reserv", e.schedule);
+      
+      NMNS.socket.emit("update reserv", $.extend(true, history, {
+        start:moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm"),
+        end:moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
+        manager: e.schedule.calendarId,
+        name: e.schedule.title,
+        contact: e.schedule.contact || e.schedule.raw.contact,
+        contents: e.schedule.contents || e.schedule.raw.contents,
+        etc: e.schedule.etc || e.schedule.raw.etc
+      }));
     },
     beforeDeleteSchedule:function(e){
       NMNS.history.push(e.schedule);
@@ -234,6 +242,15 @@
     }else{
       html+="<span class='calendar-font-icon far fa-clock'></span> ";
     }
+    switch(schedule.raw.status){
+      case "CANCELED":
+        html += "<span class='fas fa-ban'></span>";
+        break;
+      case "NOSHOW":
+        html += "<span class='fas fa-exclamation-triangle'></span>";
+        break;
+    }
+    
     html += schedule.title + (schedule.raw.contact?"<br/><span class='fas fa-phone'></span> " + schedule.raw.contact : "") + (schedule.raw.contents?"<br/><span class='fas fa-list'></span> " + schedule.raw.contents : "");
     return html;
   }
@@ -904,7 +921,7 @@ console.log("aaa");
       $("#noShowScheduleDropdown .dropdown-item").off("touch click").on("touch click", function(){
         var dropdown = $(this).parent();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:dropdown.data("status")});
-        NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {status:$(this).data("status")});
+        NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:$(this).data("status")}});
         NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:$(this).data("status"), noShowCase:$(this).data("type")});
         $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge($(this).data("status"))).on("touch click", function(){
           noShowScheduleBadge($(this));

@@ -6919,6 +6919,10 @@ return /******/ (function(modules) { // webpackBootstrap
 			if (options.raw && options.raw.etc){
 				schedule.setRaw('etc', options.raw.etc);
 			}
+	
+			if (options.raw && options.raw.status){
+				schedule.setRaw('status', options.raw.status);
+			}
 			//NMNS CUSTOMIZING END
 	    this._removeFromMatrix(schedule);
 	    this._addToMatrix(schedule);
