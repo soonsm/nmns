@@ -1,11 +1,14 @@
 'use strict';
 
-process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
-if (process.env.NODE_ENV == 'production') {
+require('./bin/constant');
+
+process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == process.nmns.MODE.PRODUCTION ) ? process.nmns.MODE.PRODUCTION : process.nmns.MODE.DEVELOPMENT;
+if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
     console.log("Production Mode");
-} else if (process.env.NODE_ENV == 'development') {
+} else if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
     console.log("Development Mode");
 }
+
 
 require('marko/node-require');
 
@@ -46,7 +49,7 @@ app.use(cookieParser());
 //flash && session setting
 const DynamoStore = require('connect-dynamodb-session')(session);
 let autoCreateValue = true;
-if (process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
     autoCreateValue = false;
 }
 let sessionStore = new DynamoStore({
@@ -111,7 +114,7 @@ app.get('/keyboard', (req, res)=>{
     res.status(200).json(message.homeKeyboard);
 });
 
-app.get('/cancel/key=:reservationKey', (req, res)=>{
+app.get('/cancel/key=:reservationKey', async (req, res)=>{
     kakaoEventHandler.cancelReservation(req.params.reservationKey, res);
 });
 

@@ -2,19 +2,23 @@
 const
     router = require('express').Router(),
     emailValidator = require('email-validator'),
-    passwordValidator = require('password-validator'),
     db = require('./webDb'),
     util = require('./util'),
+    alrimTalk = require('./alrimTalk'),
     emailSender = require('./emailSender');
 
-module.exports = function(passport){
+module.exports = function (passport) {
 
 
     router.get('/index', function (req, res) {
-        res.marko(require('../client/template/index'), {type:"signin", email:req.cookies.email, message:req.session.errorMessage});
+        res.marko(require('../client/template/index'), {
+            type: "signin",
+            email: req.cookies.email,
+            message: req.session.errorMessage
+        });
     });
 
-    router.post("/signup", async function(req, res){
+    router.post("/signup", async function (req, res) {
         let data = req.body;
         let email = data.email;
         let password = data.password;
@@ -23,32 +27,32 @@ module.exports = function(passport){
         let error = {
             type: 'signup',
             email: email,
-            message : null
+            message: null
         };
 
         //email validation
-        if(!emailValidator.validate(email)){
+        if (!emailValidator.validate(email)) {
             //email validation fail
             error.message = '올바른 이메일 형식이 아닙니다.';
             return res.marko(require('../client/template/index'), error);
         }
 
         //password validation
-        if(password !== passwordRepeat){
+        if (password !== passwordRepeat) {
             error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
             return res.marko(require('../client/template/index'), error);
         }
 
         //password strength check
         let strenthCheck = util.passwordStrengthCheck(password);
-        if(strenthCheck.result === false){
+        if (strenthCheck.result === false) {
             error.message = strenthCheck.message;
             return res.marko(require('../client/template/index'), error);
         }
 
         //기존 사용자 체크
         let user = await db.getWebUser(email);
-        if(user){
+        if (user) {
             error.message = '이미 존재하는 사용자입니다.';
             return res.marko(require('../client/template/index'), error);
         }
@@ -59,11 +63,11 @@ module.exports = function(passport){
 
         emailSender.sendEmailVerification(email, emailAuthToken);
 
-        if(user){
+        if (user) {
             //로그인처리
             req.logIn(user, () => res.redirect("/"));
             res.redirect("/");
-        }else{
+        } else {
             error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
             return res.marko(require('../client/template/index'), error);
         }
@@ -80,12 +84,12 @@ module.exports = function(passport){
      * 로그인 요청 json format이 잘못되었을 때: {message: 'Missing credentials'}
      * 그 외 에러: 나도 몰라, 근데 {message: 블라블라} 이런 형태로 리턴이 올 것임
      */
-    router.post("/signin", function(req, res){
+    router.post("/signin", function (req, res) {
         console.log(req.body);
         let email = req.body.email;
         res.cookie('email', email);
-        passport.authenticate('local', (err,user,info)=>{
-            req.logIn(user, function(err) {
+        passport.authenticate('local', (err, user, info) => {
+            req.logIn(user, function (err) {
                 if (err) {
                     req.session.errorMessage = info.message;
                     res.redirect("/index");
@@ -95,32 +99,32 @@ module.exports = function(passport){
                 res.redirect("/");
             });
 
-        })(req,res);
+        })(req, res);
     });
 
-    router.get("/signout", (req,res) => {
+    router.get("/signout", (req, res) => {
         req.logout();
-        req.session.destroy(function(err){
+        req.session.destroy(function (err) {
             console.log('fail to destroy session: ', err);
         });
         res.redirect('/');
     })
 
-    router.get("/", function(req, res){//main calendar page
-      if(req.user){
-          res.marko(require('../client/template/main'), {user:req.user});
-      }else{
-          //로그인 되지 않은 상태이므로 index page로 이동
-          res.redirect("/index");
-      }
+    router.get("/", function (req, res) {//main calendar page
+        if (req.user) {
+            res.marko(require('../client/template/main'), {user: req.user});
+        } else {
+            //로그인 되지 않은 상태이므로 index page로 이동
+            res.redirect("/index");
+        }
     });
 
-    router.get('/auth?email=:email&token=:token', async function(req, res){
+    router.get('/auth?email=:email&token=:token', async function (req, res) {
         const email = req.params.email;
         const token = req.params.token;
 
         let user = await db.getWebUser(email);
-        if(user && user.emailAuthToken === token){
+        if (user && user.emailAuthToken === token) {
             await db.updateWebUser(email, 'authStatus', 'EMAIL_VERIFICATED');
             //TODO: 이메일 인증이 완료되었다는 페이지로 이동
             return;
@@ -129,29 +133,67 @@ module.exports = function(passport){
         //TODO: 잘못된 접근이라는 페이지로 이동
     });
 
-    router.get('temp_pwd?email=:email', async function(req, res){
-       const email = req.params.email;
+    router.get('temp_pwd?email=:email', async function (req, res) {
+        const email = req.params.email;
 
-       let user = await db.getWebUser(email);
-       if(user){
-           let generator = require('generate-password');
-           let password = generator.generate({
-               length: 10,
-               numbers: true
-           });
+        let user = await db.getWebUser(email);
+        if (user) {
+            let generator = require('generate-password');
+            let password = generator.generate({
+                length: 10,
+                numbers: true
+            });
 
-           if(await db.updateWebUser(email, 'password', password)){
+            if (await db.updateWebUser(email, 'password', password)) {
 
-               emailSender.sendTempPasswordEmail(email, password);
+                emailSender.sendTempPasswordEmail(email, password);
 
-               //TODO: 임시 비밀번호 발급 되었다는 페이지
-           }else{
-               //TODO: DB 업데이트 실패 페이지 이동
-           }
-           return;
-       }
+                //TODO: 임시 비밀번호 발급 되었다는 페이지
+            } else {
+                //TODO: DB 업데이트 실패 페이지 이동
+            }
+            return;
+        }
 
-       //TODO: 잘못된 접근이라는 페이지로 이동
+        //TODO: 잘못된 접근이라는 페이지로 이동
+    });
+
+    router.get('/web_cancel/key=:reservationKey&&email=:email', async (req, res) => {
+        let id = req.params.reservationKey;
+        let email = req.params.email;
+
+        let returnMsg = '예약취소실패';
+        let contents = '예약정보가 없습니다.';
+
+        //예약정보 수정
+        if (!id || !email) {
+            returnMsg = '예약취소실패';
+            contents = '잘못된 접근입니다.';
+        } else {
+            let reservationList = await db.getReservationList(email);
+            for (var i = 0; i < reservationList.length; i++) {
+                let reservation = reservationList[i];
+                if (reservation.id === id && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED) {
+                    reservation.status = process.nmns.RESERVATION_STATUS.CANCELED;
+                    reservationList[i] = reservation;
+
+                    let user = await db.getWebUser(email)
+
+                    if (!await db.updateReservation(email, reservationList)) {
+                        contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
+                    }else{
+                        //알림톡 전송
+                        await alrimTalk.sendReservationCancelNotify(user, reservation);
+                        returnMsg = '예약취소완료';
+                        contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
+                    }
+                    break;
+                }
+            }
+        }
+
+        //TODO: rendering
+        res.render('reservationCancel.pug', { title: '예약취소안내', message: returnMsg, contents: contents });
     });
 
     return router;

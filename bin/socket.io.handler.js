@@ -5,6 +5,7 @@ const moment = require('moment');
 const util = require('./util');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
+const alrimTalk = require('./alrimTalk');
 
 const GetReservationList = 'get reserv', GetReservationSummaryList = 'get summary', AddReservation = 'add reserv', UpdateReservation = 'update reserv';
 const GetNoShow = 'get noshow', AddNoShow = 'add noshow', DelNoShow = 'delete noshow';
@@ -141,9 +142,11 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetShop, async function(){
             let status = true, message = null;
             let resultData = await db.getWebUser(email);
-            if(! resultData){
+            if(!resultData){
                 status = false;
                 message = '잘못된 접근입니다.';
+            }else{
+                delete resultData.password;
             }
 
             socket.emit(GetShop, makeResponse(status, resultData, message));
@@ -194,6 +197,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          */
 
         addEvent(GetReservationSummaryList, async function(data){
+
             let status = true, message = null, resultData = null;
             let params = data || {};
 
@@ -301,9 +305,15 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 이름과 연락처가 일치하는 고객이 없으면 추가
                  */
 
-                if(!await db.addNewReservation(email,db.newReservation(data))){
+                let reservation = db.newReservation(data);
+                if(!await db.addNewReservation(email,reservation)){
                     status = false;
                     message = '시스템 오류입니다.(DB Update Error';
+                }
+
+                if(status){
+                    //알림톡 보내기
+                    alrimTalk.sendReservationConfirm(user, reservation);
                 }
             }
             socket.emit(AddReservation, makeResponse(status, {id: data.id}, message));
@@ -619,9 +629,3 @@ const getHolidays = (function(){
         return returnHolidays;
     };
 })();
-
-
-//TODO: polling handling
-//TODO: dynamodb session
-//TODO: passport.socketio
-//TODO: queryfilter

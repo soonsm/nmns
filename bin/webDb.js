@@ -4,11 +4,11 @@ const sha256 = require('js-sha256');
 
 var AWS = require("aws-sdk");
 
-if (process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
     AWS.config.update({
         region: "ap-northeast-2"
     });
-} else if (process.env.NODE_ENV == 'development') {
+} else if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
     AWS.config.update({
         region: "ap-northeast-2",
         endpoint: "http://localhost:8000"
@@ -104,7 +104,7 @@ function del(param) {
 exports.newWebUser = function (user) {
     return {
         email: user.email,
-        authStatus: user.authStatus || 'BEFORE_EMAIL_VERIFICATION', //BEFORE_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
+        authStatus: user.authStatus || process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION, //BEFORE_EMAIL_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
         emailAuthToken: user.emailAuthToken || null,
         password: user.password,
         numOfWrongPassword: 0,
@@ -135,14 +135,14 @@ exports.signUp = async function (newUser) {
     let newWebUser = exports.newWebUser(newUser);
 
     return await put({
-        TableName: 'WebSecheduler',
+        TableName: process.nmns.TABLE.WebSecheduler,
         Item: newWebUser
     });
 }
 
 exports.getWebUser = async function (email) {
     let items = await query({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpdate, shopName, bizType, alrimTalkInfo",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
@@ -158,7 +158,7 @@ exports.getWebUser = async function (email) {
 
 exports.updateWebUser = async function (email, properties) {
     let params = {
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
             'email': email
         },
@@ -193,14 +193,14 @@ exports.newReservation = function (reservation) {
         manager: reservation.manager || null,
         etc: reservation.etc || null,
         contact: reservation.contact,
-        status: reservation.status || 'RESERVED',
+        status: reservation.status || process.nmns.RESERVATION_STATUS.RESERVED,
         cancelDate: null
     };
 }
 
 exports.addNewReservation = async function (email, newReservation) {
     return await update({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
             'email': email,
         },
@@ -214,7 +214,7 @@ exports.addNewReservation = async function (email, newReservation) {
 
 exports.updateReservation = async function (email, reservation) {
     return await update({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
             'email': email
         },
@@ -228,7 +228,7 @@ exports.updateReservation = async function (email, reservation) {
 
 exports.getReservationSummaryList = async function (email, data) {
     let items = await query({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "reservationList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
@@ -246,7 +246,7 @@ exports.getReservationSummaryList = async function (email, data) {
         let filteredList = [];
         for (var i = 0; i < list.length; i++) {
             let reservation = list[i];
-            if(reservation.status !== 'DELETED'){
+            if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
                 filteredList.push(reservation);
                 if(data.start && reservation.start < data.start){
                     filteredList.length -= 1;
@@ -265,7 +265,7 @@ exports.getReservationSummaryList = async function (email, data) {
 
 exports.getReservationList = async function (email, start, end) {
     let items = await query({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "reservationList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
@@ -304,7 +304,7 @@ exports.newStaff = function (staff) {
 }
 exports.getStaffList = async function (email) {
     let items = await query({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "staffList",
         KeyConditionExpression: "#key = :val ",
         ExpressionAttributeNames: {
@@ -322,7 +322,7 @@ exports.getStaffList = async function (email) {
 };
 exports.addNewStaff = async function (email, staff) {
     return await update({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
             'email': email,
         },
@@ -335,7 +335,7 @@ exports.addNewStaff = async function (email, staff) {
 };
 exports.updateStaffList = async function (email, staffList) {
     return await update({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
             'email': email
         },
@@ -364,7 +364,7 @@ exports.newNoShow = function (phone, noShowCase, name) {
 }
 exports.getMyNoShow = async function (email, phone) {
     let items = await query({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "noShowList",
         KeyConditionExpression: "#key = :val ",
         ExpressionAttributeNames: {
@@ -395,7 +395,7 @@ exports.getMyNoShow = async function (email, phone) {
 exports.getNoShow = async function (phoneNumber) {
     let key = sha256(phoneNumber);
     let noShow = await get({
-        TableName: 'NoShowList',
+        TableName: process.nmns.TABLE.NoShowList,
         Key: {
             'noShowKey': key
         }
@@ -422,7 +422,7 @@ exports.addToNoShowList = async function (email, phone, noShowCase, name) {
         }
     }
     await put({
-        TableName: 'NoShowList',
+        TableName: process.nmns.TABLE.NoShowList,
         Item: noShow
     });
 
@@ -451,7 +451,7 @@ exports.addToNoShowList = async function (email, phone, noShowCase, name) {
         myNoShowList.push(myNoShow);
     }
     await update({
-        TableName: "WebSecheduler",
+        TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
             'email': email
         },
@@ -487,7 +487,7 @@ exports.deleteNoShow = async function (phone, email) {
         }
         //WebScheudler update
         await update({
-            TableName: "WebSecheduler",
+            TableName: process.nmns.TABLE.WebSecheduler,
             Key: {
                 'email': email
             },
@@ -503,14 +503,14 @@ exports.deleteNoShow = async function (phone, email) {
             noShow.noShowCount -= 1;
             if (noShow.noShowCount === 0) {
                 await del({
-                    TableName: 'NoShowList',
+                    TableName: process.nmns.TABLE.NoShowList,
                     Key: {
                         "noShowKey": sha256(phone)
                     }
                 });
             } else {
                 await put({
-                    TableName: 'NoShowList',
+                    TableName: process.nmns.TABLE.NoShowList,
                     Item: noShow
                 });
             }
