@@ -7,12 +7,15 @@ const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
 const alrimTalk = require('./alrimTalk');
 
-const GetReservationList = 'get reserv', GetReservationSummaryList = 'get summary', AddReservation = 'add reserv', UpdateReservation = 'update reserv';
+const GetReservationList = 'get reserv', GetReservationSummaryList = 'get summary', AddReservation = 'add reserv',
+    UpdateReservation = 'update reserv';
 const GetNoShow = 'get noshow', AddNoShow = 'add noshow', DelNoShow = 'delete noshow';
-const GetManagerList = 'get manager', AddManager = 'add manager', UpdateManager = 'update manager', DelManager = 'delete manager';
+const GetManagerList = 'get manager', AddManager = 'add manager', UpdateManager = 'update manager',
+    DelManager = 'delete manager';
 const GetShop = 'get info', UpdateShop = 'update info', UpdatePwd = 'update password';
 const GetAlrimTalk = 'get alrim', UpdateAlirmTalk = 'update alrim';
 const SendVerification = 'send verification';
+const GetCustomInfo = 'get customer info';
 
 const EVENT_LIST_NO_NEED_VERIFICATION = [SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
@@ -41,23 +44,23 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         //     return;
         // }
 
-        const addEvent = function(eventName, fn){
-          socket.on(eventName, function(data){
-              if(EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)){
-                  fn(data);
-              }else if(user.authStatus !== 'EMAIL_VERIFICATED'){
-                  socket.emit(GetReservationList, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
-              }else{
-                  fn(data);
-              }
-          });
+        const addEvent = function (eventName, fn) {
+            socket.on(eventName, function (data) {
+                if (EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
+                    fn(data);
+                } else if (user.authStatus !== 'EMAIL_VERIFICATED') {
+                    socket.emit(GetReservationList, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
+                } else {
+                    fn(data);
+                }
+            });
         };
 
-        addEvent(SendVerification, async function(){
+        addEvent(SendVerification, async function () {
             let status = true, message = `인증 이메일이 ${email}로 전송되었습니다.`;
 
             const emailAuthToken = require('js-sha256')(email);
-            if(!(await emailSender.sendEmailVerification(email, emailAuthToken))){
+            if (!(await emailSender.sendEmailVerification(email, emailAuthToken))) {
                 status = false;
                 message = '인증 이메일 전송이 실패하였습니다.';
             }
@@ -66,12 +69,26 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         });
 
         /**
+         * 고객정보
+         */
+        addEvent(GetCustomInfo, async function () {
+            let resultData = [];
+
+            let user = await db.getWebUser(email);
+            if (user) {
+                resultData = user.memberList;
+            }
+
+            socket.emit(GetCustomInfo, makeResponse(true, resultData));
+        })
+
+        /**
          * AlrimTalk
          */
-        addEvent(GetAlrimTalk, async function(){
+        addEvent(GetAlrimTalk, async function () {
             let status = true, message = null;
             let resultData = await db.getWebUser(email);
-            if(! resultData){
+            if (!resultData) {
                 status = false;
                 message = '잘못된 접근입니다.';
             }
@@ -79,31 +96,31 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(GetAlrimTalk, makeResponse(status, resultData.alrimTalkInfo, message));
         });
 
-        addEvent(UpdateAlirmTalk, async function(data){
+        addEvent(UpdateAlirmTalk, async function (data) {
             let status = true, message = null;
             let alrimTalkInfo = user.alrimTalkInfo;
 
-            if(data.useYn && data.useYn !== 'Y' && data.useYn !== 'N'){
+            if (data.useYn && data.useYn !== 'Y' && data.useYn !== 'N') {
                 status = false;
                 message = `useYn은 Y 또는 N 값만 가질 수 있습니다.(${data.useYn})`;
-            }else if(data.callbackPhone && !util.phoneNumberValidation(data.callbackPhone)){
+            } else if (data.callbackPhone && !util.phoneNumberValidation(data.callbackPhone)) {
                 status = false;
                 message = `callbackPhone이 전화번호 형식에 맞지 않습니다.(${data.callbackPhone})`;
             }
 
-            if(status && alrimTalkInfo.useYn === 'N' && data.useYn === 'Y'){
+            if (status && alrimTalkInfo.useYn === 'N' && data.useYn === 'Y') {
                 //알림톡 미사용 -> 사용으로 변경 할 때
-                if(!alrimTalkInfo.callbackPhone && !data.callbackPhone){
+                if (!alrimTalkInfo.callbackPhone && !data.callbackPhone) {
                     status = false;
                     message = '알림톡 미사용에서 사용으로 변경 할 때는 DB에 또는 업데이트 요청에 callbackPhone에 전화번호가 있어야 합니다.';
                 }
             }
 
-            if(status){
-                for(let x in alrimTalkInfo){
+            if (status) {
+                for (let x in alrimTalkInfo) {
                     alrimTalkInfo[x] = data[x] || alrimTalkInfo[x];
                 }
-                if(!await db.updateWebUser(email, {alrimTalkInfo: alrimTalkInfo})){
+                if (!await db.updateWebUser(email, {alrimTalkInfo: alrimTalkInfo})) {
                     status = false;
                     message = '시스템 오류입니다.(DB Update Error)';
                 }
@@ -116,21 +133,21 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         /**
          * Shop & Account
          */
-        addEvent(UpdatePwd, async function(data){
+        addEvent(UpdatePwd, async function (data) {
             let status = true, message = null;
             let pwd = data.password;
-            if(!pwd){
+            if (!pwd) {
                 status = false;
                 message = '비밀번호 변경에 필요한 데이터가 없습니다.({"password":${변경할 패스워드, string}})';
-            }else{
+            } else {
                 let strengthCheck = util.passwordStrengthCheck(pwd);
-                if(strengthCheck.result === false){
+                if (strengthCheck.result === false) {
                     status = false;
                     message = strengthCheck.message;
                 }
 
-                if(status){
-                    if(!await db.updateWebUser(email, {password: pwd})){
+                if (status) {
+                    if (!await db.updateWebUser(email, {password: pwd})) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
@@ -139,49 +156,49 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(UpdatePwd, makeResponse(status, null, message));
         });
 
-        addEvent(GetShop, async function(){
+        addEvent(GetShop, async function () {
             let status = true, message = null;
             let resultData = await db.getWebUser(email);
-            if(!resultData){
+            if (!resultData) {
                 status = false;
                 message = '잘못된 접근입니다.';
-            }else{
+            } else {
                 delete resultData.password;
             }
 
             socket.emit(GetShop, makeResponse(status, resultData, message));
         });
 
-        addEvent(UpdateShop, async function(params){
-            let status = true, message = null, data={};
+        addEvent(UpdateShop, async function (params) {
+            let status = true, message = null, data = {};
 
             /**
              * Update 가능 properties
              * bizBeginTime, bizEndTime, shopName, bizType
              */
             let updateProperties = ['bizBeginTime', 'bizEndTime', 'shopName', 'bizType'];
-            for(let i=0; i<updateProperties.length; i++){
+            for (let i = 0; i < updateProperties.length; i++) {
                 let property = updateProperties[i];
-                if(params.hasOwnProperty(property)){
+                if (params.hasOwnProperty(property)) {
                     data[property] = params[property];
                 }
             }
             let user = await db.getWebUser(email);
-            if(!user){
+            if (!user) {
                 status = false;
                 message = '잘못된 접근입니다';
             }
-            if(status){
-                if(data.bizBeginTime && !moment(data.bizBeginTime, 'HHmm').isValid()){
+            if (status) {
+                if (data.bizBeginTime && !moment(data.bizBeginTime, 'HHmm').isValid()) {
                     status = false;
-                    message = 'bizBeginTime 시간 포맷이 올바르지 않습니다.(HHmm):'+data.bizBeginTime;
-                }else if(data.bizEndTime && !moment(data.bizEndTime, 'HHmm').isValid()){
+                    message = 'bizBeginTime 시간 포맷이 올바르지 않습니다.(HHmm):' + data.bizBeginTime;
+                } else if (data.bizEndTime && !moment(data.bizEndTime, 'HHmm').isValid()) {
                     status = false;
-                    message = 'bizEndTime 시간 포맷이 올바르지 않습니다.(HHmm):'+data.bizEndTime;
+                    message = 'bizEndTime 시간 포맷이 올바르지 않습니다.(HHmm):' + data.bizEndTime;
                 }
 
-                if(status){
-                    if(! await db.updateWebUser(email, data)){
+                if (status) {
+                    if (!await db.updateWebUser(email, data)) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
@@ -196,24 +213,24 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Reservation
          */
 
-        addEvent(GetReservationSummaryList, async function(data){
+        addEvent(GetReservationSummaryList, async function (data) {
 
             let status = true, message = null, resultData = null;
             let params = data || {};
 
-            if(params.start && !moment(params.start, 'YYYYMMDDHHmm').isValid()){
+            if (params.start && !moment(params.start, 'YYYYMMDDHHmm').isValid()) {
                 status = false;
                 message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.start}`;
             }
-            if(params.end && !moment(params.end, 'YYYYMMDDHHmm').isValid()){
+            if (params.end && !moment(params.end, 'YYYYMMDDHHmm').isValid()) {
                 status = false;
                 message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.end}`;
             }
-            if(params.contact  && !util.phoneNumberValidation(params.contact)){
+            if (params.contact && !util.phoneNumberValidation(params.contact)) {
                 status = false;
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${params.contact})`;
             }
-            if(status){
+            if (status) {
                 resultData = await db.getReservationSummaryList(email, params);
             }
 
@@ -251,38 +268,58 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             let status = validationResult.status;
             let message = validationResult.message || '수정완료';
 
-            if(status){
+            if (status) {
                 /*
-                TODO: 고객 없으면 추가
+                고객 없으면 추가
                 고객 조회 한 뒤, 이름과 연락처가 일치하는 고객이 있으면 무시,
                 이름과 연락처가 일치하는 고객이 없으면 추가
                  */
+                if (newReservation.contact) {
+                    let memberList = (await db.getWebUser(email)).memberList;
+                    let newMember = true;
+                    for (let i = 0; i < memberList.length; i++) {
+                        let member = memberList[i];
+                        if (newReservation.contact === member.contact) {
+                            newMember = false;
+                            if (newReservation.name && newReservation.name !== member.name) {
+                                member.name = newReservation.name;
+                                memberList[i] = member;
+                                await db.updateWebUser(email, {memberList: memberList});
+                            }
+                            break;
+                        }
+                    }
+                    if (newMember) {
+                        memberList.push({contact: newReservation.contact, name: newReservation.name});
+                        await db.updateWebUser(email, {memberList: memberList});
+                    }
+                }
 
                 let reservationList = await db.getReservationList(email);
                 let isItMyReservation = false;
-                for(var i=0; i<reservationList.length; i++){
+                for (var i = 0; i < reservationList.length; i++) {
                     let reservation = reservationList[i];
-                    if(reservation.id === newReservation.id){
-                        for(let x in reservation){
-                          if(newReservation.hasOwnProperty(x)){
-                              reservation[x] = newReservation[x];
-                          }
+                    if (reservation.id === newReservation.id) {
+                        for (let x in reservation) {
+                            if (newReservation.hasOwnProperty(x)) {
+                                reservation[x] = newReservation[x];
+                            }
                         }
                         reservationList[i] = reservation;
                         isItMyReservation = true;
                         break;
                     }
                 }
-                if(isItMyReservation){
-                    if(!await db.updateReservation(email, reservationList)){
+                if (isItMyReservation) {
+                    if (!await db.updateReservation(email, reservationList)) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
-                    if(newReservation.status === 'NOSHOW'){
+                    if (newReservation.status === 'NOSHOW') {
                         //noShow 입력
                         await db.addToNoShowList(email, newReservation.contact, null, newReservation.name);
                     }
-                }else{
+                } else {
                     status = false;
                     message = '없는 예약입니다.';
                 }
@@ -291,29 +328,48 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(UpdateReservation, makeResponse(status, {id: newReservation.id}, message));
         });
 
-        addEvent(AddReservation, async function(data){
+        addEvent(AddReservation, async function (data) {
             console.log(data);
 
             let validationResult = reservationValidationForAdd(email, data);
             let status = validationResult.status;
             let message = validationResult.message || '저장완료';
 
-            if(status){
+            if (status) {
                 /*
                 TODO: 고객 없으면 추가
                 고객 조회 한 뒤, 이름과 연락처가 일치하는 고객이 있으면 무시,
                 이름과 연락처가 일치하는 고객이 없으면 추가
                  */
+                let user = await db.getWebUser(email);
+                let memberList = user.memberList;
+                let newMember = true;
+                for (let i = 0; i < memberList.length; i++) {
+                    let member = memberList[i];
+                    if (data.contact === member.contact) {
+                        newMember = false;
+                        if (data.name && data.name !== member.name) {
+                            member.name = data.name;
+                            memberList[i] = member;
+                            await db.updateWebUser(email, {memberList: memberList});
+                        }
+                        break;
+                    }
+                }
+                if (newMember) {
+                    memberList.push({contact: data.contact, name: data.name});
+                    await db.updateWebUser(email, {memberList: memberList});
+                }
 
                 let reservation = db.newReservation(data);
-                if(!await db.addNewReservation(email,reservation)){
+                if (!await db.addNewReservation(email, reservation)) {
                     status = false;
                     message = '시스템 오류입니다.(DB Update Error';
                 }
 
-                if(status){
-                    //알림톡 보내기
-                    alrimTalk.sendReservationConfirm(user, reservation);
+                if (status) {
+                    //TODO:알림톡 보내기
+                    //await alrimTalk.sendReservationConfirm(user, reservation);
                 }
             }
             socket.emit(AddReservation, makeResponse(status, {id: data.id}, message));
@@ -328,18 +384,18 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Manager
          */
 
-        addEvent(AddManager, async (staff)=>{
+        addEvent(AddManager, async (staff) => {
             let status = true, message = null;
             let name = staff.name;
             let id = staff.id;
 
-            if(!name || !id){
+            if (!name || !id) {
                 status = false;
                 message = '담당자 추가에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${매니저 이름, string}, "color":${저장할 색깔, string, #RRGGBB, optional}})';
             }
 
-            if(status){
-                if(! await db.addNewStaff(email, db.newStaff(staff))){
+            if (status) {
+                if (!await db.addNewStaff(email, db.newStaff(staff))) {
                     status = false;
                     message = '시스템 오류입니다.(DB Update Error';
                 }
@@ -348,33 +404,33 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             socket.emit(AddManager, makeResponse(status, {id: id}, message));
         });
 
-        addEvent(UpdateManager, async (newStaff)=>{
+        addEvent(UpdateManager, async (newStaff) => {
             let status = true, message = null;
             let name = newStaff.name;
             let color = newStaff.color;
             let id = newStaff.id;
 
-            if(!name || !color || !id){
+            if (!name || !color || !id) {
                 status = false;
                 message = '담당자 수정에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${변경후 매니저 이름, string}, "color":${변경할 색깔, string, #RRGGBB}})';
             }
 
-            if(status){
+            if (status) {
                 let staffList = await db.getStaffList(email);
                 let index = -1;
-                for(let i=0;i<staffList.length;i++){
+                for (let i = 0; i < staffList.length; i++) {
                     let staff = staffList[i];
-                    if(staff.id === newStaff.id){
+                    if (staff.id === newStaff.id) {
                         index = i;
                         break;
                     }
                 }
-                if(index === -1){
+                if (index === -1) {
                     status = false;
                     message = '해당 담당자는 존재하지 않습니다.';
-                }else{
+                } else {
                     staffList[index] = newStaff;
-                    if(!await db.updateStaffList(email, staffList)){
+                    if (!await db.updateStaffList(email, staffList)) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
@@ -383,31 +439,31 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             socket.emit(UpdateManager, makeResponse(status, {id: id}, message));
         });
-        addEvent(DelManager, async (newStaff)=>{
+        addEvent(DelManager, async (newStaff) => {
             let status = true, message = null;
             let id = newStaff.id;
 
-            if(!id){
+            if (!id) {
                 status = false;
                 message = '담당자 삭제에 필요한 데이터가 없습니다. ({"id": ${매니저 키}})';
             }
 
-            if(status){
+            if (status) {
                 let staffList = await db.getStaffList(email);
                 let index = -1;
-                for(let i=0;i<staffList.length;i++){
+                for (let i = 0; i < staffList.length; i++) {
                     let staff = staffList[i];
-                    if(staff.id === newStaff.id){
+                    if (staff.id === newStaff.id) {
                         index = i;
                         break;
                     }
                 }
-                if(index === -1){
+                if (index === -1) {
                     status = false;
                     message = '해당 담당자는 존재하지 않습니다.';
-                }else{
+                } else {
                     staffList.splice(index, 1);
-                    if(!await db.updateStaffList(email, staffList)){
+                    if (!await db.updateStaffList(email, staffList)) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
@@ -428,28 +484,28 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             console.log(data);
 
-            if(!contact || (mineOnly !== false && mineOnly !== true)){
-                status=false;
+            if (!contact || (mineOnly !== false && mineOnly !== true)) {
+                status = false;
                 message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "mineOnly":${내 노쇼만 볼것인지 여부, boolean, Optional}})';
-            }else if(!util.phoneNumberValidation(contact)){
+            } else if (!util.phoneNumberValidation(contact)) {
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
                 status = false;
             }
 
-            if(status){
+            if (status) {
                 resultData = await db.getMyNoShow(email, contact);
-                if(resultData.length < 1){
-                    if(!mineOnly){
+                if (resultData.length < 1) {
+                    if (!mineOnly) {
                         resultData = await db.getNoShow(contact);
-                        if(resultData[0]){
+                        if (resultData[0]) {
                             resultData[0].mine = false;
                         }
                     }
-                }else{
+                } else {
                     resultData[0].mine = true;
                 }
 
-                if(resultData[0]){
+                if (resultData[0]) {
                     resultData[0].contact = contact;
                     resultData[0].lastNoShowDate = moment(resultData[0].lastNoShowDate).format('YYYY-MM-DD');
                     delete resultData[0].noShowKey;
@@ -466,10 +522,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             const noShowCase = data.noShowCase;
 
             //validation
-            if(!contact){
+            if (!contact) {
                 status = false;
                 message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "name":${고객 이름, string, optional},"noShowCase":${매장 코멘트, string, optional}})';
-            }else if(!util.phoneNumberValidation(contact)){
+            } else if (!util.phoneNumberValidation(contact)) {
                 status = false;
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
             }
@@ -483,10 +539,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             const contact = data.contact;
 
             //validation
-            if(!contact ){
+            if (!contact) {
                 status = false;
                 message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}})';
-            }else if(!util.phoneNumberValidation(contact)){
+            } else if (!util.phoneNumberValidation(contact)) {
                 status = false;
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
             }
@@ -506,43 +562,43 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
  * 필수: id, start, end, contact
  * 선택: name, type(default: R), isAllDay, contents, manager, etc
  */
-const reservationValidationForAdd = function(email, data){
+const reservationValidationForAdd = function (email, data) {
     let status = false, message;
-    if(!data.id || !data.start || !data.end || !data.contact){
+    if (!data.id || !data.start || !data.end || !data.contact) {
         message = '예약추가에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
-    }else if(!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
+    } else if (!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
-    }else if(!util.phoneNumberValidation(data.contact)) {
+    } else if (!util.phoneNumberValidation(data.contact)) {
         message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
-    }else if(data.type && data.type !== 'R' && data.type !== 'T'){
+    } else if (data.type && data.type !== 'R' && data.type !== 'T') {
         message = `type은 R(예약) 또는 T(일정)만 가능합니다. type:${data.type}`;
-    }else if(data.id && !data.id.startsWith(email)){
+    } else if (data.id && !data.id.startsWith(email)) {
         message = 'email 조작이 의심되어 거절합니다.';
-    }else{
+    } else {
         status = true;
     }
 
     return {status: status, message: message};
 }
 
-const reservationValidationForUdate = function(email, data){
+const reservationValidationForUdate = function (email, data) {
     let status = false, message;
 
-    if(!data.id){
+    if (!data.id) {
         message = '예약수정에 필요한 필수 데이터가 없습니다.({"id": ${예약키})';
-    }else if(data.id && !data.id.startsWith(email)){
+    } else if (data.id && !data.id.startsWith(email)) {
         message = 'email 조작이 의심되어 거절합니다.';
-    }else if(data.start && (!moment(data.start, 'YYYYMMDDHHmm').isValid())) {
+    } else if (data.start && (!moment(data.start, 'YYYYMMDDHHmm').isValid())) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}`;
-    }else if(data.end && (!moment(data.end, 'YYYYMMDDHHmm').isValid())) {
+    } else if (data.end && (!moment(data.end, 'YYYYMMDDHHmm').isValid())) {
         message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) end:${data.end}`;
-    }else if(data.contact && !util.phoneNumberValidation(data.contact)) {
+    } else if (data.contact && !util.phoneNumberValidation(data.contact)) {
         message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
-    }else if(data.type && data.type !== 'R' && data.type !== 'T'){
+    } else if (data.type && data.type !== 'R' && data.type !== 'T') {
         message = `type은 R(예약) 또는 T(일정)만 가능합니다. type:${data.type}`;
-    }else if(data.status && (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')){
+    } else if (data.status && (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')) {
         message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
-    }else{
+    } else {
         status = true;
     }
     return {status: status, message: message};
@@ -557,72 +613,72 @@ const makeResponse = function (status, data, message) {
     };
 }
 
-const getHolidays = (function(){
-    const holidays= [];
+const getHolidays = (function () {
+    const holidays = [];
 
-    const push =function (date, title){
+    const push = function (date, title) {
         holidays.push({
             date: date,
             title: title
         })
     }
 
-    push('2018-01-01','새해');
-    push('2018-02-15','설날');
-    push('2018-02-16','설날');
-    push('2018-02-17','설날');
-    push('2018-03-01','삼일절');
-    push('2018-05-05','어린이날');
-    push('2018-05-22','부처님오신날');
-    push('2018-06-06','현충일');
-    push('2018-08-15','광복절');
-    push('2018-09-23','추석');
-    push('2018-09-24','추석');
-    push('2018-09-25','추석');
-    push('2018-10-03','개천절');
-    push('2018-10-09','한글날');
-    push('2018-12-25','크리스마스');
+    push('2018-01-01', '새해');
+    push('2018-02-15', '설날');
+    push('2018-02-16', '설날');
+    push('2018-02-17', '설날');
+    push('2018-03-01', '삼일절');
+    push('2018-05-05', '어린이날');
+    push('2018-05-22', '부처님오신날');
+    push('2018-06-06', '현충일');
+    push('2018-08-15', '광복절');
+    push('2018-09-23', '추석');
+    push('2018-09-24', '추석');
+    push('2018-09-25', '추석');
+    push('2018-10-03', '개천절');
+    push('2018-10-09', '한글날');
+    push('2018-12-25', '크리스마스');
 
-    push('2019-01-01','새해');
-    push('2019-02-04','설날');
-    push('2019-02-05','설날');
-    push('2019-02-06','설날');
-    push('2019-03-01','삼일절');
-    push('2019-05-05','어린이날');
-    push('2019-05-12','부처님오신날');
-    push('2019-06-06','현충일');
-    push('2019-08-15','광복절');
-    push('2019-09-12','추석');
-    push('2019-09-13','추석');
-    push('2019-09-14','추석');
-    push('2019-10-03','개천절');
-    push('2019-10-09','한글날');
-    push('2019-12-25','크리스마스');
+    push('2019-01-01', '새해');
+    push('2019-02-04', '설날');
+    push('2019-02-05', '설날');
+    push('2019-02-06', '설날');
+    push('2019-03-01', '삼일절');
+    push('2019-05-05', '어린이날');
+    push('2019-05-12', '부처님오신날');
+    push('2019-06-06', '현충일');
+    push('2019-08-15', '광복절');
+    push('2019-09-12', '추석');
+    push('2019-09-13', '추석');
+    push('2019-09-14', '추석');
+    push('2019-10-03', '개천절');
+    push('2019-10-09', '한글날');
+    push('2019-12-25', '크리스마스');
 
-    push('2020-01-01','새해');
-    push('2020-01-24','설날');
-    push('2020-01-25','설날');
-    push('2020-01-26','설날');
-    push('2020-03-01','삼일절');
-    push('2020-05-05','어린이날');
-    push('2020-04-30','부처님오신날');
-    push('2020-06-06','현충일');
-    push('2020-08-15','광복절');
-    push('2020-09-30','추석');
-    push('2020-10-01','추석');
-    push('2020-10-02','추석');
-    push('2020-10-03','개천절');
-    push('2020-10-09','한글날');
-    push('2020-12-25','크리스마스');
+    push('2020-01-01', '새해');
+    push('2020-01-24', '설날');
+    push('2020-01-25', '설날');
+    push('2020-01-26', '설날');
+    push('2020-03-01', '삼일절');
+    push('2020-05-05', '어린이날');
+    push('2020-04-30', '부처님오신날');
+    push('2020-06-06', '현충일');
+    push('2020-08-15', '광복절');
+    push('2020-09-30', '추석');
+    push('2020-10-01', '추석');
+    push('2020-10-02', '추석');
+    push('2020-10-03', '개천절');
+    push('2020-10-09', '한글날');
+    push('2020-12-25', '크리스마스');
 
-    return function(start, end){
-        start = moment(start.substring(0,8)).format('YYYY-MM-DD');
-        end = moment(end.substring(0,8)).format('YYYY-MM-DD');
+    return function (start, end) {
+        start = moment(start.substring(0, 8)).format('YYYY-MM-DD');
+        end = moment(end.substring(0, 8)).format('YYYY-MM-DD');
 
         let returnHolidays = [];
-        for(let i=0;i<holidays.length;i++){
+        for (let i = 0; i < holidays.length; i++) {
             let holiday = holidays[i];
-            if(holiday.date >= start && holiday.date <= end){
+            if (holiday.date >= start && holiday.date <= end) {
                 returnHolidays.push(holiday);
             }
         }

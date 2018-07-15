@@ -128,7 +128,7 @@ exports.newWebUser = function (user) {
         reservationConfirmAlrimTalkList: [],
         cancelAlrimTalkList: []
     };
-}
+};
 
 exports.signUp = async function (newUser) {
 
@@ -143,7 +143,7 @@ exports.signUp = async function (newUser) {
 exports.getWebUser = async function (email) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
-        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpdate, shopName, bizType, alrimTalkInfo",
+        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpdate, shopName, bizType, alrimTalkInfo, memberList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
             "#key": "email"
