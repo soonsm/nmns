@@ -90,6 +90,8 @@
       'week.currentTimeLinePast.border': '1px dashed #009688',
       'week.currentTimeLineBullet.backgroundColor': '#009688',
       'week.currentTimeLineToday.border': '1px solid #009688',
+      "common.border": ".05rem solid #e5e5e5",
+      "common.saturday.color": "#0d47a1"
     }
   });
 
@@ -123,6 +125,10 @@
   }));
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
+  $("#mainCalendar").append("<div id='mainCalendarScreen'></div>");
+  $("#mainCalendarScreen").on("touch click", function(){
+    $(this).hide();
+  });
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
@@ -188,13 +194,6 @@
   }));
   
   NMNS.calendar.on({
-    clickSchedule:function(e){
-      console.log("clickSchedule", e);
-    },
-    clickDayname:function(e){
-      console.log("clickDayname", e);
-
-    },
     beforeCreateSchedule:function(e){
       saveNewSchedule(e);
     },
@@ -204,9 +203,9 @@
       e.schedule.start = e.start || e.schedule.start;
       e.schedule.end = e.end || e.schedule.end;
       e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
-      console.log(e);
+      
       if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
-        NMNS.calendar.deleteSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId);
+        NMNS.calendar.deleteSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, true);
         e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
         e.schedule.dueDateClass = '';
         NMNS.calendar.createSchedules([e.schedule]);
@@ -310,40 +309,6 @@
     setSchedules();
   }
 
-  function onNewSchedule() {
-    var title = $('#new-schedule-title').val();
-    var location = $('#new-schedule-location').val();
-    var isAllDay = document.getElementById('new-schedule-allday').checked;
-    var start = datePicker.getStartDate();
-    var end = datePicker.getEndDate();
-    var manager = selectedManager ? selectedManager : NMNS.calendar.getCalendars()[0];
-console.log("aaa");
-    if (!title) {
-      return;
-    }
-
-    NMNS.calendar.createSchedules([{
-      id: "",
-      calendarId: manager.id,
-      title: title,
-      isAllDay: isAllDay,
-      start: start,
-      end: end,
-      category: isAllDay ? 'allday' : 'time',
-      dueDateClass: '',
-      color: manager.color,
-      bgColor: manager.bgColor,
-      dragBgColor: manager.bgColor,
-      borderColor: manager.borderColor,
-      raw: {
-          location: location
-      },
-      state: 'Busy'
-    }]);
-
-    $('#modal-new-schedule').modal('hide');
-  }
-
   function onChangeNewScheduleCalendar(e) {
     var target = $(e.target).closest('a[role="menuitem"]')[0];
     var calendarId = target.getAttribute('data-action');
@@ -366,7 +331,6 @@ console.log("aaa");
   function createNewSchedule(event) {
     var start = event.start ? new Date(event.start.getTime()) : new Date();
     var end = event.end ? new Date(event.end.getTime()) : moment().add(1, 'hours').toDate();
-    console.log("bbbbbb");
     NMNS.calendar.openCreationPopup({
         start: start,
         end: end
@@ -451,17 +415,20 @@ console.log("aaa");
   }
 
   function setDropdownCalendarType() {
-    var type = NMNS.calendar.getViewName();
-    
     $(".calendarType").removeClass("active");
-    if (type === 'day') {
-      $(".calendarType[data-action='toggle-daily']").addClass("active");
-    } else if (type === 'week') {
-      $(".calendarType[data-action='toggle-weekly']").addClass("active");
-    } else {
-      $(".calendarType[data-action='toggle-monthly']").addClass("active");
+    
+    switch(NMNS.calendar.getViewName()){
+      case "day":
+        $(".calendarType[data-action='toggle-daily']").addClass("active");
+        break;
+      case "week":
+        $(".calendarType[data-action='toggle-weekly']").addClass("active");
+        break;
+      default:
+        $(".calendarType[data-action='toggle-monthly']").addClass("active");
+        break;
     }
-
+    
   }
 
   function setRenderRangeText() {
@@ -497,14 +464,6 @@ console.log("aaa");
     return "";
   }
 
-  function generateAccountStatusBadge(accountStatus){
-    switch(accountStatus){
-      case 1:
-        return "<span class='badge badge-danger'>잠김</span>";
-    }
-    return "";
-  }
-  
   function generateScheduleStatusBadge(scheduleStatus){
     switch(scheduleStatus){
       case "RESERVED":
@@ -661,7 +620,7 @@ console.log("aaa");
       NMNS.info.shopName = parameters.shopName;
     }
     if($("#infoPassword").val() !== ""){
-      parameters.password = $("#infoPassword").val();
+      NMNS.socket.emit("update password", {password: $("#infoPassword").val()});
     }
     if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
       history.bizType = NMNS.info.bizType;
@@ -931,10 +890,6 @@ console.log("aaa");
     }
   }
   
-  var resizeThrottled = tui.util.throttle(function() {
-    NMNS.calendar.render();
-  }, 50);
-  
   function setEventListener() {
     $('.moveDate').on('touch click', onClickNavi);
     $('.calendarType').on('touch click', onClickMenu);
@@ -945,14 +900,15 @@ console.log("aaa");
     });
     $('#managerElements').on('change', onChangeManagers);
 
-    $('#btn-save-schedule').on('touch click', onNewSchedule);
-
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
     $(".addReservLink").on("touch click", createNewSchedule);
     
     $("#infoLink").on("touch click", initInfoModal);
     $("#alrimLink").on("touch click", initAlrimModal);
     $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
+    var resizeThrottled = tui.util.throttle(function() {
+      NMNS.calendar.render();
+    }, 50);
     window.addEventListener('resize', resizeThrottled);
   }
 
@@ -1220,6 +1176,9 @@ console.log("aaa");
       submitAddNoShow($(this));
     });
   }));
+  
+  NMNS.socket.on("update password", socketResponse("비밀번호 변경하기"));
+  
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   
   $("#infoModal").on("hide.bs.modal", function(){

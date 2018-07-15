@@ -40,6 +40,14 @@ div.tui-full-calendar-timegrid-container{
     border-left: 15px solid #f8f9fa;
   }
 }
+#mainCalendarScreen{
+  width:100%;
+  height:100%;
+  display:none;
+  position:absolute;
+  left:0;
+  top:0;
+}
 button.calendarType{
   border: 0;
 }

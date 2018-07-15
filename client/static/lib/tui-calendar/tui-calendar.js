@@ -5569,7 +5569,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this._options.useCreationPopup && !createScheduleData.useCreationPopup) {
 	        if (this._showCreationPopup) {
 	            this._showCreationPopup(createScheduleData);
-	
+	            //NMNS CUSTOMIZING START
+							$("#mainCalendarScreen").show();
+							//NMNS CUSTOMIZING END
 	            return;
 	        }
 	    }
@@ -9962,7 +9964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            detailView.render(eventData);
 	            // NMNS CUSTOMIZING START
-	            $(".detailPopupLabel").off("mouseenter").on("mouseenter", function(e){
+	            $(".detailPopupLabel").off("mouseenter touch click").on("mouseenter touch click", function(e){
 	            	if(!$(this).hasClass("show")) $(".dropdown-toggle", this).dropdown("toggle");
 	            });
 	            $(".detailPopupLabel").off("mouseleave").on("mouseleave", function(e){
@@ -9986,6 +9988,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	}
             		detailView.hide();
 	            });
+	            $("#mainCalendarScreen").show();
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
@@ -14070,7 +14073,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
 	        this.hide();
-	
+					//NMNS CUSTOMIZING START
+					$("#mainCalendarScreen").hide();
+					//NMNS CUSTOMIZING END
 	        return true;
 	    }
 	
@@ -14359,7 +14364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-console.log(viewModel);
+
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
@@ -14980,14 +14985,7 @@ console.log(viewModel);
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 	    //NMNS CUSTOMIZING START
 	    var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
-	    console.log("helpers");
-	    console.log(helpers);
-	    console.log("depth0");
-	    console.log(depth0);
-	    console.log("data");
-	    console.log(data);
-	    console.log("partials");
-	    console.log(partials);
+
 	var result = 
 	  "<div id=\"creationPopup\" class=\"" + escapedCssPrefix + "popup\">\n"
 	  + "<form id=\"creationPopupForm\" class=\"" + escapedCssPrefix + "popup-container\">\n"
@@ -15369,19 +15367,17 @@ console.log(viewModel);
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 	    //NMNS CUSTOMIZING START
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
-	  return 
-	  	"<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
-			+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>"
-			+ "<span class=\"" + escapedCssPrefix + "content\">"
-				+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
-	    + "</span>"
-    + "</div>\n";//NMNS CUSTOMIZING END
+	  return "<div class=\"" + escapedCssPrefix + "popup-detail-item\">"
+			  	+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>"
+					+ "<span class=\"" + escapedCssPrefix + "content\">"
+						+ alias4(alias5(((stack1 = (depth0 != null ? depth0.calendar : depth0)) != null ? stack1.name : stack1), depth0))
+			    + "</span>"
+		    + "</div>\n";//NMNS CUSTOMIZING END
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=container.lambda;
 	    //NMNS CUSTOMIZING START
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
-			console.log("depth0", depth0);
-			console.log("stack1", stack1);
+			
 			var status = alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.status : stack1), depth0));
 	  var result = 
 	  	"<div id=\"detailPopup\" class=\"" + escapedCssPrefix + "popup " + escapedCssPrefix + "popup-detail\">\n"
@@ -15453,7 +15449,6 @@ console.log(viewModel);
 			+ "</div>\n"
 		+ "</div>\n"
 	+ "</div>\n";
-	console.log(result);
 	return result;//NMNS CUSTOMIZING END
 	},"useData":true});
 
@@ -19578,6 +19573,7 @@ console.log(viewModel);
 	            		creationHandler.fire("beforeUpdateSchedule", eventData);
 	            	}
 	            });
+	            $("#mainCalendarScreen").show();
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
