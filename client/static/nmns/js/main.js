@@ -471,8 +471,8 @@ console.log("aaa");
 
   function generateAuthStatusBadge(authStatus){
     switch(authStatus){
-      case "BEFORE_VERIFICATION":
-        return "<span class='badge badge-danger'>이메일 미인증</span>";
+      case "BEFORE_EMAIL_VERIFICATION":
+        return "<span class='badge badge-danger' title='인증메일 다시보내기' style='cursor:pointer;'>이메일 미인증</span>";
       case "EMAIL_VERIFICATED":
         return "<span class='badge badge-success'>인증</span>";
     }
@@ -696,8 +696,10 @@ console.log("aaa");
   
   function refreshInfoModal(){
     $("#infoEmail").text(NMNS.email);
-    $("#infoAuthStatus").html(generateAuthStatusBadge(NMNS.info.authStatus));
-    $("#infoAccountStatus").html(generateAccountStatusBadge(NMNS.info.accountStatus));
+    $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION"? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function(){
+      NMNS.socket.emit("send verification", {});
+      alert("인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!");
+    }) : generateAuthStatusBadge(NMNS.info.authStatus));
     $("#infoShopName").val(NMNS.info.shopName);
     $("#infoBizType").val(NMNS.info.bizType);
     $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));
