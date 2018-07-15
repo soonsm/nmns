@@ -488,6 +488,18 @@ console.log("aaa");
     return "";
   }
   
+  function generateScheduleStatusBadge(scheduleStatus){
+    switch(scheduleStatus){
+      case "RESERVED":
+        return "<span class='badge badge-success'>정상</span>";
+      case "CANCELED":
+        return "<span class='badge badge-secondary'>취소</span>";
+      case "NOSHOW":
+        return "<span class='badge badge-danger'>노쇼</span>";
+    }
+    return "";
+  }
+  
   function generateManagerList(managerList){
     var html = "";
     managerList.forEach(function(item){
@@ -516,11 +528,11 @@ console.log("aaa");
     $("#alrimCallbackPhone").val(NMNS.info.alrimTalkInfo.callbackPhone || "");
     $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
     $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
-    $("#noticeByteCount").text(getByteLength($("#alrimNotice").val()));
+    $("#noticeByteCount").text($("#alrimNotice").val().length);
   }
 
   function submitAlrimModal(){
-    if(getByteLength($("#alrimNotice").val()) > 1500){
+    if($("#alrimNotice").val().length > 700){
       alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요 :)");
       $("#alrimNotice").focus();
       return;
@@ -565,7 +577,7 @@ console.log("aaa");
     if(!NMNS.initedAlrimModal){
       NMNS.initedAlrimModal = true;
       $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e){
-        $("#noticeByteCount").text(getByteLength($(this).val()));
+        $("#noticeByteCount").text($(this).val().length);
         $(this).height(0).height(this.scrollHeight>150?150:(this.scrollHeight<60?60:this.scrollHeight));
       });
       $("#alrimUseYn").off("change").on("change", function(){
@@ -781,6 +793,60 @@ console.log("aaa");
     refreshInfoModal();//setting data
   }
 
+  function initNoShowModal(){
+    if(!NMNS.initedNoShowModal){
+      NMNS.initedNoShowModal = true;
+      if(!NMNS.noShowModalSearchScroll){
+        NMNS.noShowModalSearchScroll = new PerfectScrollbar("#noShowSearchList");
+      }
+      if(!NMNS.noShowModalScheduleScroll){
+        NMNS.noShowModalScheduleScroll = new PerfectScrollbar("#noShowScheduleList");
+      }
+      $("#noShowSearchBtn").off("touch click").on("touch click", function(){
+        if($("#noShowSearchContact").val() === ""){
+          alert("검색할 전화번호를 입력해주세요!");
+          return;
+        }
+        NMNS.socket.emit("get noshow", {contact:$("#noShowSearchContact").val(), mine:false});
+      });
+      $("#noShowScheduleSearch").off("touch click").on("touch click", function(){
+        var parameters = {};
+        if($("#noShowScheduleStartDate").val() !== ""){
+          var start = moment($("#noShowScheduleStartDate").val(), "YYYY-MM-DD");
+          if(!start.isValid()){
+            alert("검색 시작일자가 올바르지 않아요. 다시 입력해주세요!");
+            return;
+          }
+          parameters.start = start.format("YYYYMMDD");
+        }
+        if($("#noShowScheduleEndDate").val() !== ""){
+          var end = moment($("#noShowScheduleEndDate").val(), "YYYY-MM-DD");
+          if(!end.isValid()){
+            alert("검색 끝일자가 올바르지 않아요. 다시 입력해주세요!");
+            return;
+          }
+          parameters.end = end.format("YYYYMMDD");
+        }
+        if($("#noShowScheduleName").val() !== ""){
+          parameters.name = $("#noShowScheduleName").val();
+        }
+        if($("#noShowScheduleContact").val() !== ""){
+          parameters.contact = $("#noShowScheduleContact").val();
+        }
+        NMNS.socket.emit("get summary", parameters);
+      });
+      $("#noShowSearchAdd").off("touch click").on("touch click", function(){
+        $("#noShowSearchList").append(
+          "<div class='row px-0 col-12 mt-1'><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowContact' placeholder='고객 전화번호'></div><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowDate'></div><div class='col-lg-1 d-none d-lg-inline-flex'></div><div class='col-lg-2 col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value=''></option><option value='지각'>지각</option><option value='잠수'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit'></i>  <i class='fas fa-trash noShowSearchAddCancel'></i></div></div>"
+        );
+        $("#noShowSearchList div:last-child input:first-child").focus();
+      });
+      $("#noShowSearchContact").off("blur").on("blur", function(){
+        $(this).val($(this).val().replace(/\D/g,''));
+      });
+    }
+  }
+  
   var resizeThrottled = tui.util.throttle(function() {
     NMNS.calendar.render();
   }, 50);
@@ -802,7 +868,7 @@ console.log("aaa");
     
     $("#infoLink").on("touch click", initInfoModal);
     $("#alrimLink").on("touch click", initAlrimModal);
-    
+    $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
     window.addEventListener('resize', resizeThrottled);
   }
 
@@ -915,7 +981,7 @@ console.log("aaa");
     NMNS.calendar.deleteSchedule(e.data.id, origin.manager);
   }));
   
-  NMNS.socket.on("update reserv", socketResponse("예약 정보 변경하기", function(e){
+  NMNS.socket.on("update reserv", socketResponse("예약정보 변경하기", function(e){
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
@@ -986,6 +1052,28 @@ console.log("aaa");
     });
     NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
     NMNS.initedAlrimModal = false;
+  }));
+
+  NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
+    var html = "";
+    console.log(e);
+    e.data.forEach(function(item){
+      var badge = "";
+      e.data.noShowCaseList.forEach(function(item2){
+        badge += "<span class='badge badge-light'>" + (item2||"") + "</span>";
+      });
+      html += "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(item.contact||"")+"</span><span class='col-4'>"+(item.lastNoShowDate||"")+"</span><span class='col-1'>"+(item.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(item.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
+    });
+    $("#noShowSearchList").html(html);
+  }));
+
+  NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
+   var html = "";
+   console.log(e);
+   e.data.forEach(function(item){
+     html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+(item.contact?(item.contact.length===11?(item.contact.substring(0,3)+"-"+item.contact.substring(3,7)+"-"+item.contact.substring(7)):(item.contact.length===10?(item.contact.substring(0,3)+"-"+item.contact.substring(3,6)+"-"+item.contact.substring(6)):item.contact)):"")+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
+   });
+   $("#noShowScheduleList").html(html);
   }));
 
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];

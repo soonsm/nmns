@@ -282,7 +282,7 @@
                     </div>
                   </div>
                   <div class="row col-12 mb-3 mx-0 px-0 text-secondary">
-                    <small>고객에게 보낼 알림톡에 들어갈 안내문구입니다. 현재 <span id="noticeByteCount"></span> / 최대 1500 바이트까지</small>
+                    <small>고객에게 보낼 알림톡에 들어갈 안내문구입니다. 현재 <span id="noticeByteCount"></span>자 / 최대 700자</small>
                   </div>
                   <div class="row">
                     <label for="alrimCancelDue" class="col-12 col-sm-4 col-form-label col-form-label-sm">예약취소 가능시간</label>
@@ -308,41 +308,50 @@
     </div>
     
     <div id="noShowModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content rounded-0">
-          <div class="modal-header p-0">
+          <div class="modal-header p-0 mx-0">
             <ul id="noShowTabList" class="nav nav-pills d-inline-flex" role="tabList">
-              <li class="nav-item"><a class="nav-link p-2 rounded-0" href="#noShowSearch" data-toggle="tab"><i class="fas fa-plus"></i> 직접 추가 &middot; 찾기</a></li>
+              <li class="nav-item"><a class="nav-link p-2 rounded-0 active" href="#noShowSearch" data-toggle="tab" aria-selected="true"><i class="fas fa-plus"></i> 직접 추가 &middot; 찾기</a></li>
               <li class="nav-item"><a class="nav-link p-2 rounded-0" href="#noShowSchedule" data-toggle="tab"><i class="far fa-calendar-plus"></i> 예약에서 추가</a></li>
             </ul>
-            <button type="button" class="close m-0 p-2 pr-3" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close m-0 p-0 pr-3 pt-2" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
-            <div class="row tab-content">
-              <div id="noShowSearch" class="tab-pane col-12 px-0" role="tabpanel">
-                <div class="row mb-2 col-12 px-4 mx-auto d-inline-flex">
-                  <input type="text" class="form-control form-control-sm col-6 d-inline-flex rounded-0" id="noShowSearchName" placeholder="고객 이름으로 전화번호 찾기">
-                  <div class="input-group input-group-sm col-6 pr-0 d-inline-flex">
+          <div class="modal-body px-0 mx-2">
+            <div class="row tab-content mx-3">
+              <div id="noShowSearch" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+                <div class="row mb-2 col-12 px-0">
+                  <input type="text" class="form-control form-control-sm col-6 rounded-0" id="noShowSearchName" placeholder="고객 이름으로 전화번호 찾기">
+                  <div class="input-group input-group-sm col-6 pr-0">
                     <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" aria-describedby="noShowSearchContactIcon">
-                    <div class="input-group-append">
+                    <div id="noShowSearchBtn" class="input-group-append">
                       <i id="noShowSearchContactIcon" class="input-group-text fas fa-search d-sm-none rounded-0"></i>
                       <span id="noShowSearchContactIcon" class="input-group-text d-none d-sm-block rounded-0">검색</span>
                     </div>
                   </div>
                 </div>
-                <div id="noShowSearchList" class="row col-12"></div>
+                <div class="row col-12 px-0">
+                  <div class="col-12 border-left border-right border-top row text-center px-0">
+                    <span class="col-4 pr-0">전화번호</span>
+                    <span class="col-4 pr-0">마지막 <span class="d-none d-sm-inline-block">노쇼</span>날짜</span>
+                    <span class="col-1 pr-0">횟수</span>
+                    <span class="col-2 pr-0">유형</span>
+                    <span class="col-1 px-0"></span>
+                  </div>
+                  <div id="noShowSearchList" class="col-12 border text-left px-0"></div>
+                </div>
                 <div id="noShowSearchAdd" class="ml-3 px-0 btn">
-                  <p class="text-secondary align-top mb-0 ml-3">
+                  <p class="text-secondary align-top mb-0">
                     <i class="fas fa-plus"></i> 노쇼 직접 추가하기
                   </p>
                 </div>
               </div>
-              <div id="noShowSchedule" class="tab-pane col-12 px-0" role="tabpanel">
-                <div class="row col-12 mx-auto">
-                  <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-sm-0 col-form-label col-form-label-sm">예약기간</label>
-                  <div class="row col-12 col-sm-10 px-sm-0 mb-2 mx-auto">
+              <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                <div class="row col-12 px-0">
+                  <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">예약기간</label>
+                  <div class="row col-12 col-sm-10 px-0 mb-2">
                     <div class="px-0 d-inline-block noShowScheduleDate">
                       <div id="noShowScheduleStartDatePicker" class="input-group input-group-sm" data-target-input="nearest">
                         <div class="input-group-prepend" data-target="#noShowScheduleStartDatePicker" data-toggle="datetimepicker">
@@ -362,14 +371,23 @@
                     </div>
                   </div>
                 </div>
-                <div class="row col-12 mx-auto">
-                  <input type="text" class="form-control form-control-sm rounded-0 ml-3 ml-sm-0" id="noShowScheduleName" placeholder="고객 이름">
+                <div class="row col-12 px-0 mb-2">
+                  <input type="text" class="form-control form-control-sm rounded-0 ml-0" id="noShowScheduleName" placeholder="고객 이름">
                   <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호">
                   <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-secondary ml-3">
                     <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
                   </div>
                 </div>
-                <div id="noShowScheduleList" class="row col-12"></div>
+                <div class="row col-12 px-0">
+                  <div class="col-12 border-left border-right border-top row text-left px-0">
+                    <span class="col-3 col-lg-2 pr-0">날짜</span>
+                    <span class="col-4 col-lg-3 pr-0">고객이름</span>
+                    <span class="col-4 col-lg-3 pr-0">전화번호</span>
+                    <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
+                    <span class="col-1 px-0">상태</span>
+                  </div>
+                </div>
+                <div id="noShowScheduleList" class="row col-12 border px-0"></div>
               </div>
             </div>
           </div>
