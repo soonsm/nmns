@@ -489,7 +489,7 @@ console.log("aaa");
   function generateAuthStatusBadge(authStatus){
     switch(authStatus){
       case "BEFORE_EMAIL_VERIFICATION":
-        return "<span class='badge badge-danger' title='인증메일 다시보내기' style='cursor:pointer;'>이메일 미인증</span>";
+        return "<span class='badge badge-danger' title='인증메일 보내기' style='cursor:pointer;'>이메일 미인증</span><span class='btn btn-sm btn-flat btn-secondary ml-2'>인증메일 보내기</span>";
       case "EMAIL_VERIFICATED":
         return "<span class='badge badge-success'>인증</span>";
     }
