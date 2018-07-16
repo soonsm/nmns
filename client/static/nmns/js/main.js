@@ -128,10 +128,6 @@
   }));
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
-  /*$("#mainCalendar").append("<div id='mainCalendarScreen'></div>");
-  $("#mainCalendarScreen").on("touch click", function(){
-    $(this).hide();
-  });*/
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
@@ -779,6 +775,7 @@
     var dropdown = dropdownItem.parent();
     NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:"NOSHOW"});
     NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:"NOSHOW"}});
+    console.log("data", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")).on("touch click", function(){
       noShowScheduleBadge($(this));
@@ -1110,6 +1107,7 @@
   }));
   
   NMNS.socket.on("update reserv", socketResponse("예약정보 변경하기", function(e){
+    console.log(e);
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
