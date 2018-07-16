@@ -774,6 +774,18 @@
     refreshInfoModal();//setting data
   }
 
+  function submitNoShowEtcReason(dropdownItem){
+    var input = dropdownItem.children("input");
+    var dropdown = dropdownItem.parent();
+    NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:"NOSHOW"});
+    NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:"NOSHOW"}});
+    NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
+    $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")).on("touch click", function(){
+      noShowScheduleBadge($(this));
+    }));
+    dropdown.hide(300);
+  }
+
   function initNoShowModal(){
     if(!NMNS.initedNoShowModal){
       NMNS.initedNoShowModal = true;
@@ -852,7 +864,7 @@
       });
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
         var id=generateRandom();
-        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm' data-target-input='nearest'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0' data-target='#noShowSearchAddDatePicker"+id+"' data-toggle='datetimepicker'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0 datetimepicker-input' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"' data-target='#noShowSearchAddDatePicker"+id+"'></div><div class='col-lg-1 d-none d-lg-inline-flex'></div><div class='col-lg-2 col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2'></i></div></div>");
+        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm pr-0' data-target-input='nearest'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0' data-target='#noShowSearchAddDatePicker"+id+"' data-toggle='datetimepicker'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0 datetimepicker-input' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"' data-target='#noShowSearchAddDatePicker"+id+"'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1'></i></div></div>");
         newRow.find("#noShowSearchAddDatePicker"+id).datetimepicker(datetimepickerOption);
         newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function(){
           filterNonNumericCharacter($(this));
@@ -863,7 +875,11 @@
         newRow.find(".noShowSearchAddCancel").off("touch click").on("touch click", function(){
           cancelAddNoShow($(this));
         });
-        $("#noShowSearchList").append(newRow);
+        if($("#noShowSearchList .empty").length){
+          $("#noShowSearchList").html(newRow);
+        }else{
+          $("#noShowSearchList").append(newRow);
+        }
         newRow.find("div:first-child input").focus();
       });
       $("#noShowSearchContact").off("blur").on("blur", function(){
@@ -881,10 +897,6 @@
         }
       });
       $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
-        console.log("aa");
-        if($(this).hasClass("dropdown-item-etc")){
-          return;
-        }
         var dropdown = $(this).parent();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:dropdown.data("status")});
         NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:$(this).data("status")}});
@@ -893,6 +905,19 @@
           noShowScheduleBadge($(this));
         }));
         dropdown.hide(300);
+      });
+      $("#noShowScheduleDropdown .noShowScheduleCheck").off("touch click").on("touch click", function(){
+        submitNoShowEtcReason($(this).parent());
+      });
+      $("#noShowScheduleDropdown .dropdown-item-etc input").off("keyup").on("keyup", function(e){
+        switch (e.which){
+          case 13:
+            submitNoShowEtcReason($(this).parent());
+            break;
+          case 27:
+            $(this).parent().parent().hide(300);
+            break;
+        }
       });
     }
   }
@@ -985,12 +1010,14 @@
     });
   }
   function noShowScheduleBadge(self){
+    console.log(self, self.position());
     var row = self.parent().parent();
      $("#noShowScheduleDropdown")
       .data("id", row.data("id"))
       .data("manager", row.data("manager"))
       .data("status", row.data("status"))
       .css("top", (self[0].getBoundingClientRect().top - $("#noShowSchedule")[0].getBoundingClientRect().top + self.height() + 3) + "px")
+      .css("right", (self[0].getBoundingClientRect().right - $("#noShowSchedule")[0].getBoundingClientRect().right)<-20?"1rem":(self[0].getBoundingClientRect().right - $("#noShowSchedule")[0].getBoundingClientRect().right) + "px")
       .show();
   }
   
@@ -1002,7 +1029,7 @@
       return;
     }
     if(!moment(row.find("input[name='noShowSearchAddDate']").val(), "YYYY-MM-DD").isValid()){
-      alert("노쇼 날짜를 올바르게 입력해주세요!");
+      alert("노쇼 날짜를 알맞게 입력해주세요!");
       row.find("input[name='noShowSearchAddDate']").focus();
       return;
     }
@@ -1015,6 +1042,9 @@
   
   function cancelAddNoShow(self){
     self.parentsUntil("#noShowSearchList", ".row").remove();
+    if($("#noShowSearchList").html() === ""){
+      $("#noShowSearchList").html("<div class='row col-12 px-0 mt-2 empty'><span class='col-12 text-center'>전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div>");
+    }
   }
   
   function submitAddManager(self){
@@ -1056,10 +1086,10 @@
    var html = "";
    console.log(e);
    if(e.data.length===0){
-     html = "<div class='row col-12 px-0 mt-1'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>"
+     html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>"
    }else{
      e.data.forEach(function(item){
-       html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"' data-status='" + (item.status||"") + "'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+(item.contact?(item.contact.length===11?(item.contact.substring(0,3)+"-"+item.contact.substring(3,7)+"-"+item.contact.substring(7)):(item.contact.length===10?(item.contact.substring(0,3)+"-"+item.contact.substring(3,6)+"-"+item.contact.substring(6)):item.contact)):"")+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
+       html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"' data-status='" + (item.status||"") + "'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+dashContact(item.contact)+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
      });
    }
    $("#noShowScheduleList").html(html);
@@ -1160,13 +1190,23 @@
   NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
     var html = "";
     console.log(e);
-    e.data.forEach(function(item){
-      var badge = "";
-      item.noShowCaseList.forEach(function(item2){
-        badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
-      });
-      html += "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(item.contact||"")+"</span><span class='col-4'>"+(item.lastNoShowDate||"")+"</span><span class='col-1'>"+(item.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(item.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
-    });
+    if(e.data.summary.noShowCount>0){
+      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리 매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6)) + "월 " + parseInt(e.data.summary.lastModifiedDate.substring(6)) + "일이었어요.");
+      if(e.data.detail.length>0){
+        e.data.detail.forEach(function(item){
+          var badge = "";
+          item.noShowCaseList.forEach(function(item2){
+            badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
+          });
+          html += "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(item.contact||"")+"</span><span class='col-4'>"+(item.lastNoShowDate||"")+"</span><span class='col-1'>"+(item.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(item.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
+        });
+      }else{
+        html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!</span></div>";
+      }
+    }else{
+      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객은 노쇼를 한 적이 없으시네요!");
+      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>등록된 노쇼 전적이 없습니다. 안심하세요 :)</span></div>";
+    }
     $("#noShowSearchList").html(html);
   }));
 
@@ -1240,8 +1280,7 @@
     if(NMNS.infoModalScroll){
       NMNS.infoModalScroll.update();
     }
-  });
-  $("#infoModal").on("touch click", function(e){
+  }).on("touch click", function(e){
     if($("#infoModalColorPicker").is(":visible")){
       var target = $(e.target);
       if(!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length){
@@ -1276,6 +1315,10 @@
       if(!target.parents("#noShowScheduleDropdown").length && !target.hasClass("badge")){
         $("#noShowScheduleDropdown").hide(300);
       }
+    }
+  }).on("hide.bs.modal", function(){
+    if(document.activeElement.tagName === "INPUT"){
+      return false;
     }
   });
 })(jQuery);

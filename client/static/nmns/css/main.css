@@ -290,8 +290,11 @@ button.moveDate:focus{
   margin-left:auto;
   margin-right:auto;
 }
+#noShowModal #noShowSearchSummary{
+  height:30px;
+}
 #noShowModal #noShowSearchList{
-  height:180px;
+  height:150px;
 }
 #noShowModal #noShowScheduleList{
   height:179px;
@@ -299,6 +302,11 @@ button.moveDate:focus{
 /*#noShowModal #noShowSearchAdd{
   font-size:.9rem;
 }*/
+#noShowModal .noShowSearchAdd div:last-child{
+  margin-left:-5px;
+  margin-right:5px;
+  white-space: nowrap;
+}
 #noShowModal .noShowScheduleDate{
   width:calc(50% - 15px);
 }
@@ -316,7 +324,7 @@ button.moveDate:focus{
 #noShowModal .bootstrap-datetimepicker-widget{
   margin-left:1rem;
 }
-#noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit{
+#noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit, #noShowScheduleDropdown .noShowScheduleCheck{
   cursor:pointer;
 }
 #noShowScheduleList .badge{
@@ -326,7 +334,7 @@ button.moveDate:focus{
 #noShowScheduleDropdown{
   left:auto;
   right:1rem;
-  min-width:0;
+  min-width:11rem;
   text-align:right;
   padding:0;
 }
@@ -337,6 +345,10 @@ button.moveDate:focus{
 #noShowScheduleDropdown .dropdown-item.dropdown-item-etc{
   padding-top:.2rem;
   padding-bottom:.3rem;
+}
+#noShowScheduleDropdown .dropdown-item.dropdown-item-etc:active{
+  background-color:#fff;
+  color:#212121;
 }
 #noShowScheduleDropdown input{
   display:inline-flex;
