@@ -45,14 +45,18 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         // }
 
         const addEvent = function (eventName, fn) {
-            socket.on(eventName, function (data) {
+            socket.on(eventName, async function (data) {
                 if (EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
-                    fn(data);
+                    try{
+                        await fn(data);
+                    }catch(e){
+                        socket.emit(eventName, makeResponse(false, null, 'System Error'));
+                    }
                 } else if (user.authStatus !== 'EMAIL_VERIFICATED') {
-                    socket.emit(GetReservationList, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
+                    socket.emit(eventName, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
                 } else {
                     try{
-                        fn(data);
+                        await fn(data);
                     }catch(e){
                         socket.emit(eventName, makeResponse(false, null, 'System Error'));
                     }
@@ -266,6 +270,9 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         });
 
         addEvent(UpdateReservation, async function (newReservation) {
+
+            throw('asd');
+
             console.log('UpdateReservation:', newReservation);
 
             let validationResult = reservationValidationForUdate(email, newReservation);
@@ -307,7 +314,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         for (let x in reservation) {
                             if (newReservation.hasOwnProperty(x)) {
                                 reservation[x] = newReservation[x];
-                                //newReservation = reservation;
+                                newReservation = reservation;
                             }
                         }
                         reservationList[i] = reservation;
