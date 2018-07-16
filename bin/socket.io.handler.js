@@ -51,7 +51,11 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 } else if (user.authStatus !== 'EMAIL_VERIFICATED') {
                     socket.emit(GetReservationList, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
                 } else {
-                    fn(data);
+                    try{
+                        fn(data);
+                    }catch(e){
+                        socket.emit(eventName, makeResponse(false, null, 'System Error'));
+                    }
                 }
             });
         };
@@ -303,6 +307,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         for (let x in reservation) {
                             if (newReservation.hasOwnProperty(x)) {
                                 reservation[x] = newReservation[x];
+                                //newReservation = reservation;
                             }
                         }
                         reservationList[i] = reservation;
