@@ -128,10 +128,6 @@
   }));
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
-  /*$("#mainCalendar").append("<div id='mainCalendarScreen'></div>");
-  $("#mainCalendarScreen").on("touch click", function(){
-    $(this).hide();
-  });*/
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
@@ -779,6 +775,7 @@
     var dropdown = dropdownItem.parent();
     NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:"NOSHOW"});
     NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:"NOSHOW"}});
+    console.log("data", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")).on("touch click", function(){
       noShowScheduleBadge($(this));
@@ -1083,21 +1080,24 @@
   NMNS.socket.emit("get customer info", {});
 
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
-   var html = "";
-   console.log(e);
-   if(e.data.length===0){
+    var html = "";
+    console.log(e);
+    if(e.data.length===0){
      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>"
-   }else{
+    }else{
      e.data.forEach(function(item){
        html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"' data-status='" + (item.status||"") + "'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+dashContact(item.contact)+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
      });
-   }
-   $("#noShowScheduleList").html(html);
-   $("#noShowScheduleList .badge").each(function(){
+    }
+    $("#noShowScheduleList").html(html);
+    $("#noShowScheduleList .badge").each(function(){
      $(this).off("touch click").on("touch click", function(){
        noShowScheduleBadge($(this));
      });
-   });
+    });
+    if(NMNS.noShowModalScheduleScroll){
+      NMNS.noShowModalScheduleScroll.update();
+    }
   }));
 
   NMNS.socket.on("add reserv", socketResponse("예약 추가하기", function(e){
@@ -1110,6 +1110,7 @@
   }));
   
   NMNS.socket.on("update reserv", socketResponse("예약정보 변경하기", function(e){
+    console.log(e);
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
@@ -1208,6 +1209,9 @@
       html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>등록된 노쇼 전적이 없습니다. 안심하세요 :)</span></div>";
     }
     $("#noShowSearchList").html(html);
+    if(NMNS.noShowModalSearchScroll){
+      NMNS.noShowModalSearchScroll.update();
+    }
   }));
 
   NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e){
