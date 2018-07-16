@@ -122,9 +122,7 @@
           <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-monthly"><i class="fas fa-th"></i> 1달</button>
         </div>
         <div class="btn-group btn-group-sm d-inline-flex d-md-none position-absolute py-2 calendarTypeGroup" role="group">
-          <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-bars fa-rotate-90"></i> 1주
-          </button>
+          <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
           <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
             <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily"><i class="fas fa-bars"></i> 1일</a>
             <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90"></i> 1주</a>
@@ -349,13 +347,13 @@
                 </div>
               </div>
               <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
-                <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0">
+                <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0 col-3">
   	    			    <a href="#" class="dropdown-item" data-status="RESERVED"><span class="badge badge-success">정상</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="CANCELED"><span class="badge badge-secondary">취소</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각"><span class="badge badge-danger">노쇼(지각)</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수"><span class="badge badge-danger">노쇼(잠수)</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소"><span class="badge badge-danger">노쇼(직전취소)</span></a>
-  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="기타"><span class="badge badge-danger">노쇼(기타)</span></a>
+  	    			    <a href="#" class="dropdown-item dropdown-item-etc"><input type="text" class="form-control form-control-sm rounded-0" placeholder="노쇼 유형(기타)"><i class="fas fa-check noShowScheduleCheck"></i></a>
     			      </div>
                 <div class="row col-12 px-0">
                   <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>

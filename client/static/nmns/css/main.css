@@ -40,13 +40,19 @@ div.tui-full-calendar-timegrid-container{
     border-left: 15px solid #f8f9fa;
   }
 }
-#mainCalendarScreen{
+.tui-full-calendar-screen{
   width:100%;
   height:100%;
   display:none;
   position:absolute;
   left:0;
   top:0;
+  z-index:1
+}
+.tui-full-calendar-time-schedule{
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  line-height: 15px;
 }
 button.calendarType{
   border: 0;
@@ -328,6 +334,12 @@ button.moveDate:focus{
   padding:.05rem 1rem;
   font-size:.9rem;
 }
-#noShowScheduleDropdown a:last-chlid{
+#noShowScheduleDropdown .dropdown-item.dropdown-item-etc{
+  padding-top:.2rem;
   padding-bottom:.3rem;
+}
+#noShowScheduleDropdown input{
+  display:inline-flex;
+  margin-right:.5rem;
+  width: calc(100% - 24px);
 }

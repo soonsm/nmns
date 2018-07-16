@@ -26,6 +26,7 @@
   var selectedManager, datePicker;
   NMNS.calendar = new tui.Calendar("#mainCalendar", {
     taskView:["task"],
+    defaultView:$(window).width() > 550? "week" : "day",
     scheduleView:true,
     useCreationPopup:true,
     useDetailPopup:true,
@@ -91,7 +92,9 @@
       'week.currentTimeLineBullet.backgroundColor': '#009688',
       'week.currentTimeLineToday.border': '1px solid #009688',
       "common.border": ".05rem solid #e5e5e5",
-      "common.saturday.color": "#304ffe"
+      "common.saturday.color": "#304ffe",
+      "week.timegridOneHour.height":"68px",
+      "week.timegridHalfHour.height":"34px"
     }
   });
 
@@ -125,10 +128,10 @@
   }));
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
-  $("#mainCalendar").append("<div id='mainCalendarScreen'></div>");
+  /*$("#mainCalendar").append("<div id='mainCalendarScreen'></div>");
   $("#mainCalendarScreen").on("touch click", function(){
     $(this).hide();
-  });
+  });*/
   
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
@@ -419,13 +422,13 @@
     
     switch(NMNS.calendar.getViewName()){
       case "day":
-        $(".calendarType[data-action='toggle-daily']").addClass("active");
+        $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
         break;
       case "week":
-        $(".calendarType[data-action='toggle-weekly']").addClass("active");
+        $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
         break;
       default:
-        $(".calendarType[data-action='toggle-monthly']").addClass("active");
+        $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
         break;
     }
     
@@ -877,7 +880,11 @@
           $("#noShowScheduleSearch").trigger("click");
         }
       });
-      $("#noShowScheduleDropdown .dropdown-item").off("touch click").on("touch click", function(){
+      $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
+        console.log("aa");
+        if($(this).hasClass("dropdown-item-etc")){
+          return;
+        }
         var dropdown = $(this).parent();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:dropdown.data("status")});
         NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:$(this).data("status")}});
@@ -1043,6 +1050,7 @@
   setDropdownCalendarType();
   setRenderRangeText();
   setEventListener();
+  NMNS.socket.emit("get customer info", {});
 
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
    var html = "";
@@ -1179,6 +1187,9 @@
   
   NMNS.socket.on("update password", socketResponse("비밀번호 변경하기"));
   
+  NMNS.socket.on("get customer info", socketResponse("자동완성 자료 가져오기", function(e){
+    NMNS.autocomplete = e.data;
+  }));
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   
   $("#infoModal").on("hide.bs.modal", function(){

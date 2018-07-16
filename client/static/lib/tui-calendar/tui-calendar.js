@@ -5570,7 +5570,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._showCreationPopup) {
 	            this._showCreationPopup(createScheduleData);
 	            //NMNS CUSTOMIZING START
-							$("#mainCalendarScreen").show();
+							//$("#mainCalendarScreen").show();
+							document.getElementsByClassName(config.classname('screen'))[0].style.display = "block";//show screen
 							//NMNS CUSTOMIZING END
 	            return;
 	        }
@@ -6125,8 +6126,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Theme} theme - theme instance
 	 */
 	function Layout(container, theme) {
+			domutil.appendHTMLElement('div', container, config.classname('screen')).addEventListener("click", function(){
+        domutil.find('.' + config.classname('screen'), container.parentNode).style.display = "none";//disappear when clicked
+        return false;
+	    });
 	    container = domutil.appendHTMLElement('div', container, config.classname('layout'));
-	
 	    /**
 	     * @type {HTMLElement}
 	     */
@@ -9988,7 +9992,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	}
             		detailView.hide();
 	            });
-	            $("#mainCalendarScreen").show();
+	            domutil.find('.'+config.classname('screen')).style.display = "block";//show screen
+	            //$("#mainCalendarScreen").show();
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
@@ -14074,7 +14079,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
 	        this.hide();
 					//NMNS CUSTOMIZING START
-					$("#mainCalendarScreen").hide();
+					//$("#mainCalendarScreen").hide();
+					domutil.find('.'+config.classname('screen')).style.display  = "none";//hide screen
 					//NMNS CUSTOMIZING END
 	        return true;
 	    }
@@ -19567,7 +19573,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            		creationHandler.fire("beforeUpdateSchedule", eventData);
 	            	}
 	            });
-	            $("#mainCalendarScreen").show();
+	            //$("#mainCalendarScreen").show();
+	            domutil.find('.'+config.classname('screen')).style.display = "block";//show screen
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
