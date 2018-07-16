@@ -303,6 +303,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         for (let x in reservation) {
                             if (newReservation.hasOwnProperty(x)) {
                                 reservation[x] = newReservation[x];
+                                newReservation = reservation;
                             }
                         }
                         reservationList[i] = reservation;
