@@ -106,7 +106,7 @@
             successCallback(res);
           }
         }else{//fail
-          alert(requestName + "에 실패하였습니다." + (res.message?"(" + res.message + ")":""));
+          alert(requestName + "에 실패했습니다." + (res.message?"(" + res.message + ")":""));
           if(failCallback){
             failCallback(res);
           }
@@ -916,6 +916,38 @@
             break;
         }
       });
+      
+      $("#noShowSearchName").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "name",
+        zIndex: 1060,
+        maxHeight: 150,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.contact;
+            item.value = item.name;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#noShowSearchContact").val(suggestion.data);
+        },
+        beforeRender: function(container){
+          if($(container).data("scroll")){
+            $(container).data("scroll").update();
+          }else{
+            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+          }
+        },
+        
+      }, NMNS.socket);
     }
   }
   
@@ -1077,7 +1109,6 @@
   setDropdownCalendarType();
   setRenderRangeText();
   setEventListener();
-  NMNS.socket.emit("get customer info", {});
 
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
     var html = "";
@@ -1232,7 +1263,18 @@
   NMNS.socket.on("update password", socketResponse("비밀번호 변경하기"));
   
   NMNS.socket.on("get customer info", socketResponse("자동완성 자료 가져오기", function(e){
-    NMNS.autocomplete = e.data;
+    //success
+    console.log(e);
+    if(e.data.id){
+      var el = $("#"+e.data.id);
+      el.autocomplete().onSuccess.call(el.autocomplete(), e.data.query, e.data.result);
+    }
+    $("#noShowSearchName").autocomplete().onSuccess.call($("#noShowSearchName").autocomplete(), $("#noShowSearchName").val(), [{contact:"01011112222", name:"aaa"}]);
+  }, function(e){
+    if(e.data.id){
+      var el = $("#"+e.data.id);
+      el.autocomplete().onFail.call(el.autocomplete(), e.data);
+    }
   }));
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   

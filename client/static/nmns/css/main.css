@@ -355,3 +355,18 @@ button.moveDate:focus{
   margin-right:.5rem;
   width: calc(100% - 24px);
 }
+.autocomplete-suggestions{
+  border: .05rem solid #bdbdbd;
+  padding-left: .5rem;
+  background-color: white;
+  border-top:0;
+  -webkit-box-shadow: 2px 2px 5px 0px rgba(189,189,189,0.25);
+  -moz-box-shadow: 2px 2px 5px 0px rgba(189,189,189,0.25);
+  box-shadow: 2px 2px 5px 0px rgba(189,189,189,0.25);
+}
+.autocomplete-suggestion{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+}
