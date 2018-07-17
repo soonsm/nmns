@@ -6,6 +6,8 @@ const util = require('./util');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
 const alrimTalk = require('./alrimTalk');
+const hangul = require('hangul-js');
+
 
 const GetReservationList = 'get reserv', GetReservationSummaryList = 'get summary', AddReservation = 'add reserv',
     UpdateReservation = 'update reserv';
@@ -46,19 +48,13 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
-                if (EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
-                    try{
-                        await fn(data);
-                    }catch(e){
-                        socket.emit(eventName, makeResponse(false, null, 'System Error'));
-                    }
-                } else if (user.authStatus !== 'EMAIL_VERIFICATED') {
+                if (user.authStatus !== 'EMAIL_VERIFICATED' && !EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
                     socket.emit(eventName, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
                 } else {
                     try{
                         await fn(data);
                     }catch(e){
-                        socket.emit(eventName, makeResponse(false, null, 'System Error'));
+                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.'));
                     }
                 }
             });
@@ -79,15 +75,51 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         /**
          * 고객정보
          */
-        addEvent(GetCustomInfo, async function () {
-            let resultData = [];
+        addEvent(GetCustomInfo, async function (data) {
+            let status = true, message = '', resultData = {};
+            let id = data.id;
+            let contact = data.contact;
+            let name = data.name;
 
-            let user = await db.getWebUser(email);
-            if (user) {
-                resultData = user.memberList;
+            if(!id || (!contact && !name)){
+                status = false;
+                message = 'id는 필수이고 contact와 name은 둘 중 하나는 있어야 합니다.';
             }
 
-            socket.emit(GetCustomInfo, makeResponse(true, resultData));
+            if(status){
+                resultData.id = id;
+                let user = await db.getWebUser(email);
+                if (user) {
+                    let memberList = user.memberList;
+                    let returnMemberList = [];
+                    for(let i=0;i<memberList.length;i++){
+                        let member = memberList[i];
+                        if(contact){
+                            if(member.contact.includes(contact)){
+                                returnMemberList.push(member);
+                            }
+                        }else{
+                            if(member.name){
+                                if(member.name.includes(name)){
+                                    returnMemberList.push(member);
+                                }else{
+                                    //초성검색
+                                    let names = await hangul.disassemble(member.name, true).map(function(nameList){
+                                        return nameList[0];
+                                    }).join('');
+                                    if(names.includes(name)){
+                                        returnMemberList.push(member);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    resultData.result = returnMemberList;
+                }
+            }
+
+            socket.emit(GetCustomInfo, makeResponse(status, resultData, message));
         })
 
         /**
