@@ -88,6 +88,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             if(status){
                 resultData.id = id;
+                resultData.query = ((name === undefined || name === null || name === '') ? contact : name);
                 let user = await db.getWebUser(email);
                 if (user) {
                     let memberList = user.memberList;
@@ -95,13 +96,11 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                     for(let i=0;i<memberList.length;i++){
                         let member = memberList[i];
                         if(contact){
-                            resultData.query = contact;
                             if(member.contact.includes(contact)){
                                 returnMemberList.push(member);
                             }
                         }else{
                             if(member.name){
-                                resultData.query = name;
                                 if(hangul.search(member.name,name) !== -1){
                                     returnMemberList.push(member);
                                 }else{
@@ -304,8 +303,6 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         });
 
         addEvent(UpdateReservation, async function (newReservation) {
-
-            throw('asd');
 
             console.log('UpdateReservation:', newReservation);
 
