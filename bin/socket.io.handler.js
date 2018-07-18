@@ -95,13 +95,13 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                     for(let i=0;i<memberList.length;i++){
                         let member = memberList[i];
                         if(contact){
-                          resultData.query = 'contact';
+                            resultData.query = contact;
                             if(member.contact.includes(contact)){
                                 returnMemberList.push(member);
                             }
                         }else{
-                          resultData.query = 'name';
                             if(member.name){
+                                resultData.query = name;
                                 if(hangul.search(member.name,name) !== -1){
                                     returnMemberList.push(member);
                                 }else{
