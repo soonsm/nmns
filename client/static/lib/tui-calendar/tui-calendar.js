@@ -14037,7 +14037,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (popupLayer) {
 	        return;
 	    }
-			
+			//NMNS CUSTOMIZING START
+			if(domutil.closest(target, ".autocomplete-suggestions")){
+				return;
+			}
+			//NMNS CUSTOMIZING END
 	    this.hide();
 			
 	};
@@ -14367,7 +14371,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-console.log($("#creationPopup"));
+	    
+	    //NMNS CUSTOMIZING START
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
@@ -14379,75 +14384,80 @@ console.log($("#creationPopup"));
 	        guideElements = this._getGuideElements(this.guide);
 	        boxElement = guideElements.length ? guideElements[0] : null;
 	    }
-	    layer.setContent(tmpl(viewModel));
-	    //NMNS CUSTOMIZING START
-	    $("#creationPopupName").autocomplete({
-        serviceUrl: "get customer info",
-        paramName: "name",
-        zIndex: 1060,
-        maxHeight: 150,
-        transformResult: function(response, originalQuery){
-          response.forEach(function(item){
-            item.data = item.contact;
-            item.value = item.name;
-            delete item.contact;
-            delete item.name;
-          });
-          return {suggestions: response};
-        },
-        onSearchComplete : function(){},
-        formatResult: function(suggestion, currentValue){
-          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
-        },
-        onSearchError: function(){},
-        onSelect: function(suggestion){
-          $("#creationPopupContact").val(suggestion.data);
-        },
-        beforeRender: function(container){
-          if($(container).data("scroll")){
-            $(container).data("scroll").update();
-          }else{
-            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-          }
-        }
-      }, NMNS.socket);
-      
-      $("#creationPopupContact").autocomplete({
-        serviceUrl: "get customer info",
-        paramName: "contact",
-        zIndex: 1060,
-        maxHeight: 150,
-        transformResult: function(response, originalQuery){
-          response.forEach(function(item){
-            item.data = item.name;
-            item.value = item.contact;
-            delete item.contact;
-            delete item.name;
-          });
-          return {suggestions: response};
-        },
-        onSearchComplete : function(){},
-        formatResult: function(suggestion, currentValue){
-          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
-        },
-        onSearchError: function(){},
-        onSelect: function(suggestion){
-          $("#creationPopupName").val(suggestion.data);
-        },
-        beforeRender: function(container){
-          if($(container).data("scroll")){
-            $(container).data("scroll").update();
-          }else{
-            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-          }
-        }
-      }, NMNS.socket).on("blur", function(){
-      	filterNonNumericCharacter($(this));
-      });
+			if($("#creationPopup").length){//already inited
+				this._updatePopup(viewModel);
+				$("#creationPopupName").autocomplete().clearCache();
+				$("#creationPopupContact").autocomplete().clearCache();
+			}else{//need init
+	    	layer.setContent(tmpl(viewModel));
+				document.getElementById("creationPopupForm").onsubmit = function(){return false;};
+	    	this._createDatepicker(viewModel.start, viewModel.end);
+		    $("#creationPopupName").autocomplete({
+	        serviceUrl: "get customer info",
+	        paramName: "name",
+	        zIndex: 1060,
+	        maxHeight: 150,
+	        transformResult: function(response, originalQuery){
+	          response.forEach(function(item){
+	            item.data = item.contact;
+	            item.value = item.name;
+	            delete item.contact;
+	            delete item.name;
+	          });
+	          return {suggestions: response};
+	        },
+	        onSearchComplete : function(){},
+	        formatResult: function(suggestion, currentValue){
+	          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+	        },
+	        onSearchError: function(){},
+	        onSelect: function(suggestion){
+	          $("#creationPopupContact").val(suggestion.data);
+	        },
+	        beforeRender: function(container){
+	          if($(container).data("scroll")){
+	            $(container).data("scroll").update();
+	          }else{
+	            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+	          }
+	        }
+	      }, NMNS.socket);
+	      
+	      $("#creationPopupContact").autocomplete({
+	        serviceUrl: "get customer info",
+	        paramName: "contact",
+	        zIndex: 1060,
+	        maxHeight: 150,
+	        transformResult: function(response, originalQuery){
+	          response.forEach(function(item){
+	            item.data = item.name;
+	            item.value = item.contact;
+	            delete item.contact;
+	            delete item.name;
+	          });
+	          return {suggestions: response};
+	        },
+	        onSearchComplete : function(){},
+	        formatResult: function(suggestion, currentValue){
+	          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+	        },
+	        onSearchError: function(){},
+	        onSelect: function(suggestion){
+	          $("#creationPopupName").val(suggestion.data);
+	        },
+	        beforeRender: function(container){
+	          if($(container).data("scroll")){
+	            $(container).data("scroll").update();
+	          }else{
+	            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+	          }
+	        }
+	      }, NMNS.socket).on("blur", function(){
+	      	filterNonNumericCharacter($(this));
+	      });
+			}
       
 	    layer.show();
-	    this._createDatepicker(viewModel.start, viewModel.end);
-			document.getElementById("creationPopupForm").onsubmit = function(){return false;};
 			//NMNS CUSTOMIZING END
 	    this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 	
@@ -14456,6 +14466,19 @@ console.log($("#creationPopup"));
 	    })();
 	};
 	
+	//NMNS CUSTOMIZING START
+	ScheduleCreationPopup.prototype._updatePopup = function(viewModel) {
+		$("#creationPopupStartDate").data("datetimepicker").date(moment( viewModel.start? viewModel.start.toDate() : new Date()));
+		$("#creationPopupEndDate").data("datetimepicker").date(moment( viewModel.end? viewModel.end.toDate() : new Date()));
+    $("#creationPopupName").val(viewModel.title || "");
+    $("#creationPopupContents").val(viewModel.raw? viewModel.raw.contents : (viewModel.contents || ""));
+    $("#creationPopupContact").val(viewModel.raw? viewModel.raw.contact : (viewModel.contact || ""));
+    $("#creationPopupEtc").val(viewModel.raw? viewModel.raw.etc : (viewModel.etc || ""));
+    $("#creationPopupAllDay").attr("checked", viewModel.isAllDay);
+    this._selectedCal = this._selectedCal || this.calendars[0];
+    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+this._selectedCal.id+"']").html());
+	};
+	//NMNS CUSTOMIZING END
 	/**
 	 * Make view model for edit mode
 	 * @param {object} viewModel - original view model from 'beforeCreateEditPopup'

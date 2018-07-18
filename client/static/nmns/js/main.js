@@ -274,17 +274,6 @@
         viewName = 'week';
         break;
       case 'toggle-monthly':
-        var width = $(window).width();
-        if(width>=1200){
-          //$("#mainCalendar").height("65rem");
-          //$("#mainCalendar").height("1100px");
-        }else if(width >= 992){
-          //$("#mainCalendar").height("60rem");
-          //$("#mainCalendar").height("1000px");
-        }else{
-          //$("#mainCalendar").height("55rem");
-          //$("#mainCalendar").height("940px");
-        }
         viewName = 'month';
         break;
       default:
