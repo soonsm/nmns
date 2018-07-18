@@ -6877,7 +6877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        schedule.set('title', options.title);
 	    }
 	
-	    if (options.isAllDay) {
+	    if (options.isAllDay !== undefined) {
 	        schedule.set('isAllDay', options.isAllDay);
 	    }
 	
@@ -6913,19 +6913,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        schedule.set('isFocused', options.isFocused);
 	    }
 	//NMNS CUSTOMIZING START
-			if (options.raw && options.raw.contents){
+			if (options.raw && options.raw.contents !== undefined){
 				schedule.setRaw('contents', options.raw.contents);
 			}
 	
-			if (options.raw && options.raw.contact){
+			if (options.raw && options.raw.contact !== undefined){
 				schedule.setRaw('contact', options.raw.contact);
 			}
 	
-			if (options.raw && options.raw.etc){
+			if (options.raw && options.raw.etc !== undefined){
 				schedule.setRaw('etc', options.raw.etc);
 			}
 	
-			if (options.raw && options.raw.status){
+			if (options.raw && options.raw.status !== undefined){
 				schedule.setRaw('status', options.raw.status);
 			}
 			//NMNS CUSTOMIZING END

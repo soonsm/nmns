@@ -199,17 +199,18 @@
       saveNewSchedule(e);
     },
     beforeUpdateSchedule:function(e){
-      var history = $.extend(true, {}, e.schedule);
-      NMNS.history.push(e.history || history);
+      var history = e.history || $.extend(true, {}, e.schedule);
+      NMNS.history.push(history);
       e.schedule.start = e.start || e.schedule.start;
       e.schedule.end = e.end || e.schedule.end;
       e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
       
       if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
-        NMNS.calendar.deleteSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, true);
+        NMNS.calendar.deleteSchedule(e.schedule.id, e.history.selectedCal.id, true);
         e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
         e.schedule.dueDateClass = '';
         NMNS.calendar.createSchedules([e.schedule]);
+        e.history.newCalendarId = e.schedule.calendarId;
       }else{
         NMNS.calendar.updateSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
       }
@@ -1246,9 +1247,22 @@
       refreshScheduleVisibility();
     }else{
       console.log(origin);
-      if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
-      if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
-      NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
+      if(origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId)){//calendar id changed
+        NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
+        origin.category =  origin.isAllDay ? 'allday' : 'time';
+        origin.dueDateClass = '';
+        origin.calendarId = origin.selectedCal.id;
+        origin.start = (typeof origin.start === "string"?moment(origin.start, "YYYYMMDDHHmm").toDate():origin.start);
+        origin.end = (typeof origin.end === "string"?moment(origin.end, "YYYYMMDDHHmm").toDate():origin.end);
+        origin.color = origin.color || origin.selectedCal.color;
+        origin.bgColor = origin.bgColor || origin.selectedCal.bgColor;
+        origin.borderColor = origin.borderColor || origin.selectedCal.borderColor;
+        NMNS.calendar.createSchedules([origin]);
+      }else{
+        if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
+        if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
+        NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
+      }
     }
     if($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='"+e.data.id+"']").length){//예약으로 추가 모달
       $("#noShowScheduleList .row[data-id='"+e.data.id+"']").children("span:last-child").html($(generateScheduleStatusBadge(origin.status)).on("touch click", function(){
@@ -1332,8 +1346,8 @@
         html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!</span></div>";
       }
     }else{
-      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객은 노쇼를 한 적이 없으시네요!");
-      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>등록된 노쇼 전적이 없습니다. 안심하세요 :)</span></div>";
+      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.");
+      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>이분은 노쇼를 한 적이 없으시네요! 안심하세요 :)</span></div>";
     }
     $("#noShowSearchList").html(html);
     if(NMNS.noShowModalSearchScroll){
