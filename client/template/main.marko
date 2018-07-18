@@ -310,7 +310,8 @@
         <div class="modal-content rounded-0">
           <div class="modal-header p-0 mx-0">
             <ul id="noShowTabList" class="nav nav-pills d-inline-flex" role="tabList">
-              <li class="nav-item"><a class="nav-link p-2 rounded-0 active" href="#noShowSearch" data-toggle="tab" aria-selected="true"><i class="fas fa-plus"></i> 직접 추가 &middot; 찾기</a></li>
+              <li class="nav-item"><a class="nav-link p-2 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true"><i class="fas fa-plus"></i> 노쇼 추가</a></li>
+              <li class="nav-item"><a class="nav-link p-2 rounded-0" href="#noShowSearch" data-toggle="tab"><i class="fas fa-search"></i> 노쇼 찾기</a></li>
               <li class="nav-item"><a class="nav-link p-2 rounded-0" href="#noShowSchedule" data-toggle="tab"><i class="far fa-calendar-plus"></i> 예약에서 추가</a></li>
             </ul>
             <button type="button" class="close m-0 p-0 pr-3 pt-2" data-dismiss="modal" aria-label="Close">
@@ -319,9 +320,27 @@
           </div>
           <div class="modal-body px-0 mx-2">
             <div class="row tab-content mx-3">
-              <div id="noShowSearch" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+              <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+                <div class="row my-auto col-12 px-0">
+                  <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0">
+                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowAddContact" placeholder="고객 전화번호" aria-describedby="noShowAddContactIcon" autocomplete="false">
+                    <div id="noShowAddBtn" class="input-group-append">
+                      <span id="noShowAddContactIcon" class="input-group-text rounded-0">저장</span>
+                    </div>
+                    <div id="noShowAddContent" class="row col-12 px-0 mt-2">
+                      <span>노쇼 유형 : </span>
+                      <span class="btn badge badge-light noShowAddCase" data-value="지각">지각</span>
+                      <span class="btn badge badge-danger noShowAddCase" data-value="잠수">잠수</span>
+                      <span class="btn badge badge-light noShowAddCase" data-value="직전취소">직전취소</span>
+                      <br class="d-lg-none d-inline-block"/>
+                      <span id="noShowAddCaseEtc" class="btn badge badge-light noShowAddCase">기타</span>
+                      <input type="text" class="form-control form-control-sm rounded-0 mt-2 mt-sm-0" placeholder="직접입력" disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="noShowSearch" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div class="row mb-2 col-12 px-0">
-                  <input type="text" class="form-control form-control-sm col-6 rounded-0" id="noShowSearchName" placeholder="고객 이름으로 전화번호 찾기" autocomplete="false">
                   <div class="input-group input-group-sm col-6 pr-0">
                     <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" aria-describedby="noShowSearchContactIcon" autocomplete="false">
                     <div id="noShowSearchBtn" class="input-group-append">
