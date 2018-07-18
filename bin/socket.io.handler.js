@@ -95,19 +95,21 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                     for(let i=0;i<memberList.length;i++){
                         let member = memberList[i];
                         if(contact){
+                          resultData.query = 'contact';
                             if(member.contact.includes(contact)){
                                 returnMemberList.push(member);
                             }
                         }else{
+                          resultData.query = 'name';
                             if(member.name){
-                                if(member.name.includes(name)){
+                                if(hangul.search(member.name,name) !== -1){
                                     returnMemberList.push(member);
                                 }else{
                                     //초성검색
                                     let names = await hangul.disassemble(member.name, true).map(function(nameList){
                                         return nameList[0];
                                     }).join('');
-                                    if(names.includes(name)){
+                                    if(names.includes(hangul.disassemble(name).join(''))){
                                         returnMemberList.push(member);
                                     }
                                 }
