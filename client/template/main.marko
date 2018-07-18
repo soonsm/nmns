@@ -321,9 +321,9 @@
             <div class="row tab-content mx-3">
               <div id="noShowSearch" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
                 <div class="row mb-2 col-12 px-0">
-                  <input type="text" class="form-control form-control-sm col-6 rounded-0" id="noShowSearchName" placeholder="고객 이름으로 전화번호 찾기">
+                  <input type="text" class="form-control form-control-sm col-6 rounded-0" id="noShowSearchName" placeholder="고객 이름으로 전화번호 찾기" autocomplete="false">
                   <div class="input-group input-group-sm col-6 pr-0">
-                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" aria-describedby="noShowSearchContactIcon">
+                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" aria-describedby="noShowSearchContactIcon" autocomplete="false">
                     <div id="noShowSearchBtn" class="input-group-append">
                       <i id="noShowSearchContactIcon" class="input-group-text fas fa-search d-sm-none rounded-0"></i>
                       <span id="noShowSearchContactIcon" class="input-group-text d-none d-sm-block rounded-0">검색</span>
@@ -378,8 +378,8 @@
                   </div>
                 </div>
                 <div class="row col-12 px-0 mb-2">
-                  <input type="text" class="form-control form-control-sm rounded-0 ml-0" id="noShowScheduleName" placeholder="고객 이름">
-                  <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호">
+                  <input type="text" class="form-control form-control-sm rounded-0 ml-0" id="noShowScheduleName" placeholder="고객 이름" autocomplete="false">
+                  <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호" autocomplete="false">
                   <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-secondary ml-3">
                     <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
                   </div>
@@ -424,6 +424,7 @@
   <script src="/nmns/js/util.min.js"></script>
   <script src="/lib/moment/moment-with-locales.min.js"></script>
   <script src="/lib/moment/locales.min.js"></script>
+  <script src="/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
   <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
   <script src="/lib/tui-calendar/tui-time-picker.min.js"></script>
   <script src="/lib/tui-calendar/tui-date-picker.min.js"></script>
@@ -436,7 +437,6 @@
     var NMNS = {email:"${input.user.email}"};
   </script>
   <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-  <script src="/lib/jquery.autocomplete/jquery.autocomplete.js"></script>
   <script src="/nmns/js/main.js"></script>
 </body>
 </html>

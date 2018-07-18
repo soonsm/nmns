@@ -34,6 +34,7 @@ div.tui-full-calendar-timegrid-container{
 }
 #mainContents{
   padding-left:0;
+  margin-bottom:40px;
 }
 @media (min-width: 992px){
   #mainContents{
@@ -48,6 +49,9 @@ div.tui-full-calendar-timegrid-container{
   left:0;
   top:0;
   z-index:1
+}
+.tui-full-calendar-vlayout-area, .tui-full-calendar-week-container{
+  height:auto !important;
 }
 .tui-full-calendar-time-schedule{
   text-overflow:ellipsis;
@@ -357,7 +361,6 @@ button.moveDate:focus{
 }
 .autocomplete-suggestions{
   border: .05rem solid #bdbdbd;
-  padding-left: .5rem;
   background-color: white;
   border-top:0;
   -webkit-box-shadow: 2px 2px 5px 0px rgba(189,189,189,0.25);
@@ -369,4 +372,8 @@ button.moveDate:focus{
   overflow: hidden;
   white-space: nowrap;
   cursor: pointer;
+  padding-left: .5rem;
+}
+.autocomplete-selected{
+  background-color: #b2dfdb;
 }

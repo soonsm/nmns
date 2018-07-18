@@ -91,14 +91,14 @@
       'week.currentTimeLinePast.border': '1px dashed #009688',
       'week.currentTimeLineBullet.backgroundColor': '#009688',
       'week.currentTimeLineToday.border': '1px solid #009688',
-      "common.border": ".05rem solid #e5e5e5",
+      "common.border": ".07rem solid #e5e5e5",
       "common.saturday.color": "#304ffe",
       "week.timegridOneHour.height":"68px",
       "week.timegridHalfHour.height":"34px"
     }
   });
 
-  var socketResponse = function(requestName, successCallback, failCallback){
+  var socketResponse = function(requestName, successCallback, failCallback, silent){
     return function(res){
       if(res && res.type === "response"){
         if(res.status){//success
@@ -106,7 +106,9 @@
             successCallback(res);
           }
         }else{//fail
-          alert(requestName + "에 실패했습니다." + (res.message?"(" + res.message + ")":""));
+          if(!silent){
+            alert(requestName + "에 실패했습니다." + (res.message?"(" + res.message + ")":""));
+          }
           if(failCallback){
             failCallback(res);
           }
@@ -229,7 +231,11 @@
       NMNS.socket.emit("update reserv", e.schedule);
     },
     afterRenderSchedule:function(e){
-      $("#mainCalendar").height(($(".tui-full-calendar-layout").height() + 7) > $("footer").position().top - 200 ? ($("footer").position().top - 200): ($(".tui-full-calendar-layout").height() + 7)+ "px");
+      //$("#mainCalendar").height(($(".tui-full-calendar-layout").height() + 7) > $("footer").position().top ? ($("footer").position().top): ($(".tui-full-calendar-layout").height() + 7)+ "px");
+      if(NMNS.calendar.getViewName() !== "month"){
+        $("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
+        //$(".tui-full-calendar-layout").height(($(".tui-full-calendar-layout").height()-6) + "px");
+      }
     }
   });
   
@@ -270,11 +276,14 @@
       case 'toggle-monthly':
         var width = $(window).width();
         if(width>=1200){
-          $("#mainCalendar").height("65rem");
+          //$("#mainCalendar").height("65rem");
+          //$("#mainCalendar").height("1100px");
         }else if(width >= 992){
-          $("#mainCalendar").height("60rem");
+          //$("#mainCalendar").height("60rem");
+          //$("#mainCalendar").height("1000px");
         }else{
-          $("#mainCalendar").height("55rem");
+          //$("#mainCalendar").height("55rem");
+          //$("#mainCalendar").height("940px");
         }
         viewName = 'month';
         break;
@@ -885,6 +894,7 @@
       $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
       $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "months").toDate());
       $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
+      $("#noShowScheduleEndDatePicker").data("datetimepicker").date(moment().add(1, "months").toDate());
       $("#noShowScheduleContact").off("blur").on("blur", function(){
         filterNonNumericCharacter($(this));
       });
@@ -895,7 +905,7 @@
       });
       $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
         var dropdown = $(this).parent();
-        NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:dropdown.data("status")});
+        NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), raw:{status:dropdown.data("status")}});
         NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:$(this).data("status")}});
         NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:$(this).data("status"), noShowCase:$(this).data("type")});
         $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge($(this).data("status"))).on("touch click", function(){
@@ -945,9 +955,105 @@
           }else{
             $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
           }
-        },
-        
+        }
       }, NMNS.socket);
+      
+      $("#noShowSearchContact").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "contact",
+        zIndex: 1060,
+        maxHeight: 150,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.name;
+            item.value = item.contact;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#noShowSearchName").val(suggestion.data);
+        },
+        beforeRender: function(container){
+          if($(container).data("scroll")){
+            $(container).data("scroll").update();
+          }else{
+            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+          }
+        }
+      }, NMNS.socket);
+      
+      $("#noShowScheduleName").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "name",
+        zIndex: 1060,
+        maxHeight: 150,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.contact;
+            item.value = item.name;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#noShowScheduleContact").val(suggestion.data);
+        },
+        beforeRender: function(container){
+          if($(container).data("scroll")){
+            $(container).data("scroll").update();
+          }else{
+            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+          }
+        }
+      }, NMNS.socket);
+      $("#noShowScheduleContact").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "contact",
+        zIndex: 1060,
+        maxHeight: 150,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.name;
+            item.value = item.contact;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#noShowScheduleName").val(suggestion.data);
+        },
+        beforeRender: function(container){
+          if($(container).data("scroll")){
+            $(container).data("scroll").update();
+          }else{
+            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+          }
+        }
+      }, NMNS.socket);
+    }else{
+      $("#noShowSearchName").autocomplete().clearCache();
+      $("#noShowSearchContact").autocomplete().clearCache();
+      $("#noShowScheduleName").autocomplete().clearCache();
+      $("#noShowScheduleContact").autocomplete().clearCache();
     }
   }
   
@@ -1150,6 +1256,7 @@
       drawSchedule([origin]);
       refreshScheduleVisibility();
     }else{
+      console.log(origin);
       if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
       if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
       NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
@@ -1269,13 +1376,12 @@
       var el = $("#"+e.data.id);
       el.autocomplete().onSuccess.call(el.autocomplete(), e.data.query, e.data.result);
     }
-    $("#noShowSearchName").autocomplete().onSuccess.call($("#noShowSearchName").autocomplete(), $("#noShowSearchName").val(), [{contact:"01011112222", name:"aaa"}]);
   }, function(e){
     if(e.data.id){
       var el = $("#"+e.data.id);
       el.autocomplete().onFail.call(el.autocomplete(), e.data);
     }
-  }));
+  }, true));
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   
   $("#infoModal").on("hide.bs.modal", function(){

@@ -14367,7 +14367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-
+console.log($("#creationPopup"));
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
 	        boxElement = viewModel.target;
@@ -14381,6 +14381,70 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    layer.setContent(tmpl(viewModel));
 	    //NMNS CUSTOMIZING START
+	    $("#creationPopupName").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "name",
+        zIndex: 1060,
+        maxHeight: 150,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.contact;
+            item.value = item.name;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#creationPopupContact").val(suggestion.data);
+        },
+        beforeRender: function(container){
+          if($(container).data("scroll")){
+            $(container).data("scroll").update();
+          }else{
+            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+          }
+        }
+      }, NMNS.socket);
+      
+      $("#creationPopupContact").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "contact",
+        zIndex: 1060,
+        maxHeight: 150,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.name;
+            item.value = item.contact;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#creationPopupName").val(suggestion.data);
+        },
+        beforeRender: function(container){
+          if($(container).data("scroll")){
+            $(container).data("scroll").update();
+          }else{
+            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
+          }
+        }
+      }, NMNS.socket).on("blur", function(){
+      	filterNonNumericCharacter($(this));
+      });
+      
 	    layer.show();
 	    this._createDatepicker(viewModel.start, viewModel.end);
 			document.getElementById("creationPopupForm").onsubmit = function(){return false;};
@@ -14716,7 +14780,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.guide.clearGuideElement();
 	        this.guide = null;
 	    }
-	
+			//NMNS CUSTOMIZING START
+			domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+			//NMNS CUSTOMIZING END
 	    domevent.off(document.body, 'mousedown', this._onMouseDown, this);
 	};
 	
@@ -14999,7 +15065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupNameIcon\" class=\"input-group-text fas fa-user\"></i>"
 		+"      </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupName\" name=\"name\" placeholder=\"고객이름\" aria-describedby=\"creationPopupNameIcon\" value=\"" + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper))) + "\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupName\" name=\"name\" placeholder=\"고객이름\" aria-describedby=\"creationPopupNameIcon\" autocomplete=\"false\" value=\"" + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
 		+"  <div class=\"row mb-2 mb-sm-3\">"
@@ -15008,7 +15074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
 		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone\"></i>"
 		+"      </div>"
-		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처(숫자)\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper))) + "\">"
+		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처\" autocomplete=\"false\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
 		+"  </div>"
   		
@@ -15070,14 +15136,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    </div>"
 		+"  </div>"
 
-	    /*+ "<div class=\"" + escapedCssPrefix + "popup-section\">\n"
-	    	+ "<div class=\"" + escapedCssPrefix + "popup-section-item " + escapedCssPrefix + "section-title\">\n"
-		    	+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "ic-title\"></span>\n"
-		    	+ "<input id=\"" + escapedCssPrefix + "schedule-title\" class=\"" + escapedCssPrefix + "content\" placeholder=\"" + alias4(((helper = (helper = helpers["titlePlaceholder-tmpl"] || (depth0 != null ? depth0["titlePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"titlePlaceholder-tmpl","hash":{},"data":data}) : helper)))
-		    		+ "\" value=\"" + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper))) + "\"></span>\n"
-    		+ "</div>\n"
-  		+ "</div>\n"*/
-		
 		+ "<button class=\"" + escapedCssPrefix + "button " + escapedCssPrefix + "popup-close\">"
 			+ "<span class=\"fas fa-times\"></span>"
 		+ "</button>\n"

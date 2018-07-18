@@ -174,8 +174,10 @@
             that.element.setAttribute('autocomplete', 'nope');
 
             // html() deals with many types: htmlString or Element or Array or jQuery
-            that.noSuggestionsContainer = $('<div class="autocomplete-no-suggestion"></div>')
-                                          .html(this.options.noSuggestionNotice).get(0);
+            if(that.options.showNoSuggestionNotice){
+                that.noSuggestionsContainer = $('<div class="autocomplete-no-suggestion"></div>')
+                                              .html(this.options.noSuggestionNotice).get(0);
+            }
 
             that.suggestionsContainer = Autocomplete.utils.createNode(options.containerClass);
 
@@ -923,6 +925,9 @@
                 // when clicking on suggestion with a mouse
                 that.ignoreValueChange = true;
                 that.el.val(that.getValue(that.suggestions[index].value));
+                if($.isFunction(that.options.onSelect)){
+                    that.options.onSelect.call(that.element, that.suggestions[index]);
+                }
             }
 
             that.signalHint(null);
