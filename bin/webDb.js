@@ -347,13 +347,12 @@ exports.updateStaffList = async function (email, staffList) {
     });
 }
 
-exports.newNoShow = function (phone, noShowCase, name) {
+exports.newNoShow = function (phone, noShowCase, date) {
     let key = sha256(phone);
     let newNoShow = {
         noShowKey: key,
-        name: name,
         noShowCount: 1,
-        lastNoShowDate: moment().format('YYYYMMDD'),
+        lastNoShowDate: date || moment().format('YYYYMMDD'),
         noShowCaseList: []
     };
 
@@ -362,7 +361,21 @@ exports.newNoShow = function (phone, noShowCase, name) {
     }
     return newNoShow;
 }
-exports.getMyNoShow = async function (email, phone) {
+exports.newMyNoShow = function (id, phone, noShowCase, date) {
+    let key = sha256(phone);
+    let newNoShow = {
+        id: id,
+        noShowKey: key,
+        noShowCount: 1,
+        date: date || moment().format('YYYYMMDD'),
+    };
+
+    if (noShowCase) {
+        newNoShow.noShowCaseList = noShowCase;
+    }
+    return newNoShow;
+}
+exports.getMyNoShow = async function (email) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "noShowList",
@@ -376,47 +389,38 @@ exports.getMyNoShow = async function (email, phone) {
     });
     if (items.length === 0) {
         return [];
-    }
-
-    let noShowList = items[0].noShowList;
-    if (!phone) {
-        return noShowList;
-    } else {
-        let key = sha256(phone);
-        for (let i = 0; i < noShowList.length; i++) {
-            let noShow = noShowList[i];
-            if (noShow.noShowKey === key) {
-                return [noShow];
-            }
-        }
-        return [];
+    }else{
+        return items[0].noShowList;
     }
 }
 exports.getNoShow = async function (phoneNumber) {
     let key = sha256(phoneNumber);
-    let noShow = await get({
+    return await get({
         TableName: process.nmns.TABLE.NoShowList,
         Key: {
             'noShowKey': key
         }
     });
-    if (noShow) {
-        return [noShow];
-    } else {
-        return [];
-    }
+
 };
 
-exports.addToNoShowList = async function (email, phone, noShowCase, name) {
-    let noShow = (await exports.getNoShow(phone))[0];
+exports.getNoShowWithKey = async function (key) {
+    return await get({
+        TableName: process.nmns.TABLE.NoShowList,
+        Key: {
+            'noShowKey': key
+        }
+    });
+};
+
+exports.addToNoShowList = async function (email, phone, noShowCase, date, id) {
+    let noShow = await exports.getNoShow(phone);
+    let lastNoShowDate = date || moment().format('YYYYMMDD');
     if (!noShow) {
-        noShow = exports.newNoShow(phone, noShowCase, name);
+        noShow = exports.newNoShow(phone, noShowCase, lastNoShowDate);
     } else {
         noShow.noShowCount += 1;
-        noShow.lastNoShowDate = moment().format('YYYYMMDD');
-        if (name) {
-            noShow.name = name;
-        }
+        noShow.lastNoShowDate = lastNoShowDate;
         if (noShowCase) {
             noShow.noShowCaseList.push(noShowCase);
         }
@@ -426,38 +430,16 @@ exports.addToNoShowList = async function (email, phone, noShowCase, name) {
         Item: noShow
     });
 
-    let myNoShowList = await exports.getMyNoShow(email);
-    //내꺼에 있으면 업데이트 없으면 추가
-    let key = sha256(phone);
-    let myNoShow;
-    for (var i = 0; i < myNoShowList.length; i++) {
-        let noShow = myNoShowList[i];
-        if (noShow.noShowKey === key) {
-            myNoShow = noShow;
-            myNoShow.noShowCount += 1;
-            myNoShow.lastNoShowDate = moment().format('YYYYMMDD');
-            if (name) {
-                myNoShow.name = name;
-            }
-            if (noShowCase) {
-                myNoShow.noShowCaseList.push(noShowCase);
-            }
-            myNoShowList[i] = myNoShow;
-            break;
-        }
-    }
-    if (!myNoShow) {
-        myNoShow = exports.newNoShow(phone, noShowCase, name);
-        myNoShowList.push(myNoShow);
-    }
+    noShow = exports.newMyNoShow(id, phone, noShowCase, lastNoShowDate);
+
     await update({
         TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
-            'email': email
+            'email': email,
         },
-        UpdateExpression: "set noShowList = :newNoShowList",
+        UpdateExpression: "set noShowList = list_append(noShowList, :noShow)",
         ExpressionAttributeValues: {
-            ":newNoShowList": myNoShowList
+            ":noShow": [noShow]
         },
         ReturnValues: "NONE"
     });
@@ -465,26 +447,20 @@ exports.addToNoShowList = async function (email, phone, noShowCase, name) {
     return noShow;
 
 }
-exports.deleteNoShow = async function (phone, email) {
-    let key = sha256(phone);
+exports.deleteNoShow = async function (email, id) {
     let isItMine = false;
     let delIndex = -1, noShowToDelete;
     let myNoShowList = await exports.getMyNoShow(email);
     for (var i = 0; i < myNoShowList.length; i++) {
         let myNoShow = myNoShowList[i];
-        if (myNoShow.noShowKey === key) {
+        if (myNoShow.id === id) {
             isItMine = true;
             noShowToDelete = myNoShow;
             break;
         }
     }
     if (isItMine) {
-        if (noShowToDelete.noShowCount == 1) {
-            myNoShowList.splice(delIndex, 1);
-        } else {
-            noShowToDelete.noShowCount -= 1;
-            myNoShowList.splice(delIndex, 1, noShowToDelete);
-        }
+        myNoShowList.splice(delIndex, 1);
         //WebScheudler update
         await update({
             TableName: process.nmns.TABLE.WebSecheduler,
@@ -498,14 +474,14 @@ exports.deleteNoShow = async function (phone, email) {
             ReturnValues: "NONE"
         });
         //NoShowList update
-        let noShow = await exports.getNoShow(phone);
+        let noShow = await exports.getNoShowWithKey(noShowToDelete.noShowKey);
         if (noShow) {
             noShow.noShowCount -= 1;
             if (noShow.noShowCount === 0) {
                 await del({
                     TableName: process.nmns.TABLE.NoShowList,
                     Key: {
-                        "noShowKey": sha256(phone)
+                        "noShowKey": noShowToDelete.noShowKey
                     }
                 });
             } else {
