@@ -328,7 +328,7 @@ button.moveDate:focus{
 #noShowModal .bootstrap-datetimepicker-widget{
   margin-left:1rem;
 }
-#noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit, #noShowScheduleDropdown .noShowScheduleCheck{
+#noShowModal #noShowAddBtn, #noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit, #noShowScheduleDropdown .noShowScheduleCheck{
   cursor:pointer;
 }
 #noShowScheduleList .badge{
@@ -376,4 +376,20 @@ button.moveDate:focus{
 }
 .autocomplete-selected{
   background-color: #b2dfdb;
+}
+#noShowAddContent span{
+  margin-right:.5rem;
+}
+#noShowAddContent .noShowAddCase{
+  line-height:1rem;
+  height:1.5rem;
+}
+#noShowAddContent input{
+  line-height:1rem;
+  width: calc(100% - 105px);
+}
+@media(min-width:576px){
+  #noShowAddContent input{
+    width: calc(100% - 258px);
+  }
 }

@@ -204,7 +204,7 @@
       e.schedule.start = e.start || e.schedule.start;
       e.schedule.end = e.end || e.schedule.end;
       e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
-      
+
       if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
         NMNS.calendar.deleteSchedule(e.schedule.id, e.history.selectedCal.id, true);
         e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
@@ -215,15 +215,17 @@
         NMNS.calendar.updateSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
       }
       
-      NMNS.socket.emit("update reserv", $.extend(true, history, {
+      NMNS.socket.emit("update reserv", {
         start:moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm"),
         end:moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
         manager: e.schedule.calendarId,
         name: e.schedule.title,
         contact: e.schedule.contact || e.schedule.raw.contact,
         contents: e.schedule.contents || e.schedule.raw.contents,
-        etc: e.schedule.etc || e.schedule.raw.etc
-      }));
+        etc: e.schedule.etc || e.schedule.raw.etc,
+        status: e.schedule.status || e.schedule.raw.status,
+        isAllDay: e.schedule.isAllDay
+      });
     },
     beforeDeleteSchedule:function(e){
       NMNS.history.push(e.schedule);
@@ -824,6 +826,23 @@
       if(!NMNS.noShowModalScheduleScroll){
         NMNS.noShowModalScheduleScroll = new PerfectScrollbar("#noShowScheduleList", {suppressScrollX:true});
       }
+      
+      $(".noShowAddCase").off("touch click").on("touch click", function(){
+        $(".noShowAddCase").not($(this)).removeClass("badge-danger").addClass("badge-light");
+        if($(this).removeClass("badge-light").addClass("badge-danger").is("#noShowAddCaseEtc")){
+          $(this).next().removeAttr("disabled");
+        }else{
+          $(this).siblings("input").attr("disabled", "disabled");
+        }
+      });
+      $("#noShowAddBtn").off("touch click").on("touch click", function(){
+        if($("#noShowAddContact").val() === ""){
+          alert("저장할 전화번호를 입력해주세요!");
+          return;
+        }
+        var noShowCase = $("#noShowAddContent .badge-danger").is("#noShowAddCaseEtc")?$("#noShowAddContent input").val() : $("#noShowAddContent .badge-danger").data("value");
+        NMNS.socket.emit("add noshow", {contact:$("#noShowAddContact").val(), noShowCase:noShowCase});
+      });
       $("#noShowSearchBtn").off("touch click").on("touch click", function(){
         if($("#noShowSearchContact").val() === ""){
           alert("검색할 전화번호를 입력해주세요!");
@@ -878,7 +897,7 @@
         }
         newRow.find("div:first-child input").focus();
       });
-      $("#noShowSearchContact").off("blur").on("blur", function(){
+      $("#noShowSearchContact, #noShowAddContact, #noShowScheduleContact").off("blur").on("blur", function(){
         filterNonNumericCharacter($(this));
       });
       $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
@@ -917,15 +936,15 @@
         }
       });
       
-      $("#noShowSearchName").autocomplete({
+      $("#noShowAddContact").autocomplete({
         serviceUrl: "get customer info",
-        paramName: "name",
+        paramName: "contact",
         zIndex: 1060,
         maxHeight: 150,
         transformResult: function(response, originalQuery){
           response.forEach(function(item){
-            item.data = item.contact;
-            item.value = item.name;
+            item.data = item.name;
+            item.value = item.contact;
             delete item.contact;
             delete item.name;
           });
@@ -936,9 +955,7 @@
           return suggestion.value + " (" + dashContact(suggestion.data) + ")";
         },
         onSearchError: function(){},
-        onSelect: function(suggestion){
-          $("#noShowSearchContact").val(suggestion.data);
-        },
+        onSelect: function(suggestion){},
         beforeRender: function(container){
           if($(container).data("scroll")){
             $(container).data("scroll").update();
@@ -967,9 +984,7 @@
           return suggestion.value + " (" + dashContact(suggestion.data) + ")";
         },
         onSearchError: function(){},
-        onSelect: function(suggestion){
-          $("#noShowSearchName").val(suggestion.data);
-        },
+        onSelect: function(suggestion){},
         beforeRender: function(container){
           if($(container).data("scroll")){
             $(container).data("scroll").update();
@@ -1242,7 +1257,7 @@
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
-    if(origin.status === "DELETED"){
+    if((origin.status || origin.raw.status) === "DELETED"){
       drawSchedule([origin]);
       refreshScheduleVisibility();
     }else{
@@ -1261,6 +1276,7 @@
       }else{
         if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
         if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
+        console.log(origin);
         NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
       }
     }
@@ -1358,12 +1374,15 @@
   NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e){
     var html, badge = "";
     console.log(e);
-    e.data.noShowCaseList.forEach(function(item2){
-      badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
-    });
-    html = "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(e.data.contact||"")+"</span><span class='col-4'>"+(e.data.lastNoShowDate?e.data.lastNoShowDate.substring(0,4)+"-"+e.data.lastModifiedDate.substring(4,6)+"-"+e.data.lastNoShowDate.substring(6):"")+"</span><span class='col-1'>"+(e.data.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(e.data.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
-    $(html).insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
-    $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"']").remove();
+    alert("추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)");
+    if($("#noShowSearch").is(":visible")){
+      e.data.noShowCaseList.forEach(function(item2){
+        badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
+      });
+      html = "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(e.data.contact||"")+"</span><span class='col-4'>"+(e.data.lastNoShowDate?e.data.lastNoShowDate.substring(0,4)+"-"+e.data.lastModifiedDate.substring(4,6)+"-"+e.data.lastNoShowDate.substring(6):"")+"</span><span class='col-1'>"+(e.data.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(e.data.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
+      $(html).insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
+      $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"']").remove();
+    }
   }, function(e){
     $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"'] .noShowSearchAddSubmit").off("touch click").on("touch click", function(){
       submitAddNoShow($(this));
