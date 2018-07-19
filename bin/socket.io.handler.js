@@ -359,9 +359,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         status = false;
                         message = '시스템 오류입니다.(DB Update Error)';
                     }
-                    if (newReservation.status === 'NOSHOW') {
+                    if (newReservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
                         //noShow 입력
-                        await db.addToNoShowList(email, newReservation.contact, null, newReservation.name);
+                        let id = email + require('js-sha256')(newReservation.contact);
+                        await db.addToNoShowList(email, newReservation.contact, newReservation.noShowCase, newReservation.start.substring(0,6), id);
                     }
                 } else {
                     status = false;
@@ -537,22 +538,20 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             }
 
             if (status) {
-                resultData = await db.getMyNoShow(email, contact);
-                if (resultData.length < 1) {
-                    if (!mineOnly) {
-                        resultData = await db.getNoShow(contact);
-                        if (resultData[0]) {
-                            resultData[0].mine = false;
-                        }
-                    }
-                } else {
-                    resultData[0].mine = true;
-                }
+                resultData = {
+                    summary: {
+                        contact: contact,
+                        noShowCount: 0,
+                        lastNoShowDate: ''
+                    },
+                    detail : []
+                };
+                let summary = await db.getNoShow(contact);
+                if(summary){
+                    resultData.summary.noShowCount = summary.noShowCount;
+                    resultData.summary.lastNoShowDate = summary.lastNoShowDate;
 
-                if (resultData[0]) {
-                    resultData[0].contact = contact;
-                    resultData[0].lastNoShowDate = moment(resultData[0].lastNoShowDate).format('YYYY-MM-DD');
-                    delete resultData[0].noShowKey;
+                    resultData.detail = await db.getMyNoShow(email);
                 }
             }
 
@@ -561,37 +560,39 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         addEvent(AddNoShow, async function (data) {
             let status = true, message = null, resultData;
+            const id = data.id;
             const contact = data.contact;
-            const name = data.name;
             const noShowCase = data.noShowCase;
+            const noShowDate = data.date;
 
             //validation
-            if (!contact) {
+            if (!contact || !id || !noShowDate) {
                 status = false;
-                message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}, "name":${고객 이름, string, optional},"noShowCase":${매장 코멘트, string, optional}})';
+                message = '노쇼 등록에 필요한 데이터가 없습니다. ({"id":${노쇼 ID, string}, "contact":${고객 모바일, string}, "noShowCase":${매장 코멘트, string, optional}, "date":${노쇼 날짜, string, YYYYMMDD}})';
             } else if (!util.phoneNumberValidation(contact)) {
                 status = false;
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
+            } else if (!moment(noShowDate, 'YYYYMMDD').isValid()){
+                status = false;
+                message = `날짜 형식이 올바르지 않습니다.(${noShowDate})`;
+
             }
-            resultData = await db.addToNoShowList(email, contact, noShowCase, name);
+            resultData = await db.addToNoShowList(email, contact, noShowCase, noShowDate, id);
 
             socket.emit(AddNoShow, makeResponse(status, resultData, message));
         });
 
         addEvent(DelNoShow, async function (data) {
             let status = true, message = null;
-            const contact = data.contact;
+            const id = data.id;
 
             //validation
-            if (!contact) {
+            if (!id) {
                 status = false;
-                message = '노쇼 등록에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string}})';
-            } else if (!util.phoneNumberValidation(contact)) {
-                status = false;
-                message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
+                message = '노쇼 등록에 필요한 데이터가 없습니다. ({"id":${노쇼ID, string}})';
             }
 
-            let deleteResult = await db.deleteNoShow(contact, email);
+            let deleteResult = await db.deleteNoShow(email, id);
             if (!deleteResult) {
                 status = false;
                 message = '내가 추가한 노쇼만 삭제 할 수 있습니다.';
