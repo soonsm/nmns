@@ -294,14 +294,38 @@ button.moveDate:focus{
   margin-left:auto;
   margin-right:auto;
 }
+#noShowTabList{
+  height:37px;
+  overflow:hidden;
+}
 #noShowModal #noShowSearchSummary{
-  height:30px;
+  height:45px;
+  display:none;
+  overflow-y:hidden;
+}
+#noShowModal #noShowSearchList.summary{
+  height:114px;
 }
 #noShowModal #noShowSearchList{
-  height:150px;
+  height:159px;
 }
 #noShowModal #noShowScheduleList{
-  height:179px;
+  height:140px;
+  margin-bottom:.5rem;
+}
+@media(min-width:992px){
+  #noShowModal #noShowSearchSummary{
+    height:25px;
+    display:none;
+  }
+  #noShowModal #noShowSearchList.summary{
+    height:134px;
+  }
+}
+@media(min-width:576px){
+  #noShowModal #noShowScheduleList{
+    height:171px;
+  }
 }
 /*#noShowModal #noShowSearchAdd{
   font-size:.9rem;

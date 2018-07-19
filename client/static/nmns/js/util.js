@@ -103,3 +103,7 @@ function filterNonNumericCharacter(obj){
 function dashContact(contact){
   return (contact?(contact.length===11?(contact.substring(0,3)+"-"+contact.substring(3,7)+"-"+contact.substring(7)):(contact.length===10?(contact.substring(0,3)+"-"+contact.substring(3,6)+"-"+contact.substring(6)):contact)):"");
 }
+
+function findById(item, target){
+  return item.id === target;
+}

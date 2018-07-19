@@ -910,6 +910,16 @@
       $("#noShowSearchContact, #noShowAddContact, #noShowScheduleContact").off("blur").on("blur", function(){
         filterNonNumericCharacter($(this));
       });
+      $("#noShowSearchContact").on("keyup", function(e){
+        if(e.which === 13){
+          $("#noShowSearchBtn").trigger("click");
+        }
+      });
+      $("#noShowAddContact").on("keyup", function(e){
+        if(e.which === 13){
+          $("#noShowAddBtn").trigger("click");
+        }
+      });
       $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
       $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "months").toDate());
       $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
@@ -1199,6 +1209,13 @@
     });
   }
   
+  function deleteNoShow(self){
+    var row = self.parentsUntil("#noShowSearchList", ".row");
+    NMNS.history.push({id: row.data("id"), contact: row.data("contact"), date: row.data("date"), noShowCase: row.data("noshowcase")});
+    NMNS.socket.emit("delete noshow", {id: row.data("id")});
+    row.remove();
+  }
+  
   function cancelAddNoShow(self){
     self.parentsUntil("#noShowSearchList", ".row").remove();
     if($("#noShowSearchList").html() === ""){
@@ -1250,9 +1267,8 @@
 
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
     var html = "";
-    console.log(e);
     if(e.data.length===0){
-     html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>"
+     html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>";
     }else{
      e.data.forEach(function(item){
        html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"' data-status='" + (item.status||"") + "'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2 pr-0'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-3 col-lg-2 px-0'>"+dashContact(item.contact)+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-2 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
@@ -1284,7 +1300,6 @@
   }));
   
   NMNS.socket.on("update reserv", socketResponse("예약정보 변경하기", function(e){
-    console.log(e);
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
@@ -1293,7 +1308,6 @@
       drawSchedule([origin]);
       refreshScheduleVisibility();
     }else{
-      console.log(origin);
       if(origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId)){//calendar id changed
         NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
         origin.category =  origin.isAllDay ? 'allday' : 'time';
@@ -1308,7 +1322,6 @@
       }else{
         if(typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
         if(typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
-        console.log(origin);
         NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal? origin.selectedCal.id : origin.calendarId, origin);
       }
     }
@@ -1336,7 +1349,7 @@
   }));
   
   NMNS.socket.on("delete manager", socketResponse("담당자 삭제하기", function(e){
-    NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+    NMNS.history.remove(e.data.id, findById);
   }, function(e){
     var manager = NMNS.history.find(function(item){return item.id === e.data.id});
     if(manager){
@@ -1345,25 +1358,25 @@
       NMNS.calendar.setCalendars(NMNS.calendar.getCalendars());
       $("#lnbManagerList").html(generateLnbManagerList(calendars));
       refreshScheduleVisibility();
-      NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+      NMNS.history.remove(e.data.id, findById);
     }
   }));
   
   NMNS.socket.on("update manager", socketResponse("담당자 변경하기", function(e){
     console.log(e);
-    NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+    NMNS.history.remove(e.data.id, findById);
   }, function(e){
     var manager = NMNS.history.find(function(item){return item.id === e.data.id});
     if(manager){
       NMNS.calendar.setCalendar(e.data.id, manager);
       $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
       refreshScheduleVisibility();
-      NMNS.history.remove(e.data.id, function(item, target){return item.id === target});
+      NMNS.history.remove(e.data.id, findById);
     }
   }));
   
   NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function(){
-    NMNS.history.remove("info", function(item, target){return item.id === target});
+    NMNS.history.remove("info", findById);
   }, function(e){
     var history = NMNS.history.find(function(item){return item.id === "info"});
     if(history.bizBeginTime || history.bizEndTime){
@@ -1371,42 +1384,44 @@
     }
     NMNS.info.shopName = history.shopName || NMNS.info.shopName;
     NMNS.info.bizType = history.bizType;
-    NMNS.history.remove("info", function(item, target){return item.id === target});
+    NMNS.history.remove("info", findById);
     NMNS.initedInfoModal = false;
   }));
   
   NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function(){
-    NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
+    NMNS.history.remove("alrimInfo", findById);
   }, function(){
     var history = NMNS.history.find(function(item){return item.id === "alrimInfo"});
     Object.keys(history).forEach(function(key){
       NMNS.info.alrimTalkInfo[key] = history[key];
     });
-    NMNS.history.remove("alrimInfo", function(item, target){return item.id === target});
+    NMNS.history.remove("alrimInfo", findById);
     NMNS.initedAlrimModal = false;
   }));
 
   NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
     var html = "";
     console.log(e);
+    e.data.summary = {noShowCount : 1, lastNoShowDate : "20180202", contact: "01012341234"};
+    e.data.detail = [{id:"aa", contact:"01012341234", noShowCase:"잠수", date:"20180202"}];
     if(e.data.summary.noShowCount>0){
-      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리 매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6)) + "월 " + parseInt(e.data.summary.lastModifiedDate.substring(6)) + "일이었어요.");
+      $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6)) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6)) + "일이었어요.").show();
       if(e.data.detail.length>0){
         e.data.detail.forEach(function(item){
-          var badge = "";
-          item.noShowCaseList.forEach(function(item2){
-            badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
-          });
-          html += "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(item.contact||"")+"</span><span class='col-4'>"+(item.lastNoShowDate||"")+"</span><span class='col-1'>"+(item.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(item.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
+          html += "<div class='row col-12 px-0 mt-1' data-id='"+item.id+"' data-contact='"+(item.contact||"")+"' data-date='"+(item.date||"")+"' data-noshowcase='"+(item.noShowCase||"")+"'><span class='col-4'>"+(item.contact?dashContact(item.contact):"")+"</span><span class='col-4'>"+(item.date?(item.date.substring(0,4)+"-"+item.date.substring(4,6)+"-"+item.date.substring(6)):"")+"</span><span class='col-3'>"+(item.noShowCase?("<span class='badge badge-danger'>" + item.noShowCase + "</span>") : "")+"</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>";
         });
       }else{
-        html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!</span></div>";
+        html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!<br/>이분이 노쇼를 하셨다면 아래 추가 버튼을 눌러 다른 매장에도 공유해주세요.</span></div>";
       }
     }else{
       $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.");
       html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>이분은 노쇼를 한 적이 없으시네요! 안심하세요 :)</span></div>";
     }
     $("#noShowSearchList").html(html);
+    $("#noShowSearchList").addClass("summary");
+    $("#noShowSearchList .noShowSearchDelete").off("touch click").on("touch click", function(){
+      deleteNoShow($(this));
+    });
     if(NMNS.noShowModalSearchScroll){
       NMNS.noShowModalSearchScroll.update();
     }
@@ -1415,19 +1430,41 @@
   NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e){
     var html, badge = "";
     console.log(e);
-    alert("추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)");
     if($("#noShowSearch").is(":visible")){
-      e.data.noShowCaseList.forEach(function(item2){
-        badge += (item2?("<span class='badge badge-light'>" + item2 + "</span>") : "");
+      badge = (e.data.noShowCase?("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
+      html = $("<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(e.data.contact||"")+"</span><span class='col-4'>"+(e.data.lastNoShowDate?e.data.lastNoShowDate.substring(0,4)+"-"+e.data.lastModifiedDate.substring(4,6)+"-"+e.data.lastNoShowDate.substring(6):"")+"</span><span class='col-1'>"+(e.data.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
+      html.insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
+      html.find(".noShowSearchDelete").on("touch click", function(){
+        deleteNoShow($(this));
       });
-      html = "<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(e.data.contact||"")+"</span><span class='col-4'>"+(e.data.lastNoShowDate?e.data.lastNoShowDate.substring(0,4)+"-"+e.data.lastModifiedDate.substring(4,6)+"-"+e.data.lastNoShowDate.substring(6):"")+"</span><span class='col-1'>"+(e.data.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'>"+(e.data.isMine?"<i class='fas fa-trash' title='삭제'></i>":"")+"</span></div>";
-      $(html).insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
       $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"']").remove();
     }
+    alert("추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)");
   }, function(e){
     $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"'] .noShowSearchAddSubmit").off("touch click").on("touch click", function(){
       submitAddNoShow($(this));
     });
+  }));
+  
+  NMNS.socket.on("delete noshow", socketResponse("노쇼 삭제하기", function(e){
+    NMNS.history.remove(e.data.id, findById);
+  }, function(e){
+    if(e && e.data){
+      var origin = NMNS.history.find(function(item){ return item.id === e.data.id});
+      if(origin){
+        var newRow = $("<div class='row col-12 px-0 mt-1' data-id='"+origin.id+"' data-contact='"+(origin.contact||"")+"' data-date='"+(origin.date||"")+"' data-noshowcase='"(origin.noShowCase||"")+"'><span class='col-4'>"+(origin.contact?dashContact(origin.contact):"")+"</span><span class='col-4'>"+(origin.date?(origin.date.substring(0,4)+"-"+origin.date.substring(4,6)+"-"+origin.date.substring(6)):"")+"</span><span class='col-3'>"+(origin.noShowCase?("<span class='badge badge-light'>" + origin.noShowCase + "</span>") : "")+"</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
+        newRow.find(".noShowSearchDelete").off("touch click").on("touch click", function(){
+          deleteNoShow($(this));
+        });
+        if($("#noShowSearchList .empty").length){//전체 덮어 씌우기
+          $("#noShowSearchList").html(newRow);
+        } else if($("#noShowSearchList .noShowSearchAdd").length){
+          newRow.insertBefore("#noShowSearchList .noShowSearchAdd:first-child");
+        }else{
+          $("#noShowSearchList").append(newRow);
+        }
+      }
+    }
   }));
   
   NMNS.socket.on("update password", socketResponse("비밀번호 변경하기"));
@@ -1540,6 +1577,11 @@
       $("#noShowTabList .nav-link[href='#noShowSearch']").tab("show");
     }else if($("#sidebarContainer .list-group-item:focus").hasClass("addNoShowLink")){
       $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
+    }
+  });
+  $("#mainRow").on("touch click", function(){
+    if($("#navbarResponsive").hasClass("show")){
+      $("#navbarResponsive").collapse("hide");
     }
   });
 })(jQuery);
