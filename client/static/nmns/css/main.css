@@ -308,10 +308,12 @@ button.moveDate:focus{
 }
 #noShowModal #noShowSearchList{
   height:159px;
+  padding-bottom:.4rem;
 }
 #noShowModal #noShowScheduleList{
   height:140px;
   margin-bottom:.5rem;
+  padding-bottom:.4rem;
 }
 @media(min-width:992px){
   #noShowModal #noShowSearchSummary{
@@ -327,9 +329,9 @@ button.moveDate:focus{
     height:171px;
   }
 }
-/*#noShowModal #noShowSearchAdd{
-  font-size:.9rem;
-}*/
+#noShowModal #noShowSearchList .bootstrap-datetimepicker-widget{
+  margin-left:.95rem;
+}
 #noShowModal .noShowSearchAdd div:last-child{
   margin-left:-5px;
   margin-right:5px;
@@ -352,7 +354,7 @@ button.moveDate:focus{
 #noShowModal .bootstrap-datetimepicker-widget{
   margin-left:1rem;
 }
-#noShowModal #noShowAddBtn, #noShowModal #noShowSearchBtn, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit, #noShowScheduleDropdown .noShowScheduleCheck{
+#noShowModal #noShowAddBtn, #noShowModal #noShowSearchBtn, #noShowModal #noShowSearchList .noShowSearchDelete, #noShowModal .noShowSearchAddCancel, #noShowModal .noShowSearchAddSubmit, #noShowScheduleDropdown .noShowScheduleCheck{
   cursor:pointer;
 }
 #noShowScheduleList .badge{

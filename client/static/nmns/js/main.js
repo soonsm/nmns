@@ -812,7 +812,7 @@
         viewMode: "days",
         buttons:{
           showClose:true
-        },
+        },debug:true,
         allowInputToggle:true,
         tooltips:{
           close:"닫기",
@@ -851,7 +851,7 @@
           return;
         }
         var noShowCase = $("#noShowAddContent .badge-danger").is("#noShowAddCaseEtc")?$("#noShowAddContent input").val() : $("#noShowAddContent .badge-danger").data("value");
-        NMNS.socket.emit("add noshow", {contact:$("#noShowAddContact").val(), noShowCase:noShowCase});
+        NMNS.socket.emit("add noshow", {id: NMNS.email + generateRandom(), contact:$("#noShowAddContact").val(), noShowCase:noShowCase});
       });
       $("#noShowSearchBtn").off("touch click").on("touch click", function(){
         if($("#noShowSearchContact").val() === ""){
@@ -1402,8 +1402,6 @@
   NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
     var html = "";
     console.log(e);
-    e.data.summary = {noShowCount : 1, lastNoShowDate : "20180202", contact: "01012341234"};
-    e.data.detail = [{id:"aa", contact:"01012341234", noShowCase:"잠수", date:"20180202"}];
     if(e.data.summary.noShowCount>0){
       $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6)) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6)) + "일이었어요.").show();
       if(e.data.detail.length>0){
@@ -1432,7 +1430,7 @@
     console.log(e);
     if($("#noShowSearch").is(":visible")){
       badge = (e.data.noShowCase?("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
-      html = $("<div class='row col-12 px-0 mt-1'><span class='col-4'>"+(e.data.contact||"")+"</span><span class='col-4'>"+(e.data.lastNoShowDate?e.data.lastNoShowDate.substring(0,4)+"-"+e.data.lastModifiedDate.substring(4,6)+"-"+e.data.lastNoShowDate.substring(6):"")+"</span><span class='col-1'>"+(e.data.noShowCount||"")+"</span><span class='col-2'>"+badge+"</span><span class='col-1'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
+      html = $("<div class='row col-12 px-0 mt-1' data-id='"+e.data.id+"' data-contact='"+e.data.contact+"' data-date='"+e.data.date+"' data-noshowcase='"+e.data.noShowCase+"'><span class='col-4'>"+(e.data.contact||$("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"'] input[name='noShowSearchAddContact']").val())+"</span><span class='col-4'>"+(e.data.date?e.data.date.substring(0,4)+"-"+e.data.date.substring(4,6)+"-"+e.data.date.substring(6):"")+"</span><span class='col-3'>"+badge+"</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
       html.insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
       html.find(".noShowSearchDelete").on("touch click", function(){
         deleteNoShow($(this));
