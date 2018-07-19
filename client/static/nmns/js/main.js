@@ -216,6 +216,7 @@
       }
       
       NMNS.socket.emit("update reserv", {
+        id: e.schedule.id,
         start:moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm"),
         end:moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
         manager: e.schedule.calendarId,
@@ -467,11 +468,11 @@
   function generateScheduleStatusBadge(scheduleStatus){
     switch(scheduleStatus){
       case "RESERVED":
-        return "<span class='badge badge-success' title='바꾸기'>정상</span>";
+        return "<span class='badge badge-success' title='바꾸기'>정상 </span><span class='btn btn-sm btn-light noShowScheduleNoShow' title='노쇼처리'><i class='fas fa-exclamation-triangle'></i><span class='d-none d-lg-inline-block'> 노쇼처리</span></span>";
       case "CANCELED":
-        return "<span class='badge badge-secondary' title='바꾸기'>취소</span>";
+        return "<span class='badge badge-secondary' title='바꾸기'>취소 </span><span class='btn btn-sm btn-light noShowScheduleNoShow' title='노쇼처리'><i class='fas fa-exclamation-triangle'></i><span class='d-none d-lg-inline-block'> 노쇼처리</span></span>";
       case "NOSHOW":
-        return "<span class='badge badge-danger' title='바꾸기'>노쇼</span>";
+        return "<span class='badge badge-danger' title='바꾸기'>노쇼 </span><span class='btn btn-sm btn-light noShowScheduleNormal' title='되돌리기'><i class='fas fa-undo'></i><span class='d-none d-lg-inline-block'> 되돌리기</span></span>";
     }
     return "";
   }
@@ -778,9 +779,18 @@
     NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:"NOSHOW"}});
     console.log("data", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
-    $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")).on("touch click", function(){
-      noShowScheduleBadge($(this));
-    }));
+    var row = $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']");
+    row.children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")));
+    row.find(".badge, .noShowScheduleNoShow").each(function(){
+      $(this).on("touch click", function(e){
+        e.stopPropagation();
+        noShowScheduleBadge($(this));
+      });
+    });
+    row.find(".noShowScheduleNormal").on("touch click", function(e){
+      e.stopPropagation();
+      noShowScheduleNormal($(this));
+    });
     dropdown.hide(300);
   }
 
@@ -917,9 +927,18 @@
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), raw:{status:dropdown.data("status")}});
         NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:$(this).data("status")}});
         NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:$(this).data("status"), noShowCase:$(this).data("type")});
-        $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']").children("span:last-child").html($(generateScheduleStatusBadge($(this).data("status"))).on("touch click", function(){
-          noShowScheduleBadge($(this));
-        }));
+        var row = $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']");
+        row.children("span:last-child").html($(generateScheduleStatusBadge($(this).data("status"))));
+        row.find(".badge, .noShowScheduleNoShow").each(function(){
+          $(this).on("touch click", function(e){
+            e.stopPropagation();
+            noShowScheduleBadge($(this));
+          });
+        });
+        row.find(".noShowScheduleNormal").on("touch click", function(e){
+          e.stopPropagation();
+          noShowScheduleNormal($(this));
+        });
         dropdown.hide(300);
       });
       $("#noShowScheduleDropdown .noShowScheduleCheck").off("touch click").on("touch click", function(){
@@ -1055,7 +1074,7 @@
         }
       }, NMNS.socket);
     }else{
-      $("#noShowSearchName").autocomplete().clearCache();
+      $("#noShowAddContact").autocomplete().clearCache();
       $("#noShowSearchContact").autocomplete().clearCache();
       $("#noShowScheduleName").autocomplete().clearCache();
       $("#noShowScheduleContact").autocomplete().clearCache();
@@ -1150,8 +1169,8 @@
     });
   }
   function noShowScheduleBadge(self){
-    console.log(self, self.position());
-    var row = self.parent().parent();
+    console.log(self);
+    var row = self.parentsUntil("#noShowScheduleList", ".row");
      $("#noShowScheduleDropdown")
       .data("id", row.data("id"))
       .data("manager", row.data("manager"))
@@ -1215,7 +1234,15 @@
     $(self).parents(".addManagerItem").remove();
   }
   
-  //window.cal = NMNS.calendar;
+  var noShowScheduleNormal = function(self){
+    var row = self.parentsUntil("#noShowScheduleList", ".row");
+    NMNS.history.push({id:row.data("id"), calendarId:row.data("manager"), raw:{status:row.data("status")}});
+    NMNS.calendar.updateSchedule(row.data("id"), row.data("manager"), {raw:{status:"RESERVED"}});
+    NMNS.socket.emit("update reserv", {id:row.data("id"), status:"RESERVED"});
+    row.children("span:last-child").html($(generateScheduleStatusBadge("RESERVED"))).on("touch click", function(){
+      noShowScheduleBadge($(this));
+    });
+  }
 
   setDropdownCalendarType();
   setRenderRangeText();
@@ -1228,14 +1255,19 @@
      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>"
     }else{
      e.data.forEach(function(item){
-       html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"' data-status='" + (item.status||"") + "'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-4 col-lg-3'>"+dashContact(item.contact)+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-1 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
+       html += "<div class='row col-12 px-0 mt-1' data-id='"+(item.id||"")+"' data-manager='"+(item.manager||"")+"' data-status='" + (item.status||"") + "'" + (item.contents?(" title='"+item.contents+"'"):"")+"><span class='col-3 col-lg-2 pr-0'>"+(item.start?moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD"):"")+"</span><span class='col-4 col-lg-3'>"+(item.name||"")+"</span><span class='col-3 col-lg-2 px-0'>"+dashContact(item.contact)+"</span><span class='col-3 d-none d-lg-inline-flex'>"+(item.contents||"")+"</span><span class='col-2 px-0'>"+generateScheduleStatusBadge(item.status)+"</span></div>";
      });
     }
     $("#noShowScheduleList").html(html);
-    $("#noShowScheduleList .badge").each(function(){
-     $(this).off("touch click").on("touch click", function(){
+    $("#noShowScheduleList .badge, #noShowScheduleList .noShowScheduleNoShow").each(function(){
+     $(this).off("touch click").on("touch click", function(e){
+       e.stopPropagation();
        noShowScheduleBadge($(this));
      });
+    });
+    $("#noShowScheduleList .noShowScheduleNormal").off("touch click").on("touch click", function(e){
+      e.stopPropagation();
+      noShowScheduleNormal($(this));
     });
     if(NMNS.noShowModalScheduleScroll){
       NMNS.noShowModalScheduleScroll.update();
@@ -1281,9 +1313,18 @@
       }
     }
     if($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='"+e.data.id+"']").length){//예약으로 추가 모달
-      $("#noShowScheduleList .row[data-id='"+e.data.id+"']").children("span:last-child").html($(generateScheduleStatusBadge(origin.status)).on("touch click", function(){
-        noShowScheduleBadge($(this));
-      }));
+      var row = $("#noShowScheduleList .row[data-id='"+e.data.id+"']");
+      row.children("span:last-child").html($(generateScheduleStatusBadge(origin.status || origin.raw.status)));
+      row.find(".badge, .noShowScheduleNoShow").each(function(){
+        $(this).on("touch click", function(e){
+          e.stopPropagation();
+          noShowScheduleBadge($(this));
+        });
+      });
+      row.find(".noShowScheduleNormal").on("touch click", function(e){
+        e.stopPropagation();
+        noShowScheduleNormal($(this));
+      });
     }
   }));
   
@@ -1486,13 +1527,19 @@
   $("#noShowModal").on("touch click", function(e){
     if($("#noShowScheduleDropdown").is(":visible")){
       var target = $(e.target);
-      if(!target.parents("#noShowScheduleDropdown").length && !target.hasClass("badge")){
+      if(!target.parents("#noShowScheduleDropdown").length && !target.hasClass("badge") && !target.parents(".noShowScheduleNoShow").length){
         $("#noShowScheduleDropdown").hide(300);
       }
     }
   }).on("hide.bs.modal", function(){
     if(document.activeElement.tagName === "INPUT"){
       return false;
+    }
+  }).on("show.bs.modal", function(){
+    if($("#sidebarContainer .list-group-item:focus").hasClass("getNoShowLink")){
+      $("#noShowTabList .nav-link[href='#noShowSearch']").tab("show");
+    }else if($("#sidebarContainer .list-group-item:focus").hasClass("addNoShowLink")){
+      $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
     }
   });
 })(jQuery);

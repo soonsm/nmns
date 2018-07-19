@@ -341,7 +341,7 @@
               </div>
               <div id="noShowSearch" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div class="row mb-2 col-12 px-0">
-                  <div class="input-group input-group-sm col-6 pr-0">
+                  <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0">
                     <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" aria-describedby="noShowSearchContactIcon" autocomplete="false">
                     <div id="noShowSearchBtn" class="input-group-append">
                       <i id="noShowSearchContactIcon" class="input-group-text fas fa-search d-sm-none rounded-0"></i>
@@ -368,7 +368,6 @@
               <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0 col-3">
   	    			    <a href="#" class="dropdown-item" data-status="RESERVED"><span class="badge badge-success">정상</span></a>
-  	    			    <a href="#" class="dropdown-item" data-status="CANCELED"><span class="badge badge-secondary">취소</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각"><span class="badge badge-danger">노쇼(지각)</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수"><span class="badge badge-danger">노쇼(잠수)</span></a>
   	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소"><span class="badge badge-danger">노쇼(직전취소)</span></a>
@@ -406,10 +405,10 @@
                 <div class="row col-12 px-0">
                   <div class="col-12 border-left border-right border-top row text-left px-0">
                     <span class="col-3 col-lg-2 pr-0">날짜</span>
-                    <span class="col-4 col-lg-3 pr-0">고객이름</span>
-                    <span class="col-4 col-lg-3 pr-0">전화번호</span>
+                    <span class="col-4 col-lg-3">고객이름</span>
+                    <span class="col-3 col-lg-2 px-0">전화번호</span>
                     <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
-                    <span class="col-1 px-0">상태</span>
+                    <span class="col-2 px-0">상태</span>
                   </div>
                 </div>
                 <div id="noShowScheduleList" class="row col-12 border px-0"><div class="row col-12 px-0 mt-2"><span class="col-12 text-center">검색버튼을 눌러 예약을 검색하여 노쇼로 추가해보세요!</span></div></div>
