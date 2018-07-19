@@ -15232,7 +15232,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (popupLayer) {
 	        return;
 	    }
-	
+			//NMNS CUSTOMIZING START
+			domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+			//NMNS CUSTOMIZING END
 	    this.hide();
 	};
 	
@@ -15289,7 +15291,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.fire('beforeDeleteSchedule', {
 	            schedule: this._schedule
 	        });
-	
+					//NMNS CUSTOMIZING START
+					domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+					//NMNS CUSTOMIZING END
 	        this.hide();
 	    }
 	};
