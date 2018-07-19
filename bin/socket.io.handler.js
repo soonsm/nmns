@@ -566,13 +566,13 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             const noShowDate = data.date;
 
             //validation
-            if (!contact || !id || !noShowDate) {
+            if (!contact || !id) {
                 status = false;
                 message = '노쇼 등록에 필요한 데이터가 없습니다. ({"id":${노쇼 ID, string}, "contact":${고객 모바일, string}, "noShowCase":${매장 코멘트, string, optional}, "date":${노쇼 날짜, string, YYYYMMDD}})';
             } else if (!util.phoneNumberValidation(contact)) {
                 status = false;
                 message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
-            } else if (!moment(noShowDate, 'YYYYMMDD').isValid()){
+            } else if (noShowDate && !moment(noShowDate, 'YYYYMMDD').isValid()){
                 status = false;
                 message = `날짜 형식이 올바르지 않습니다.(${noShowDate})`;
 

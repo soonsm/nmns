@@ -371,7 +371,7 @@ exports.newMyNoShow = function (id, phone, noShowCase, date) {
     };
 
     if (noShowCase) {
-        newNoShow.noShowCaseList = noShowCase;
+        newNoShow.noShowCase = noShowCase;
     }
     return newNoShow;
 }
