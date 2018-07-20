@@ -441,7 +441,7 @@ button.moveDate:focus{
   width:40%;
   max-width:400px;
   max-height:500px;
-  display:none;
+  overflow-y:hidden;
 }
 .alert-minimalist {
 	background-color: rgb(241, 242, 240);
@@ -450,6 +450,7 @@ button.moveDate:focus{
 	color: rgb(149, 149, 149);
 	padding: 10px;
 	border-radius:0;
+	width: calc(100% - 20px);
 }
 .alert-minimalist .notification-icon {
 	height: 3rem;

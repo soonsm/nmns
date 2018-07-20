@@ -1480,7 +1480,7 @@
   }, true));
 
   NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
-    console.log(e);
+    showNotification(e.data);
   }));
 //websocket response end
 //Modal events start  
@@ -1590,25 +1590,6 @@
       if("Notification" in window){
         if(Notification.permission === "granted"){
           NMNS.notification = "GRANTED";
-          $.notifyDefaults({
-            newest_on_top: true,
-            type: "minimalist",
-            allow_dismiss : true,
-            delay: 0,
-            url: "#",
-            element: "#notifications",
-            icon_type: "class",
-            icon: "far fa-bell",
-            onClose: function(self){
-              console.log(self);
-            },
-            onClosed: function(){
-              if($("#notifications").html() === ""){
-                $("#notifications").hide();
-              }
-            },
-            template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
-          });
         }else if(Notification.permission === "default"){
           NMNS.notification = "REQUESTING";
           Notification.requestPermission().then(function(permission){
@@ -1625,30 +1606,21 @@
                 element: "#notifications",
                 icon_type: "class",
                 icon: "far fa-bell",
-                onClose: function(self){
-                  console.log(self);
+                onClose: function(){
+                  NMNS.socket.emit("delete noti", {id:$(this).data("id")});
                 },
-                template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+                onClosed: function(){
+                  if($("#notifications").html() === ""){
+                    $("#notifications").hide();
+                  }
+                },
+                template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="'+notification.id+'"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
               });
             }
           });
-        }else{
-          $.notifyDefaults({
-            newest_on_top: true,
-            type: "minimalist",
-            allow_dismiss : true,
-            delay: 0,
-            url: "#",
-            element: "#notifications",
-            icon_type: "class",
-            icon: "far fa-bell",
-            onClose: function(self){
-              console.log(self);
-            },
-            template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
-          });
         }
-      }else{
+      }
+      if(NMNS.notification !== "GRANTED"){
         $.notifyDefaults({
           newest_on_top: true,
           type: "minimalist",
@@ -1658,10 +1630,13 @@
           element: "#notifications",
           icon_type: "class",
           icon: "far fa-bell",
-          onClose: function(self){
-            console.log(self);
+          onClose: function(){
+            NMNS.socket.emit("delete noti", {id:$(this).data("id")});
           },
-          template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+          onClosed: function(){
+            $("#notifications").height(($("#notifications .alert").length * 80 + 10) + "px");
+          },
+          template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="'+notification.id+'"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
         });
       }
     }
@@ -1678,8 +1653,7 @@
           noti.close();
         };
         noti.onclose = function(e){
-          console.log("close!!");
-          NMNS.socket.emit("delete noti", notification.id);
+          NMNS.socket.emit("delete noti", {id:notification.id});
         }
         return;
       }catch(exception){
@@ -1687,14 +1661,12 @@
       }
     }
     //bootstrap notification
-    $("#notifications").show();
     $.notify({
       icon: "far fa-bell",
       title: notification.title,
       message: notification.body
     }, {});
-    
+    $("#notifications").height(($("#notifications .alert").length * 80 + 10) + "px");
   }
-  NMNS.showNotification = showNotification;
-  
+
 })(jQuery);
