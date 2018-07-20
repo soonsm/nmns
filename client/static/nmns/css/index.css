@@ -196,9 +196,6 @@ hr.star-white:after {
 .form .hide {
   display: none;
 }
-.form #passwordReset{
-  display:none;
-}
 
 .form .form-check-label{
   font-size:0.8rem;

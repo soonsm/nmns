@@ -38,7 +38,14 @@
     if($(".loginPage form:visible input[name='email']").val() !== ""){
       $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
     }
-    $('.loginPage form').animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
+    $('.loginPage form').not("#resetForm").animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
+  }
+  
+  function switchResetForm(callback){
+    if($(".loginPage form:visible input[name='email']").val() !== ""){
+      $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
+    }
+    $('.loginPage form').not("#signupForm").animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
   }
   
   function alignMiddle(){
@@ -97,6 +104,24 @@
       onfocusout:false,
       focusCleanup:true
     });
+    $("#resetForm").validate({
+      rules:{
+        email:{
+          required:true,
+          email:true
+        }
+      },
+      messages:{
+        email:{
+          required:"이메일을 입력해주세요.",
+          email:"올바른 이메일을 입력해주세요."
+        }
+      },
+      errorElement:"p",
+      errorClass:"message text-danger my-1",
+      onfocusout:false,
+      focusCleanup:true
+    });
     $("#signupForm").validate({
       rules:{
         email:{
@@ -135,7 +160,6 @@
   $("#signupLink").on("click touch", function(e){
     e.preventDefault();
     if(!$(".loginPage form:visible").is("#signupForm")){
-      console.log("bb");
       switchForm(function(){
         var first = true;
         return function(){
@@ -150,7 +174,6 @@
           $("#signupForm input[name='email']").focus();
       }}());
     }else{
-      console.log("aa");
       $('html, body').animate({
         scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
       }, 1000, "easeInOutExpo");
@@ -203,33 +226,43 @@
     }
   });
   
-  $(".message a[class!='passwordReset'][class!='returnSignin']").on("click touch", function(e){
+  $(".message .switchForm").on("click touch", function(e){
     e.preventDefault();
     switchForm();
   });
   
   $(".message a.passwordReset").on("click touch", function(e){
     e.preventDefault();
-    $("#normalSignin").hide();
-    $("#signinForm").attr("action", "/resetPassword");
-    $("#passwordReset").show();
-    alignMiddle();
-    $('html, body').animate({
-      scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
-    }, 1000, "easeInOutExpo");
-    $("#signinForm input[name='email']").focus();
+    switchResetForm(function(){
+      alignMiddle();
+      $('html, body').animate({
+        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+      }, 1000, "easeInOutExpo");
+      $("#resetForm input[name='email']").focus();
+    });
   });
   
   $(".message a.returnSignin").on("click touch", function(e){
     e.preventDefault();
-    $("#passwordReset").hide();
-    $("#signinForm").attr("action", "/signin");
-    $("#normalSignin").show();
-    alignMiddle();
-    $('html, body').animate({
-      scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
-    }, 1000, "easeInOutExpo");
-    $("#signinForm input[name='email']").focus();
+    switchResetForm(function(){
+      alignMiddle();
+      $('html, body').animate({
+        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+      }, 1000, "easeInOutExpo");
+      $("#signinForm input[name='email']").focus();
+    });
   });
 
+  $("#resetBtn").on("touch click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    if($("#resetForm").valid()){
+      $.post("/resetPassword", {email:$(this).prev().val()})
+      .done(function(){
+        alert("비밀번호 초기화 메일을 보냈습니다. 메일을 확인해주세요!");
+      }).fail(function(){
+        alert("메일 보내기에 실패했습니다. 다시 시도해주세요!");
+      });
+    }
+  });
 })(jQuery);
