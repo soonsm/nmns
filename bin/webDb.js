@@ -212,7 +212,8 @@ exports.addNewReservation = async function (email, newReservation) {
     });
 };
 
-exports.updateReservation = async function (email, reservation) {
+exports.updateReservation = async function (email, reservationList) {
+    
     return await update({
         TableName: process.nmns.TABLE.WebSecheduler,
         Key: {
@@ -220,7 +221,7 @@ exports.updateReservation = async function (email, reservation) {
         },
         UpdateExpression: "set reservationList = :reservation",
         ExpressionAttributeValues: {
-            ":reservation": reservation
+            ":reservation": reservationList
         },
         ReturnValues: "NONE"
     });
