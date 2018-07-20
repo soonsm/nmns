@@ -1480,7 +1480,9 @@
   }, true));
 
   NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
-    showNotification(e.data);
+    e.data.forEach(function(item){
+      showNotification(item);
+    });
   }));
 //websocket response end
 //Modal events start  
@@ -1668,5 +1670,11 @@
     }, {});
     $("#notifications").height(($("#notifications .alert").length * 80 + 10) + "px");
   }
-
+  
+  NMNS.socket.emit("get noti");
+  NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e){
+    e.data.forEach(function(item){
+      showNotification(item);
+    });
+  }));
 })(jQuery);
