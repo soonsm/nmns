@@ -2,6 +2,7 @@
 (function($) {
   NMNS.needInit = true;
   NMNS.history = [];
+  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
@@ -21,9 +22,7 @@
     $('.navbar-collapse').collapse('hide');
   });
 
-  //calendars
-  NMNS.schedulelist = [];
-  var selectedManager, datePicker;
+  //calendars init
   NMNS.calendar = new tui.Calendar("#mainCalendar", {
     taskView:["task"],
     defaultView:$(window).width() > 550? "week" : "day",
@@ -98,6 +97,54 @@
     }
   });
 
+  NMNS.calendar.on({
+    beforeCreateSchedule:function(e){
+      saveNewSchedule(e);
+    },
+    beforeUpdateSchedule:function(e){
+      var history = e.history || $.extend(true, {}, e.schedule);
+      NMNS.history.push(history);
+      e.schedule.start = e.start || e.schedule.start;
+      e.schedule.end = e.end || e.schedule.end;
+      e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
+
+      if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
+        NMNS.calendar.deleteSchedule(e.schedule.id, e.history.selectedCal.id, true);
+        e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
+        e.schedule.dueDateClass = '';
+        NMNS.calendar.createSchedules([e.schedule]);
+        e.history.newCalendarId = e.schedule.calendarId;
+      }else{
+        NMNS.calendar.updateSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
+      }
+      
+      NMNS.socket.emit("update reserv", {
+        id: e.schedule.id,
+        start:moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm"),
+        end:moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
+        manager: e.schedule.calendarId,
+        name: e.schedule.title,
+        contact: e.schedule.contact || e.schedule.raw.contact,
+        contents: e.schedule.contents || e.schedule.raw.contents,
+        etc: e.schedule.etc || e.schedule.raw.etc,
+        status: e.schedule.status || e.schedule.raw.status,
+        isAllDay: e.schedule.isAllDay
+      });
+    },
+    beforeDeleteSchedule:function(e){
+      NMNS.history.push(e.schedule);
+      NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
+      e.schedule.status = "DELETED";
+      NMNS.socket.emit("update reserv", e.schedule);
+    },
+    afterRenderSchedule:function(e){
+      if(NMNS.calendar.getViewName() !== "month"){
+        $("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
+      }
+    }
+  });
+
+//common websocket response wrapper
   var socketResponse = function(requestName, successCallback, failCallback, silent){
     return function(res){
       if(res && res.type === "response"){
@@ -125,12 +172,16 @@
     };
   };
   NMNS.socket = io();
-  NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
-    console.log(e);
-  }));
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
   
+  NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
+    console.log(e);
+    drawSchedule(e.data);
+    NMNS.holiday = e.holiday;
+    refreshScheduleVisibility();
+  }));
+
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     console.log(e);
     NMNS.info = e.data;
@@ -138,13 +189,6 @@
       NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2)):23)}});
     }
     NMNS.email = e.data.email || NMNS.email;
-  }));
-  
-  NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
-    console.log(e);
-    drawSchedule(e.data);
-    NMNS.holiday = e.holiday;
-    refreshScheduleVisibility();
   }));
   
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
@@ -194,55 +238,7 @@
     });
   }));
   
-  NMNS.calendar.on({
-    beforeCreateSchedule:function(e){
-      saveNewSchedule(e);
-    },
-    beforeUpdateSchedule:function(e){
-      var history = e.history || $.extend(true, {}, e.schedule);
-      NMNS.history.push(history);
-      e.schedule.start = e.start || e.schedule.start;
-      e.schedule.end = e.end || e.schedule.end;
-      e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
-
-      if(e.history && e.history.selectedCal.id !== e.schedule.calendarId){//manager changed
-        NMNS.calendar.deleteSchedule(e.schedule.id, e.history.selectedCal.id, true);
-        e.schedule.category =  e.schedule.isAllDay ? 'allday' : 'time';
-        e.schedule.dueDateClass = '';
-        NMNS.calendar.createSchedules([e.schedule]);
-        e.history.newCalendarId = e.schedule.calendarId;
-      }else{
-        NMNS.calendar.updateSchedule(e.schedule.id, e.history? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
-      }
-      
-      NMNS.socket.emit("update reserv", {
-        id: e.schedule.id,
-        start:moment(e.schedule.start.toDate? e.schedule.start.toDate(): e.schedule.start).format("YYYYMMDDHHmm"),
-        end:moment(e.schedule.end.toDate? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
-        manager: e.schedule.calendarId,
-        name: e.schedule.title,
-        contact: e.schedule.contact || e.schedule.raw.contact,
-        contents: e.schedule.contents || e.schedule.raw.contents,
-        etc: e.schedule.etc || e.schedule.raw.etc,
-        status: e.schedule.status || e.schedule.raw.status,
-        isAllDay: e.schedule.isAllDay
-      });
-    },
-    beforeDeleteSchedule:function(e){
-      NMNS.history.push(e.schedule);
-      NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
-      e.schedule.status = "DELETED";
-      NMNS.socket.emit("update reserv", e.schedule);
-    },
-    afterRenderSchedule:function(e){
-      //$("#mainCalendar").height(($(".tui-full-calendar-layout").height() + 7) > $("footer").position().top ? ($("footer").position().top): ($(".tui-full-calendar-layout").height() + 7)+ "px");
-      if(NMNS.calendar.getViewName() !== "month"){
-        $("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
-        //$(".tui-full-calendar-layout").height(($(".tui-full-calendar-layout").height()-6) + "px");
-      }
-    }
-  });
-  
+//business specific functions about calendar start
   function getTimeSchedule(schedule, isAllDay){
     var html = "";
     if (!isAllDay) {
@@ -326,7 +322,6 @@
 
     calendarNameElement.innerHTML = html.join('');
 
-    selectedManager = manager;
   }
 
   function createNewSchedule(event) {
@@ -453,7 +448,8 @@
     NMNS.calendar.clear();
     getSchedule(NMNS.calendar.getDateRangeStart(), NMNS.calendar.getDateRangeEnd());
   }
-
+//business specific functions about calendar end
+//business specific functions about general features start
   function generateAuthStatusBadge(authStatus){
     switch(authStatus){
       case "BEFORE_EMAIL_VERIFICATION":
@@ -1259,12 +1255,14 @@
     row.children("span:last-child").html($(generateScheduleStatusBadge("RESERVED"))).on("touch click", function(){
       noShowScheduleBadge($(this));
     });
-  }
-
+  };
+//business specific functions about general features end
+//after calendar initialization start
   setDropdownCalendarType();
   setRenderRangeText();
   setEventListener();
-
+//after calendar initialization end
+//websocket response start
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
     var html = "";
     if(e.data.length===0){
@@ -1480,8 +1478,12 @@
       el.autocomplete().onFail.call(el.autocomplete(), e.data);
     }
   }, true));
-  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
-  
+
+  NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
+    console.log(e);
+  }));
+//websocket response end
+//Modal events start  
   $("#infoModal").on("hide.bs.modal", function(){
     if(document.activeElement.tagName === "INPUT"){
       return false;
@@ -1570,10 +1572,10 @@
     if(document.activeElement.tagName === "INPUT"){
       return false;
     }
-  }).on("show.bs.modal", function(){
-    if($("#sidebarContainer .list-group-item:focus").hasClass("getNoShowLink")){
+  }).on("show.bs.modal", function(e){
+    if($(e.relatedTarget).hasClass("getNoShowLink")){
       $("#noShowTabList .nav-link[href='#noShowSearch']").tab("show");
-    }else if($("#sidebarContainer .list-group-item:focus").hasClass("addNoShowLink")){
+    }else if($(e.relatedTarget).hasClass("addNoShowLink")){
       $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
     }
   });
@@ -1582,4 +1584,117 @@
       $("#navbarResponsive").collapse("hide");
     }
   });
+//Modal events end
+  function showNotification(notification){
+    if(!NMNS.notification){//not inited
+      if("Notification" in window){
+        if(Notification.permission === "granted"){
+          NMNS.notification = "GRANTED";
+          $.notifyDefaults({
+            newest_on_top: true,
+            type: "minimalist",
+            allow_dismiss : true,
+            delay: 0,
+            url: "#",
+            element: "#notifications",
+            icon_type: "class",
+            icon: "far fa-bell",
+            onClose: function(self){
+              console.log(self);
+            },
+            onClosed: function(){
+              if($("#notifications").html() === ""){
+                $("#notifications").hide();
+              }
+            },
+            template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+          });
+        }else if(Notification.permission === "default"){
+          NMNS.notification = "REQUESTING";
+          Notification.requestPermission().then(function(permission){
+            if(permission === "granted"){//granted
+              NMNS.notification = "GRANTED";
+            }else{//denied
+              NMNS.notification = "DENIED";
+              $.notifyDefaults({
+                newest_on_top: true,
+                type: "minimalist",
+                allow_dismiss : true,
+                delay: 0,
+                url: "#",
+                element: "#notifications",
+                icon_type: "class",
+                icon: "far fa-bell",
+                onClose: function(self){
+                  console.log(self);
+                },
+                template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+              });
+            }
+          });
+        }else{
+          $.notifyDefaults({
+            newest_on_top: true,
+            type: "minimalist",
+            allow_dismiss : true,
+            delay: 0,
+            url: "#",
+            element: "#notifications",
+            icon_type: "class",
+            icon: "far fa-bell",
+            onClose: function(self){
+              console.log(self);
+            },
+            template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+          });
+        }
+      }else{
+        $.notifyDefaults({
+          newest_on_top: true,
+          type: "minimalist",
+          allow_dismiss : true,
+          delay: 0,
+          url: "#",
+          element: "#notifications",
+          icon_type: "class",
+          icon: "far fa-bell",
+          onClose: function(self){
+            console.log(self);
+          },
+          template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+        });
+      }
+    }
+    
+    if(NMNS.notification === "GRANTED"){//native notification
+      try{
+        var noti = new Notification(notification.title, {
+          requireInteraction:true,
+          lang:"ko-KR",
+          body:notification.body,
+          icon:""
+        });
+        noti.onclick = function(e){
+          noti.close();
+        };
+        noti.onclose = function(e){
+          console.log("close!!");
+          NMNS.socket.emit("delete noti", notification.id);
+        }
+        return;
+      }catch(exception){
+        console.error(exception);
+      }
+    }
+    //bootstrap notification
+    $("#notifications").show();
+    $.notify({
+      icon: "far fa-bell",
+      title: notification.title,
+      message: notification.body
+    }, {});
+    
+  }
+  NMNS.showNotification = showNotification;
+  
 })(jQuery);
