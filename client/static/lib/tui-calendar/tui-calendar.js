@@ -14152,7 +14152,7 @@ return /******/ (function(modules) { // webpackBootstrap
       /*common.find(this.calendars, function(cal) {
           return cal.id === selectedCalendarId;
       });*/
-      $("#creationPopupManager").html($(selectedItem).html());
+      $("#creationPopupManager").html($(selectedItem).html()).data("calendarid", selectedCalendarId);
       //NMNS CUSTOMIZING END
 	    return true;
 	};
@@ -14248,7 +14248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    	return true;
 	    }
 	    var title, isAllDay, startDate, endDate, contents, contact, etc, status;
-	    var start, end, calendarId, manager = this._selectedCal;
+	    var start, end, calendarId = $("#creationPopupManager").data("calendarid"), manager = this.calendars.find(function(cal){ return cal.id === calendarId;});
 
 	    startDate = new TZDate(moment($("#tui-full-calendar-schedule-start-date").val(), "YYYY-MM-DD HH:mm").toDate());
 	    endDate = new TZDate(moment($("#tui-full-calendar-schedule-end-date").val(), "YYYY-MM-DD HH:mm").toDate());
@@ -14415,7 +14415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        onSearchError: function(){},
 	        onSelect: function(suggestion){
-	          $("#creationPopupContact").val(suggestion.data);
+	          $("#creationPopupContact").val(suggestion.data).trigger("blur");
 	        },
 	        beforeRender: function(container){
 	          if($(container).data("scroll")){
@@ -14447,6 +14447,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onSearchError: function(){},
 	        onSelect: function(suggestion){
 	          $("#creationPopupName").val(suggestion.data);
+	          onContactBlur();
 	        },
 	        beforeRender: function(container){
 	          if($(container).data("scroll")){
@@ -14459,13 +14460,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      	filterNonNumericCharacter($(this));
 	      });
 	      var timeout;
-	      function onContactChange(){
+	      function onContactBlur(){
 	      	clearTimeout(timeout);
 	      	NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
 	      }
-	      $("#creationPopupContact").on("change", function(){
+	      $("#creationPopupContact").on("blur", function(){
 	      	clearTimeout(timeout);
-	      	timeout = setTimeout(function() {onContactChange();}, 500);
+	      	timeout = setTimeout(function() {onContactBlur();}, 500);
 	      });
 			}
       $("#creationPopupContact").trigger("change");
@@ -14488,7 +14489,7 @@ return /******/ (function(modules) { // webpackBootstrap
     $("#creationPopupEtc").val(viewModel.raw? viewModel.raw.etc : (viewModel.etc || ""));
     $("#creationPopupAllDay").attr("checked", viewModel.isAllDay);
     this._selectedCal = this._selectedCal || this.calendars[0];
-    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+this._selectedCal.id+"']").html());
+    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+this._selectedCal.id+"']").html()).data("calendarid", this._selectedCal.id);
 	};
 	//NMNS CUSTOMIZING END
 	/**
@@ -15099,7 +15100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupName\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">고객이름</label>"
 		+"    <div class=\"col-9 col-sm-5 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupNameIcon\" class=\"input-group-text fas fa-user\"></i>"
+		+"        <i id=\"creationPopupNameIcon\" class=\"input-group-text fas fa-user\" title=\"고객이름\"></i>"
 		+"      </div>"
 		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupName\" name=\"name\" placeholder=\"고객이름\" aria-describedby=\"creationPopupNameIcon\" autocomplete=\"false\" value=\"" + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
@@ -15108,7 +15109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처<span class=\"text-danger\">*</span></label>"
 		+"    <div class=\"col-9 col-sm-5 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone\"></i>"
+		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone\" title=\"고객 연락처\"></i>"
 		+"      </div>"
 		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처\" autocomplete=\"false\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
@@ -15117,14 +15118,14 @@ return /******/ (function(modules) { // webpackBootstrap
 		+ "<div class=\"row mb-1 mb-sm-3\">\n"
 			+ "<div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 " + escapedCssPrefix + "section-start-date\" data-target-input=\"nearest\">\n"
 				+ "<div class=\"input-group-prepend\">"
-			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupStartDate\" data-toggle=\"datetimepicker\"></i>"
+			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupStartDate\" data-toggle=\"datetimepicker\" title=\"예약 시작시간\"></i>"
 			+"     </div>"
 				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" name=\"start\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupStartDate\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
 			+ "</div>\n"
 			+ "<span class=\"px-2 " + escapedCssPrefix + "dash\">—</span>\n"
 			+ "<div id=\"creationPopupEndDate\" class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\" data-target-input=\"nearest\">\n"
 				+ "<div class=\"input-group-prepend\">"
-			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupEndDate\" data-toggle=\"datetimepicker\"></i>"
+			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupEndDate\" data-toggle=\"datetimepicker\" title=\"예약 종료시간\"></i>"
 			+"   </div>"
 				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" name=\"end\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupEndDate\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
 			+ "</div>\n"
@@ -15139,7 +15140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupContents\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">예약내용</label>"
 		+"    <div class=\"col-sm-9 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupContentsIcon\" class=\"input-group-text fas fa-list-ul\"></i>"
+		+"        <i id=\"creationPopupContentsIcon\" class=\"input-group-text fas fa-list-ul\" title=\"예약내용\"></i>"
 		+"       </div>"
 		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContents\" name=\"content\" aria-describedby=\"creationPopupContentsIcon\" placeholder=\"예약내용\" value=\"" + alias4(((helper = (helper = helpers.contents || (depth0 != null ? depth0.contents : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contents","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
@@ -15150,7 +15151,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupManager\" class=\"col-2 pr-0 col-form-label d-sm-inline-block d-none\">담당자</label>"
 		    + "<div class=\"input-group input-group-sm btn-group dropdown col-sm-9\">\n"
 		+"       <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"         <i id=\"creationPopupManagerIcon\" class=\"input-group-text fas fa-user-tie\"></i>"
+		+"         <i id=\"creationPopupManagerIcon\" class=\"input-group-text fas fa-user-tie\" title=\"담당자\"></i>"
 		+"       </div>"
 			    + "<button id=\"creationPopupManager\" type=\"button\" aria-describedby=\"creationPopupManagerIcon\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\" class=\"btn btn-sm dropdown-toggle btn-flat form-control text-left\">\n"
 				    + "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + alias4(alias5(((stack1 = (depth0 != null ? depth0.selectedCal : depth0)) != null ? stack1.bgColor : stack1), depth0)) + "\"></span>\n"
@@ -15166,7 +15167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupEtc\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">고객메모</label>"
 		+"    <div class=\"col-sm-9 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupEtcIcon\" class=\"input-group-text far fa-bookmark\"></i>"
+		+"        <i id=\"creationPopupEtcIcon\" class=\"input-group-text far fa-bookmark\" title=\"고객메모\"></i>"
 		+"       </div>"
 		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupEtc\" name=\"etc\" aria-describedby=\"creationPopupEtcIcon\" placeholder=\"고객메모\" value=\"" + alias4(((helper = (helper = helpers.etc || (depth0 != null ? depth0.etc : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"etc","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"

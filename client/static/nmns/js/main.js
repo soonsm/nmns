@@ -1480,7 +1480,38 @@
   }, true));
 
   NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){
-    console.log(e);
+    if(e.data.contact === $("#creationPopupContact").val()){
+      if(e.data.etc){
+        $("#creationPopupEtc").val(e.data.etc);
+      }
+      if(e.data.manager){
+        var manager = findManager(e.data.manager);
+        if(manager){
+          $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+manager.id+"']").html()).data("calendarid", manager.id);
+        }
+      }
+      if(e.data.contents){
+        $("#creationPopupContents").val(e.data.contents);
+      }
+      if(e.data.isAllDay !== undefined){
+        $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
+      }
+      if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
+        $("#creationPopupContact").tooltip({
+          title:"이 전화번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
+          placement: ($(window).width()>576?"right":"top"),
+          trigger:"click hover focus",
+          delay:{"hide":1000}
+        }).tooltip("show");
+        setTimeout(function(){
+          $("#creationPopupContact").tooltip("hide");
+        }, 3000);
+        $("#creationPopupContact").one("keyup change", function(){
+          console.log("aaa");
+          $(this).tooltip('dispose');
+        });
+      }
+    }
   }, undefined, true));
 
   NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
