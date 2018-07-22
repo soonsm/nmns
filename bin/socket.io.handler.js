@@ -28,7 +28,7 @@ const GetShop = 'get info',
 const GetAlrimTalkInfo = 'get alrim',
     UpdateAlirmTalk = 'update alrim';
 const SendVerification = 'send verification';
-const GetCustomerInfo = 'get customer info';
+const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
 
 const EVENT_LIST_NO_NEED_VERIFICATION = [SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
@@ -99,6 +99,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * 고객정보
          */
         addEvent(GetCustomerInfo, customerHandler.getCustomerInfo);
+        addEvent(GetCustomerDetail, customerHandler.getCustomerDetail)
 
         /**
          * AlrimTalk

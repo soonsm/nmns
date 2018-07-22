@@ -3,6 +3,28 @@
 const db = require('./webDb');
 const hangul = require('hangul-js');
 
+exports.getCustomerDetail = async function(data){
+    let email = this.email;
+    let status = true, message, resultData = {};
+    let contact = data.contact;
+    let name = data.name;
+
+    if(!name && !contact){
+        status = false;
+        message = 'name 또는 contact 둘 중 하나는 필수입니다.';
+    }
+
+    if(status){
+
+    }
+
+    return {
+        status: status,
+        message: message,
+        data: resultData
+    };
+};
+
 exports.getCustomerInfo = async function (data) {
     let email = this.email;
     let status = true,
