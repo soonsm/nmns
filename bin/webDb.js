@@ -15,7 +15,9 @@ if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
     });
 }
 
-var docClient = new AWS.DynamoDB.DocumentClient();
+var docClient = new AWS.DynamoDB.DocumentClient({
+    convertEmptyValues: true
+});
 
 function get(param) {
     return new Promise((resolve) => {

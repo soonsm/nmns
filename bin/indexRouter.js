@@ -4,7 +4,7 @@ const
     emailValidator = require('email-validator'),
     db = require('./webDb'),
     util = require('./util'),
-    alrimTalk = require('./alrimTalk'),
+    alrimTalk = require('./alrimTalkSender'),
     emailSender = require('./emailSender');
 
 module.exports = function (passport) {
@@ -133,8 +133,8 @@ module.exports = function (passport) {
         //TODO: 잘못된 접근이라는 페이지로 이동
     });
 
-    router.get('temp_pwd?email=:email', async function (req, res) {
-        const email = req.params.email;
+    router.post('/resetPassword', async function (req, res) {
+        const email = req.body.email;
 
         let user = await db.getWebUser(email);
         if (user) {
@@ -144,18 +144,16 @@ module.exports = function (passport) {
                 numbers: true
             });
 
-            if (await db.updateWebUser(email, 'password', password)) {
+            if (await db.updateWebUser(email, {password: password})) {
 
-                emailSender.sendTempPasswordEmail(email, password);
+                await emailSender.sendTempPasswordEmail(email, password);
 
-                //TODO: 임시 비밀번호 발급 되었다는 페이지
-            } else {
-                //TODO: DB 업데이트 실패 페이지 이동
+                res.sendStatus(200);
+                return;
             }
-            return;
         }
 
-        //TODO: 잘못된 접근이라는 페이지로 이동
+        res.sendStatus(404);
     });
 
     router.get('/web_cancel/key=:reservationKey&&email=:email', async (req, res) => {
