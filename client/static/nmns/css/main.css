@@ -49,7 +49,9 @@ div.tui-full-calendar-timegrid-container{
   bottom:0;
   opacity:0;
   background-color:black;
-  z-index:-1;
+  transition:opacity 0.15s linear;
+  visibility:"hidden";
+  z-index:1;
 }
 .tui-full-calendar-vlayout-area, .tui-full-calendar-week-container{
   height:auto !important;

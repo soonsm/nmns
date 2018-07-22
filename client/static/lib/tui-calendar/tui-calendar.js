@@ -5570,7 +5570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._showCreationPopup) {
 	            this._showCreationPopup(createScheduleData);
 	            //NMNS CUSTOMIZING START
-							document.getElementsByClassName(config.classname('screen'))[0].style.zIndex = 1;//show screen
+							document.getElementsByClassName(config.classname('screen'))[0].style.visibility = "visible";//show screen
 							document.getElementsByClassName(config.classname('screen'))[0].style.opacity = 0.5;//show screen
 							//NMNS CUSTOMIZING END
 	            return;
@@ -6128,7 +6128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function Layout(container, theme) {
 			domutil.appendHTMLElement('div', container, config.classname('screen')).addEventListener("click", function(){
         domutil.find('.' + config.classname('screen'), container.parentNode).style.opacity = 0;//disappear when clicked
-        domutil.find('.' + config.classname('screen'), container.parentNode).style.zIndex = -1;//disappear when clicked
+        domutil.find('.' + config.classname('screen'), container.parentNode).style.visibility = "hidden";//disappear when clicked
         return false;
 	    });
 	    container = domutil.appendHTMLElement('div', container, config.classname('layout'));
@@ -9993,7 +9993,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	}
             		detailView.hide();
 	            });
-	            domutil.find(config.classname('.screen')).style.zIndex = 1;//show screen
+	            domutil.find(config.classname('.screen')).style.visibility = "visible";//show screen
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
@@ -14084,7 +14084,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.hide();
 					//NMNS CUSTOMIZING START
 					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
-					domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
+					domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 					//NMNS CUSTOMIZING END
 	        return true;
 	    }
@@ -14458,8 +14458,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }, NMNS.socket).on("blur", function(){
 	      	filterNonNumericCharacter($(this));
 	      });
+	      var timeout;
+	      function onContactChange(){
+	      	clearTimeout(timeout);
+	      	NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
+	      }
+	      $("#creationPopupContact").on("change", function(){
+	      	clearTimeout(timeout);
+	      	timeout = setTimeout(function() {onContactChange();}, 500);
+	      });
 			}
-      
+      $("#creationPopupContact").trigger("change");
 	    layer.show();
 	    //this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 			//NMNS CUSTOMIZING END
@@ -14808,7 +14817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 			//NMNS CUSTOMIZING START
 			domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
-			domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
+			domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 			//NMNS CUSTOMIZING END
 	    domevent.off(document.body, 'mousedown', this._onMouseDown, this);
 	};
@@ -15238,7 +15247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 			//NMNS CUSTOMIZING START
 			domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
-			domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
+			domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 			//NMNS CUSTOMIZING END
 	    this.hide();
 	};
@@ -15298,7 +15307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 					//NMNS CUSTOMIZING START
 					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
-					domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
+					domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 					//NMNS CUSTOMIZING END
 	        this.hide();
 	    }
@@ -19661,7 +19670,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            		creationHandler.fire("beforeUpdateSchedule", eventData);
 	            	}
 	            });
-	            domutil.find(config.classname('.screen')).style.zIndex  = 1;//show screen
+	            domutil.find(config.classname('.screen')).style.visibility  = "visible";//show screen
 							domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
 	            // NMNS CUSTOMIZING END
 	        };

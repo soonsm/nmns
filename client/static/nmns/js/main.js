@@ -1479,6 +1479,10 @@
     }
   }, true));
 
+  NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){
+    console.log(e);
+  }, undefined, true));
+
   NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
     e.data.forEach(function(item){
       showNotification(item);
