@@ -15299,7 +15299,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            triggerEventName: 'click',
 	            target: this._scheduleEl
 	        });
-	
+					//NMNS CUSTOMIZING START
+					domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
+					domutil.find(config.classname('.screen')).style.visibility  = "visible";//show screen
+					//NMNS CUSTOMIZING END
 	        this.hide();
 	    }
 	};
