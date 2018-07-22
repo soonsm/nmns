@@ -1,5 +1,5 @@
 /*main contents*/
-#mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-timegrid-todaymarker){
+#mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-timegrid-todaymarker):not(input + span){
   border-width: .05rem;
   border-radius:0;
 }

@@ -1467,7 +1467,6 @@
   
   NMNS.socket.on("get customer info", socketResponse("자동완성 자료 가져오기", function(e){
     //success
-    console.log(e);
     if(e.data.id){
       var el = $("#"+e.data.id);
       el.autocomplete().onSuccess.call(el.autocomplete(), e.data.query, e.data.result);

@@ -14364,6 +14364,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {object} viewModel - view model from factory/monthView
 	 */
 	ScheduleCreationPopup.prototype.render = function(viewModel) {
+			var timeout;
+      function onContactBlur(){
+      	clearTimeout(timeout);
+      	NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
+      }
 	    var calendars = this.calendars;
 	    var layer = this.layer;
 	    var self = this;
@@ -14459,11 +14464,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }, NMNS.socket).on("blur", function(){
 	      	filterNonNumericCharacter($(this));
 	      });
-	      var timeout;
-	      function onContactBlur(){
-	      	clearTimeout(timeout);
-	      	NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
-	      }
+	      
 	      $("#creationPopupContact").on("blur", function(){
 	      	clearTimeout(timeout);
 	      	timeout = setTimeout(function() {onContactBlur();}, 500);
