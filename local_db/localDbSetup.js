@@ -1,7 +1,7 @@
 'use strict';
 
 var AWS = require("aws-sdk");
-var db = require('./../bin/webDb');
+//var db = require('./../bin/webDb');
 var moment = require('moment');
 AWS.config.update({
     region: "eu-west-2",
@@ -89,7 +89,7 @@ docClient.update(params, function(err, data) {
         console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
     }
 });
-
+/*
 //예약정보 Insert
 var reservation = db.newReservation({
     id: 'A1',
