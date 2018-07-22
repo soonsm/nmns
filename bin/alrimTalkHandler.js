@@ -23,6 +23,7 @@ exports.updateAlrimTalkInfo = async function (data) {
     let email = this.email;
     let status = true,
         message = null;
+    let user = await db.getWebUser(email);
     let alrimTalkInfo = user.alrimTalkInfo;
 
     if (data.useYn && data.useYn !== 'Y' && data.useYn !== 'N') {

@@ -86,8 +86,9 @@ exports.updateReservation = async function (newReservation) {
         고객 조회 한 뒤, 이름과 연락처가 일치하는 고객이 있으면 무시,
         이름과 연락처가 일치하는 고객이 없으면 추가
          */
+        let user = await db.getWebUser(email);
         if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
-            let memberList = (await db.getWebUser(email)).memberList;
+            let memberList = user.memberList;
             let newMember = true;
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
@@ -107,8 +108,9 @@ exports.updateReservation = async function (newReservation) {
             }
         }
 
+        status = false;
+        message = '없는 예약입니다.';
         let reservationList = await db.getReservationList(email);
-        let isItMyReservation = false;
         for (let i = 0; i < reservationList.length; i++) {
             let reservation = reservationList[i];
             if (reservation.id === newReservation.id) {
@@ -121,33 +123,42 @@ exports.updateReservation = async function (newReservation) {
                         }
                 }
 
+                //번호가 바뀌었을 때는 알림톡 재전송(새 예약정보의 status가 바뀌지 않고, 기존 예약 상태가 예약 상태일 때만)
+                let needAlirmTalk = false;
+                if(newReservation.contact && newReservation.contact !== reservation.contact && (!newReservation.status || newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED) && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
+                    needAlirmTalk = true;
+                }
+
                 //프로퍼티 복사
                 for (let x in reservation) {
                     if (newReservation.hasOwnProperty(x)) {
-                        reservation[x] = newReservation[x];
+                        reservation[x] = newReservation[x];// === '' ? null : newReservation[x];
                     }
                 }
-                newReservation = reservation;
+
+                //예약정보 저장
                 reservationList[i] = reservation;
-                isItMyReservation = true;
+                if (!await db.updateReservation(email, reservationList)) {
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error)';
+                }else{
+                    //노쇼 처리인 경우 노쇼
+                    if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
+                        await db.addToNoShowList(email, reservation.contact, reservation.noShowCase, reservation.start.substring(0, 8), reservation.id);
+                    }
+
+                    //알림톡 전송
+                    if(needAlirmTalk){
+                        await alrimTalk.sendReservationConfirm(user, reservation);
+                    }
+
+                    status = true;
+                    message = '예약수정완료';
+                }
+
                 break;
             }
         }
-        if (isItMyReservation) {
-            if (!await db.updateReservation(email, reservationList)) {
-                status = false;
-                message = '시스템 오류입니다.(DB Update Error)';
-            }
-            if (newReservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
-                await db.addToNoShowList(email, newReservation.contact, newReservation.noShowCase, newReservation.start.substring(0, 8), newReservation.id);
-            }
-
-        }
-        else {
-            status = false;
-            message = '없는 예약입니다.';
-        }
-
     }
 
     return {
@@ -197,8 +208,7 @@ exports.addReservation = async function (data) {
         }
 
         if (status) {
-            //TODO:알림톡 보내기
-            //await alrimTalk.sendReservationConfirm(user, reservation);
+            await alrimTalk.sendReservationConfirm(user, reservation);
         }
     }
 

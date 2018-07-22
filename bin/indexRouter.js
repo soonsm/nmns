@@ -133,7 +133,7 @@ module.exports = function (passport) {
         //TODO: 잘못된 접근이라는 페이지로 이동
     });
 
-    router.post('resetPassword', async function (req, res) {
+    router.post('/resetPassword', async function (req, res) {
         const email = req.body.email;
 
         let user = await db.getWebUser(email);
@@ -144,7 +144,7 @@ module.exports = function (passport) {
                 numbers: true
             });
 
-            if (await db.updateWebUser(email, 'password', password)) {
+            if (await db.updateWebUser(email, {password: password})) {
 
                 await emailSender.sendTempPasswordEmail(email, password);
 

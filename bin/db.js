@@ -8,7 +8,9 @@ AWS.config.update({
     region: "ap-northeast-2"
 });
 
-var docClient = new AWS.DynamoDB.DocumentClient();
+var docClient = new AWS.DynamoDB.DocumentClient({
+    convertEmptyValues: true
+});
 
 function get(param) {
     return new Promise((resolve) => {
