@@ -29,6 +29,7 @@ const GetAlrimTalkInfo = 'get alrim',
     UpdateAlirmTalk = 'update alrim';
 const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
+const PushCancelReservation = 'push cancel reservation';
 
 const EVENT_LIST_NO_NEED_VERIFICATION = [SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
@@ -56,6 +57,18 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         //     console.log(`User ${email} is not logged in`);
         //     return;
         // }
+
+        socket.cancelReservation = async function(){
+
+            //push
+            socket.emit(PushCancelReservation);
+        }
+
+        process.nmns.ONLINE[email] = socket;
+
+        socket.on('disconnect', async function(reason){
+            delete process.nmns.ONLINE[email];
+        });
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
