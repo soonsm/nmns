@@ -14040,7 +14040,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	    }
 			//NMNS CUSTOMIZING START
-			if(domutil.closest(target, ".autocomplete-suggestions")){
+			if(domutil.closest(target, ".autocomplete-suggestions") || domutil.closest(target, ".tooltip")){
 				return;
 			}
 			//NMNS CUSTOMIZING END
@@ -14367,7 +14367,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			var timeout;
       function onContactBlur(){
       	clearTimeout(timeout);
-      	NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
+      	if($("#creationPopupContact").val().length > 9){
+      		NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
+      	}
       }
 	    var calendars = this.calendars;
 	    var layer = this.layer;
@@ -14468,12 +14470,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	      
 	      $("#creationPopupContact").on("blur", function(){
+	      	filterNonNumericCharacter($("#creationPopupContact"));
 	      	clearTimeout(timeout);
 	      	timeout = setTimeout(function() {onContactBlur();}, 500);
 	      });
 			}
-      $("#creationPopupContact").trigger("change");
 	    layer.show();
+	    if(this._isEditMode){
+				$("#creationPopup").data("edit", true);
+				onContactBlur();
+			}
 	    //this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 			//NMNS CUSTOMIZING END
 	
