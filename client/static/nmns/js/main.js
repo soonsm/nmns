@@ -966,6 +966,7 @@
         paramName: "contact",
         zIndex: 1060,
         maxHeight: 150,
+        triggerSelectOnValidInput: false,
         transformResult: function(response, originalQuery){
           response.forEach(function(item){
             item.data = item.name;
@@ -995,6 +996,7 @@
         paramName: "contact",
         zIndex: 1060,
         maxHeight: 150,
+        triggerSelectOnValidInput: false,
         transformResult: function(response, originalQuery){
           response.forEach(function(item){
             item.data = item.name;
@@ -1024,6 +1026,7 @@
         paramName: "name",
         zIndex: 1060,
         maxHeight: 150,
+        triggerSelectOnValidInput: false,
         transformResult: function(response, originalQuery){
           response.forEach(function(item){
             item.data = item.contact;
@@ -1054,6 +1057,7 @@
         paramName: "contact",
         zIndex: 1060,
         maxHeight: 150,
+        triggerSelectOnValidInput: false,
         transformResult: function(response, originalQuery){
           response.forEach(function(item){
             item.data = item.name;

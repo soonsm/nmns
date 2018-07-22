@@ -14079,8 +14079,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	ScheduleCreationPopup.prototype._closePopup = function(target) {
 	    var className = config.classname('popup-close');
-	
 	    if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
+	
 	        this.hide();
 					//NMNS CUSTOMIZING START
 					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
@@ -14405,6 +14405,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        paramName: "name",
 	        zIndex: 1060,
 	        maxHeight: 150,
+	        triggerSelectOnValidInput: false,
 	        transformResult: function(response, originalQuery){
 	          response.forEach(function(item){
 	            item.data = item.contact;
@@ -14436,6 +14437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        paramName: "contact",
 	        zIndex: 1060,
 	        maxHeight: 150,
+	        triggerSelectOnValidInput: false,
 	        transformResult: function(response, originalQuery){
 	          response.forEach(function(item){
 	            item.data = item.name;
@@ -14468,6 +14470,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      $("#creationPopupContact").on("blur", function(){
 	      	clearTimeout(timeout);
 	      	timeout = setTimeout(function() {onContactBlur();}, 500);
+	      });
+	      $("#creationPopup input").on("keydown", function(e){
+	      	if(e.which === 13){
+	      		e.preventDefault();
+	      	}
 	      });
 			}
       $("#creationPopupContact").trigger("change");
