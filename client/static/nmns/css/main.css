@@ -1,4 +1,8 @@
 /*main contents*/
+#mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-timegrid-todaymarker){
+  border-width: .05rem;
+  border-radius:0;
+}
 div.tui-full-calendar-weekday-grid{
   overflow-y:auto;
 }
@@ -37,7 +41,7 @@ div.tui-full-calendar-timegrid-container{
   margin-bottom:40px;
 }
 @media (min-width: 992px){
-  #mainContents{
+  #mainRow #mainContents{
     border-left: 15px solid #f8f9fa;
   }
 }
@@ -167,6 +171,10 @@ button.moveDate:focus{
     transform: translate3d(0px, 35px, 0px) !important;
   }
 }
+#creationPopupForm{
+  border-radius: 0;
+  border:0;
+}
 .tui-full-calendar-dash{
   font-size:0.5rem;
   padding-top: 8px;
@@ -179,7 +187,7 @@ button.moveDate:focus{
   line-height: 1.8;
 }
 #creationPopupManager{
-  border: 1px solid #ced4da;
+  border: .05rem solid #ced4da;
 }
 #creationPopupManager:focus{
   box-shadow:none;
@@ -204,7 +212,7 @@ button.moveDate:focus{
 }
 /* detail popup */
 #detailPopup .tui-full-calendar-section-button{
-  border-top: 1px solid #bdbdbd;
+  border-top: .05rem solid #bdbdbd;
 }
 #detailPopup .tui-full-calendar-section-button .tui-full-calendar-popup-delete, #detailPopup .tui-full-calendar-section-button .tui-full-calendar-popup-edit, #detailPopup .tui-full-calendar-section-button .detailPopupLabel{
   width: calc(33.3333% - 2px);
@@ -216,7 +224,7 @@ button.moveDate:focus{
   display:block;
   height:20px;
   line-height:20px;
-  border-right:1px solid #bdbdbd;
+  border-right:.05rem solid #bdbdbd;
 }
 #detailPopup .tui-full-calendar-section-button .tui-full-calendar-popup-delete .tui-full-calendar-content{
   border-right:none;
