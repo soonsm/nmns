@@ -42,13 +42,14 @@ div.tui-full-calendar-timegrid-container{
   }
 }
 .tui-full-calendar-screen{
-  width:100%;
-  height:100%;
-  display:none;
-  position:absolute;
+  position:fixed;
   left:0;
   top:0;
-  z-index:1
+  right:0;
+  bottom:0;
+  opacity:0;
+  background-color:black;
+  z-index:-1;
 }
 .tui-full-calendar-vlayout-area, .tui-full-calendar-week-container{
   height:auto !important;
@@ -103,6 +104,19 @@ button.moveDate:focus{
   overflow-y:hidden;
 }
 /* creation popup */
+#creationPopup{
+  position:fixed;
+  left:calc(50% - 150px);
+  top:200px;
+}
+@media(min-width:576px){
+  #creationPopup{
+    left:calc(50% - 267.5px);
+  }
+}
+#tui-full-calendar-popup-arrow{
+  display:none;
+}
 .tui-full-calendar-button.tui-full-calendar-popup-close{
   font-size:1.2rem;
   right:16px;
@@ -186,6 +200,7 @@ button.moveDate:focus{
 .compactLabel{
   letter-spacing: -1px;
 }
+/* detail popup */
 #detailPopup .tui-full-calendar-section-button{
   border-top: 1px solid #bdbdbd;
 }

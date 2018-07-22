@@ -5570,7 +5570,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._showCreationPopup) {
 	            this._showCreationPopup(createScheduleData);
 	            //NMNS CUSTOMIZING START
-							document.getElementsByClassName(config.classname('screen'))[0].style.display = "block";//show screen
+							document.getElementsByClassName(config.classname('screen'))[0].style.zIndex = 1;//show screen
+							document.getElementsByClassName(config.classname('screen'))[0].style.opacity = 0.5;//show screen
 							//NMNS CUSTOMIZING END
 	            return;
 	        }
@@ -6126,7 +6127,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function Layout(container, theme) {
 			domutil.appendHTMLElement('div', container, config.classname('screen')).addEventListener("click", function(){
-        domutil.find('.' + config.classname('screen'), container.parentNode).style.display = "none";//disappear when clicked
+        domutil.find('.' + config.classname('screen'), container.parentNode).style.opacity = 0;//disappear when clicked
+        domutil.find('.' + config.classname('screen'), container.parentNode).style.zIndex = -1;//disappear when clicked
         return false;
 	    });
 	    container = domutil.appendHTMLElement('div', container, config.classname('layout'));
@@ -9991,7 +9993,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	}
             		detailView.hide();
 	            });
-	            domutil.find(config.classname('.screen')).style.display = "block";//show screen
+	            domutil.find(config.classname('.screen')).style.zIndex = 1;//show screen
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
@@ -14081,7 +14083,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (domutil.hasClass(target, className) || domutil.closest(target, '.' + className)) {
 	        this.hide();
 					//NMNS CUSTOMIZING START
-					domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
+					domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
 					//NMNS CUSTOMIZING END
 	        return true;
 	    }
@@ -14458,8 +14461,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
       
 	    layer.show();
+	    //this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 			//NMNS CUSTOMIZING END
-	    this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
 	
 	    util.debounce(function() {
 	        domevent.on(document.body, 'mousedown', self._onMouseDown, self);
@@ -14804,7 +14807,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.guide = null;
 	    }
 			//NMNS CUSTOMIZING START
-			domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+			domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
+			domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
 			//NMNS CUSTOMIZING END
 	    domevent.off(document.body, 'mousedown', this._onMouseDown, this);
 	};
@@ -15233,7 +15237,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	    }
 			//NMNS CUSTOMIZING START
-			domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+			domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
+			domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
 			//NMNS CUSTOMIZING END
 	    this.hide();
 	};
@@ -15292,7 +15297,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            schedule: this._schedule
 	        });
 					//NMNS CUSTOMIZING START
-					domutil.find(config.classname('.screen')).style.display  = "none";//hide screen
+					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
+					domutil.find(config.classname('.screen')).style.zIndex  = -1;//hide screen
 					//NMNS CUSTOMIZING END
 	        this.hide();
 	    }
@@ -19655,7 +19661,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            		creationHandler.fire("beforeUpdateSchedule", eventData);
 	            	}
 	            });
-	            domutil.find(config.classname('.screen')).style.display = "block";//show screen
+	            domutil.find(config.classname('.screen')).style.zIndex  = 1;//show screen
+							domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {
