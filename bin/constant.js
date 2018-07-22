@@ -27,6 +27,9 @@
         DEVELOPMENT: 'development'
     }
 
+    //현재 온라인 상태인 user
+    o.ONLINE = {};
+
     process.nmns = o;
 
 
