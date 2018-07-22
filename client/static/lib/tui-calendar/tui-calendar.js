@@ -14471,11 +14471,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      	clearTimeout(timeout);
 	      	timeout = setTimeout(function() {onContactBlur();}, 500);
 	      });
-	      $("#creationPopup input").on("keydown", function(e){
-	      	if(e.which === 13){
-	      		e.preventDefault();
-	      	}
-	      });
 			}
       $("#creationPopupContact").trigger("change");
 	    layer.show();
@@ -15181,12 +15176,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    </div>"
 		+"  </div>"
 
-		+ "<button class=\"" + escapedCssPrefix + "button " + escapedCssPrefix + "popup-close\">"
+		+ "<div class=\"" + escapedCssPrefix + "button " + escapedCssPrefix + "popup-close\">"
 			+ "<span class=\"fas fa-times\"></span>"
-		+ "</button>\n"
+		+ "</div>\n"
 		+ "<div class=\"text-right\">"
-			+ "<button id=\"creationPopupClose\" class=\"btn btn-flat btn-light mr-2 " + escapedCssPrefix + "popup-close\">닫기</button>"
-			+ "<button id=\"creationPopupSave\" class=\"btn btn-primary btn-flat\">저장</button>"
+			+ "<span id=\"creationPopupClose\" class=\"btn btn-flat btn-light mr-2 " + escapedCssPrefix + "popup-close\">닫기</span>"
+			+ "<span id=\"creationPopupSave\" class=\"btn btn-primary btn-flat\">저장</span>"
 		+ "</div>\n"
 	  + "</form>\n"
 	  + "<div id=\"" + escapedCssPrefix + "popup-arrow\" class=\"" + escapedCssPrefix + "popup-arrow " + escapedCssPrefix + "arrow-bottom\">\n"
