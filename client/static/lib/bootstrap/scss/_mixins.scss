@@ -1,9 +1,8 @@
 @mixin body-font() {
-  font-family: 'Lato', "나눔 고딕", "나눔고딕", "Nanum Gothic", "NanumGothic";
+  font-family: 'Lato', "Nanum Gothic";
   color: $textPrimary;
 }
-
 @mixin heading-font() {
   font-weight: 700;
-  font-family: 'Montserrat';
+  font-family: 'Nanum Gothic';
 }

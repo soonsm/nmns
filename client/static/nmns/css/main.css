@@ -441,12 +441,18 @@ button.moveDate:focus{
 #noShowAdd.active{
   display:inline-flex;
 }
+#noShowAdd .input-group{
+  height:65px;
+}
 #noShowAddContent span{
   margin-right:.5rem;
 }
 #noShowAddContent .noShowAddCase{
   line-height:1rem;
   height:1.5rem;
+}
+#noShowAddContent .noShowAddCase:focus{
+  box-shadow:none;
 }
 #noShowAddContent input{
   line-height:1rem;
