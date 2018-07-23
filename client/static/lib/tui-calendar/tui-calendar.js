@@ -12356,7 +12356,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this._autoScroll) {
 	        this._autoScroll.destroy();
 	    }
-	
+			//NMNS CUSTOMIZING START
+			if ($(config.classname('.timegrid-container')).data("scroll")){
+				$(config.classname('.timegrid-container')).data("scroll").destroy();
+				$(config.classname('.timegrid-container')).data("scroll", null);
+			}
+			//NMNS CUSTOMIZING END
 	    this._autoScroll = this.hourmarkers = this.intervalID = this.timerID = this._cacheParentViewModel = null;
 	};
 	
