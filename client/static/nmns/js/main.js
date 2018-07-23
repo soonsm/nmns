@@ -952,7 +952,7 @@
         },
         onSearchComplete : function(){},
         formatResult: function(suggestion, currentValue){
-          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+          return dashContact(suggestion.value) + " (" + suggestion.data + ")";
         },
         onSearchError: function(){},
         onSelect: function(suggestion){},
@@ -982,7 +982,7 @@
         },
         onSearchComplete : function(){},
         formatResult: function(suggestion, currentValue){
-          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+          return dashContact(suggestion.value) + " (" + suggestion.data + ")";
         },
         onSearchError: function(){},
         onSelect: function(suggestion){},
@@ -1043,7 +1043,7 @@
         },
         onSearchComplete : function(){},
         formatResult: function(suggestion, currentValue){
-          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+          return dashContact(suggestion.value) + " (" + suggestion.data + ")";
         },
         onSearchError: function(){},
         onSelect: function(suggestion){
