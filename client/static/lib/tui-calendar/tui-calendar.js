@@ -10436,11 +10436,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.fire('resize', {
 	        layoutData: this.getLayoutData()
 	    });
-	
+
 	    this._dragData = null;
 	    this._clearGuideElement(dragData.guideElement);
 	    dragData.splPanel.removeClass(config.classname('splitter-focused'));
 	    domutil.removeClass(document.body, config.classname('resizing'));
+	    //NMNS CUSTOMIZING START
+	    var area = $(".tui-full-calendar-timegrid-container");
+	    if(area){
+	    	if(area.data("scroll")){
+	    		area.data("scroll").update();
+	    	}else{
+	    		area.data("scroll", new PerfectScrollbar(".tui-full-calendar-timegrid-container", {suppressScrollX:true}));
+	    	}
+	    }
+	    //NMNS CUSTOMIZING END
 	};
 	
 	/**********

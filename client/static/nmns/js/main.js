@@ -83,7 +83,7 @@
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
       hourStart:NMNS.info?parseInt(NMNS.info.bizBeginTime.substring(0,2)) : 9,
-      hourEnd:NMNS.info?parseInt(NMNS.info.bizEndTime.substring(0,2)):23
+      hourEnd:NMNS.info?parseInt(NMNS.info.bizEndTime.substring(0,2))+(NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1):23
     },
     theme:{
       'week.currentTime.color': '#009688',
@@ -167,7 +167,7 @@
           successCallback(res);
         }
       }else{
-        console.log(res);
+        console.error(res);
       }
     };
   };
@@ -176,19 +176,19 @@
   NMNS.socket.emit("get manager");
   
   NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e){
-    console.log(e);
     drawSchedule(e.data);
     NMNS.holiday = e.holiday;
     refreshScheduleVisibility();
   }));
 
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
-    console.log(e);
     NMNS.info = e.data;
     if(NMNS.calendar){
-      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2)):23)}});
+      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2))+(NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1):23)}});
     }
     NMNS.email = e.data.email || NMNS.email;
+    NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
+    $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
   }));
   
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
@@ -205,39 +205,8 @@
       delete NMNS.needInit;
       setSchedules();
     }
-    $(".addManager").off("touch click").on("touch click", function(){
-      var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
-      var list = $(this).prev();
-      var clazz = list.attr("id") === "lnbManagerList"? "lnbManagerItem" : "infoManagerItem";
-      list.append($("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>"));
-      if(clazz === "lnbManagerItem"){
-        $(".lnbManagerItem .submitAddManager").off("touch click").on("touch click", function(){
-          submitAddManager(this);
-        });
-        $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
-          if(e.which === 27){
-            cancelAddManager(this);
-            list.find("div:last-child input[type='text']").focus();
-          }else if(e.which === 13){
-            submitAddManager(this);
-          }
-        });
-      }else{
-        $(".infoManagerItem input[type='text']").off("keyup").on("keyup", function(e){
-          if(e.which === 27){
-            cancelAddManager(this);
-            list.find("div:last-child input[type='text']").focus();
-          }
-        });
-      }
-      $("."+ clazz + " .cancelAddManager").off("touch click").on("touch click", function(){
-        cancelAddManager(this);
-        list.find("div:last-child input[type='text']").focus();
-      });
-      list.find("div:last-child input[type='text']").focus();
-    });
   }));
-  
+
 //business specific functions about calendar start
   function getTimeSchedule(schedule, isAllDay){
     var html = "";
@@ -269,12 +238,15 @@
     switch (action) {
       case 'toggle-daily':
         viewName = 'day';
+        $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
         break;
       case 'toggle-weekly':
         viewName = 'week';
+        $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
         break;
       case 'toggle-monthly':
         viewName = 'month';
+        $("#mainCalendar").css("height", "62rem");
         break;
       default:
         break;
@@ -916,18 +888,15 @@
           $("#noShowAddBtn").trigger("click");
         }
       });
-      $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
-      $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "months").toDate());
-      $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
-      $("#noShowScheduleEndDatePicker").data("datetimepicker").date(moment().add(1, "months").toDate());
-      $("#noShowScheduleContact").off("blur").on("blur", function(){
-        filterNonNumericCharacter($(this));
-      });
       $("#noShowScheduleContact").off("keyup").on("keyup", function(e){
         if(e.which === 13){
           $("#noShowScheduleSearch").trigger("click");
         }
       });
+      $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
+      $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "months").toDate());
+      $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
+      $("#noShowScheduleEndDatePicker").data("datetimepicker").date(moment().add(1, "months").toDate());
       $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
         var dropdown = $(this).parent();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), raw:{status:dropdown.data("status")}});
@@ -1629,6 +1598,39 @@
     }
   });
 //Modal events end
+  
+  $(".addManager").on("touch click", function(){
+    var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
+    var list = $(this).prev();
+    var clazz = list.attr("id") === "lnbManagerList"? "lnbManagerItem" : "infoManagerItem";
+    list.append($("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>"));
+    if(clazz === "lnbManagerItem"){
+      $(".lnbManagerItem .submitAddManager").off("touch click").on("touch click", function(){
+        submitAddManager(this);
+      });
+      $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+        if(e.which === 27){
+          cancelAddManager(this);
+          list.find("div:last-child input[type='text']").focus();
+        }else if(e.which === 13){
+          submitAddManager(this);
+        }
+      });
+    }else{
+      $(".infoManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+        if(e.which === 27){
+          cancelAddManager(this);
+          list.find("div:last-child input[type='text']").focus();
+        }
+      });
+    }
+    $("."+ clazz + " .cancelAddManager").off("touch click").on("touch click", function(){
+      cancelAddManager(this);
+      list.find("div:last-child input[type='text']").focus();
+    });
+    list.find("div:last-child input[type='text']").focus();
+  });
+//notification handling start
   function showNotification(notification){
     if(!NMNS.notification){//not inited
       if("Notification" in window){
@@ -1719,4 +1721,5 @@
       showNotification(item);
     });
   }));
+//notification handling end
 })(jQuery);

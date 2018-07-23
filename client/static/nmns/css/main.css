@@ -45,6 +45,9 @@ div.tui-full-calendar-timegrid-container{
     border-left: 15px solid #f8f9fa;
   }
 }
+.tui-full-calendar-timegrid-right + div + .ps__rail-y {
+  opacity:0;
+}
 .tui-full-calendar-screen{
   position:fixed;
   left:0;
