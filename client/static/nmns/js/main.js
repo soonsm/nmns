@@ -215,16 +215,20 @@
     }else{
       html+="<span class='calendar-font-icon far fa-clock'></span> ";
     }
+    html += schedule.title;
     switch(schedule.raw.status){
       case "CANCELED":
-        html += "<span class='fas fa-ban'></span>";
+        html += "<br/><span class='badge badge-light'>취소</span>";
         break;
       case "NOSHOW":
-        html += "<span class='fas fa-exclamation-triangle'></span>";
+        html += "<br/><span class='badge badge-danger'>노쇼</span>";
+        break;
+      case "CUSTOMERCANCELED":
+        html += "<br/><span class='badge badge-light'>고객취소</span>";
         break;
     }
     
-    html += schedule.title + (schedule.raw.contact?"<br/><span class='fas fa-phone'></span> " + schedule.raw.contact : "") + (schedule.raw.contents?"<br/><span class='fas fa-list'></span> " + schedule.raw.contents : "");
+    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<br/><span class='fas fa-list' title='예약내용'></span> ":" ")+ schedule.raw.contents) : "") + (schedule.raw.contact?"<br/><span class='fas fa-phone' title='연락처'></span> " + schedule.raw.contact : "");
     return html;
   }
   
@@ -438,6 +442,7 @@
       case "RESERVED":
         return "<span class='badge badge-success' title='바꾸기'>정상 </span><span class='btn btn-sm btn-light noShowScheduleNoShow' title='노쇼처리'><i class='fas fa-exclamation-triangle'></i><span class='d-none d-lg-inline-block'> 노쇼처리</span></span>";
       case "CANCELED":
+      case "CUSTOMERCANCELED":
         return "<span class='badge badge-secondary' title='바꾸기'>취소 </span><span class='btn btn-sm btn-light noShowScheduleNoShow' title='노쇼처리'><i class='fas fa-exclamation-triangle'></i><span class='d-none d-lg-inline-block'> 노쇼처리</span></span>";
       case "NOSHOW":
         return "<span class='badge badge-danger' title='바꾸기'>노쇼 </span><span class='btn btn-sm btn-light noShowScheduleNormal' title='되돌리기'><i class='fas fa-undo'></i><span class='d-none d-lg-inline-block'> 되돌리기</span></span>";
@@ -1676,7 +1681,8 @@
           element: "#notifications",
           icon_type: "class",
           icon: "far fa-bell",
-          onClose: function(){
+          onClose: function(data){
+            console.log(data);
             NMNS.socket.emit("delete noti", {id:$(this).data("id")});
           },
           onClosed: function(){
@@ -1713,8 +1719,12 @@
       message: notification.body
     }, {});
     $("#notifications").height(($("#notifications .alert").length * 80 + 10) + "px");
+    
+    if(notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager){
+      NMNS.calendar.updateSchedule(notification.data.id, notification.data.manager, {raw:{status:"CUSTOMERCANCELED"}});
+    }
   }
-  
+  NMNS.showNotification = showNotification;
   NMNS.socket.emit("get noti");
   NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e){
     e.data.forEach(function(item){

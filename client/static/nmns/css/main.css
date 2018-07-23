@@ -68,6 +68,9 @@ div.tui-full-calendar-timegrid-container{
   white-space: nowrap;
   line-height: 15px;
 }
+.tui-full-calendar-time-schedule .badge{
+  vertical-align: top;
+}
 button.calendarType{
   border: 0;
 }
