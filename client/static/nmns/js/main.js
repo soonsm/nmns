@@ -1109,7 +1109,7 @@
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
     $(".addReservLink").on("touch click", createNewSchedule);
-    
+
     $("#infoLink").on("touch click", initInfoModal);
     $("#alrimLink").on("touch click", initAlrimModal);
     $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
