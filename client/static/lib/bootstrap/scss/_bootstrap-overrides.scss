@@ -80,7 +80,7 @@ a.text-primary {
   border: 0.05rem solid $divider !important;
 }
 .list-group-item{
-  border:1px solid $divider;
+  border:.05rem solid $divider;
   &:hover,
   &:active{
     z-index:0;

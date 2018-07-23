@@ -3,6 +3,12 @@
   border-width: .05rem;
   border-radius:0;
 }
+#mainRow{
+  max-width:1280px;
+}
+#mainRow .tui-full-calendar-time-date:last-child{
+  border-right:none !important;
+}
 div.tui-full-calendar-weekday-grid{
   overflow-y:auto;
 }
@@ -38,7 +44,6 @@ div.tui-full-calendar-timegrid-container{
 }
 #mainContents{
   padding-left:0;
-  margin-bottom:40px;
 }
 @media (min-width: 992px){
   #mainRow #mainContents{
