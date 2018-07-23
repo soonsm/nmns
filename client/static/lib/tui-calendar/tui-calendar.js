@@ -15133,7 +15133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"    <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처<span class=\"text-danger\">*</span></label>"
 		+"    <div class=\"col-9 col-sm-5 input-group input-group-sm\">"
 		+"      <div class=\"d-inline-block input-group-prepend d-sm-none\">"
-		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone\" title=\"고객 연락처\"></i>"
+		+"        <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone fa-rotate-90\" title=\"고객 연락처\"></i>"
 		+"      </div>"
 		+"      <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\" placeholder=\"고객연락처\" autocomplete=\"false\" value=\"" + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper))) + "\">"
 		+"    </div>"
@@ -15523,7 +15523,7 @@ return /******/ (function(modules) { // webpackBootstrap
     		+ "</div>\n"
     		+ "<div class=\"" + escapedCssPrefix + "section-detail\">\n"
     		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객 연락처\">"
-    			+ "<i class=\"fas fa-phone fa-fw align-middle\"></i>"
+    			+ "<i class=\"fas fa-phone fa-rotate-90 fa-fw align-middle\"></i>"
     			+ "<span class=\"" + escapedCssPrefix + "content\"> "
 	    			+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0))
 	    		+ "</span></div>\n"
@@ -19699,7 +19699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	}
 	            });
 	            domutil.find(config.classname('.screen')).style.visibility  = "visible";//show screen
-							domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
+							//domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {

@@ -228,7 +228,7 @@
         break;
     }
     
-    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<br/><span class='fas fa-list' title='예약내용'></span> ":" ")+ schedule.raw.contents) : "") + (schedule.raw.contact?"<br/><span class='fas fa-phone' title='연락처'></span> " + schedule.raw.contact : "");
+    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<br/><span class='fas fa-list' title='예약내용'></span> ":" ")+ schedule.raw.contents) : "") + (schedule.raw.contact?"<br/><span class='fas fa-phone fa-rotate-90' title='연락처'></span> " + schedule.raw.contact : "");
     return html;
   }
   
