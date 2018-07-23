@@ -30,11 +30,11 @@
     useCreationPopup:true,
     useDetailPopup:true,
     template:{
-      monthGridHeader: function(model){
+/*      monthGridHeader: function(model){
         var date = new Date(model.date);
         var template = "<span class='tui-full-calendar-weekday-grid-date'>"+date.getDate() + "</span>";
         return template;
-      },
+      },*/
       allday:function(schedule){
         return getTimeSchedule(schedule, schedule.isAllDay);
       },
@@ -75,15 +75,50 @@
       },
       popupDelete: function(){
         return "삭제";
-      }
+      },
+      weekDayname: function(model) {
+	        var classDate = 'tui-full-calendar-dayname-date';
+	        var className = 'tui-full-calendar-dayname-name';
+	        var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === model.renderDate}):undefined;
+          if(holiday){
+            className += " tui-full-calendar-holiday";
+            classDate += " tui-full-calendar-holiday";
+          }
+	
+	        return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday?("["+holiday.title+"]"):"") + '</span>';
+	    },
+      monthGridHeader: function(model){
+        var date = parseInt(model.date.split('-')[2], 10);
+        var classNames = ["tui-full-calendar-weekday-grid-date"];
+        
+        if (model.isToday) {
+          classNames.push('tui-full-calendar-weekday-grid-date-decorator');
+        }
+
+        var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === model.date}):undefined;
+        if(holiday){
+          classNames.push("tui-full-calendar-holiday");
+        }
+        return '<span class="' + classNames.join(' ') + '">' + date + (holiday?("["+holiday.title+"]"):"") +'</span>';
+      },
+      monthGridHeaderExceed: function(hiddenSchedules) {
+	        return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="숨겨진 항목 더보기">+' + hiddenSchedules + '</span>';
+	    },
+	    monthMoreTitleDate: function(date, dayname){
+	      var dateFormat = date.split(".").join("-");
+        var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === dateFormat}):undefined;
+        var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일"?" tui-full-calendar-holiday-sun":"") + (holiday?" tui-full-calendar-holiday":"") + (dayname==="토"?" tui-full-calendar-holiday-sat":"");
+
+        return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday?("["+holiday.title+"]"):"") + '</span>';
+	    }
     },
     month:{
       daynames:["일", "월", "화", "수", "목", "금", "토"]
     },
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
-      hourStart:NMNS.info?parseInt(NMNS.info.bizBeginTime.substring(0,2)) : 9,
-      hourEnd:NMNS.info?parseInt(NMNS.info.bizEndTime.substring(0,2))+(NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1):23
+      hourStart:NMNS.info?parseInt(NMNS.info.bizBeginTime.substring(0,2), 10) : 9,
+      hourEnd:NMNS.info?parseInt(NMNS.info.bizEndTime.substring(0,2), 10)+(NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1):23
     },
     theme:{
       'week.currentTime.color': '#009688',
@@ -184,7 +219,7 @@
   NMNS.socket.on("get info", socketResponse("매장 정보 받아오기", function(e){
     NMNS.info = e.data;
     if(NMNS.calendar){
-      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2)):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2))+(NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1):23)}});
+      NMNS.calendar.setOptions({week:{hourStart:(NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2), 10):9), hourEnd:(NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2), 10)+(NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1):23)}});
     }
     NMNS.email = e.data.email || NMNS.email;
     NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
@@ -381,9 +416,6 @@
       var span = input.nextElementSibling;
       span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
     });
-    if(NMNS.holiday){
-      drawHoliday(NMNS.holiday);
-    }
   }
 
   function setDropdownCalendarType() {
@@ -586,7 +618,7 @@
       parameters.bizEndTime = endTime.format("HHmm");
       NMNS.info.bizBeginTime = parameters.bizBeginTime || "0900";
       NMNS.info.bizEndTime = parameters.bizEndTime || "2300";
-      NMNS.calendar.setOptions({week:{hourStart:(parameters.bizBeginTime?parseInt(parameters.bizBeginTime.substring(0,2)):NMNS.calendar.getOptions().week.hourStart), hourEnd:(parameters.bizEndTime?parseInt(parameters.bizEndTime.substring(0,2)):NMNS.calendar.getOptions().week.hourEnd)}});
+      NMNS.calendar.setOptions({week:{hourStart:(parameters.bizBeginTime?parseInt(parameters.bizBeginTime.substring(0,2), 10):NMNS.calendar.getOptions().week.hourStart), hourEnd:(parameters.bizEndTime?parseInt(parameters.bizEndTime.substring(0,2), 10):NMNS.calendar.getOptions().week.hourEnd)}});
     }
     if($("#infoShopName").val() !== (NMNS.info.shopName || "")){
       history.shopName = NMNS.info.shopName;
@@ -1131,27 +1163,6 @@
     }), true);
   }
 
-  function drawHoliday(holiday){
-    holiday.forEach(function(item){
-      if(NMNS.calendar.getViewName() === "month"){
-        var dayname = $(".tui-full-calendar-near-month-day[data-date='"+item.date+"']");
-        if(dayname.length){
-          dayname.addClass("tui-full-calendar-holiday");
-          dayname.find("div span").css("color", "#ff4040");
-          var name = dayname.find(".tui-full-calendar-weekday-grid-date").parent();
-          name.text(name.text() + " [" + item.title + "]");
-        }
-      }else{
-        var dayname = $(".tui-full-calendar-dayname[data-date='"+item.date+"']");
-        if(dayname.length){
-          dayname.addClass("tui-full-calendar-holiday");
-          dayname.children("span").css("color", "#ff4040");
-          var name = dayname.find(".tui-full-calendar-dayname-name");
-          name.text(name.text() + " [" + item.title + "]");
-        }
-      }
-    });
-  }
   function noShowScheduleBadge(self){
     console.log(self);
     var row = self.parentsUntil("#noShowScheduleList", ".row");
@@ -1403,7 +1414,6 @@
 
   NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e){
     var html, badge = "";
-    console.log(e);
     if($("#noShowSearch").is(":visible")){
       badge = (e.data.noShowCase?("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
       html = $("<div class='row col-12 px-0 mt-1' data-id='"+e.data.id+"' data-contact='"+e.data.contact+"' data-date='"+e.data.date+"' data-noshowcase='"+e.data.noShowCase+"'><span class='col-4'>"+(e.data.contact||$("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"'] input[name='noShowSearchAddContact']").val())+"</span><span class='col-4'>"+(e.data.date?e.data.date.substring(0,4)+"-"+e.data.date.substring(4,6)+"-"+e.data.date.substring(6):"")+"</span><span class='col-3'>"+badge+"</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");

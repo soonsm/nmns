@@ -20761,6 +20761,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            target: moreElement,
 	            ymd: domutil.getData(moreElement, 'ymd')
 	        });
+	        //NMNS CUSTOMIZING START
+	        domutil.find(config.classname('.screen')).style.visibility = "visible";//show screen
+	        //NMNS CUSTOMIZING END
 	    }
 	
 	    if (blockElement) {

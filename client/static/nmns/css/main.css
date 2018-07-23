@@ -68,6 +68,11 @@ div.tui-full-calendar-timegrid-container{
 .tui-full-calendar-vlayout-area, .tui-full-calendar-week-container{
   height:auto !important;
 }
+.tui-full-calendar-weekday-grid-line .tui-full-calendar-weekday-grid-date{
+  width:auto;
+  text-align:left;
+  padding-left:.25rem;
+}
 .tui-full-calendar-time-schedule{
   text-overflow:ellipsis;
   white-space: nowrap;
@@ -91,6 +96,12 @@ button.moveDate:focus{
 .bootstrap-datetimepicker-widget{
   border-radius:0;
 }
+.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat + span{
+  color:#304ffe;
+}
+.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun + span, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday + span{
+  color:#ff4040;
+} 
 /* side bar */
 #sidebarContainer{
   max-width:230px;
