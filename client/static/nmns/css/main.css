@@ -173,11 +173,11 @@ button.moveDate:focus{
   width: 300px;
   min-width: 300px;
 }
-#creationPopup #creationPopupManager + .dropdown-menu{
+#creationPopup #creationPopupManager + .dropdown-menu, #taskForm #taskManager + .dropdown-menu{
   margin-top:0;
   padding: .25rem 0;
   border-radius: 0;
-  width:234px;
+  width:235px;
 }
 #creationPopup .dropdown-menu .dropdown-item{
   padding-left:0.5rem;
@@ -187,7 +187,7 @@ button.moveDate:focus{
   #creationPopup .tui-full-calendar-popup-container{
     width: 535px;
   }
-  #creationPopup #creationPopupManager + div.dropdown-menu{
+  #creationPopup #creationPopupManager + div.dropdown-menu, #taskForm #taskManager + .dropdown-menu{
     width:367px;
     margin-left:15px;
     transform: translate3d(0px, 35px, 0px) !important;
@@ -522,4 +522,63 @@ button.moveDate:focus{
 	font-size: 80%;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
+}
+/* taskModal */
+#taskModal{
+  font-size:.9rem;
+}
+#taskModal i, #taskModal input{
+  border-radius: 0;
+}
+#taskModal i{
+  width:2rem;
+  background-color:white;
+}
+#taskModal .close{
+  position:absolute;
+  right:1rem;
+}
+#taskModal #taskManager{
+  border: .05rem solid #ced4da;
+}
+#taskModal #taskManager:focus{
+  border: .05rem solid #ced4da;
+  box-shadow:none;
+}
+#taskModal #taskManager:after{
+  position:absolute;
+  right:5%;
+  top:45%;
+}
+#taskForm #taskManager + .dropdown-menu{
+  margin-top:0;
+  padding: .25rem 0;
+  border-radius: 0;
+  width:calc(100% - 61px);
+  font-size:.9rem;
+  min-width:5rem;
+}
+#taskForm span.tui-full-calendar-content{
+  margin-left:.25rem;
+}
+#taskForm #taskManager + .dropdown-menu .dropdown-item{
+  padding-left:0.5rem;
+  font-size:.9rem;
+  cursor:pointer;
+}
+@media (min-width: 576px){
+  #taskForm #taskManager + .dropdown-menu{
+    margin-left:15px;
+    width:342px;
+    transform: translate3d(0px, 34px, 0px) !important;
+  }
+}
+#taskModal #taskStartDatePicker, #taskModal #taskEndDatePicker{
+  width: calc(50% - 13.5px);
+}
+#taskModal #taskModalButtons{
+  text-align: right;
+}
+#taskModal #taskModalButtons button{
+  margin-left:.5rem;
 }

@@ -337,7 +337,7 @@
 
   function createNewSchedule(event) {
     var start = event.start ? new Date(event.start.getTime()) : new Date();
-    var end = event.end ? new Date(event.end.getTime()) : moment().add(1, 'hours').toDate();
+    var end = event.end ? new Date(event.end.getTime()) : moment().add(1, 'h').toDate();
     NMNS.calendar.openCreationPopup({
         start: start,
         end: end
@@ -817,7 +817,7 @@
         viewMode: "days",
         buttons:{
           showClose:true
-        },debug:true,
+        },
         allowInputToggle:true,
         tooltips:{
           close:"닫기",
@@ -931,9 +931,9 @@
         }
       });
       $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
-      $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "months").toDate());
+      $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "M").toDate());
       $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
-      $("#noShowScheduleEndDatePicker").data("datetimepicker").date(moment().add(1, "months").toDate());
+      $("#noShowScheduleEndDatePicker").data("datetimepicker").date(moment().add(1, "M").toDate());
       $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
         var dropdown = $(this).parent();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), raw:{status:dropdown.data("status")}});
@@ -1097,6 +1097,71 @@
     }
   }
   
+  function generateTaskManagerList(){
+    var html = "";
+    NMNS.calendar.getCalendars().forEach(function(item){
+      html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='" + item.id + "'>"
+        			+ "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + item.bgColor + "'></span>"
+        			+ "<span class='tui-full-calendar-content'>" + item.name + "</span>"
+      	    + "</button>";
+    });
+    
+    return html;
+  }
+  
+  function initTaskModal(){
+    if(!NMNS.initedTaskModal){
+      NMNS.initedTaskModal = true;
+      var datetimepickerOption = {
+        format: "YYYY-MM-DD HH:mm",
+        icons:{
+          previous: "fas fa-chevron-left",
+          next: "fas fa-chevron-right",
+          date: "far fa-calendar",
+          up: "fas fa-chevron-up",
+          down: "fas fa-chevron-down",
+          close: "fas fa-times"
+        },
+        dayViewHeaderFormat:"YYYY년 M월",
+        defaultDate: moment(new Date()),
+        date: moment(new Date()),
+        locale:"ko",
+        viewMode: "days",
+        buttons:{
+          showClose:true
+        },
+        stepping:10,
+        allowInputToggle:true,
+        tooltips:{
+          close:"닫기",
+          selectMonth:"월 선택",
+          prevMonth:"전달",
+          nextMonth:"다음달",
+          selectYear:"연도 선택",
+          prevYear:"작년",
+          nextYear:"내년",
+          selectDecade:"",
+          prevDecade:"이전",
+          nextDecade:"다음",
+          prevCentury:"이전",
+          nextCentury:"다음",
+          incrementHour: '시 증가',
+  		    pickHour: '시 선택',
+  		    decrementHour:'시 감소',
+  		    incrementMinute: '분 증가',
+  		    pickMinute: '분 선택',
+  		    decrementMinute:'분 감소'
+        }
+      };
+      $("#taskStartDatePicker").datetimepicker(datetimepickerOption);
+      $("#taskEndDatePicker").datetimepicker(datetimepickerOption);
+      $("#taskEndDatePicker").data("datetimepicker").date(moment().add(30, "m").toDate());
+    }
+    $("#taskManager").next().html(generateTaskManagerList());
+    var selected = NMNS.calendar.getCalendars()[0];
+    $("#taskManager").html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + selected.bgColor + "'></span><span class='tui-full-calendar-content'>" + selected.name + "</span>").data("calendar-id", selected.id);
+  }
+  
   function setEventListener() {
     $('.moveDate').on('touch click', onClickNavi);
     $('.calendarType').on('touch click', onClickMenu);
@@ -1109,6 +1174,7 @@
 
     $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
     $(".addReservLink").on("touch click", createNewSchedule);
+    $(".addTaskLink").on("touch click", initTaskModal);
 
     $("#infoLink").on("touch click", initInfoModal);
     $("#alrimLink").on("touch click", initAlrimModal);
