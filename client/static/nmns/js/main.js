@@ -1564,7 +1564,7 @@
   }, true));
 
   NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){
-    if(e.data.contact === $("#creationPopupContact").val()){
+    if(e.data.contact === $("#creationPopupContact").val() && $("#creationPopup").data("contact") !== e.data.contact){
       if($("#creationPopup").data("edit")){
         if(e.data.etc){
           $("#creationPopupEtc").val(e.data.etc);

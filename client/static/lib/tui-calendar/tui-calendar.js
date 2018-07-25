@@ -14482,7 +14482,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 	    layer.show();
 	    if(this._isEditMode){
-				$("#creationPopup").data("edit", true);
+				$("#creationPopup").data("contact", viewModel.raw.contact);
 				onContactBlur();
 			}
 	    //this._setPopupPositionAndArrowDirection(boxElement.getBoundingClientRect());
@@ -15502,12 +15502,14 @@ return /******/ (function(modules) { // webpackBootstrap
 			var escapedCssPrefix = alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)));
 			
 			var status = alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.status : stack1), depth0));
+			var title = alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.title : stack1), depth0)), contents = alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contents : stack1), depth0))
+			, etc = alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.etc : stack1), depth0));
 	  var result = 
 	  	"<div id=\"detailPopup\" class=\"" + escapedCssPrefix + "popup " + escapedCssPrefix + "popup-detail\">\n"
 	  	+ "<div class=\"" + escapedCssPrefix + "popup-container\">\n"
 	  		+ "<div class=\"" + escapedCssPrefix + "popup-section " + escapedCssPrefix + "section-header\">\n"
 	  			+ "<div title=\"고객이름\">\n"
-	  				+ "<span class=\"" + escapedCssPrefix + "schedule-title\">" + alias4(alias5(((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.title : stack1), depth0)) + "</span>\n"
+	  				+ "<span class=\"" + escapedCssPrefix + "schedule-title\">" + (title!=="" && title?title:(contents!==""&&contents?contents:alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0)))) + "</span>\n"
   				+ "</div>\n"
   				+ "<div class=\"" + escapedCssPrefix + "popup-detail-date " + escapedCssPrefix + "content\" title=\"예약 시간\">"
 	    			+ alias4((helpers["popupDetailDate-tmpl"] || (depth0 && depth0["popupDetailDate-tmpl"]) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.isAllDay : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.start : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.end : stack1),{"name":"popupDetailDate-tmpl","hash":{},"data":data}))
@@ -15519,18 +15521,18 @@ return /******/ (function(modules) { // webpackBootstrap
     			+ "<span class=\"" + escapedCssPrefix + "content\"> "
 	    			+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0))
 	    		+ "</span></div>\n"
-    		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"예약 내용\">"
+    		+ (contents !== "" && contents?"<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"예약 내용\">"
     			+ "<i class=\"fas fa-list-ul fa-fw align-middle\"></i>"
     			+ "<span class=\"" + escapedCssPrefix + "content\"> "
-    				+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contents : stack1), depth0))
+    				+ contents
   				+ "</span>"
-  			+ "</div>\n"
-  			+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객메모\">"
+  			+ "</div>\n":"")
+  			+ (etc !== "" && etc?"<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객메모\">"
   				+ "<i class=\"far fa-bookmark fa-fw align-middle\"></i>"
   				+ "<span class=\"" + escapedCssPrefix + "content\"> "
-	    			+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.etc : stack1), depth0))
+	    			+ etc
 	    		+ "</span>"
-    		+ "</div>\n"
+    		+ "</div>\n":"")
 	    	+ ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.calendar : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + "</div>\n"
 	    + "<div class=\"" + escapedCssPrefix + "section-button\">\n"
