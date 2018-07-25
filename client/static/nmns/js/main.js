@@ -1583,20 +1583,20 @@
         }
         $("#creationPopup").removeData("edit");
       }
-      if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
-        $("#creationPopupContact").tooltip({
-          title:"이 전화번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
-          placement: ($(window).width()>576?"right":"top"),
-          trigger:"click hover focus",
-          delay:{"hide":1000}
-        }).tooltip("show");
-        setTimeout(function(){
-          $("#creationPopupContact").tooltip("hide");
-        }, 3000);
-        $("#creationPopupContact").one("keyup change", function(){
-          $(this).tooltip('dispose');
-        });
-      }
+    }
+    if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
+      $("#creationPopupContact").tooltip({
+        title:"이 전화번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
+        placement: ($(window).width()>576?"right":"top"),
+        trigger:"click hover focus",
+        delay:{"hide":1000}
+      }).tooltip("show");
+      setTimeout(function(){
+        $("#creationPopupContact").tooltip("hide");
+      }, 3000);
+      $("#creationPopupContact").one("keyup change", function(){
+        $(this).tooltip('dispose');
+      });
     }
   }, undefined, true));
 
