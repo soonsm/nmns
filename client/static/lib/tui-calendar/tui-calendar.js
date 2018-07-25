@@ -9932,7 +9932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            weekView.render();
 	        });
 	    });
-	
+
 	    // binding create schedules event
 	    if (options.useCreationPopup) {
 	        createView = new ScheduleCreationPopup(layoutContainer, baseController.calendars);
@@ -14249,7 +14249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		        end:"종료시간을 입력해주세요."
 		      },
 		      errorElement:"p",
-		      errorClass:"message text-danger my-1 pl-4 pl-sm-0",
+		      errorClass:"message text-danger my-1 pl-4 pl-sm-0 ml-3",
 		      errorPlacement:function(error, element){
 		      	error.appendTo(element.parent().parent());
 		      },
@@ -14257,7 +14257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			      $(element).removeClass(errorClass);
 			    }
 		    });
-	    }
+	    }console.log(config);
 	    if(!this.validator.form()){
 	    	this.validator.showErrors();
 	    	return true;
@@ -14265,8 +14265,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var title, isAllDay, startDate, endDate, contents, contact, etc, status;
 	    var start, end, calendarId = $("#creationPopupManager").data("calendarid"), manager = this.calendars.find(function(cal){ return cal.id === calendarId;});
 
-	    startDate = new TZDate(moment($("#tui-full-calendar-schedule-start-date").val(), "YYYY-MM-DD HH:mm").toDate());
-	    endDate = new TZDate(moment($("#tui-full-calendar-schedule-end-date").val(), "YYYY-MM-DD HH:mm").toDate());
+	    startDate = new TZDate($("#creationPopupStartDate").data("datetimepicker").date().toDate());
+	    endDate = new TZDate($("#creationPopupEndDate").data("datetimepicker").date().toDate());
 
 	    if (!startDate && !endDate) {
 	        return true;
@@ -14277,16 +14277,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    contact = $("#creationPopupContact").val();
 	    etc = $("#creationPopupEtc").val();
 	    isAllDay = $("#creationPopupAllDay").is(":checked");
-	
-	    if (isAllDay) {
-	        startDate.setHours(0);
-	        startDate.setMinutes(0);
-	        endDate.setHours(23);
-	        endDate.setMinutes(50);
-	        
-			    startDate = new TZDate(startDate);
-			    endDate = new TZDate(endDate);
-	    }
 
 	    if (manager) {
 	        calendarId = manager.id;
@@ -14505,8 +14495,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	//NMNS CUSTOMIZING START
 	ScheduleCreationPopup.prototype._updatePopup = function(viewModel) {
-		$("#creationPopupStartDate").data("datetimepicker").date(moment( viewModel.start? viewModel.start.toDate() : new Date()));
-		$("#creationPopupEndDate").data("datetimepicker").date(moment( viewModel.end? viewModel.end.toDate() : new Date()));
+		$("#creationPopupStartDate").data("datetimepicker").date(moment( viewModel.start? (viewModel.start.toDate?viewModel.start.toDate():viewModel.start) : new Date()));
+		$("#creationPopupEndDate").data("datetimepicker").date(moment( viewModel.end? (viewModel.end.toDate?viewModel.end.toDate():viewModel.end) : new Date()));
     $("#creationPopupName").val(viewModel.title || "");
     $("#creationPopupContents").val(viewModel.raw? viewModel.raw.contents : (viewModel.contents || ""));
     $("#creationPopupContact").val(viewModel.raw? viewModel.raw.contact : (viewModel.contact || ""));
@@ -14823,9 +14813,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    $("#creationPopupStartDate").on("change.datetimepicker", function (e) {
           $('#creationPopupEndDate').datetimepicker('minDate', e.date.add(10, 'm'));
+          $("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
       });
       $("#creationPopupEndDate").on("change.datetimepicker", function (e) {
           $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
+          $("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
       });
       //NMNS CUSTOMIZING END
 	};

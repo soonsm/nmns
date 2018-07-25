@@ -346,7 +346,6 @@
   }
   function saveNewSchedule(scheduleData) {
     scheduleData.id = NMNS.email + generateRandom();
-    console.log(scheduleData);
     NMNS.calendar.createSchedules([scheduleData]);
     
     NMNS.history.push(scheduleData);
@@ -782,7 +781,6 @@
     var dropdown = dropdownItem.parent();
     NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), status:"NOSHOW"});
     NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:"NOSHOW"}});
-    console.log("data", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:"NOSHOW", noShowCase:input.val()});
     var row = $("#noShowScheduleList .row[data-id='"+dropdown.data("id")+"']");
     row.children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")));
@@ -1100,7 +1098,7 @@
   function generateTaskManagerList(){
     var html = "";
     NMNS.calendar.getCalendars().forEach(function(item){
-      html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='" + item.id + "'>"
+      html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='" + item.id + "' data-bgcolor='"+item.bgColor+"'>"
         			+ "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + item.bgColor + "'></span>"
         			+ "<span class='tui-full-calendar-content'>" + item.name + "</span>"
       	    + "</button>";
@@ -1156,10 +1154,46 @@
       $("#taskStartDatePicker").datetimepicker(datetimepickerOption);
       $("#taskEndDatePicker").datetimepicker(datetimepickerOption);
       $("#taskEndDatePicker").data("datetimepicker").date(moment().add(30, "m").toDate());
+      $("#taskModalSave").on("touch click", function(){
+        var id = NMNS.email + generateRandom();
+        NMNS.calendar.createSchedules([{
+          id:id,
+          calendarId:$("#taskManager").data("calendar-id"),
+          title:$("#taskName").val(),
+          start:$("#taskStartDatePicker").data("datetimepicker").date().toDate(),
+          end:$("#taskEndDatePicker").data("datetimepicker").date().toDate(),
+          isAllDay:!$("#taskStartDatePicker").data("datetimepicker").date().isSame($("#taskEndDatePicker").data("datetimepicker").date(), "day"),
+          category:"task",
+          dueDateClass:"",
+          color:getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
+          bgColor:$("#taskManager").data("bgcolor"),
+          borderColor:$("#taskManager").data("bgcolor"),
+          raw:{
+            contents:$("#taskContents").val()
+          }
+        }]);
+        NMNS.history.push({
+          id:id,
+          manager:$("#taskManager").data("calendar-id")
+        });
+        NMNS.socket.emit("add reserv", {
+          id:id,
+          manager:$("#taskManager").data("calendar-id"),
+          name:$("#taskName").val(),
+          start:$("#taskStartDatePicker").data("datetimepicker").date().format("YYYYMMDDHHmm"),
+          end:$("#taskEndDatePicker").data("datetimepicker").date().format("YYYYMMDDHHmm"),
+          isAllDay:!$("#taskStartDatePicker").data("datetimepicker").date().isSame($("#taskEndDatePicker").data("datetimepicker").date(), "day"),
+          type:"T",
+          contents:$("#taskContents").val()
+        });
+        $("#taskModal").modal("hide");
+      });
     }
-    $("#taskManager").next().html(generateTaskManagerList());
+    $("#taskManager").next().html(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function(){
+      $("#taskManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
+    });
     var selected = NMNS.calendar.getCalendars()[0];
-    $("#taskManager").html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + selected.bgColor + "'></span><span class='tui-full-calendar-content'>" + selected.name + "</span>").data("calendar-id", selected.id);
+    $("#taskManager").html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + selected.bgColor + "'></span><span class='tui-full-calendar-content'>" + selected.name + "</span>").data("calendar-id", selected.id).data("bgcolor", selected.bgColor);
   }
   
   function setEventListener() {
@@ -1230,7 +1264,6 @@
   }
 
   function noShowScheduleBadge(self){
-    console.log(self);
     var row = self.parentsUntil("#noShowScheduleList", ".row");
      $("#noShowScheduleDropdown")
       .data("id", row.data("id"))
@@ -1343,7 +1376,7 @@
     }
   }));
 
-  NMNS.socket.on("add reserv", socketResponse("예약 추가하기", function(e){
+  NMNS.socket.on("add reserv", socketResponse("예약/일정 추가하기", function(e){
     NMNS.history.remove(e.data.id, function(item, target){return (item.id === target);});
   }, function(e){
     var origin = NMNS.history.find(function(history){return (history.id === e.data.id);});
@@ -1416,7 +1449,6 @@
   }));
   
   NMNS.socket.on("update manager", socketResponse("담당자 변경하기", function(e){
-    console.log(e);
     NMNS.history.remove(e.data.id, findById);
   }, function(e){
     var manager = NMNS.history.find(function(item){return item.id === e.data.id});
@@ -1454,7 +1486,6 @@
 
   NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
     var html = "";
-    console.log(e);
     if(e.data.summary.noShowCount>0){
       $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6)) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6)) + "일이었어요.").show();
       if(e.data.detail.length>0){
@@ -1552,7 +1583,6 @@
         }
         $("#creationPopup").removeData("edit");
       }
-      console.log("aa");
       if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
         $("#creationPopupContact").tooltip({
           title:"이 전화번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
@@ -1564,7 +1594,6 @@
           $("#creationPopupContact").tooltip("hide");
         }, 3000);
         $("#creationPopupContact").one("keyup change", function(){
-          console.log("aaa");
           $(this).tooltip('dispose');
         });
       }
@@ -1758,7 +1787,6 @@
           icon_type: "class",
           icon: "far fa-bell",
           onClose: function(data){
-            console.log(data);
             NMNS.socket.emit("delete noti", {id:$(this).data("id")});
           },
           onClosed: function(){
