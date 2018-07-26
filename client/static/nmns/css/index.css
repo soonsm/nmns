@@ -1,7 +1,3 @@
-section {
-  padding: 6rem 0;
-}
-
 section h2 {
   font-size: 2.25rem;
   line-height: 2rem;
@@ -229,8 +225,7 @@ hr.star-white:after {
 }
 /*carousel - login form*/
 .loginPage{
-  margin-left:auto;
-  margin-right:auto;
+  width:100%;
 }
 .loginPage form {
   width: 100%;
@@ -240,18 +235,13 @@ hr.star-white:after {
   margin-top:4rem;
 }
 .carousel-caption {
-  height:auto;
   bottom:unset;
 }
-@media (min-width: 768px) { 
-	.carousel-caption {
-    text-align: left;
-    padding-right: 300px;
-	}
-	.loginPage {
-    position: absolute;
-    right: 8rem;
-	}
+.carousel-flex{
+  position:absolute;
+  display:flex;
+  top:0;
+  height:100%;
 }
 .carousel-item img{
   max-height:800px;
