@@ -1806,6 +1806,10 @@
       }
     }
     
+    if(notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager){
+      NMNS.calendar.updateSchedule(notification.data.id, notification.data.manager, {raw:{status:"CUSTOMERCANCELED"}});
+    }
+    
     if(NMNS.notification === "GRANTED"){//native notification
       try{
         var noti = new Notification(notification.title, {
@@ -1836,10 +1840,6 @@
       height += item.getBoundingClientRect().height + 10;
     });
     $("#notifications").height(height + "px");
-    
-    if(notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager){
-      NMNS.calendar.updateSchedule(notification.data.id, notification.data.manager, {raw:{status:"CUSTOMERCANCELED"}});
-    }
   }
   NMNS.showNotification = showNotification;
   NMNS.socket.emit("get noti");
