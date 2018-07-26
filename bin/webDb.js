@@ -116,7 +116,11 @@ exports.newWebUser = function (user) {
         signUpDate: moment().format('YYYYMMDD'),
         shopName: user.shopName || null,
         bizType: user.bizType || null,
-        staffList: [],
+        staffList: [{
+            id: user.email + moment().format('YYYYMMDDHHmmssSSS'),
+            name: '기본관리자',
+            color: '#ff00ff'
+        }],
         alrimTalkInfo: {
             useYn: 'N',
             callbackPhone: null,
@@ -128,7 +132,8 @@ exports.newWebUser = function (user) {
         reservationList: [],
         memberList: [],
         reservationConfirmAlrimTalkList: [],
-        cancelAlrimTalkList: []
+        cancelAlrimTalkList: [],
+        pushList: []
     };
 };
 
@@ -140,7 +145,7 @@ exports.signUp = async function (newUser) {
         TableName: process.nmns.TABLE.WebSecheduler,
         Item: newWebUser
     });
-}
+};
 
 exports.getWebUser = async function (email) {
     let items = await query({

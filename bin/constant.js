@@ -8,7 +8,8 @@
         NOSHOW: 'NOSHOW',
         RESERVED: 'RESERVED',
         CANCELED: 'CANCELSED',
-        DELETED: 'DELETED'
+        DELETED: 'DELETED',
+        CUSTOMERCANCELED: 'CUSTOMERCANCELED'
     };
 
     //계정 인증 상태
