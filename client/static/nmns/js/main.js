@@ -1766,6 +1766,11 @@
                   NMNS.socket.emit("delete noti", {id:$(this).data("id")});
                 },
                 onClosed: function(){
+                  var height = 10;
+                  $("#notifications .alert").each(function(index, item){
+                    height += item.getBoundingClientRect().height + 10;
+                  });
+                  $("#notifications").height(height + "px");
                   if($("#notifications").html() === ""){
                     $("#notifications").hide();
                   }
@@ -1790,7 +1795,11 @@
             NMNS.socket.emit("delete noti", {id:$(this).data("id")});
           },
           onClosed: function(){
-            $("#notifications").height(($("#notifications .alert").length * 80 + 10) + "px");
+            var height = 10;
+            $("#notifications .alert").each(function(index, item){
+              height += item.getBoundingClientRect().height + 10;
+            });
+            $("#notifications").height(height + "px");
           },
           template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="'+notification.id+'"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
         });
@@ -1822,7 +1831,11 @@
       title: notification.title,
       message: notification.body
     }, {});
-    $("#notifications").height(($("#notifications .alert").length * 80 + 10) + "px");
+    var height = 10;
+    $("#notifications .alert").each(function(index, item){
+      height += item.getBoundingClientRect().height + 10;
+    });
+    $("#notifications").height(height + "px");
     
     if(notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager){
       NMNS.calendar.updateSchedule(notification.data.id, notification.data.manager, {raw:{status:"CUSTOMERCANCELED"}});
