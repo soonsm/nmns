@@ -91,23 +91,28 @@ exports.delManager = async (newStaff) => {
 
     if (status) {
         let staffList = await db.getStaffList(this.email);
-        let index = -1;
-        for (let i = 0; i < staffList.length; i++) {
-            let staff = staffList[i];
-            if (staff.id === newStaff.id) {
-                index = i;
-                break;
-            }
-        }
-        if (index === -1) {
+        if(staffList.length === 1){
             status = false;
-            message = '해당 담당자는 존재하지 않습니다.';
-        }
-        else {
-            staffList.splice(index, 1);
-            if (!await db.updateStaffList(this.email, staffList)) {
+            message = '담당자 1명은 필수입니다.';
+        }else{
+            let index = -1;
+            for (let i = 0; i < staffList.length; i++) {
+                let staff = staffList[i];
+                if (staff.id === newStaff.id) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index === -1) {
                 status = false;
-                message = '시스템 오류입니다.(DB Update Error)';
+                message = '해당 담당자는 존재하지 않습니다.';
+            }
+            else {
+                staffList.splice(index, 1);
+                if (!await db.updateStaffList(this.email, staffList)) {
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error)';
+                }
             }
         }
     }

@@ -7,6 +7,8 @@ const
     alrimTalk = require('./alrimTalkSender'),
     emailSender = require('./emailSender');
 
+const moment = require('moment');
+
 module.exports = function (passport) {
 
 
@@ -172,10 +174,34 @@ module.exports = function (passport) {
             for (var i = 0; i < reservationList.length; i++) {
                 let reservation = reservationList[i];
                 if (reservation.id === id && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED) {
-                    reservation.status = process.nmns.RESERVATION_STATUS.CANCELED;
+                    reservation.status = process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED;
+                    reservation.cancelDate = moment().format('YYYYMMDD');
                     reservationList[i] = reservation;
 
-                    let user = await db.getWebUser(email)
+                    let user = await db.getWebUser(email);
+                    let socket = process.nmns.ONLINE[email];
+                    let push = {
+                        type: 'push',
+                        data: [{
+                            id: moment().format('YYYYMMDDHHmmssSSS'),
+                            title: '예약취소알림',
+                            body: `${moment(reservation.start).format('YYYY년MM월DD일HH시mm분')} ${reservation.contact} 고객님 예약이 취소되었습니다.`,
+                            data: {
+                                type: 'cancel reserv',
+                                id: reservation.id,
+                                manager: reservation.manager
+                            },
+                            confirmed: false
+                        }]
+                    };
+                    if(socket){
+                        push.confirmed = true;
+                        await socket.sendPush(push);
+                    }
+
+                    let pushList = user.pushList || [];
+                    pushList.push(push);
+                    await db.updateWebUser(email, {pushList: pushList});
 
                     if (!await db.updateReservation(email, reservationList)) {
                         contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
