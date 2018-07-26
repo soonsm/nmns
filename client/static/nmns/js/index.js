@@ -47,38 +47,8 @@
     }
     $('.loginPage form').not("#signupForm").animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
   }
-  
-  function alignMiddle(){
-    $(".carousel-caption").each(function(){
-      if($(window).width()<=750){
-        if($(this).height()>0){
-          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-250-($(this).height()/2)) + "px");
-        }else{
-          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-400) + "px");
-        }
-      }else{
-        if($(this).height()>0){
-          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-70-($(this).height()/2)) + "px");
-        }else{
-          $(this).css("top", ($("#mainNav").height()+($("#carouselWrapper").height()/2)-180) + "px");
-        }
-      }
-    });
-    if($(window).width()>=751){
-      $(".loginPage").css("top", (($("#carouselWrapper").height()/2)-(25+($(".loginPage .form").height()/2))) + "px");
-    }else{
-      $(".loginPage").css("top", "2rem");
-    }
-  }
-
-  $(window).on("resize", alignMiddle);
-  
-  $("#mainIndicators img").on("load", function(){
-    alignMiddle();
-  });
 
   $(document).ready(function(){
-    alignMiddle();
     $.validator.addMethod("passwordCheck", function(value, element){
       return /\W+/.test(value) && /[0-9]+/.test(value);//특수문자와 숫자가 하나 이상 포함
     }, "비밀번호는 하나 이상의 숫자와 특수문자를 포함해야합니다.");
@@ -167,7 +137,6 @@
             first = false;
             return;
           }
-          alignMiddle();
           $('html, body').animate({
             scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
           }, 1000, "easeInOutExpo");
@@ -234,7 +203,6 @@
   $(".message a.passwordReset").on("click touch", function(e){
     e.preventDefault();
     switchResetForm(function(){
-      alignMiddle();
       $('html, body').animate({
         scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
       }, 1000, "easeInOutExpo");
@@ -245,7 +213,6 @@
   $(".message a.returnSignin").on("click touch", function(e){
     e.preventDefault();
     switchResetForm(function(){
-      alignMiddle();
       $('html, body').animate({
         scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
       }, 1000, "easeInOutExpo");

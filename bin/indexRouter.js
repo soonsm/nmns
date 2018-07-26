@@ -217,7 +217,7 @@ module.exports = function (passport) {
         }
 
         //TODO: rendering
-        res.render('reservationCancel.pug', { title: '예약취소안내', message: returnMsg, contents: contents });
+        return res.marko(require('../client/template/reservationCancel'), {title:returnMsg, contents:contents});
     });
 
     return router;
