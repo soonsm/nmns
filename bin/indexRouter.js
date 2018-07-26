@@ -180,21 +180,24 @@ module.exports = function (passport) {
 
                     let user = await db.getWebUser(email);
                     let socket = process.nmns.ONLINE[email];
+
+                    let msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시 mm분')}`;
+                    if(reservation.start.endsWith('00')){
+                        msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시')}`;
+                    }
+                    msg +=  ' 예약이 취소되었습니다.'
                     let push = {
-                        type: 'push',
-                        data: [{
-                            id: moment().format('YYYYMMDDHHmmssSSS'),
-                            title: '예약취소알림',
-                            body: `${moment(reservation.start).format('YYYY년MM월DD일HH시mm분')} ${reservation.contact} 고객님 예약이 취소되었습니다.`,
-                            data: {
-                                type: 'cancel reserv',
-                                id: reservation.id,
-                                manager: reservation.manager
-                            },
-                            confirmed: false
-                        }]
+                        id: moment().format('YYYYMMDDHHmmssSSS'),
+                        title: '예약취소알림',
+                        body: msg,
+                        data: {
+                            type: 'cancel reserv',
+                            id: reservation.id,
+                            manager: reservation.manager
+                        },
+                        confirmed: false
                     };
-                    if(socket){
+                    if (socket) {
                         push.confirmed = true;
                         await socket.sendPush(push);
                     }
@@ -205,9 +208,9 @@ module.exports = function (passport) {
 
                     if (!await db.updateReservation(email, reservationList)) {
                         contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
-                    }else{
+                    } else {
                         //알림톡 전송
-                        await alrimTalk.sendReservationCancelNotify(user, reservation);
+                        // await alrimTalk.sendReservationCancelNotify(user, reservation);
                         returnMsg = '예약취소완료';
                         contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
                     }
@@ -216,8 +219,7 @@ module.exports = function (passport) {
             }
         }
 
-        //TODO: rendering
-        return res.marko(require('../client/template/reservationCancel'), {title:returnMsg, contents:contents});
+        return res.marko(require('../client/template/reservationCancel'), {title: returnMsg, contents: contents});
     });
 
     return router;
