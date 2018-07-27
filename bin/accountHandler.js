@@ -46,6 +46,10 @@ exports.getShop = async function () {
         delete resultData.password;
     }
 
+    if(resultData.isFirstVisit){
+        await db.updateWebUser(email, {isFirstVisit: false});
+    }
+
     return {
         status: status,
         data: resultData,

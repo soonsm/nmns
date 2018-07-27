@@ -63,7 +63,7 @@ module.exports = function (passport) {
 
         user = await db.signUp({email: email, password: password, emailAuthToken: emailAuthToken});
 
-        emailSender.sendEmailVerification(email, emailAuthToken);
+        await emailSender.sendEmailVerification(email, emailAuthToken);
 
         if (user) {
             //로그인처리
