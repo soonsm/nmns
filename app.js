@@ -14,6 +14,7 @@ require('marko/node-require');
 
 const
     express = require('express'),
+    favicon = require('express-favicon'),
     Server = require("http").Server,
     markoExpress = require('marko/express'),
     body_parser = require('body-parser'),
@@ -33,6 +34,9 @@ const
     noShowRouter = require('./bin/noShowRouter'),
     db = require('./bin/webDb')
 ;
+
+//favicon
+app.use(favicon(__dirname + '/client/static/nmns/img/favicon.ico'));
 
 //static file은 session 설정 필요없으므로 위로 이동
 app.use(express.static(__dirname + '/client/static'));
