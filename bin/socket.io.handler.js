@@ -29,7 +29,7 @@ const GetAlrimTalkInfo = 'get alrim',
     UpdateAlirmTalk = 'update alrim';
 const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
-const Push = 'message';
+const SendNoti = 'message', GetNoti = 'get noti';
 
 const EVENT_LIST_NO_NEED_VERIFICATION = [SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
@@ -59,7 +59,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         // }
 
         socket.sendPush = async function(data){
-            socket.emit(Push, data);
+            socket.emit(SendNoti, {
+                type: 'push',
+                data: [data]
+            });
         }
 
         process.nmns.ONLINE[email] = socket;
@@ -105,6 +108,32 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             socket.emit(SendVerification, makeResponse(status, null, message));
         });
+
+        /**
+         * 알림 조회
+         */
+        addEvent(GetNoti, async function(){
+            let resultData = {
+                type: 'push',
+                data: []
+            };
+
+            let user = await db.getWebUser(email);
+            let pushList = user.pushList || [];
+            for(let i=pushList.length-1; i>=0; i--){
+                let push = pushList[i];
+                if(push.confirmed === false){
+                    resultData.data.push(push);
+                    pushList[i].confirmed = true;
+                }else{
+                    break;
+                }
+            }
+
+            await db.updateWebUser(email, {pushList: pushList});
+
+            socket.emit(GetNoti, makeResponse(true, resultData, null));
+        })
 
         /**
          * 고객정보
