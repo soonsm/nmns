@@ -133,7 +133,8 @@ exports.newWebUser = function (user) {
         memberList: [],
         reservationConfirmAlrimTalkList: [],
         cancelAlrimTalkList: [],
-        pushList: []
+        pushList: [],
+        isFirstVisit: true
     };
 };
 
