@@ -15376,6 +15376,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        top: parentRect.top
 	    };
 	    var scheduleEl = event.target || event.srcElement;
+	    if($(scheduleEl).hasClass("tui-full-calendar-weekday-schedule-title")){
+	    	scheduleEl = scheduleEl.parentElement;
+	    }
 	    var scheduleBound = scheduleEl.getBoundingClientRect();
 	    var pos;
 	

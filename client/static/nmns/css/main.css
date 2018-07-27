@@ -68,10 +68,13 @@ div.tui-full-calendar-timegrid-container{
 .tui-full-calendar-vlayout-area, .tui-full-calendar-week-container{
   height:auto !important;
 }
-.tui-full-calendar-weekday-grid-line .tui-full-calendar-weekday-grid-date{
+.tui-full-calendar-weekday-grid-line:not(.tui-full-calendar-today) .tui-full-calendar-weekday-grid-date{
   width:auto;
   text-align:left;
   padding-left:.25rem;
+}
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator{
+  background-color:#009688;
 }
 .tui-full-calendar-time-schedule{
   text-overflow:ellipsis;
@@ -142,7 +145,7 @@ button.moveDate:focus{
     left:calc(50% - 267.5px);
   }
 }
-#tui-full-calendar-popup-arrow{
+#creationPopup #tui-full-calendar-popup-arrow{
   display:none;
 }
 .tui-full-calendar-button.tui-full-calendar-popup-close{
@@ -263,14 +266,17 @@ button.moveDate:focus{
   display:none;
 }
 .detailPopupLabel .dropdown-menu{
-  min-width:5.5rem;
-  width:5.5rem;
+  min-width:5.4rem;
+  width:5.4rem;
 }
 .detailPopupLabel .dropdown-item{
   padding-left:1.5rem;
   font-size:.9rem;
 }
-
+.tui-full-calendar-popup-detail .tui-full-calendar-icon.tui-full-calendar-calendar-dot{
+  margin-left:4px;
+  margin-right:5px;
+}
 /* infoForm */
 #infoForm{
   font-size:.9rem;
