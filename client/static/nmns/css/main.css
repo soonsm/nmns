@@ -490,7 +490,7 @@ button.moveDate:focus{
 #notifications{
   position:absolute;
   right:0;
-  top:0;
+  top:55px;
   width:40%;
   max-width:400px;
   max-height:500px;
