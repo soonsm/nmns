@@ -10031,6 +10031,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    weekView.on('afterRender', function() {
 	        vLayout.refresh();
+	        //NMNS CUSTOMIZING START
+			    var area = $(".tui-full-calendar-timegrid-container");
+			    if(area){
+			    	if(area.data("scroll")){
+			    		area.data("scroll").update();
+			    	}else{
+			    		area.data("scroll", new PerfectScrollbar(".tui-full-calendar-timegrid-container", {suppressScrollX:true}));
+			    	}
+			    }
+			    //NMNS CUSTOMIZING END
 	    });
 	
 	    // add controller
@@ -10465,11 +10475,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var layoutHeight = this.getViewBound().height;
 	    var usedHeight = 0;
 	    var remainHeight;
-	
+
 	    if (!layoutHeight) {
 	        return;
 	    }
-	
+
 	    util.forEach(this.panels, function(panel) {
 	        if (panel.options.autoHeight) {
 	            panelToFillHeight.push(panel);
@@ -10726,7 +10736,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (options.className) {
 	        domutil.addClass(container, options.className);
 	    }
-	
+	console.log(container, options);
 	    if (options.autoHeight) {
 	        domutil.setData(container, 'autoHeight', true);
 	    } else {
@@ -12616,10 +12626,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     **********/
 	    this.hourmarkers = domutil.find(config.classname('.timegrid-hourmarker'), container, true);
 	
-	    if (!this._scrolled) {
+			$("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
+	    /*if (!this._scrolled) {console.log("aa");
 	        this._scrolled = true;
 	        this.scrollToNow();
-	    }
+	    }*/
 	};
 	
 	TimeGrid.prototype.renderStickyContainer = function(baseViewModel) {

@@ -128,7 +128,8 @@
       "common.border": ".07rem solid #e5e5e5",
       "common.saturday.color": "#304ffe",
       "week.timegridOneHour.height":"68px",
-      "week.timegridHalfHour.height":"34px"
+      "week.timegridHalfHour.height":"34px",
+      "week.vpanelSplitter.height":"5px"
     }
   });
 
@@ -174,7 +175,7 @@
     },
     afterRenderSchedule:function(e){
       if(NMNS.calendar.getViewName() !== "month"){
-        $("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
+        //$("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
       }
     }
   });
@@ -1586,7 +1587,7 @@
     }
     if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
       $("#creationPopupContact").tooltip({
-        title:"이 전화번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
+        title:"이 번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
         placement: ($(window).width()>576?"right":"top"),
         trigger:"click hover focus",
         delay:{"hide":1000}
@@ -1844,7 +1845,7 @@
   NMNS.showNotification = showNotification;
   NMNS.socket.emit("get noti");
   NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e){
-    e.data.forEach(function(item){
+    e.data.data.forEach(function(item){
       showNotification(item);
     });
   }));

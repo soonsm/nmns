@@ -32,12 +32,12 @@ hr.star:after{
   font-size: 2em;
 }
 
-hr.star-secondary {
+hr.star-dark {
   border-color: #ffffff;
 }
-hr.star-secondary:after {
+hr.star-dark:after {
   color: #ffffff;
-  background-color: #757575;
+  background-color: #343a40;
 }
 hr.star-primary {
   border-color: #ffffff;

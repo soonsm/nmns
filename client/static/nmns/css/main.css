@@ -21,6 +21,9 @@ div.tui-full-calendar-dayname-container{
 div.tui-full-calendar-timegrid-container{
   overflow-y: hidden;
 }
+div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-panel-index="4"]{
+  height:auto !important;
+}
 #renderRange{
   font-size:1.5rem;
 }
@@ -587,4 +590,14 @@ button.moveDate:focus{
 }
 #taskModal #taskModalSave{
   margin-left:.5rem;
+}
+/* footer */
+footer{
+  left:0;
+  right:0;
+  bottom:0;
+}
+/* commons */
+.tooltip-inner{
+  max-width:265px;
 }
