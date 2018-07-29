@@ -2143,8 +2143,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    start: function(date) {
 	        var d = new TZDate(date.getTime());
-	        d.setHours(0, 0, 0, 0);
-	
+	        //NMNS CUSTOMIZING START
+	        d.setHours((NMNS.info&&NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0,2), 10):9), (NMNS.info&&NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(2), 10):0), 0, 0);
+					//NMNS CUSTOMIZING END
 	        return d;
 	    },
 	
@@ -2156,7 +2157,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    end: function(date) {
 	        var d = new TZDate(date.getTime());
 	        //NMNS CUSTOMIZING START
-	        d.setHours(23, 50, 0, 0);
+	        d.setHours((NMNS.info&&NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(0,2), 10):23), (NMNS.info&&NMNS.info.bizEndTime?parseInt(NMNS.info.bizEndTime.substring(2), 10):50), 0, 0);
 					//NMNS CUSTOMIZING END
 	        return d;
 	    },
@@ -12627,7 +12628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.hourmarkers = domutil.find(config.classname('.timegrid-hourmarker'), container, true);
 	//NMNS CUSTOMIZING START
 			$("#mainCalendar").height(($(".tui-full-calendar-week-container").is(":visible")?($(".tui-full-calendar-week-container").height()):($(".tui-full-calendar-layout").height()))+ "px");
-	    /*if (!this._scrolled) {console.log("aa");
+	    /*if (!this._scrolled) {
 	        this._scrolled = true;
 	        this.scrollToNow();
 	    }*/
@@ -14732,6 +14733,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
 		//NMNS CUSTOMIZING START
+			var openingHours = [];
+			if(NMNS.info.bizBeginTime && NMNS.info.bizEndTime){
+				var endTime = parseInt(NMNS.info.bizEndTime.substring(0,2)) + (NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1);
+				for (var i=parseInt(NMNS.info.bizBeginTime.substring(0,2), 10);i<=endTime;i++){
+					openingHours.push(i);
+				}
+			}else{
+				openingHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+			}
 	    $("#creationPopupStartDate").datetimepicker({
 	    	icons:{
 	    		up: "fas fa-chevron-up",
@@ -14777,7 +14787,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 				buttons:{
 					showClose:true
-				}
+				},
+				enabledHours: openingHours
 	    });
 	    $("#creationPopupEndDate").datetimepicker({
 	    	icons:{
@@ -14821,7 +14832,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 				buttons:{
 					showClose:true
-				}
+				},
+				enabledHours: openingHours
 	    });
 	    $("#creationPopupStartDate").on("change.datetimepicker", function (e) {
           $('#creationPopupEndDate').datetimepicker('minDate', e.date.add(10, 'm'));
@@ -15524,7 +15536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  	+ "<div class=\"" + escapedCssPrefix + "popup-container\">\n"
 	  		+ "<div class=\"" + escapedCssPrefix + "popup-section " + escapedCssPrefix + "section-header\">\n"
 	  			+ "<div title=\"고객이름\">\n"
-	  				+ "<span class=\"" + escapedCssPrefix + "schedule-title\">" + (title!=="" && title?title:(contents!==""&&contents?contents:alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0)))) + "</span>\n"
+	  				+ "<span class=\"" + escapedCssPrefix + "schedule-title\">" + (title!=="" && title?title:(contents!==""&&contents?contents:dashContact(alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0))))) + "</span>\n"
   				+ "</div>\n"
   				+ "<div class=\"" + escapedCssPrefix + "popup-detail-date " + escapedCssPrefix + "content\" title=\"예약 시간\">"
 	    			+ alias4((helpers["popupDetailDate-tmpl"] || (depth0 && depth0["popupDetailDate-tmpl"]) || alias2).call(alias1,((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.isAllDay : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.start : stack1),((stack1 = (depth0 != null ? depth0.schedule : depth0)) != null ? stack1.end : stack1),{"name":"popupDetailDate-tmpl","hash":{},"data":data}))
@@ -15534,7 +15546,7 @@ return /******/ (function(modules) { // webpackBootstrap
     		+ "<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"고객 연락처\">"
     			+ "<i class=\"fas fa-phone fa-rotate-90 fa-fw align-middle\"></i>"
     			+ "<span class=\"" + escapedCssPrefix + "content\"> "
-	    			+ alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0))
+	    			+ dashContact(alias4(alias5(((stack1 = (depth0 != null && depth0.schedule && depth0.schedule.raw ? depth0.schedule.raw : depth0)) != null ? stack1.contact : stack1), depth0)))
 	    		+ "</span></div>\n"
     		+ (contents !== "" && contents?"<div class=\"" + escapedCssPrefix + "popup-detail-item\" title=\"예약 내용\">"
     			+ "<i class=\"fas fa-list-ul fa-fw align-middle\"></i>"
@@ -18366,13 +18378,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        return util.bind(function(startDate, endDate) {
 	            var gridY, timeY, nearestGridY, nearestGridTimeY, nearestGridEndY, nearestGridEndTimeY;
-	
-	            gridY = startDate.getHours() + getNearestHour(startDate.getMinutes());
+							//NMNS CUSTOMIZING START
+	            gridY = startDate.getHours() + getNearestHour(startDate.getMinutes()) - (NMNS.info&&NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10):0);
 	            timeY = viewTime + datetime.millisecondsFrom('hour', gridY);
 	            nearestGridY = gridY;
 	            nearestGridTimeY = viewTime + datetime.millisecondsFrom('hour', nearestGridY);
-	            nearestGridEndY = endDate.getHours() + getNearestHour(endDate.getMinutes());
+	            nearestGridEndY = endDate.getHours() + getNearestHour(endDate.getMinutes()) - (NMNS.info&&NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10):0);
 	            nearestGridEndTimeY = viewTime + datetime.millisecondsFrom('hour', nearestGridEndY);
+	            //NMNS CUSTOMIZING END
 	
 	            return util.extend({
 	                target: timeView,
