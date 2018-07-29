@@ -12625,12 +12625,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Render hourmarker
 	     **********/
 	    this.hourmarkers = domutil.find(config.classname('.timegrid-hourmarker'), container, true);
-	
-			$("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
+	//NMNS CUSTOMIZING START
+			$("#mainCalendar").height(($(".tui-full-calendar-week-container").is(":visible")?($(".tui-full-calendar-week-container").height()):($(".tui-full-calendar-layout").height()))+ "px");
 	    /*if (!this._scrolled) {console.log("aa");
 	        this._scrolled = true;
 	        this.scrollToNow();
 	    }*/
+	    //NMNS CUSTOMIZING END
 	};
 	
 	TimeGrid.prototype.renderStickyContainer = function(baseViewModel) {
