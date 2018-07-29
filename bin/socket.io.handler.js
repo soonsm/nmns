@@ -48,9 +48,9 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         const user = socket.request.user;
         const email = user.email;
 
-        // var email = 'ksm@test.com';
+        // var email = 'soonsm@gmail.com';
         // var user = await db.getWebUser(email);
-        // user.authStatus = 'EMAIL_VERIFICATED';
+        //user.authStatus = 'EMAIL_VERIFICATED';
         console.log('socket io email:', email);
 
         if(!email || !socket.request.user.logged_in){
