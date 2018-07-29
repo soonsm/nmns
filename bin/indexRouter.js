@@ -119,10 +119,7 @@ module.exports = function (passport) {
                 console.log('fail to destroy session: ', err);
             });
 
-            res.marko(require('../client/template/index'), {
-                type: "signin",
-                email: email
-            });
+            res.redirect("/");
         }else{
             res.sendStatus(404);
         }
