@@ -246,3 +246,32 @@ hr.star-white:after {
 .carousel-item img{
   max-height:800px;
 }
+.carouselLastLine{
+  display:none;
+}
+@media(min-width:438px){
+  .carouselLastLine{
+    display:inline-flex;
+  }
+}
+@media(min-width:370px){
+  #mainIndicators + .loginPage{
+    margin-top:3rem;
+  }
+}
+.d-xs-none{
+  display:none;
+}
+@media(min-width:353px){
+  .d-xs-none{
+    display:inline-block;
+  }
+}
+#mainNav button{
+  display:none;
+}
+@media(min-width:311px){
+  #mainNav button{
+    display:inline-flex;
+  }
+}

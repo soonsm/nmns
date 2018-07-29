@@ -138,13 +138,13 @@
             return;
           }
           $('html, body').animate({
-            scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+            scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
           }, 1000, "easeInOutExpo");
           $("#signupForm input[name='email']").focus();
       }}());
     }else{
       $('html, body').animate({
-        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+        scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
       }, 1000, "easeInOutExpo");
       $("#signupForm input[name='email']").focus();
     }
@@ -162,22 +162,20 @@
           }
           if(!$("#signinBtn").is(":visible")){
             $(".message a.returnSignin").trigger("click");
-          }else{
-            $('html, body').animate({
-              scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
-            }, 1000, "easeInOutExpo");
-            $("#signinForm input[name='email']").focus();
           }
+          $('html, body').animate({
+            scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
+          }, 1000, "easeInOutExpo");
+          $("#signinForm input[name='email']").focus();
       }}());
     }else{
       if(!$("#signinBtn").is(":visible")){
         $(".message a.returnSignin").trigger("click");
-      }else{
-        $('html, body').animate({
-          scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
-        }, 1000, "easeInOutExpo");
-        $("#signinForm input[name='email']").focus();
       }
+      $('html, body').animate({
+        scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
+      }, 1000, "easeInOutExpo");
+      $("#signinForm input[name='email']").focus();
     }
   });
   
@@ -204,7 +202,7 @@
     e.preventDefault();
     switchResetForm(function(){
       $('html, body').animate({
-        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+        scrollTop: $(".loginPage")[0].getBoundingClientRect().top
       }, 1000, "easeInOutExpo");
       $("#resetForm input[name='email']").focus();
     });
@@ -214,7 +212,7 @@
     e.preventDefault();
     switchResetForm(function(){
       $('html, body').animate({
-        scrollTop: $("#mainNav").height() + parseInt($(".loginPage").css("top"))
+        scrollTop: $(".loginPage")[0].getBoundingClientRect().top
       }, 1000, "easeInOutExpo");
       $("#signinForm input[name='email']").focus();
     });
