@@ -111,14 +111,21 @@ module.exports = function (passport) {
     });
 
     router.get("/signout", (req, res) => {
-        if(req.user){
-            res.cookie('email',req.user.email);
+        if(req.user) {
+            let email = req.user.email;
+            res.cookie('email', email);
+            req.logout();
+            req.session.destroy(function (err) {
+                console.log('fail to destroy session: ', err);
+            });
+
+            res.marko(require('../client/template/index'), {
+                type: "signin",
+                email: email
+            });
+        }else{
+            res.sendStatus(404);
         }
-        req.logout();
-        req.session.destroy(function (err) {
-            console.log('fail to destroy session: ', err);
-        });
-        res.redirect('/');
     })
 
     router.get("/", function (req, res) {//main calendar page
