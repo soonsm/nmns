@@ -13,11 +13,16 @@ module.exports = function (passport) {
 
 
     router.get('/index', function (req, res) {
-        res.marko(require('../client/template/index'), {
-            type: "signin",
-            email: req.cookies.email,
-            message: req.session.errorMessage
-        });
+        if (req.user) {
+            //로그인 되있으면 main으로 이동
+            res.marko(require('../client/template/main'), {user: req.user});
+        } else {
+            res.marko(require('../client/template/index'), {
+                type: "signin",
+                email: req.cookies.email,
+                message: req.session.errorMessage
+            });
+        }
     });
 
     router.post("/signup", async function (req, res) {
@@ -63,12 +68,13 @@ module.exports = function (passport) {
 
         user = await db.signUp({email: email, password: password, emailAuthToken: emailAuthToken});
 
-        await emailSender.sendEmailVerification(email, emailAuthToken);
+        emailSender.sendEmailVerification(email, emailAuthToken);
 
         if (user) {
             //로그인처리
-            req.logIn(user, () => res.redirect("/"));
-            res.redirect("/");
+            req.logIn(user, function(){
+                res.redirect("/");
+            });
         } else {
             error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
             return res.marko(require('../client/template/index'), error);
@@ -105,11 +111,21 @@ module.exports = function (passport) {
     });
 
     router.get("/signout", (req, res) => {
-        req.logout();
-        req.session.destroy(function (err) {
-            console.log('fail to destroy session: ', err);
-        });
-        res.redirect('/');
+        if(req.user) {
+            let email = req.user.email;
+            res.cookie('email', email);
+            req.logout();
+            req.session.destroy(function (err) {
+                console.log('fail to destroy session: ', err);
+            });
+
+            res.marko(require('../client/template/index'), {
+                type: "signin",
+                email: email
+            });
+        }else{
+            res.sendStatus(404);
+        }
     })
 
     router.get("/", function (req, res) {//main calendar page
@@ -121,18 +137,21 @@ module.exports = function (passport) {
         }
     });
 
-    router.get('/auth?email=:email&token=:token', async function (req, res) {
+    //http://localhost:8088/emailVerification/email=soonsm@gmail.com&token=297356b5ba41255cfe85cc692ecabbf3a0caf5423e62b9c0974e8ef73676b32a
+    router.get("/emailVerification/email=:email&token=:token", async function (req, res) {
         const email = req.params.email;
         const token = req.params.token;
 
         let user = await db.getWebUser(email);
-        if (user && user.emailAuthToken === token) {
-            await db.updateWebUser(email, 'authStatus', 'EMAIL_VERIFICATED');
-            //TODO: 이메일 인증이 완료되었다는 페이지로 이동
+        if (user && user.emailAuthToken === token && user.authStatus !== process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
+            await db.updateWebUser(email, {authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED});
+            req.logIn(user, function(){
+                res.redirect("/");
+            });
             return;
         }
 
-        //TODO: 잘못된 접근이라는 페이지로 이동
+        res.sendStatus(404);
     });
 
     router.post('/resetPassword', async function (req, res) {
