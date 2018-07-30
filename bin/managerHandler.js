@@ -12,7 +12,7 @@ exports.getManagerList = async function () {
     };
 };
 
-exports.addManager = async (staff) => {
+exports.addManager = async function(staff){
     let status = true,
         message = null;
     let name = staff.name;
@@ -37,7 +37,7 @@ exports.addManager = async (staff) => {
     };
 };
 
-exports.updateManager = async (newStaff) => {
+exports.updateManager = async function(newStaff){
     let status = true,
         message = null;
     let name = newStaff.name;
