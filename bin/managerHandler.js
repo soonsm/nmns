@@ -79,7 +79,7 @@ exports.updateManager = async function(newStaff){
     };
 };
 
-exports.delManager = async (newStaff) => {
+exports.delManager = async function(newStaff){
     let status = true,
         message = null;
     let id = newStaff.id;
