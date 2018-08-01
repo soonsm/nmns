@@ -35,6 +35,7 @@ exports.getCustomerDetail = async function(data){
                     resultData.isAllDay = reservation.isAllDay;
                     resultData.manager = reservation.manager;
                     resultData.contents = reservation.contents;
+                    resultData.name = reservation.name;
                     resultData.etc = reservation.etc;
 
                     break;
