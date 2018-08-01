@@ -1548,23 +1548,23 @@
 
   NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){console.log(e);
     if(e.data.contact === $("#creationPopupContact").val() && $("#creationPopup").data("contact") !== e.data.contact){
-      if($("#creationPopup").data("edit")){
-        if(e.data.etc){
-          $("#creationPopupEtc").val(e.data.etc);
+      if(e.data.etc && $("#creationPopupEtc").val() === ""){
+        $("#creationPopupEtc").val(e.data.etc);
+      }
+      if(e.data.manager){
+        var manager = findManager(e.data.manager);
+        if(manager){
+          $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+manager.id+"']").html()).data("calendarid", manager.id);
         }
-        if(e.data.manager){
-          var manager = findManager(e.data.manager);
-          if(manager){
-            $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+manager.id+"']").html()).data("calendarid", manager.id);
-          }
-        }
-        if(e.data.contents){
-          $("#creationPopupContents").val(e.data.contents);
-        }
-        if(e.data.isAllDay !== undefined){
-          $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
-        }
-        $("#creationPopup").removeData("edit");
+      }
+      if(e.data.contents && $("#creationPopupContents").val() === ""){
+        $("#creationPopupContents").val(e.data.contents);
+      }
+      if(e.data.isAllDay !== undefined){
+        $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
+      }
+      if(e.data.name && $("#creationPopupName").val() === ""){
+        $("#creationPopupName").val(e.data.name);
       }
     }
     if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
