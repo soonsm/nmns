@@ -46,6 +46,9 @@ exports.getNoShow = async function(data) {
                     filteredList.push(noShow);
                 }
             }
+            await filteredList.sort((a,b)=>{
+               return a.date - b.date;
+            });
             resultData.detail = filteredList;
         }
     }
