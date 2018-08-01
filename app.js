@@ -52,17 +52,19 @@ app.use(cookieParser());
 
 //flash && session setting
 const DynamoStore = require('connect-dynamodb-session')(session);
-let autoCreateValue = true;
-if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
-    autoCreateValue = false;
-}
-let sessionStore = new DynamoStore({
+let optionForDynamoStroe = {
     region: 'ap-northeast-2',
     tableName: 'SessionTable',
     cleanupInterval: 0, // session is not expired unless log-out
     touchAfter: 0,
-    autoCreate: autoCreateValue
-});
+    autoCreate: true
+};
+if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
+    optionForDynamoStroe.endpoint = "http://localhost:8000"
+}
+let sessionStore = new DynamoStore(optionForDynamoStroe);
+
+
 
 app.use(session({secret: "rilahhuma", resave: false, saveUninitialized: false,
     store: sessionStore }));
