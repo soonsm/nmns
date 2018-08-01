@@ -7127,7 +7127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		var self = this;
 	    this.calendars.forEach(function(item, index){
 	    	if(item.id === calendarId){
-	    		self.calendars[index] = calendar;
+	    		self.calendars[index] = util.extend(self.calendars[index], calendar);
 	    	}
 	    });
 	};
@@ -9992,6 +9992,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            			weekView.handler.move.time.fire("beforeUpdateSchedule", eventData);
 	            		}
 	            	}
+	            	domutil.find(config.classname('.screen')).style.visibility = "hidden";//hide screen
             		detailView.hide();
 	            });
 	            domutil.find(config.classname('.screen')).style.visibility = "visible";//show screen
@@ -14416,6 +14417,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				this._updatePopup(viewModel);
 				$("#creationPopupName").autocomplete().clearCache();
 				$("#creationPopupContact").autocomplete().clearCache();
+				$("#creationPopupContact").tooltip("dispose");
 			}else{//need init
 	    	layer.setContent(tmpl(viewModel));
 				document.getElementById("creationPopupForm").onsubmit = function(){return false;};
@@ -14442,13 +14444,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onSearchError: function(){},
 	        onSelect: function(suggestion){
 	          $("#creationPopupContact").val(suggestion.data).trigger("blur");
-	        },
-	        beforeRender: function(container){
-	          if($(container).data("scroll")){
-	            $(container).data("scroll").update();
-	          }else{
-	            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-	          }
 	        }
 	      }, NMNS.socket);
 	      
@@ -14475,13 +14470,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onSelect: function(suggestion){
 	          $("#creationPopupName").val(suggestion.data);
 	          onContactBlur();
-	        },
-	        beforeRender: function(container){
-	          if($(container).data("scroll")){
-	            $(container).data("scroll").update();
-	          }else{
-	            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-	          }
 	        }
 	      }, NMNS.socket).on("blur", function(){
 	      	filterNonNumericCharacter($(this));
@@ -14508,15 +14496,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	//NMNS CUSTOMIZING START
 	ScheduleCreationPopup.prototype._updatePopup = function(viewModel) {
-		$("#creationPopupStartDate").data("datetimepicker").date(moment( viewModel.start? (viewModel.start.toDate?viewModel.start.toDate():viewModel.start) : new Date()));
-		$("#creationPopupEndDate").data("datetimepicker").date(moment( viewModel.end? (viewModel.end.toDate?viewModel.end.toDate():viewModel.end) : new Date()));
+		$("#creationPopupStartDate").data("datetimepicker").date(viewModel.start.toDate?viewModel.start.toDate():viewModel.start);
+		$("#creationPopupEndDate").data("datetimepicker").date(viewModel.end.toDate?viewModel.end.toDate():viewModel.end);
     $("#creationPopupName").val(viewModel.title || "");
     $("#creationPopupContents").val(viewModel.raw? viewModel.raw.contents : (viewModel.contents || ""));
     $("#creationPopupContact").val(viewModel.raw? viewModel.raw.contact : (viewModel.contact || ""));
     $("#creationPopupEtc").val(viewModel.raw? viewModel.raw.etc : (viewModel.etc || ""));
     $("#creationPopupAllDay").attr("checked", viewModel.isAllDay);
     this._selectedCal = this._selectedCal || this.calendars[0];
-    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+this._selectedCal.id+"']").html()).data("calendarid", this._selectedCal.id);
+    var dropdown = "";
+    this.calendars.forEach(function(item){
+    	var escapedCssPrefix = "tui-full-calendar-";
+    	dropdown += "<button type=\"button\" class=\"dropdown-item " + escapedCssPrefix + "dropdown-item\" data-calendar-id=\"" + item.id + "\">\n"
+								+ "<span class=\"" + escapedCssPrefix + "icon " + escapedCssPrefix + "calendar-dot\" style=\"background-color: " + item.bgColor + "\"></span>\n"
+								+ "<span class=\"" + escapedCssPrefix + "content\">" + item.name + "</span>\n"
+						    + "</button>\n";
+    });
+    $("#creationPopupManager").html($("#creationPopupManager").next().html(dropdown).find("button[data-calendar-id='"+this._selectedCal.id+"']").html()).data("calendarid", this._selectedCal.id);
 	};
 	//NMNS CUSTOMIZING END
 	/**
@@ -14731,7 +14727,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {TZDate} start - start date
 	 * @param {TZDate} end - end date
 	 */
-	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
+	ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isStartOnly) {
 		//NMNS CUSTOMIZING START
 			var openingHours = [];
 			if(NMNS.info.bizBeginTime && NMNS.info.bizEndTime){
@@ -14790,59 +14786,61 @@ return /******/ (function(modules) { // webpackBootstrap
 				},
 				enabledHours: openingHours
 	    });
-	    $("#creationPopupEndDate").datetimepicker({
-	    	icons:{
-	    		up: "fas fa-chevron-up",
-	    		down: "fas fa-chevron-down",
-	    		time: 'far fa-clock',
-          date: 'far fa-calendar',
-          previous: 'fas fa-chevron-left',
-          next: 'fas fa-chevron-right',
-          close: 'fas fa-times'
-	    	},
-	    	defaultDate: end.toDate? end.toDate() : end,
-	    	date: end.toDate? end.toDate() : end,
-	    	format: "YYYY-MM-DD HH:mm",
-	    	dayViewHeaderFormat : "YYYY년 M월",
-	    	stepping:10,
-	    	locale: "ko",
-	    	sideBySide: true,
-	    	allowInputToggle:true,
-	    	tooltips: {
-			    today: '오늘',
-			    clear: '초기화',
-			    close: '닫기',
-			    selectMonth: '월 선택',
-			    prevMonth: '전달',
-			    nextMonth: '다음달',
-			    selectYear: '연도 선택',
-			    prevYear: '작년',
-			    nextYear: '내년',
-			    selectDecade: '',
-			    prevDecade: '이전',
-			    nextDecade: '다음',
-			    prevCentury: '이전',
-			    nextCentury: '다음',
-			    incrementHour: '시 증가',
-			    pickHour: '시 선택',
-			    decrementHour:'시 감소',
-			    incrementMinute: '분 증가',
-			    pickMinute: '분 선택',
-			    decrementMinute:'분 감소'
-				},
-				buttons:{
-					showClose:true
-				},
-				enabledHours: openingHours
-	    });
-	    $("#creationPopupStartDate").on("change.datetimepicker", function (e) {
+	    $("#creationPopupStartDate").off("change.datetimepicker").on("change.datetimepicker", function (e) {
           $('#creationPopupEndDate').datetimepicker('minDate', e.date.add(10, 'm'));
-          $("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
+          //$("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
       });
-      $("#creationPopupEndDate").on("change.datetimepicker", function (e) {
-          $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
-          $("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
-      });
+	    if(!isStartOnly){
+		    $("#creationPopupEndDate").datetimepicker({
+		    	icons:{
+		    		up: "fas fa-chevron-up",
+		    		down: "fas fa-chevron-down",
+		    		time: 'far fa-clock',
+	          date: 'far fa-calendar',
+	          previous: 'fas fa-chevron-left',
+	          next: 'fas fa-chevron-right',
+	          close: 'fas fa-times'
+		    	},
+		    	defaultDate: end.toDate? end.toDate() : end,
+		    	date: end.toDate? end.toDate() : end,
+		    	format: "YYYY-MM-DD HH:mm",
+		    	dayViewHeaderFormat : "YYYY년 M월",
+		    	stepping:10,
+		    	locale: "ko",
+		    	sideBySide: true,
+		    	allowInputToggle:true,
+		    	tooltips: {
+				    today: '오늘',
+				    clear: '초기화',
+				    close: '닫기',
+				    selectMonth: '월 선택',
+				    prevMonth: '전달',
+				    nextMonth: '다음달',
+				    selectYear: '연도 선택',
+				    prevYear: '작년',
+				    nextYear: '내년',
+				    selectDecade: '',
+				    prevDecade: '이전',
+				    nextDecade: '다음',
+				    prevCentury: '이전',
+				    nextCentury: '다음',
+				    incrementHour: '시 증가',
+				    pickHour: '시 선택',
+				    decrementHour:'시 감소',
+				    incrementMinute: '분 증가',
+				    pickMinute: '분 선택',
+				    decrementMinute:'분 감소'
+					},
+					buttons:{
+						showClose:true
+					},
+					enabledHours: openingHours
+		    });
+	      $("#creationPopupEndDate").off("change.datetimepicker").on("change.datetimepicker", function (e) {
+	          $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
+	          //$("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
+	      });
+	    }
       //NMNS CUSTOMIZING END
 	};
 	
@@ -15571,7 +15569,7 @@ return /******/ (function(modules) { // webpackBootstrap
     		+ "</button>\n"
     		+ "<div class=\"detailPopupLabel dropup d-inline-block text-center\">"
     			+ "<span id=\"detailPopupLabelDropdown\" class=\"" + escapedCssPrefix + "content dropdown-toggle dropdown-toggle-up\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\" data-reference=\"parent\">"
-    				+ "<span class=\"badge badge-" + (status === "NOSHOW" ? "danger" : (status === "RESERVED"? "success" : (status === "CANCELED" ? "secondary" : "light"))) + "\">" + (status === "NOSHOW" ? "노쇼" : (status === "RESERVED"? "정상" : (status === "CANCELED" ? "취소" : "삭제"))) + "</span>"
+    				+ "<span class=\"badge badge-" + (status === "NOSHOW" ? "danger" : (status === "RESERVED"? "success" : (status === "CANCELED" || status === "CUSTOMERCANCELED" ? "secondary" : "light"))) + "\">" + (status === "NOSHOW" ? "노쇼" : (status === "RESERVED"? "정상" : (status === "CANCELED" || status === "CUSTOMERCANCELED" ? "취소" : "삭제"))) + "</span>"
 	    		+ "</span>"
 	    		+ "<div class=\"dropdown-menu text-center\" aria-labelledby=\"detailPopupLabelDropdown\">\n"
 	    			+ "<a href=\"#\" class=\"dropdown-item\" data-badge=\"light\"><span class=\"badge badge-light\">삭제</span></a>"
@@ -18380,11 +18378,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var gridY, timeY, nearestGridY, nearestGridTimeY, nearestGridEndY, nearestGridEndTimeY;
 							//NMNS CUSTOMIZING START
 	            gridY = startDate.getHours() + getNearestHour(startDate.getMinutes()) - (NMNS.info&&NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10):0);
-	            timeY = viewTime + datetime.millisecondsFrom('hour', gridY);
+	            timeY = viewTime + startDate.getHours() + getNearestHour(startDate.getMinutes());
 	            nearestGridY = gridY;
-	            nearestGridTimeY = viewTime + datetime.millisecondsFrom('hour', nearestGridY);
+	            nearestGridTimeY = viewTime + datetime.millisecondsFrom('hour', timeY - viewTime);
 	            nearestGridEndY = endDate.getHours() + getNearestHour(endDate.getMinutes()) - (NMNS.info&&NMNS.info.bizBeginTime?parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10):0);
-	            nearestGridEndTimeY = viewTime + datetime.millisecondsFrom('hour', nearestGridEndY);
+	            nearestGridEndTimeY = viewTime + datetime.millisecondsFrom('hour', endDate.getHours() + getNearestHour(endDate.getMinutes()));
 	            //NMNS CUSTOMIZING END
 	
 	            return util.extend({
@@ -19719,6 +19717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            		eventData.schedule.status = (status === "success"? "RESERVED" : (status === "secondary"? "CANCELED" : (status === "danger"? "NOSHOW": "RESERVED")));
 	            		creationHandler.fire("beforeUpdateSchedule", eventData);
 	            	}
+	            	domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 	            });
 	            domutil.find(config.classname('.screen')).style.visibility  = "visible";//show screen
 							//domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen

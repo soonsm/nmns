@@ -338,7 +338,7 @@
 
   function createNewSchedule(event) {
     var start = event.start ? new Date(event.start.getTime()) : new Date();
-    var end = event.end ? new Date(event.end.getTime()) : moment().add(1, 'h').toDate();
+    var end = event.end ? new Date(event.end.getTime()) : moment().add(30, 'm').toDate();
     NMNS.calendar.openCreationPopup({
         start: start,
         end: end
@@ -684,11 +684,20 @@
     }) : generateAuthStatusBadge(NMNS.info.authStatus));
     $("#infoShopName").val(NMNS.info.shopName);
     $("#infoBizType").val(NMNS.info.bizType);
-    $("#infoManagerList").html(generateManagerList(NMNS.calendar.getCalendars()));
+    var list = $("#infoManagerList");
+    if(NMNS.infoModalScroll){
+      list.children(":not(.ps__rail-x):not(.ps__rail-y)").remove();
+      $(generateManagerList(NMNS.calendar.getCalendars())).prependTo(list);
+    }else{
+      list.html(generateManagerList(NMNS.calendar.getCalendars()));
+      NMNS.infoModalScroll = new PerfectScrollbar(list[0]);
+    }
+    
     $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
       var item = $(this).parents(".infoManagerItem");
       item.hide();
       item.attr("data-delete", "true");
+      NMNS.infoModalScroll.update();
     });
     $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
       $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + $(this).position().left) + "px")
@@ -986,14 +995,7 @@
           return dashContact(suggestion.value) + " (" + suggestion.data + ")";
         },
         onSearchError: function(){},
-        onSelect: function(suggestion){},
-        beforeRender: function(container){
-          if($(container).data("scroll")){
-            $(container).data("scroll").update();
-          }else{
-            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-          }
-        }
+        onSelect: function(suggestion){}
       }, NMNS.socket);
       
       $("#noShowSearchContact").autocomplete({
@@ -1016,14 +1018,7 @@
           return dashContact(suggestion.value) + " (" + suggestion.data + ")";
         },
         onSearchError: function(){},
-        onSelect: function(suggestion){},
-        beforeRender: function(container){
-          if($(container).data("scroll")){
-            $(container).data("scroll").update();
-          }else{
-            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-          }
-        }
+        onSelect: function(suggestion){}
       }, NMNS.socket);
       
       $("#noShowScheduleName").autocomplete({
@@ -1048,13 +1043,6 @@
         onSearchError: function(){},
         onSelect: function(suggestion){
           $("#noShowScheduleContact").val(suggestion.data);
-        },
-        beforeRender: function(container){
-          if($(container).data("scroll")){
-            $(container).data("scroll").update();
-          }else{
-            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-          }
         }
       }, NMNS.socket);
       $("#noShowScheduleContact").autocomplete({
@@ -1079,13 +1067,6 @@
         onSearchError: function(){},
         onSelect: function(suggestion){
           $("#noShowScheduleName").val(suggestion.data);
-        },
-        beforeRender: function(container){
-          if($(container).data("scroll")){
-            $(container).data("scroll").update();
-          }else{
-            $(container).data("scroll", new PerfectScrollbar(".autocomplete-suggestions"));
-          }
         }
       }, NMNS.socket);
     }else{
@@ -1323,6 +1304,7 @@
     var calendars = NMNS.calendar.getCalendars();
     calendars.push({
       id : id,
+      name: name.val(),
       checked : true,
       bgColor : name.data("color"),
       borderColor : name.data("color"),
@@ -1564,7 +1546,7 @@
     }
   }, true));
 
-  NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){
+  NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){console.log(e);
     if(e.data.contact === $("#creationPopupContact").val() && $("#creationPopup").data("contact") !== e.data.contact){
       if($("#creationPopup").data("edit")){
         if(e.data.etc){
@@ -1651,11 +1633,6 @@
     if(changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")){
       return false;
     }
-  });
-  $("#infoModal").on("shown.bs.modal", function(){
-    if(NMNS.infoModalScroll){
-      NMNS.infoModalScroll.update();
-    }
   }).on("touch click", function(e){
     if($("#infoModalColorPicker").is(":visible")){
       var target = $(e.target);
@@ -1663,6 +1640,9 @@
         $("#infoModalColorPicker").hide(300);
       }
     }
+  }).on("shown.bs.modal", function(){
+    NMNS.infoModalScroll.update();
+    $("#infoManagerList")[0].scrollTop = 0;
   });
   $("#alrimModal").on("hide.bs.modal", function(){
     if(document.activeElement.tagName === "INPUT"){

@@ -85,6 +85,7 @@
         
         // set socket variable
         that.socket = socket;
+        that.scroll = null;
     }
 
     Autocomplete.utils = utils;
@@ -691,8 +692,15 @@
             this.adjustContainerWidth();
 
             noSuggestionsContainer.detach();
-            container.html(html);
-
+            if(that.scroll){
+                container.children(":not(.ps__rail-x):not(.ps__rail-y)").remove();
+                $(html).prependTo(container);
+                that.scroll.update();
+            }else{
+                container.html(html);
+                that.scroll = new PerfectScrollbar(that.suggestionsContainer);
+            }
+            
             if ($.isFunction(beforeRender)) {
                 beforeRender.call(that.element, container, that.suggestions);
             }
@@ -975,6 +983,7 @@
 
         dispose: function () {
             var that = this;
+            if(that.scroll) that.scroll.destroy();
             that.el.off('.autocomplete').removeData('autocomplete');
             $(window).off('resize.autocomplete', that.fixPositionCapture);
             $(that.suggestionsContainer).remove();
