@@ -17,9 +17,10 @@
   
   <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
   <link href="/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
-  <link href="/lib/datetimepicker/tempusdominus-bootstrap-4.min.css" rel="stylesheet">
-  <link href="/lib/tui-calendar/tui-date-picker.min.css" rel="stylesheet">
-  <link href="/lib/tui-calendar/tui-time-picker.min.css" rel="stylesheet">
+  <link href="/lib/datetimepicker/flatpickr.min.css" rel="stylesheet">
+  <!--[if IE 9]>
+  <link href="/lib/datetimepicker/ie.css" rel="stylesheet">
+  <![endif]-->
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
@@ -173,20 +174,20 @@
                   <label for="infoBizBeginTime" class="col-12 col-sm-3 col-form-label col-form-label-sm">매장운영시간</label>
                   <div class="col-12 col-sm-9 pl-sm-0">
                     <div class="px-0 d-inline-block infoBizTime">
-                      <div id="infoBizBeginTimePicker" class="input-group input-group-sm" data-target-input="nearest">
-                        <div class="input-group-prepend" data-target="#infoBizBeginTimePicker" data-toggle="datetimepicker">
+                      <div id="infoBizBeginTimePicker" class="input-group input-group-sm">
+                        <div class="input-group-prepend">
                           <i id="infoBizBeginTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
                         </div>
-                        <input id="infoBizBeginTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizBeginTimePicker" aria-describedby="infoBizBeginTimeIcon"/>
+                        <input id="infoBizBeginTime" class="form-control rounded-0" aria-describedby="infoBizBeginTimeIcon" autocomplete="off"/>
                       </div>
                     </div>
                     <span class="px-2 pt-1">—</span>
                     <div class="px-0 d-inline-block infoBizTime">
-                      <div id="infoBizEndTimePicker" class="input-group input-group-sm" data-target-input="nearest">
-                        <div class="input-group-prepend" data-target="#infoBizEndTimePicker" data-toggle="datetimepicker">
+                      <div id="infoBizEndTimePicker" class="input-group input-group-sm">
+                        <div class="input-group-prepend">
                           <i id="infoBizEndTimeIcon" class="input-group-text far fa-clock rounded-0"></i>
                         </div>
-                        <input id="infoBizEndTime" class="form-control datetimepicker-input rounded-0" data-target="#infoBizEndTimePicker" aria-describedby="infoBizEndTimeIcon"/>
+                        <input id="infoBizEndTime" class="form-control rounded-0" aria-describedby="infoBizEndTimeIcon" autocomplete="off"/>
                       </div>
                     </div>
                   </div>
@@ -382,20 +383,20 @@
                   <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>
                   <div class="row col-12 col-sm-10 px-0 mb-2">
                     <div class="px-0 d-inline-block noShowScheduleDate">
-                      <div id="noShowScheduleStartDatePicker" class="input-group input-group-sm" data-target-input="nearest">
-                        <div class="input-group-prepend" data-target="#noShowScheduleStartDatePicker" data-toggle="datetimepicker">
+                      <div id="noShowScheduleStartDatePicker" class="input-group input-group-sm">
+                        <div class="input-group-prepend">
                           <i id="noShowScheduleStartDateIcon" class="input-group-text far fa-calendar rounded-0"></i>
                         </div>
-                        <input id="noShowScheduleStartDate" class="form-control datetimepicker-input rounded-0" data-target="#noShowScheduleStartDatePicker" aria-describedby="noShowScheduleStartDateIcon"/>
+                        <input id="noShowScheduleStartDate" class="form-control rounded-0" aria-describedby="noShowScheduleStartDateIcon"/>
                       </div>
                     </div>
                     <span class="px-2 pt-1">—</span>
                     <div class="px-0 d-inline-block noShowScheduleDate">
-                      <div id="noShowScheduleEndDatePicker" class="input-group input-group-sm" data-target-input="nearest">
-                        <div class="input-group-prepend" data-target="#noShowScheduleEndDatePicker" data-toggle="datetimepicker">
+                      <div id="noShowScheduleEndDatePicker" class="input-group input-group-sm">
+                        <div class="input-group-prepend">
                           <i id="noShowScheduleEndDateIcon" class="input-group-text far fa-calendar rounded-0"></i>
                         </div>
-                        <input id="noShowScheduleEndDate" class="form-control datetimepicker-input rounded-0" data-target="#noShowScheduleEndDatePicker" aria-describedby="noShowScheduleEndDateIcon"/>
+                        <input id="noShowScheduleEndDate" class="form-control rounded-0" aria-describedby="noShowScheduleEndDateIcon"/>
                       </div>
                     </div>
                   </div>
@@ -443,18 +444,18 @@
                   </div>
                 </div>
                 <div class="row mb-2 mb-sm-3 col-11 px-0 ml-0">
-                  <div id="taskStartDatePicker" class="input-group input-group-sm pr-0" data-target-input="nearest">
+                  <div id="taskStartDatePicker" class="input-group input-group-sm pr-0">
                     <div class="input-group-prepend">
-                      <i id="taskStartDateIcon" class="input-group-text far fa-calendar" data-target="#taskStartDatePicker" data-toggle="datetimepicker" title="일정 시작시간"></i>
+                      <i id="taskStartDateIcon" class="input-group-text far fa-calendar" title="일정 시작시간"></i>
                     </div>
-                    <input id="taskStartDate" name="start" class="form-control datetimepicker-input" data-target="#taskStartDatePicker" aria-describedby="taskStartDateIcon" placeholder="시작시간">
+                    <input id="taskStartDate" name="start" class="form-control" aria-describedby="taskStartDateIcon" placeholder="시작시간">
                   </div>
                   <span class="px-2 tui-full-calendar-dash">—</span>
-                  <div id="taskEndDatePicker" class="input-group input-group-sm pl-0" data-target-input="nearest">
+                  <div id="taskEndDatePicker" class="input-group input-group-sm pl-0">
                     <div class="input-group-prepend">
-                      <i id="taskEndDateIcon" class="input-group-text far fa-calendar" data-target="#taskEndDatePicker" data-toggle="datetimepicker" title="일정 종료시간"></i>
+                      <i id="taskEndDateIcon" class="input-group-text far fa-calendar" title="일정 종료시간"></i>
                     </div>
-                    <input id="taskEndDate" name="end" class="form-control datetimepicker-input" data-target="#taskEndDatePicker" aria-describedby="taskEndDateIcon" placeholder="종료시간">
+                    <input id="taskEndDate" name="end" class="form-control" aria-describedby="taskEndDateIcon" placeholder="종료시간">
                   </div>
                 </div>
                 <div class="row mb-2 mb-sm-3">
@@ -515,9 +516,8 @@
   <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
   <script src="/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
   <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
-<!--  <script src="/lib/tui-calendar/tui-time-picker.min.js"></script>
-  <script src="/lib/tui-calendar/tui-date-picker.min.js"></script>-->
-  <script src="/lib/datetimepicker/tempusdominus-bootstrap-4.min.js"></script>
+  <script src="/lib/datetimepicker/flatpickr.min.js"></script>
+  <script src="/lib/datetimepicker/ko.min.js"></script>
   <script src="/lib/tui-calendar/tui-calendar.js"></script>
   <script src="/lib/socket.io/socket.io.slim.js"></script>
   <!-- Custom scripts for this template -->

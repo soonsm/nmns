@@ -48,8 +48,10 @@ gulp.task('lib', async function() {
     .pipe(gulp.dest("./client/static/lib/moment"));
     
   //datetimepicker
-  gulp.src(["./node_modules/tempusdominus-bootstrap-4/build/js/*min.js",
-    "./node_modules/tempusdominus-bootstrap-4/build/css/*min.css"])
+  gulp.src(["./node_modules/flatpickr/dist/*min.css",
+    "./node_modules/flatpickr/dist/ie.css",
+    "./node_modules/flatpickr/dist/l10n/ko.js"
+    ])
     .pipe(gulp.dest("./client/static/lib/datetimepicker"));
 });
 

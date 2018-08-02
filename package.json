@@ -21,6 +21,7 @@
     "express": "^4.16.3",
     "express-favicon": "^2.0.1",
     "express-session": "^1.15.6",
+    "flatpickr": "^4.5.1",
     "generate-password": "^1.4.0",
     "hangul-js": "^0.2.5",
     "jade-bootstrap": "^1.0.14",
@@ -42,7 +43,6 @@
     "request": "^2.87.0",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
-    "tempusdominus-bootstrap-4": "^5.0.1",
     "tui-calendar": "^1.6.0"
   },
   "devDependencies": {

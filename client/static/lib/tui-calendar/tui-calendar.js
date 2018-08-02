@@ -5571,6 +5571,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._showCreationPopup) {
 	            this._showCreationPopup(createScheduleData);
 	            //NMNS CUSTOMIZING START
+	            document.body.classList.add("modal-open");
 							document.getElementsByClassName(config.classname('screen'))[0].style.visibility = "visible";//show screen
 							document.getElementsByClassName(config.classname('screen'))[0].style.opacity = 0.5;//show screen
 							//NMNS CUSTOMIZING END
@@ -14069,7 +14070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	    }
 			//NMNS CUSTOMIZING START
-			if(domutil.closest(target, ".autocomplete-suggestions") || domutil.closest(target, ".tooltip")){
+			if(domutil.closest(target, ".autocomplete-suggestions") || domutil.closest(target, ".tooltip") || domutil.closest(target, ".flatpickr-calendar")){
 				return;
 			}
 			//NMNS CUSTOMIZING END
@@ -14112,6 +14113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this.hide();
 					//NMNS CUSTOMIZING START
+					document.body.classList.remove("modal-open");
 					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
 					domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 					//NMNS CUSTOMIZING END
@@ -14279,8 +14281,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var title, isAllDay, startDate, endDate, contents, contact, etc, status;
 	    var start, end, calendarId = $("#creationPopupManager").data("calendarid"), manager = this.calendars.find(function(cal){ return cal.id === calendarId;});
 
-	    startDate = new TZDate($("#creationPopupStartDate").data("datetimepicker").date().toDate());
-	    endDate = new TZDate($("#creationPopupEndDate").data("datetimepicker").date().toDate());
+	    startDate = new TZDate($("#tui-full-calendar-schedule-start-date")[0]._flatpickr.selectedDates[0]);
+	    endDate = new TZDate($("#tui-full-calendar-schedule-end-date")[0]._flatpickr.selectedDates[0]);
 
 	    if (!startDate && !endDate) {
 	        return true;
@@ -14383,6 +14385,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {object} viewModel - view model from factory/monthView
 	 */
 	ScheduleCreationPopup.prototype.render = function(viewModel) {
+			//NMNS CUSTOMIZING START
 			var timeout;
       function onContactBlur(){
       	clearTimeout(timeout);
@@ -14390,6 +14393,7 @@ return /******/ (function(modules) { // webpackBootstrap
       		NMNS.socket.emit("get customer", {contact:$("#creationPopupContact").val()});
       	}
       }
+      //NMNS CUSTOMIZING END
 	    var calendars = this.calendars;
 	    var layer = this.layer;
 	    var self = this;
@@ -14400,7 +14404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (calendars.length) {
 	        viewModel.selectedCal = this._selectedCal = calendars[0];
 	    }
-	    
+	    console.log(viewModel.start, viewModel.end);
 	    //NMNS CUSTOMIZING START
 	    this._isEditMode = viewModel.schedule && viewModel.schedule.id;
 	    if (this._isEditMode) {
@@ -14418,10 +14422,11 @@ return /******/ (function(modules) { // webpackBootstrap
 				$("#creationPopupName").autocomplete().clearCache();
 				$("#creationPopupContact").autocomplete().clearCache();
 				$("#creationPopupContact").tooltip("dispose");
+	    	this._createDatepicker(viewModel.start.toDate? viewModel.start.toDate() : viewModel.start, viewModel.end.toDate? viewModel.end.toDate() : viewModel.end);
 			}else{//need init
 	    	layer.setContent(tmpl(viewModel));
 				document.getElementById("creationPopupForm").onsubmit = function(){return false;};
-	    	this._createDatepicker(viewModel.start, viewModel.end);
+	    	this._createDatepicker(viewModel.start.toDate? viewModel.start.toDate() : viewModel.start, viewModel.end.toDate? viewModel.end.toDate() : viewModel.end);
 		    $("#creationPopupName").autocomplete({
 	        serviceUrl: "get customer info",
 	        paramName: "name",
@@ -14496,8 +14501,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	//NMNS CUSTOMIZING START
 	ScheduleCreationPopup.prototype._updatePopup = function(viewModel) {
-		$("#creationPopupStartDate").data("datetimepicker").date(viewModel.start.toDate?viewModel.start.toDate():viewModel.start);
-		$("#creationPopupEndDate").data("datetimepicker").date(viewModel.end.toDate?viewModel.end.toDate():viewModel.end);
+		document.getElementById("tui-full-calendar-schedule-start-date")._flatpickr.destroy();
+		document.getElementById("tui-full-calendar-schedule-end-date")._flatpickr.destroy();
     $("#creationPopupName").val(viewModel.title || "");
     $("#creationPopupContents").val(viewModel.raw? viewModel.raw.contents : (viewModel.contents || ""));
     $("#creationPopupContact").val(viewModel.raw? viewModel.raw.contact : (viewModel.contact || ""));
@@ -14727,120 +14732,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {TZDate} start - start date
 	 * @param {TZDate} end - end date
 	 */
-	ScheduleCreationPopup.prototype._createDatepicker = function(start, end, isStartOnly) {
+	ScheduleCreationPopup.prototype._createDatepicker = function(start, end) {
 		//NMNS CUSTOMIZING START
-			var openingHours = [];
-			if(NMNS.info.bizBeginTime && NMNS.info.bizEndTime){
-				var endTime = parseInt(NMNS.info.bizEndTime.substring(0,2)) + (NMNS.info.bizEndTime.substring(2) === "00"? 0 : 1);
-				for (var i=parseInt(NMNS.info.bizBeginTime.substring(0,2), 10);i<=endTime;i++){
-					openingHours.push(i);
-				}
-			}else{
-				openingHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-			}
-	    $("#creationPopupStartDate").datetimepicker({
-	    	icons:{
-	    		up: "fas fa-chevron-up",
-	    		down: "fas fa-chevron-down",
-	    		time: 'far fa-clock',
-          date: 'far fa-calendar',
-          previous: 'fas fa-chevron-left',
-          next: 'fas fa-chevron-right',
-          close: 'fas fa-times'
-	    	},
-	    	defaultDate: start.toDate ? start.toDate() : start,
-	    	date: start.toDate? start.toDate() : start,
-	    	format: "YYYY-MM-DD HH:mm",
-	    	dayViewHeaderFormat : "YYYY년 M월",
-	    	stepping:10,
-	    	locale: "ko",
-	    	sideBySide: true,
-	    	widgetPositioning:{
-	    		horizontal: "left"
-	    	},
-	    	allowInputToggle:true,
-	    	tooltips: {
-			    today: '오늘',
-			    clear: '초기화',
-			    close: '닫기',
-			    selectMonth: '월 선택',
-			    prevMonth: '전달',
-			    nextMonth: '다음달',
-			    selectYear: '연도 선택',
-			    prevYear: '작년',
-			    nextYear: '내년',
-			    selectDecade: '',
-			    prevDecade: '이전',
-			    nextDecade: '다음',
-			    prevCentury: '이전',
-			    nextCentury: '다음',
-			    incrementHour: '시 증가',
-			    pickHour: '시 선택',
-			    decrementHour:'시 감소',
-			    incrementMinute: '분 증가',
-			    pickMinute: '분 선택',
-			    decrementMinute:'분 감소'
-				},
-				buttons:{
-					showClose:true
-				},
-				enabledHours: openingHours
-	    });
-	    $("#creationPopupStartDate").off("change.datetimepicker").on("change.datetimepicker", function (e) {
-          $('#creationPopupEndDate').datetimepicker('minDate', e.date.add(10, 'm'));
-          //$("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
-      });
-	    if(!isStartOnly){
-		    $("#creationPopupEndDate").datetimepicker({
-		    	icons:{
-		    		up: "fas fa-chevron-up",
-		    		down: "fas fa-chevron-down",
-		    		time: 'far fa-clock',
-	          date: 'far fa-calendar',
-	          previous: 'fas fa-chevron-left',
-	          next: 'fas fa-chevron-right',
-	          close: 'fas fa-times'
-		    	},
-		    	defaultDate: end.toDate? end.toDate() : end,
-		    	date: end.toDate? end.toDate() : end,
-		    	format: "YYYY-MM-DD HH:mm",
-		    	dayViewHeaderFormat : "YYYY년 M월",
-		    	stepping:10,
-		    	locale: "ko",
-		    	sideBySide: true,
-		    	allowInputToggle:true,
-		    	tooltips: {
-				    today: '오늘',
-				    clear: '초기화',
-				    close: '닫기',
-				    selectMonth: '월 선택',
-				    prevMonth: '전달',
-				    nextMonth: '다음달',
-				    selectYear: '연도 선택',
-				    prevYear: '작년',
-				    nextYear: '내년',
-				    selectDecade: '',
-				    prevDecade: '이전',
-				    nextDecade: '다음',
-				    prevCentury: '이전',
-				    nextCentury: '다음',
-				    incrementHour: '시 증가',
-				    pickHour: '시 선택',
-				    decrementHour:'시 감소',
-				    incrementMinute: '분 증가',
-				    pickMinute: '분 선택',
-				    decrementMinute:'분 감소'
-					},
-					buttons:{
-						showClose:true
-					},
-					enabledHours: openingHours
-		    });
-	      $("#creationPopupEndDate").off("change.datetimepicker").on("change.datetimepicker", function (e) {
-	          $('#creationPopupStartDate').datetimepicker('maxDate', e.date.add(-10, 'm'));
-	          //$("#creationPopupAllDay").prop("checked", !$("#creationPopupStartDate").data("datetimepicker").date().isSame($('#creationPopupEndDate').data("datetimepicker").date(), "day"));
-	      });
-	    }
+			var beginTime = moment((NMNS.info.bizBeginTime || "0900"), "HHmm").format("HH:mm");
+			var endTime = moment((NMNS.info.bizEndTime || "2300"), "HHmm").format("HH:mm");
+			
+	    flatpickr("#tui-full-calendar-schedule-start-date", {
+	    	format: "Y-m-d H:i",
+        enableTime:true,
+        defaultDate: start,
+        locale:"ko",
+        onChange:function(a, b, c){
+          document.getElementById("tui-full-calendar-schedule-end-date")._flatpickr.set("minDate", moment(a[0]).add(10, "m").toDate());
+        },
+        minuteIncrement:10,
+        maxDate:moment(end).subtract(10, "m").toDate(),
+        minTime:beginTime,
+        maxTime:endTime,
+        time_24hr:true
+	    }).setDate(start);
+	    flatpickr("#tui-full-calendar-schedule-end-date", {
+	    	format: "Y-m-d H:i",
+        enableTime:true,
+        defaultDate: end,
+        locale:"ko",
+        onChange:function(a, b, c){
+          document.getElementById("tui-full-calendar-schedule-start-date")._flatpickr.set("maxDate", moment(a[0]).subtract(10, "m").toDate());
+        },
+        minuteIncrement:10,
+        minDate:moment(start).add(10, "m").toDate(),
+        minTime:beginTime,
+        maxTime:endTime,
+        time_24hr:true
+	    }).setDate(end);
       //NMNS CUSTOMIZING END
 	};
 	
@@ -14855,6 +14779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.guide = null;
 	    }
 			//NMNS CUSTOMIZING START
+			document.body.classList.remove("modal-open");
 			domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
 			domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 			//NMNS CUSTOMIZING END
@@ -15154,18 +15079,18 @@ return /******/ (function(modules) { // webpackBootstrap
 		+"  </div>"
   		
 		+ "<div class=\"row mb-1 mb-sm-3\">\n"
-			+ "<div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 " + escapedCssPrefix + "section-start-date\" data-target-input=\"nearest\">\n"
+			+ "<div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 " + escapedCssPrefix + "section-start-date\">\n"
 				+ "<div class=\"input-group-prepend\">"
-			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupStartDate\" data-toggle=\"datetimepicker\" title=\"예약 시작시간\"></i>"
+			+"       <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" title=\"예약 시작시간\"></i>"
 			+"     </div>"
-				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" name=\"start\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupStartDate\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
+				+ "<input id=\"" + escapedCssPrefix + "schedule-start-date\" name=\"start\" class=\"form-control\" aria-describedby=\"creationPopupStartDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["startDatePlaceholder-tmpl"] || (depth0 != null ? depth0["startDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"startDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
 			+ "</div>\n"
 			+ "<span class=\"px-2 " + escapedCssPrefix + "dash\">—</span>\n"
-			+ "<div id=\"creationPopupEndDate\" class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\" data-target-input=\"nearest\">\n"
+			+ "<div id=\"creationPopupEndDate\" class=\"input-group input-group-sm col-5 col-sm-4 pl-0 " + escapedCssPrefix + "section-end-date\">\n"
 				+ "<div class=\"input-group-prepend\">"
-			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" data-target=\"#creationPopupEndDate\" data-toggle=\"datetimepicker\" title=\"예약 종료시간\"></i>"
+			+"     <i id=\"creationPopupEndDateIcon\" class=\"input-group-text far fa-calendar\" title=\"예약 종료시간\"></i>"
 			+"   </div>"
-				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" name=\"end\" class=\"form-control datetimepicker-input\" data-target=\"#creationPopupEndDate\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
+				+ "<input id=\"" + escapedCssPrefix + "schedule-end-date\" name=\"end\" class=\"form-control\" aria-describedby=\"creationPopupEndDateIcon\" placeholder=\"" + alias4(((helper = (helper = helpers["endDatePlaceholder-tmpl"] || (depth0 != null ? depth0["endDatePlaceholder-tmpl"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"endDatePlaceholder-tmpl","hash":{},"data":data}) : helper))) + "\">"
 			+ "</div>\n"
 			+ "<div class=\"" + escapedCssPrefix + "section-allday pl-4 pl-sm-0\">\n"
 				+ "<input id=\"creationPopupAllDay\" name=\"isAllDay\" type=\"checkbox\"" + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isAllDay : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "") + "></input>\n"
@@ -15285,7 +15210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	    }
 			//NMNS CUSTOMIZING START
-			domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
+			//domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
 			domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 			//NMNS CUSTOMIZING END
 	    this.hide();
@@ -15329,6 +15254,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            target: this._scheduleEl
 	        });
 					//NMNS CUSTOMIZING START
+					document.body.classList.add("modal-open");
 					domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
 					domutil.find(config.classname('.screen')).style.visibility  = "visible";//show screen
 					//NMNS CUSTOMIZING END
@@ -15348,7 +15274,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            schedule: this._schedule
 	        });
 					//NMNS CUSTOMIZING START
-					domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
+					//domutil.find(config.classname('.screen')).style.opacity  = 0;//hide screen
 					domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 					//NMNS CUSTOMIZING END
 	        this.hide();
@@ -19720,7 +19646,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            	domutil.find(config.classname('.screen')).style.visibility  = "hidden";//hide screen
 	            });
 	            domutil.find(config.classname('.screen')).style.visibility  = "visible";//show screen
-							//domutil.find(config.classname('.screen')).style.opacity  = 0.5;//show screen
 	            // NMNS CUSTOMIZING END
 	        };
 	        onDeleteSchedule = function(eventData) {

@@ -337,11 +337,17 @@
   }
 
   function createNewSchedule(event) {
-    var start = event.start ? new Date(event.start.getTime()) : new Date();
-    var end = event.end ? new Date(event.end.getTime()) : moment().add(30, 'm').toDate();
+    var now = moment(new Date());
+    if(now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0,2)) && now.minute()+ 30 > Number(NMNS.info.bizEndTime.substring(2)))){
+      now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
+    }else if(now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))){
+      now = moment(NMNS.info.bizBeginTime, "HHmm");        
+    }else{
+      now.minute(Math.ceil(now.minute()/10) * 10);
+    }
     NMNS.calendar.openCreationPopup({
-        start: start,
-        end: end
+        start: now.toDate(),
+        end: now.add(30, "m").toDate()
     });
     $("#creationPopupName").focus();
   }
@@ -611,7 +617,7 @@
     //validation end
     //update info start
     var parameters = {}, history = {id:"info"};
-    if(beginTime.format("HHmm") !== (NMNS.info.bizBeginTime || "0900") || endTime.format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
+    if((beginTime.format("HHmm") !== NMNS.info.bizBeginTime) || (endTime.format("HHmm") !== NMNS.info.bizEndTime)){
       history.hourStart = NMNS.info.bizBeginTime || "0900";
       history.hourEnd = NMNS.info.bizEndTime || "2300";
       parameters.bizBeginTime = beginTime.format("HHmm");
@@ -710,61 +716,27 @@
   function initInfoModal(){
     if(!NMNS.initedInfoModal){//first init
       NMNS.initedInfoModal = true;
-    
-      $("#infoBizBeginTimePicker").datetimepicker({
-        format: "HH:mm",
-        icons:{
-          time: "fas fa-clock",
-          up: "fas fa-chevron-up",
-          down: "fas fa-chevron-down",
-          close: "fas fa-times"
-        },
-        defaultDate: moment(NMNS.info.bizBeginTime || "0900", "HHmm"),
-        date: moment(NMNS.info.bizBeginTime || "0900", "HHmm"),
-        locale:"ko",
-        viewMode: "times",
-        buttons:{
-          showClose:true
-        },
-        allowInputToggle:true,
-        tooltips:{
-          close:"닫기",
-          pickHour:"시 선택",
-          incrementHour:"시 증가",
-          decrementHour:"시 감소",
-          pickMinute:"분 선택",
-          incrementMinute:"분 증가",
-          decrementMinute:"분 감소"
-        },
-        stepping:10
-      });
-      $("#infoBizEndTimePicker").datetimepicker({
-        format: "HH:mm",
-        icons:{
-          time: "fas fa-clock",
-          up: "fas fa-chevron-up",
-          down: "fas fa-chevron-down",
-          close: "fas fa-times"
-        },
-        defaultDate: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
-        date: moment(NMNS.info.bizEndTime || "2300", "HHmm"),
-        locale:"ko",
-        viewMode: "times",
-        buttons:{
-          showClose:true
-        },
-        allowInputToggle:true,
-        tooltips:{
-          close:"닫기",
-          pickHour:"시 선택",
-          incrementHour:"시 증가",
-          decrementHour:"시 감소",
-          pickMinute:"분 선택",
-          incrementMinute:"분 증가",
-          decrementMinute:"분 감소"
-        },
-        stepping:10
-      });
+      
+      flatpickr("#infoBizBeginTime", {
+        dateFormat: "H:i",
+        time_24hr: true,
+        defaultHour: Number((NMNS.info.bizBeginTime || "0900").substring(0,2)),
+        defaultMinute: Number((NMNS.info.bizBeginTime || "0900").substring(2, 4)),
+        minuteIncrement:10,
+        noCalendar:true,
+        enableTime:true,
+        appendTo:document.getElementById("infoModal")
+      }).setDate(moment((NMNS.info.bizBeginTime? NMNS.info.bizBeginTime : "0900"), "HHmm").toDate());
+      flatpickr("#infoBizEndTime", {
+        dateFormat: "H:i",
+        time_24hr: true,
+        defaultHour: Number((NMNS.info.bizEndTime || "2300").substring(0,2)),
+        defaultMinute: Number((NMNS.info.bizEndTime || "2300").substring(2, 4)),
+        minuteIncrement:10,
+        noCalendar:true,
+        enableTime:true,
+        appendTo:document.getElementById("infoModal")
+      }).setDate(moment((NMNS.info.bizEndTime? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());
       if(!NMNS.infoModalScroll){
         NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
       } 
@@ -811,35 +783,12 @@
     if(!NMNS.initedNoShowModal){
       NMNS.initedNoShowModal = true;
       var datetimepickerOption = {
-        format: "YYYY-MM-DD",
-        icons:{
-          previous: "fas fa-chevron-left",
-          next: "fas fa-chevron-right",
-          date: "far fa-calendar",
-          close: "fas fa-times"
-        },
-        dayViewHeaderFormat:"YYYY년 M월",
-        defaultDate: moment(new Date()),
-        date: moment(new Date()),
+        format: "Y-m-d",
+        defaultDate: new Date(),
+        appendTo:document.getElementById("noShowModal"),
         locale:"ko",
-        viewMode: "days",
-        buttons:{
-          showClose:true
-        },
-        allowInputToggle:true,
-        tooltips:{
-          close:"닫기",
-          selectMonth:"월 선택",
-          prevMonth:"전달",
-          nextMonth:"다음달",
-          selectYear:"연도 선택",
-          prevYear:"작년",
-          nextYear:"내년",
-          selectDecade:"",
-          prevDecade:"이전",
-          nextDecade:"다음",
-          prevCentury:"이전",
-          nextCentury:"다음"
+        onChange:function(a, b, c){
+          c.close();
         }
       };
       
@@ -902,8 +851,7 @@
       });
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
         var id=generateRandom();
-        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm pr-0' data-target-input='nearest'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0' data-target='#noShowSearchAddDatePicker"+id+"' data-toggle='datetimepicker'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0 datetimepicker-input' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"' data-target='#noShowSearchAddDatePicker"+id+"'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1'></i></div></div>");
-        newRow.find("#noShowSearchAddDatePicker"+id).datetimepicker(datetimepickerOption);
+        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm pr-0'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1'></i></div></div>");
         newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function(){
           filterNonNumericCharacter($(this));
         });
@@ -919,6 +867,7 @@
           $("#noShowSearchList").append(newRow);
         }
         newRow.find("div:first-child input").focus();
+        newRow.data("datetimepicker", flatpickr("#noShowSearchAddDate"+id, datetimepickerOption));
       });
       $("#noShowSearchContact, #noShowAddContact, #noShowScheduleContact").off("blur").on("blur", function(){
         filterNonNumericCharacter($(this));
@@ -938,10 +887,8 @@
           $("#noShowScheduleSearch").trigger("click");
         }
       });
-      $("#noShowScheduleStartDatePicker").datetimepicker(datetimepickerOption);
-      $("#noShowScheduleStartDatePicker").data("datetimepicker").date(moment().subtract(1, "M").toDate());
-      $("#noShowScheduleEndDatePicker").datetimepicker(datetimepickerOption);
-      $("#noShowScheduleEndDatePicker").data("datetimepicker").date(moment().add(1, "M").toDate());
+      flatpickr("#noShowScheduleStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
+      flatpickr("#noShowScheduleEndDate", datetimepickerOption).setDate(moment().add(1, "M").toDate());
       $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
         var dropdown = $(this).parent();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), raw:{status:dropdown.data("status")}});
@@ -1093,58 +1040,35 @@
     if(!NMNS.initedTaskModal){
       NMNS.initedTaskModal = true;
       var datetimepickerOption = {
-        format: "YYYY-MM-DD HH:mm",
-        icons:{
-          previous: "fas fa-chevron-left",
-          next: "fas fa-chevron-right",
-          date: "far fa-calendar",
-          up: "fas fa-chevron-up",
-          down: "fas fa-chevron-down",
-          close: "fas fa-times"
-        },
-        dayViewHeaderFormat:"YYYY년 M월",
-        defaultDate: moment(new Date()),
-        date: moment(new Date()),
+        format: "Y-m-d H:i",
+        enableTime:true,
+        defaultDate: new Date(),
+        appendTo:document.getElementById("taskModal"),
         locale:"ko",
-        viewMode: "days",
-        buttons:{
-          showClose:true
+        onChange:function(a, b, c){
+          c.close();
         },
-        stepping:10,
-        allowInputToggle:true,
-        tooltips:{
-          close:"닫기",
-          selectMonth:"월 선택",
-          prevMonth:"전달",
-          nextMonth:"다음달",
-          selectYear:"연도 선택",
-          prevYear:"작년",
-          nextYear:"내년",
-          selectDecade:"",
-          prevDecade:"이전",
-          nextDecade:"다음",
-          prevCentury:"이전",
-          nextCentury:"다음",
-          incrementHour: '시 증가',
-  		    pickHour: '시 선택',
-  		    decrementHour:'시 감소',
-  		    incrementMinute: '분 증가',
-  		    pickMinute: '분 선택',
-  		    decrementMinute:'분 감소'
-        }
+        minuteIncrement:10
       };
-      $("#taskStartDatePicker").datetimepicker(datetimepickerOption);
-      $("#taskEndDatePicker").datetimepicker(datetimepickerOption);
-      $("#taskEndDatePicker").data("datetimepicker").date(moment().add(30, "m").toDate());
+      var now = moment(new Date());
+      if(now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0,2)) && now.minute()+ 30 > Number(NMNS.info.bizEndTime.substring(2)))){
+        now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
+      }else if(now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))){
+        now = moment(NMNS.info.bizBeginTime, "HHmm");        
+      }else{
+        now.minute(Math.ceil(now.minute()/10) * 10);
+      }
+      flatpickr("#taskStartDate", datetimepickerOption).setDate(now.toDate());
+      flatpickr("#taskEndDate", datetimepickerOption).setDate(now.add(30, "m").toDate());
       $("#taskModalSave").on("touch click", function(){
         var id = NMNS.email + generateRandom();
         NMNS.calendar.createSchedules([{
           id:id,
           calendarId:$("#taskManager").data("calendar-id"),
           title:$("#taskName").val(),
-          start:$("#taskStartDatePicker").data("datetimepicker").date().toDate(),
-          end:$("#taskEndDatePicker").data("datetimepicker").date().toDate(),
-          isAllDay:!$("#taskStartDatePicker").data("datetimepicker").date().isSame($("#taskEndDatePicker").data("datetimepicker").date(), "day"),
+          start:$("#taskStartDate")[0]._flatpickr.selectedDates[0],
+          end:$("#taskEndDate")[0]._flatpickr.selectedDates[0],
+          isAllDay:!moment($("#taskStartDate")[0]._flatpickr.selectedDates[0]).isSame(moment($("#taskEndDate")[0]._flatpickr.selectedDates[0]), "day"),
           category:"task",
           dueDateClass:"",
           color:getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
@@ -1162,9 +1086,9 @@
           id:id,
           manager:$("#taskManager").data("calendar-id"),
           name:$("#taskName").val(),
-          start:$("#taskStartDatePicker").data("datetimepicker").date().format("YYYYMMDDHHmm"),
-          end:$("#taskEndDatePicker").data("datetimepicker").date().format("YYYYMMDDHHmm"),
-          isAllDay:!$("#taskStartDatePicker").data("datetimepicker").date().isSame($("#taskEndDatePicker").data("datetimepicker").date(), "day"),
+          start:moment($("#taskStartDate")[0]._flatpickr.selectedDates[0]).format("YYYYMMDDHHmm"),
+          end:moment($("#taskEndDate")[0]._flatpickr.selectedDates[0]).format("YYYYMMDDHHmm"),
+          isAllDay:!moment($("#taskStartDate")[0]._flatpickr.selectedDates[0]).isSame(moment($("#taskEndDate")[0]._flatpickr.selectedDates[0]), "day"),
           type:"T",
           contents:$("#taskContents").val()
         });
@@ -1199,6 +1123,7 @@
       NMNS.calendar.render();
     }, 50);
     window.addEventListener('resize', resizeThrottled);
+    flatpickr.localize("ko");
   }
 
   function getSchedule(start, end){
@@ -1283,7 +1208,9 @@
   }
   
   function cancelAddNoShow(self){
-    self.parentsUntil("#noShowSearchList", ".row").remove();
+    var row = self.parentsUntil("#noShowSearchList", ".row");
+    row.data("datetimepicker").destroy();
+    row.remove();
     if($("#noShowSearchList").html() === ""){
       $("#noShowSearchList").html("<div class='row col-12 px-0 mt-2 empty'><span class='col-12 text-center'>전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div>");
     }
@@ -1501,7 +1428,9 @@
       html.find(".noShowSearchDelete").on("touch click", function(){
         deleteNoShow($(this));
       });
-      $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"']").remove();
+      var row = $("#noShowSearchList div.noShowSearchAdd[data-id='"+e.data.id+"']");
+      row.data("datetimepicker").destroy();
+      row.remove();
     }
     alert("추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)");
   }, function(e){
@@ -1569,10 +1498,11 @@
     }
     if(e.data.totalNoShow !== undefined && e.data.totalNoShow > 0){
       $("#creationPopupContact").tooltip({
-        title:"이 번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다." + (e.data.myNoShow && e.data.myNoShow>0?"\n우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
+        title:"이 번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다.<br/>" + (e.data.myNoShow && e.data.myNoShow>0?"우리 매장에서는 "+e.data.myNoShow+"번 등록되었습니다.":""),
         placement: ($(window).width()>576?"right":"top"),
         trigger:"click hover focus",
-        delay:{"hide":1000}
+        delay:{"hide":1000},
+        html: true
       }).tooltip("show");
       setTimeout(function(){
         $("#creationPopupContact").tooltip("hide");
@@ -1596,10 +1526,10 @@
     }
     var changed = false;
     
-    if(moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizBeginTime || "0900")){
+    if(moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizBeginTime)){
       changed = true;
     }
-    if(!changed && moment($("#infoBizEndTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime || "2300")){
+    if(!changed && moment($("#infoBizEndTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime)){
       changed = true;
     }
     if(!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")){
