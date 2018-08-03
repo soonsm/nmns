@@ -14180,9 +14180,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 			var selectedCalendarId = domutil.getData(selectedItem, 'calendarId');
       this._selectedCal = this.calendars.find(function(cal){ return (cal.id === selectedCalendarId);});
-      /*common.find(this.calendars, function(cal) {
-          return cal.id === selectedCalendarId;
-      });*/
       $("#creationPopupManager").html($(selectedItem).html()).data("calendarid", selectedCalendarId);
       //NMNS CUSTOMIZING END
 	    return true;
