@@ -29,6 +29,7 @@
     scheduleView:true,
     useCreationPopup:true,
     useDetailPopup:true,
+    disableDblClick:true,
     template:{
 /*      monthGridHeader: function(model){
         var date = new Date(model.date);
