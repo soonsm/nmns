@@ -320,6 +320,7 @@
   }
 
   function onChangeNewScheduleCalendar(e) {
+    e.preventDefault();
     var target = $(e.target).closest('a[role="menuitem"]')[0];
     var calendarId = target.getAttribute('data-action');
     changeNewScheduleCalendar(calendarId);
@@ -337,7 +338,8 @@
 
   }
 
-  function createNewSchedule(event) {
+  function createNewSchedule(e) {
+    e.preventDefault();
     var now = moment(new Date());
     if(now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0,2)) && now.minute()+ 30 > Number(NMNS.info.bizEndTime.substring(2)))){
       now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
@@ -1107,6 +1109,7 @@
     $('.moveDate').on('touch click', onClickNavi);
     $('.calendarType').on('touch click', onClickMenu);
     $("#calendarTypeMenu").next().children("a").on("touch click", function(e){
+      e.preventDefault();
       $("#calendarTypeMenu").html($(e.target).html());
       $("#calendarTypeMenu").attr("data-action", $(e.target).data("action"));
       $("#calendarTypeMenu").trigger("click");
@@ -1478,7 +1481,7 @@
 
   NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){console.log(e);
     if(e.data.contact === $("#creationPopupContact").val() && $("#creationPopup").data("contact") !== e.data.contact){
-      if(e.data.etc && $("#creationPopupEtc").val() === ""){
+      if(e.data.etc){
         $("#creationPopupEtc").val(e.data.etc);
       }
       if(e.data.manager){
@@ -1487,13 +1490,13 @@
           $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='"+manager.id+"']").html()).data("calendarid", manager.id);
         }
       }
-      if(e.data.contents && $("#creationPopupContents").val() === ""){
+      if(e.data.contents){
         $("#creationPopupContents").val(e.data.contents);
       }
       if(e.data.isAllDay !== undefined){
         $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
       }
-      if(e.data.name && $("#creationPopupName").val() === ""){
+      if(e.data.name){
         $("#creationPopupName").val(e.data.name);
       }
     }
