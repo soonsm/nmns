@@ -123,7 +123,32 @@ button.moveDate:focus{
 }
 .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun + span, .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday + span{
   color:#ff4040;
-} 
+}
+.flatpickr-input{
+  background-color:white;
+}
+.flatpickr-calendar.hasTime.noCalendar{
+  max-width:134px;
+}
+.flatpickr-calendar.hadTime.noCalendar .flatpickr-time{
+  border-top:0;
+}
+.flatpickr-calendar .numInputWrapper span{
+  border:0;
+}
+.flatpickr-calendar .numInputWrapper span:after{
+  left:3px;
+}
+.flatpickr-calendar{
+  border-radius:0;
+}
+.flatpickr-day{
+  border-radius:0;
+}
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay{
+  background-color:#009688;
+  border-color:#009688;
+}
 /* side bar */
 #sidebarContainer{
   max-width:230px;
@@ -134,6 +159,9 @@ button.moveDate:focus{
 #lnbManagerList .lnbManagerItem, #lnbManagerList + .lnbManagerItem{
   line-height:.8rem;
   margin-left:.25rem;
+}
+#lnbManagerList .addManagerItem .addManagerColor{
+  cursor:default;
 }
 .addManagerItem label{
   width: calc(100% - 35px);
@@ -187,6 +215,7 @@ button.moveDate:focus{
   width:31px;
   background-color:white;
   border-radius:0 !important;
+  border-width:.06rem;
 }
 .tui-full-calendar-popup input.form-control{
   border-radius:0;
@@ -341,6 +370,10 @@ button.moveDate:focus{
 #infoModal .scroll-wrapper{
   max-width:300px;
 }
+#infoModal i.input-group-text{
+  border-width:.06rem;
+  background-color:white;
+}
 /*alrim modal*/
 #alrimNotice{
   height:130px;
@@ -369,6 +402,13 @@ button.moveDate:focus{
 #noShowTabList{
   height:37px;
   overflow:hidden;
+}
+#noShowModal .input-group-append i, #noShowModal .input-group-append span{
+  border-width:.06rem;
+}
+#noShowModal .input-group-prepend i{
+  background-color:white;
+  border-width:.06rem;
 }
 #noShowModal #noShowSearchSummary{
   height:45px;
@@ -597,6 +637,10 @@ button.moveDate:focus{
     width:342px;
     transform: translate3d(0px, 34px, 0px) !important;
   }
+}
+#taskModal .input-group-prepend i{
+  border-width:.06rem;
+  background-color:white;
 }
 #taskModal #taskStartDatePicker, #taskModal #taskEndDatePicker{
   width: calc(50% - 13.5px);
