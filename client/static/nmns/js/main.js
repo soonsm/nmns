@@ -557,7 +557,7 @@
     if(Object.keys(parameters).length){
       NMNS.history.push(history);
       NMNS.socket.emit("update alrim", parameters);
-      alert("변경된 정보를 전송하였습니다.");
+      alert("정상적으로 요청하였습니다.");
     }else{
       alert("변경된 내역이 없습니다.");
     }
@@ -685,6 +685,13 @@
     $("#infoModal").modal("hide");
   }
   
+  function showColorPickerPopup(self){
+    $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + self.position().left) + "px")
+        .css("top", ($("#infoManagerList").position().top + self.position().top + 74) + "px")
+        .data("target", self.next().data("id"))
+        .show(300);
+  }
+  
   function refreshInfoModal(){
     $("#infoEmail").text(NMNS.email);
     $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION"? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function(){
@@ -709,10 +716,7 @@
       NMNS.infoModalScroll.update();
     });
     $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
-      $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + $(this).position().left) + "px")
-        .css("top", ($("#infoManagerList").position().top + $(this).position().top + 74) + "px")
-        .data("target", $(this).next().data("id"))
-        .show(300);
+      showColorPickerPopup($(this));
     });
   }
   
@@ -750,11 +754,11 @@
         $("#infoModalColorPicker").hide(300);
       });
       $(".infoModalColor").off("touch click").on("touch click", function(){
-        var colorPicker = $("#infoModalColorPicker");
-        var target = $(".infoManagerItem input[data-id='"+colorPicker.data("target")+"']");
+        var target = $(".infoManagerItem input[data-id='"+$("#infoModalColorPicker").data("target")+"']");
+        var color = $(this).attr("data-color");
         if(target.length){
-          target.data("color", $(this).attr("data-color"));
-          target.prev().css("background-color", $(this).data("color")).css("border-color", $(this).data("color"));
+          target.data("color", color);
+          target.prev().css("background-color", color).css("border-color", color).data("color", color);
         }
       });
     }
@@ -1110,8 +1114,12 @@
     $('.calendarType').on('touch click', onClickMenu);
     $("#calendarTypeMenu").next().children("a").on("touch click", function(e){
       e.preventDefault();
-      $("#calendarTypeMenu").html($(e.target).html());
-      $("#calendarTypeMenu").attr("data-action", $(e.target).data("action"));
+      var target = $(e.target);
+      if(!target.hasClass("dropdown-item")){
+        target = target.parents(".dropdown-item");
+      }
+      $("#calendarTypeMenu").html(target.html());
+      $("#calendarTypeMenu").attr("data-action", target.data("action"));
       $("#calendarTypeMenu").trigger("click");
     });
     $('#managerElements').on('change', onChangeManagers);
@@ -1228,8 +1236,8 @@
       return;
     }
     
-    var id = NMNS.email + generateRandom();
-    lnbManagerItem.attr("data-value", id);
+    var id = name.data("id");
+    var color = lnbManagerItem.find(".addManagerColor").data("color");
     lnbManagerItem.removeClass("addManagerItem");
     lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:"+name.data("color")+"; border-color:"+name.data("color")+"'></span><small>"+name.val()+"</small></label>");
     var calendars = NMNS.calendar.getCalendars();
@@ -1237,12 +1245,12 @@
       id : id,
       name: name.val(),
       checked : true,
-      bgColor : name.data("color"),
-      borderColor : name.data("color"),
-      color : getColorFromBackgroundColor(name.data("color"))
+      bgColor : color,
+      borderColor : color,
+      color : getColorFromBackgroundColor(color)
     });
     NMNS.calendar.setCalendars(calendars);
-    NMNS.socket.emit("add manager", {id: id, name:name.val(), color:name.data("color")});
+    NMNS.socket.emit("add manager", {id: id, name:name.val(), color:color});
   }
   
   function cancelAddManager(self){
@@ -1570,7 +1578,7 @@
   }).on("touch click", function(e){
     if($("#infoModalColorPicker").is(":visible")){
       var target = $(e.target);
-      if(!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length){
+      if(!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length && !target.hasClass("addManagerColor") && !target.parents(".addManagerColor").length && !target.parents(".addManagerColor").length){
         $("#infoModalColorPicker").hide(300);
       }
     }
@@ -1628,12 +1636,13 @@
     var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
     var list = $(this).prev();
     var clazz = list.attr("id") === "lnbManagerList"? "lnbManagerItem" : "infoManagerItem";
-    list.append($("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>"));
+    var row = $("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' data-id='"+NMNS.email + generateRandom() +"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>");
+    list.append(row);
     if(clazz === "lnbManagerItem"){
-      $(".lnbManagerItem .submitAddManager").off("touch click").on("touch click", function(){
+      row.find(".submitAddManager").off("touch click").on("touch click", function(){
         submitAddManager(this);
       });
-      $(".lnbManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+      row.find("input[type='text']").off("keyup").on("keyup", function(e){
         if(e.which === 27){
           cancelAddManager(this);
           list.find("div:last-child input[type='text']").focus();
@@ -1642,14 +1651,17 @@
         }
       });
     }else{
-      $(".infoManagerItem input[type='text']").off("keyup").on("keyup", function(e){
+      row.find("input[type='text']").off("keyup").on("keyup", function(e){
         if(e.which === 27){
           cancelAddManager(this);
           list.find("div:last-child input[type='text']").focus();
         }
       });
+      row.find(".addManagerColor").off("touch click").on("touch click", function(){
+        showColorPickerPopup($(this));
+      });
     }
-    $("."+ clazz + " .cancelAddManager").off("touch click").on("touch click", function(){
+    row.find(".cancelAddManager").off("touch click").on("touch click", function(){
       cancelAddManager(this);
       list.find("div:last-child input[type='text']").focus();
     });

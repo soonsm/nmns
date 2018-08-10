@@ -77,7 +77,7 @@ a.text-primary {
   border-top: 0.05rem solid $divider !important;
 }
 .border{
-  border: 0.05rem solid $divider !important;
+  border: 0.06rem solid $divider !important;
 }
 .list-group-item{
   border:.05rem solid $divider;
@@ -99,4 +99,8 @@ a.text-primary {
 
 .form-control, .form-control-sm, div.rounded-0{
   border-width: 0.05rem;
+}
+.form-control:focus{
+  box-shadow:none;
+  border-color:#ced4da;
 }

@@ -37,8 +37,8 @@
   <nav class="navbar bg-primary navbar-shrink" id="mainNav">
     <a class="navbar-brand js-scroll-trigger" href="/">No More No Show</a>
     <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="fa fa-bars d-block d-md-none"></i>
-      <span class="d-none d-md-block"><if(input.user.shopName)>${input.user.shopName}<small class="d-none d-lg-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
+      <i class="fa fa-bars d-block d-sm-none"></i>
+      <span class="d-none d-sm-block"><if(input.user.shopName)>${input.user.shopName}<small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav text-white mr-auto godo normal w700">
@@ -119,19 +119,19 @@
     <div id="mainContents" class="col px-0">
       <div id="mainCalendarTools" class="text-center align-middle bg-light">
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button"><i class="fas fa-chevron-left"></i></button>
-        <span id="renderRange" class="align-middle mx-2"></span>
+        <span id="renderRange" class="align-middle"></span>
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button"><i class="fas fa-chevron-right"></i></button>
         <div class="btn-group btn-group-sm position-absolute py-2 d-none d-md-inline-flex calendarTypeGroup" role="group" aria-label="캘린더 종류">
-          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-daily"><i class="fas fa-bars"></i> 1일</button>
-          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90"></i> 1주</button>
-          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-monthly"><i class="fas fa-th"></i> 1달</button>
+          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-daily"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></button>
+          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></button>
+          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-monthly"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></button>
         </div>
         <div class="btn-group btn-group-sm d-inline-flex d-md-none position-absolute py-2 calendarTypeGroup" role="group">
           <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
           <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
-            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily"><i class="fas fa-bars"></i> 1일</a>
-            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90"></i> 1주</a>
-            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly"><i class="fas fa-th"></i> 1달</a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></a>
           </div>
         </div>
       </div>

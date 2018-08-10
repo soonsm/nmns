@@ -45,6 +45,25 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-p
   line-height:28px;
   width:auto;
 }
+#mainCalendarTools #calendarTypeMenu .calendarTypeText{
+  display:none;
+}
+#mainCalendarTools #calendarTypeMenu.dropdown-toggle:after{
+  margin-left:0;
+}
+@media (min-width: 360px){
+  #mainCalendarTools #calendarTypeMenu i.calendarTypeText{
+    display:inline;
+  }
+  #mainCalendarTools #calendarTypeMenu.dropdown-toggle:after{
+    margin-left:.255rem;
+  }
+}
+@media(min-width:430px){
+  #mainCalendarTools #calendarTypeMenu span.calendarTypeText{
+    display:inline;
+  }
+}
 #mainContents{
   padding-left:0;
 }
