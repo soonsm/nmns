@@ -75,6 +75,14 @@
                 <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
                 <input id="signupPassword" type="password" name="password" class="form-control" placeholder="비밀번호"/>
                 <input type="password" name="passwordRepeat" class="form-control" placeholder="비밀번호 확인"/>
+                <div class="form-check pl-2 text-left mb-2">
+                  <input type="checkbox" class="form-check-input" id="agreeContract" name="agreeContract" value="true" checked="checked"/>
+                  <label for="agreeContract"></label>
+                  <label class="form-check-label align-text-top" for="agreeContract">No More No Show <a href="#" class="contract">이용약관</a>에 동의합니다.</label>
+                </div>
+                <div class="hide contractContents text-secondary">
+                  이용약관!
+                </div>
                 <button class="btn-primary signupBtn">회원가입</button>
                 <p class="message text-danger" if(input.type === "signup" && input.message)>${input.message}</p>
                 <p class=["message", "text-secondary", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchSigninForm">로그인</a>해주세요.</p>
@@ -113,6 +121,14 @@
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
             <input id="signupPassword2" type="password" name="password" class="form-control" placeholder="비밀번호"/>
             <input type="password" name="passwordRepeat" class="form-control" placeholder="비밀번호 확인"/>
+            <div class="form-check text-left pl-2 mb-2">
+              <input type="checkbox" class="form-check-input" id="agreeContract2" name="agreeContract2" value="true" checked="checked"/>
+              <label for="agreeContract2"></label>
+              <label class="form-check-label align-text-top" for="agreeContract2">No More No Show <a href="#" class="contract">이용약관</a>에 동의합니다.</label>
+            </div>
+            <div class="hide contractContents text-secondary">
+              이용약관!
+            </div>
             <button class="btn-primary signupBtn">회원가입</button>
             <p class="message text-danger" if(input.type === "signup" && input.message)>${input.message}</p>
             <p class=["message", "text-secondary", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchSigninForm">로그인</a>해주세요.</p>
@@ -146,7 +162,7 @@
 
   <section id="easyReservation" class="bg-dark text-white">
     <div class="container">
-      <h2 class="text-center text-uppercase text-white godo normal w700">예약관리</h2>
+      <h2 class="text-center text-white godo normal w700">예약관리</h2>
       <hr class="star star-dark mb-5 mx-auto">
       <div class="row">
         <div class="col-lg-10 ml-auto mr-auto">
@@ -160,57 +176,57 @@
       </div>
       <div class="row">
         <div class="col-lg-10 ml-auto mr-auto">
-          <p class="lead godo normal w400">하루, 일주일, 한달 단위로 한눈에 볼 수 있는 예약스케줄로 보다 편리한 예약관리가 가능합니다.</p>
+          <p class="lead godo normal w400">하루, 일주일, 한달 단위로 예약 스케줄을 한눈에 볼 수 있습니다.</p>
         </div>
       </div>
             <div class="row">
               <div class="col-lg-10 ml-auto mr-auto">
-                <img src="/nmns/img/index_scheduler.png" class="img-fluid" alt="예약관리">
+                <img src="/nmns/img/index_scheduler.png" class="img-fluid" alt="홈페이지에서 간편하게 예약을 관리합니다.">
               </div>
            </div>
     </div>
   </section>
 
-  <section class="portfolio" id="shareNoShow">
+  <section class="bg-primary text-white portfolio" id="shareNoShow">
     <div class="container">
-      <h2 class="text-center text-uppercase godo normal w700">노쇼 전적 확인</h2>
-      <hr class="star star-white mb-5 mx-auto">
-      <div class="row">
-              <div class="col-lg-10 ml-auto mr-auto">
-                <p class="lead godo normal w400">예약받은 고객의 노쇼 전적을 확인해보세요.</p>
-              </div>
-            </div>
+      <h2 class="text-center text-white godo normal w700">노쇼 전적 공유</h2>
+      <hr class="star star-primary mb-5 mx-auto">
       <div class="row">
         <div class="col-lg-10 ml-auto mr-auto">
-          <p class="lead godo normal w400">예약을 입력하면 고객의 노쇼 전적을 알려줍니다.</p>
+          <p class="lead godo normal w400">앱 설치 없이 카카오톡과 홈페이지에서 간편하게 노쇼 전적을 공유합니다.</p>
         </div>
       </div>
       <div class="row">
         <div class="col-lg-10 ml-auto mr-auto">
-          <p class="lead godo normal w400">1000개의 매장에서 노쇼 전적을 찾아서 알려줍니다.</p>
+          <p class="lead godo normal w400">예약받은 고객의 노쇼 이력을 체크해보세요!</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-10 ml-auto mr-auto">
+          <p class="lead godo normal w400">전국 1000여 개 매장에서 공유한 노쇼기록으로 보다 스마트하게 예약을 관리해보세요.</p>
         </div>
       </div>
       <div class="row">
         <div class="col-lg-5 ml-auto mr-auto">
-          <img src="/nmns/img/index_noshow_check.png" class="img-fluid" alt="예약을 입력하면 고객의 노쇼 전적을 알려줍니다.">
+          <img src="/nmns/img/index_noshow_check.png" class="img-fluid" alt="전화번호를 입력하면 고객의 노쇼 이력을 알려줍니다.">
         </div>
         <div class="col-lg-5 ml-auto mr-auto">
-          <img src="/nmns/img/index_noshow_check2.png" class="img-fluid" alt="예약을 입력하면 고객의 노쇼 전적을 알려줍니다.">
+          <img src="/nmns/img/index_noshow_check2.png" class="img-fluid" alt="쉽게 노쇼 내역을 공유, 검색할 수 있습니다.">
         </div>
       </div>
     </div>
   </section>
 
-  <section class="bg-primary text-white mb-0 godo normal w700" id="easyCancel">
+  <section class="mb-0 godo normal w700" id="easyCancel">
     <div class="container">
-      <h2 class="text-center text-uppercase text-white godo normal w700">간편한 예약취소</h2>
-      <hr class="star star-primary mb-5 mx-auto">
+      <h2 class="text-center godo normal w700">간편한 예약취소</h2>
+      <hr class="star star-white mb-5 mx-auto">
       <div class="row">
         <div class="col-lg-4 ml-auto">
-          <p class="lead godo normal w400">고객이 예약취소를 위해 가게에 연락하는게 번거롭고 부담스러워서 노쇼가 더 발생한다는 사실을 알고 계신가요?</p>
+          <p class="lead godo normal w400">고객이 매장에 연락하는게 번거롭고 부담스러워서 노쇼가 더 발생한다는 사실을 알고 계신가요?</p>
         </div>
         <div class="col-lg-4 mr-auto">
-          <p class="lead godo normal w400">고객이 따로 연락하지 않고 간단히 터치 한 번 만으로 예약을 취소할 수 있게 예약취소 버튼을 카톡으로 보내보세요!<br/>노쇼가 줄어들거에요 :)</p>
+          <p class="lead godo normal w400">고객이 간단히 예약을 취소할 수 있게 예약취소 버튼을 카톡으로 보내보세요!<br/>노쇼가 줄어들거에요 :)</p>
         </div>
       </div>
       <hr class="star-light mb-5 mx-auto">
@@ -233,18 +249,18 @@
     </div>
   </section>
 
-  <section class="portfolio" id="kakaoVersion">
+  <section class="portfolio bg-dark text-white" id="kakaoVersion">
     <div class="container">
-      <h2 class="text-center text-uppercase godo normal w700">카카오톡 버전</h2>
-      <hr class="star star-white mb-5 mx-auto">
-      <div class="row">
-              <div class="col-lg-10 ml-auto mr-auto">
-                <p class="lead godo normal w400">노쇼 전적 조회, 노쇼 추가, 예약취소버튼 보내기 기능은 카카오톡에서도 사용 할 수 있습니다.</p>
-              </div>
-            </div>
+      <h2 class="text-center text-white godo normal w700">카카오톡 버전</h2>
+      <hr class="star star-dark mb-5 mx-auto">
       <div class="row">
         <div class="col-lg-10 ml-auto mr-auto">
-          <p class="lead godo normal w400">카카오톡 검색에서 "nmns" 또는 "노쇼그만"을 검색해보세요.</p>
+          <p class="lead godo normal w400">노쇼 전적 조회, 추가, 예약 메시지 전송 기능을 카카오톡에서도 사용 할 수 있습니다.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-10 ml-auto mr-auto">
+          <p class="lead godo normal w400">카카오톡 친구검색에서 "nmns" 또는 "노쇼그만"을 검색해보세요.</p>
         </div>
       </div>
     </div>
@@ -253,7 +269,9 @@
   <!-- Footer -->
   <footer class="footer text-center">
     <div class="copyright py-2 text-center text-white container">
-      <small>Copyright &copy; nomorenoshow.com 2018</small>
+      <small>Copyright &copy; nomorenoshow.co.kr 2018</small>
+      <br/>
+      <small><a href="/privacy" class="text-white">개인정보 처리방침</a></small>
     </div>
   </footer>
 

@@ -261,6 +261,7 @@ hr.star-white:after {
 @media(min-width:370px){
   #mainIndicators + .loginPage{
     margin-top:3rem;
+    margin-bottom:3rem;
   }
 }
 .d-xs-none{
@@ -278,4 +279,13 @@ hr.star-white:after {
   #mainNav button{
     display:inline-flex;
   }
+}
+.signupForm .form-check{
+  margin-top:-.5rem;
+}
+.signupForm input[type="checkbox"] + label{
+  margin-bottom:0;
+}
+.signupForm .form-check-label{
+  display:inline;
 }

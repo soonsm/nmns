@@ -26,7 +26,9 @@
 
   // Closes responsive menu when a scroll trigger link is clicked
   $('.js-scroll-trigger').click(function() {
-    $('.navbar-collapse').collapse('hide');
+    if($(".navbar-collapse").hasClass("show")){
+      $('.navbar-collapse').collapse('hide');
+    }
   });
 
   // Activate scrollspy to add active class to navbar items on scroll
@@ -170,6 +172,9 @@
 
   $("#signupLink").off("click touch").on("click touch", function(e){
     e.preventDefault();
+    if($(".navbar-collapse").hasClass("show")){
+      $('.navbar-collapse').collapse('hide');
+    }
     if(!$(".loginPage form:visible").hasClass("signupForm")){
       switchSignupForm(function(){
         var first = true;
@@ -193,6 +198,9 @@
 
   $("#signinLink").off("click touch").on("click touch", function(e){
     e.preventDefault();
+    if($(".navbar-collapse").hasClass("show")){
+      $('.navbar-collapse').collapse('hide');
+    }
     if(!$(".loginPage form:visible").hasClass("signinForm")){
       switchSigninForm(function(){
         var first = true;
@@ -289,5 +297,10 @@
         alert("메일 보내기에 실패했습니다. 다시 시도해주세요!");
       });
     }
+  });
+  
+  $(".contract").off("touch click").on("touch click", function(e){
+    e.preventDefault();
+    $(this).parent().parent().next().toggle();
   });
 })(jQuery);
