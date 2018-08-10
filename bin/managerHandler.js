@@ -20,7 +20,8 @@ exports.addManager = async function(staff){
 
     if (!name || !id) {
         status = false;
-        message = '담당자 추가에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${매니저 이름, string}, "color":${저장할 색깔, string, #RRGGBB, optional}})';
+        // message = '담당자 추가에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${매니저 이름, string}, "color":${저장할 색깔, string, #RRGGBB, optional}})';
+        message = '담당자 추가를 위해서 이름과 색을 지정하세요.';
     }
 
     if (status) {
@@ -46,7 +47,8 @@ exports.updateManager = async function(newStaff){
 
     if (!name || !color || !id) {
         status = false;
-        message = '담당자 수정에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${변경후 매니저 이름, string}, "color":${변경할 색깔, string, #RRGGBB}})';
+        // message = '담당자 수정에 필요한 데이터가 없습니다. ({"id": ${매니저 키}, "name":${변경후 매니저 이름, string}, "color":${변경할 색깔, string, #RRGGBB}})';
+        message = '새 담당자 이름과 색을 입력하세요.';
     }
 
     if (status) {
@@ -86,7 +88,8 @@ exports.delManager = async function(newStaff){
 
     if (!id) {
         status = false;
-        message = '담당자 삭제에 필요한 데이터가 없습니다. ({"id": ${매니저 키}})';
+        // message = '담당자 삭제에 필요한 데이터가 없습니다. ({"id": ${매니저 키}})';
+        message = '담당자 삭제를 위한 아이디가 필요합니다.';
     }
 
     if (status) {

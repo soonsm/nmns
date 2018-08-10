@@ -62,7 +62,8 @@ exports.getCustomerInfo = async function (data) {
 
     if (!id || (!contact && !name)) {
         status = false;
-        message = 'id는 필수이고 contact와 name은 둘 중 하나는 있어야 합니다.';
+        // message = 'id는 필수이고 contact와 name은 둘 중 하나는 있어야 합니다.';
+        message = '연락처 혹은 고객 이름 둘 중 하나는 필수입니다.';
     }
 
     if (status) {

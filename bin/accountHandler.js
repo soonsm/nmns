@@ -10,7 +10,8 @@ exports.updatePwd = async function (data) {
     let pwd = data.password;
     if (!pwd) {
         status = false;
-        message = '비밀번호 변경에 필요한 데이터가 없습니다.({"password":${변경할 패스워드, string}})';
+        // message = '비밀번호 변경에 필요한 데이터가 없습니다.({"password":${변경할 패스워드, string}})';
+        message = '새 비밀번호를 입력하세요.';
     }
     else {
         let strengthCheck = util.passwordStrengthCheck(pwd);
@@ -81,11 +82,13 @@ exports.updateShop = async function (params) {
     if (status) {
         if (data.bizBeginTime && !moment(data.bizBeginTime, 'HHmm').isValid()) {
             status = false;
-            message = 'bizBeginTime 시간 포맷이 올바르지 않습니다.(HHmm):' + data.bizBeginTime;
+            // message = 'bizBeginTime 시간 포맷이 올바르지 않습니다.(HHmm):' + data.bizBeginTime;
+            message = `매장운영시간이 잘못됐습니다.(${data.bizBeginTime})`;
         }
         else if (data.bizEndTime && !moment(data.bizEndTime, 'HHmm').isValid()) {
             status = false;
-            message = 'bizEndTime 시간 포맷이 올바르지 않습니다.(HHmm):' + data.bizEndTime;
+            // message = 'bizEndTime 시간 포맷이 올바르지 않습니다.(HHmm):' + data.bizEndTime;
+            message = `매장운영시간이 잘못됐습니다.(${data.bizEndTime})`;
         }
 
         if (status) {
