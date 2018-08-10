@@ -16,7 +16,8 @@ exports.getNoShow = async function(data) {
 
     if (!contact) {
         status = false;
-        message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string})';
+        // message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string})';
+        message = '조회할 전화번호를 입력하세요.';
     }
     else if (!util.phoneNumberValidation(contact)) {
         message = `휴대전화번호 형식이 올바르지 않습니다.(${contact})`;
@@ -72,7 +73,8 @@ exports.addNoShow = async function(data) {
     //validation
     if (!contact || !id) {
         status = false;
-        message = '노쇼 등록에 필요한 데이터가 없습니다. ({"id":${노쇼 ID, string}, "contact":${고객 모바일, string}, "noShowCase":${매장 코멘트, string, optional}, "date":${노쇼 날짜, string, YYYYMMDD}})';
+        // message = '노쇼 등록에 필요한 데이터가 없습니다. ({"id":${노쇼 ID, string}, "contact":${고객 모바일, string}, "noShowCase":${매장 코멘트, string, optional}, "date":${노쇼 날짜, string, YYYYMMDD}})';
+        message = '노쇼 등록을 위해 전화번호와 노쇼 날짜를 입력하세요.';
     }
     else if (!util.phoneNumberValidation(contact)) {
         status = false;
@@ -100,7 +102,8 @@ exports.delNoShow = async function(data) {
     //validation
     if (!id) {
         status = false;
-        message = '노쇼 등록에 필요한 데이터가 없습니다. ({"id":${노쇼ID, string}})';
+        // message = '노쇼 삭제에 필요한 데이터가 없습니다. ({"id":${노쇼ID, string}})';
+        message = '노쇼 삭제를 위해 아이디가 필요합니다.';
     }
 
     let deleteResult = await db.deleteNoShow(this.email, id);

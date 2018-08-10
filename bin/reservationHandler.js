@@ -16,14 +16,17 @@ exports.getReservationSummaryList = async function(data) {
 
     if (params.start && !moment(params.start, 'YYYYMMDDHHmm').isValid()) {
         status = false;
-        message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.start}`;
+        // message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.start}`;
+        message = `조회하려는 날짜가 형식에 맞지 않습니다.(${params.start})`;
     }
     if (params.end && !moment(params.end, 'YYYYMMDDHHmm').isValid()) {
         status = false;
-        message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.end}`;
+        // message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${params.end}`;
+        message = `조회하려는 날짜가 형식에 맞지 않습니다.(${params.end})`;
     }
     if (params.contact && !util.phoneNumberValidation(params.contact)) {
         status = false;
+        // message = `휴대전화번호 형식이 올바르지 않습니다.(${params.contact})`;
         message = `휴대전화번호 형식이 올바르지 않습니다.(${params.contact})`;
     }
     if (status) {
@@ -44,11 +47,13 @@ exports.getReservationList = async function(data) {
     let resultData = null;
     console.log(data);
     if (!data || !data.start || !data.end) {
-        message = '예약정보 조회에 필요한 데이터가 없습니다.({"start":${조회 시작 일자, string, YYYYMMDDHHmm}, "end":${조회 종료 일자, string, YYYYMMDDHHmm}})';
+        // message = '예약정보 조회에 필요한 데이터가 없습니다.({"start":${조회 시작 일자, string, YYYYMMDDHHmm}, "end":${조회 종료 일자, string, YYYYMMDDHHmm}})';
+        message = '조회하려는 날짜를 입력하세요.';
         status = false;
     }
     else if (!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid()) {
-        message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
+        // message = `조회하려는 날짜가 날짜 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
+        message = `조회하려는 날짜가 형식에 맞지 않습니다.(${data.start}, ${data.end})`;
         status = false;
     }
 
@@ -224,23 +229,28 @@ const reservationValidationForUdate = function (email, data) {
         message;
 
     if (!data.id) {
-        message = '예약수정에 필요한 필수 데이터가 없습니다.({"id": ${예약키})';
+        // message = '예약수정에 필요한 필수 데이터가 없습니다.({"id": ${예약키})';
+        message = '예약수정에 필요한 예약 아이디가 없습니다.';
     }
     else if (!data.id.startsWith(email)) {
         message = 'email 조작이 의심되어 거절합니다.';
     }
     else if (data.status !== process.nmns.RESERVATION_STATUS.DELETED) {
         if(data.isAllDay === false && (data.start && (!moment(data.start, 'YYYYMMDDHHmm').isValid()))){
-            message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}`;
+            // message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}`;
+            message = `날짜가 형식에 맞지 않습니다.(${data.start})`;
         }
         else if (data.isAllDay === false && (data.end && (!moment(data.end, 'YYYYMMDDHHmm').isValid()))) {
-            message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) end:${data.end}`;
+            // message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) end:${data.end}`;
+            message = `날짜가 형식에 맞지 않습니다.(${data.end})`;
         }
         else if(data.isAllDay === true && (data.start && (!moment(data.start, 'YYYYMMDD').isValid()))){
-            message = `날짜가 형식에 맞지 않습니다.(YYYMMDD) start:${data.start}`;
+            // message = `날짜가 형식에 맞지 않습니다.(YYYMMDD) start:${data.start}`;
+            message = `날짜가 형식에 맞지 않습니다.(${data.start})`;
         }
         else if (data.isAllDay === true && (data.end && (!moment(data.end, 'YYYYMMDD').isValid()))) {
-            message = `날짜가 형식에 맞지 않습니다.(YYYMMDD) end:${data.end}`;
+            // message = `날짜가 형식에 맞지 않습니다.(YYYMMDD) end:${data.end}`;
+            message = `날짜가 형식에 맞지 않습니다.(${data.end})`;
         }
         else if (data.type && data.type !== 'R' && data.type !== 'T') {
             message = `type은 R(예약) 또는 T(일정)만 가능합니다. type:${data.type}`;
@@ -255,7 +265,8 @@ const reservationValidationForUdate = function (email, data) {
             message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
         }
         else if (data.status && (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')) {
-            message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
+            // message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
+            message = '예약상태 값이 올바르지 않습니다.';
         }
         else {
             status = true;
@@ -276,7 +287,8 @@ const reservationValidationForAdd = function (email, data) {
     let status = false,
         message;
     if (!data.id || !data.start || !data.end ) {
-        message = '예약추가에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "contact":${고객 전화번호, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
+        // message = '예약추가에 필요한 필수 데이터가 없습니다. ({"id": ${예약키}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm})';
+        message = '예약을 추가하려면 시작시간과 끝시간을 입력하세요.';
     }else if(!data.id.startsWith(email)){
         message = 'email 조작이 의심되어 거절합니다.';
     }else{
@@ -288,9 +300,11 @@ const reservationValidationForAdd = function (email, data) {
         }else if(data.isAllDay !== true && data.isAllDay !== false){
             message = `isAllDay는 true 또는 false만 가능합니다. type:${data.isAllDay}`;
         }else if(data.isAllDay && (!moment(data.start, 'YYYYMMDD').isValid() || !moment(data.end, 'YYYYMMDD').isValid())) {
-            message = `날짜가 형식에 맞지 않습니다.(YYYMMDD) start:${data.start}, end:${data.end}`;
+            // message = `날짜가 형식에 맞지 않습니다.(YYYMMDD) start:${data.start}, end:${data.end}`;
+            message = `날짜가 형식에 맞지 않습니다.(${data.start}, ${data.end})`;
         }else if(!data.isAllDay && (!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid())){
-            message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
+            // message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
+            message = `날짜가 형식에 맞지 않습니다.(${data.start}, ${data.end})`;
         }else if(data.type === 'R' && !data.contact){
             message = '예약추가시에는 연락처가 필수입니다.';
         }else if(data.type === 'R' && !util.phoneNumberValidation(data.contact)) {
