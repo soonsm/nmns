@@ -31,7 +31,7 @@ const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
 const SendNoti = 'message', GetNoti = 'get noti';
 
-const EVENT_LIST_NO_NEED_VERIFICATION = [GetCustomerInfo, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
+const EVENT_LIST_NO_NEED_VERIFICATION = [GetCustomerInfo, GetCustomerDetail, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
@@ -74,7 +74,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
                 if (user.authStatus !== 'EMAIL_VERIFICATED' && !EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
-                    socket.emit(eventName, makeResponse(false, null, '이메일 인증 후 사용하시기 바랍니다.'));
+                    socket.emit(eventName, makeResponse(false, data, '이메일 인증 후 사용하시기 바랍니다.'));
                 }
                 else {
                     try {
