@@ -1,5 +1,6 @@
 /*global jQuery, location*/
 (function($) {
+  var scrollDelay = (/*@cc_on!@*/false || !!document.documentMode? 0:1000);
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
@@ -8,7 +9,7 @@
       if (target.length) {
         $('html, body').animate({
           scrollTop: (target.offset().top - 60)
-        }, 1000, "easeInOutExpo");
+        }, scrollDelay, "easeInOutExpo");
         return false;
       }
     }
@@ -34,25 +35,32 @@
     offset: 80
   });
 
-  function switchForm(callback){
+  function switchSigninForm(callback){
     if($(".loginPage form:visible input[name='email']").val() !== ""){
       $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
     }
-    $('.loginPage form').not("#resetForm").animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
+    $('.loginPage form:visible, .loginPage .signinForm').animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
+  }
+
+  function switchSignupForm(callback){
+    if($(".loginPage form:visible input[name='email']").val() !== ""){
+      $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
+    }
+    $('.loginPage form:visible, .loginPage .signupForm').animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
   }
   
   function switchResetForm(callback){
     if($(".loginPage form:visible input[name='email']").val() !== ""){
       $(".loginPage form:hidden input[name='email']").val($(".loginPage form:visible input[name='email']").val());
     }
-    $('.loginPage form').not("#signupForm").animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
+    $('.loginPage form').not(".signupForm").animate({height: "toggle", opacity: "toggle"}, "slow", null, callback);
   }
 
   $(document).ready(function(){
     $.validator.addMethod("passwordCheck", function(value, element){
       return /\W+/.test(value) && /[0-9]+/.test(value);//특수문자와 숫자가 하나 이상 포함
     }, "비밀번호는 하나 이상의 숫자와 특수문자를 포함해야합니다.");
-    $("#signinForm").validate({
+    $(".signinForm").validate({
       rules:{
         email:{
           required:true,
@@ -74,7 +82,7 @@
       onfocusout:false,
       focusCleanup:true
     });
-    $("#resetForm").validate({
+    $(".resetForm").validate({
       rules:{
         email:{
           required:true,
@@ -92,7 +100,7 @@
       onfocusout:false,
       focusCleanup:true
     });
-    $("#signupForm").validate({
+    $(".loginPage.my-auto .signupForm").validate({
       rules:{
         email:{
           required:true,
@@ -125,103 +133,155 @@
       onfocusout:false,
       focusCleanup:true
     });
+    $(".loginPage.d-md-none .signupForm").validate({
+      rules:{
+        email:{
+          required:true,
+          email:true
+        },
+        password:{
+          required:true,
+          minlength:8,
+          maxlength:30,
+          passwordCheck:true
+        },
+        passwordRepeat:{
+          equalTo:"#signupPassword2"
+        }
+      },
+      messages:{
+        email:{
+          required:"이메일을 입력해주세요.",
+          email:"올바른 이메일을 입력해주세요."
+        },
+        password:{
+          required:"비밀번호를 입력해주세요.",
+          minlength:"비밀번호는 최소 8자리 이상입니다.",
+          maxlength:"비밀번호는 최대 30자리 이내입니다."
+        },
+        passwordRepeat:"비밀번호가 일치하지 않습니다."
+      },
+      errorElement:"p",
+      errorClass:"message text-danger my-1",
+      onfocusout:false,
+      focusCleanup:true
+    });
   });
 
-  $("#signupLink").on("click touch", function(e){
+  $("#signupLink").off("click touch").on("click touch", function(e){
     e.preventDefault();
-    if(!$(".loginPage form:visible").is("#signupForm")){
-      switchForm(function(){
+    if(!$(".loginPage form:visible").hasClass("signupForm")){
+      switchSignupForm(function(){
         var first = true;
         return function(){
           if(first){
             first = false;
             return;
           }
-          $('html, body').animate({
+          $('html').animate({
             scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
-          }, 1000, "easeInOutExpo");
-          $("#signupForm input[name='email']").focus();
+          }, scrollDelay, "easeInOutExpo");
+          $(".loginPage:visible .signupForm input[name='email']").focus();
       }}());
     }else{
-      $('html, body').animate({
+      $('html').animate({
         scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
-      }, 1000, "easeInOutExpo");
-      $("#signupForm input[name='email']").focus();
+      }, scrollDelay, "easeInOutExpo");
+      $(".loginPage:visible .signupForm input[name='email']").focus();
     }
   });
 
-  $("#signinLink").on("click touch", function(e){
+  $("#signinLink").off("click touch").on("click touch", function(e){
     e.preventDefault();
-    if(!$(".loginPage form:visible").is("#signinForm")){
-      switchForm(function(){
+    if(!$(".loginPage form:visible").hasClass("signinForm")){
+      switchSigninForm(function(){
         var first = true;
         return function(){
           if(first){
             first = false;
             return;
           }
-          if(!$("#signinBtn").is(":visible")){
+          if(!$(".loginPage form:visible .signinBtn").length){
             $(".message a.returnSignin").trigger("click");
           }
-          $('html, body').animate({
+          $('html').animate({
             scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
-          }, 1000, "easeInOutExpo");
-          $("#signinForm input[name='email']").focus();
+          }, scrollDelay, "easeInOutExpo");
+          $(".loginPage:visible .signinForm input[name='email']").focus();
       }}());
     }else{
-      if(!$("#signinBtn").is(":visible")){
+      if(!$(".loginPage:visible .signinBtn").is(":visible")){
         $(".message a.returnSignin").trigger("click");
       }
-      $('html, body').animate({
+      $('html').animate({
         scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
-      }, 1000, "easeInOutExpo");
-      $("#signinForm input[name='email']").focus();
+      }, scrollDelay, "easeInOutExpo");
+      $(".loginPage:visible .signinForm input[name='email']").focus();
     }
   });
   
-  $("#signinBtn").on("click touch", function(e){
+  $(".signinBtn").off("click touch").on("click touch", function(e){
     e.preventDefault();
-    if($("#signinForm").valid()){
-      $("#signinForm").submit();
+    if($(this).parents(".signinForm").valid()){
+      $(this).parents(".signinForm").submit();
     }
   });
   
-  $("#signupBtn").on("click touch", function(e){
+  $(".signupBtn").off("click touch").on("click touch", function(e){
     e.preventDefault();
-    if($("#signupForm").valid()){
-      $("#signupForm").submit();
+    if($(this).parents(".signupForm").valid()){
+      $(this).parents(".signupForm").submit();
     }
   });
   
-  $(".message .switchForm").on("click touch", function(e){
-    e.preventDefault();
-    switchForm();
-  });
-  
-  $(".message a.passwordReset").on("click touch", function(e){
-    e.preventDefault();
-    switchResetForm(function(){
-      $('html, body').animate({
-        scrollTop: $(".loginPage")[0].getBoundingClientRect().top
-      }, 1000, "easeInOutExpo");
-      $("#resetForm input[name='email']").focus();
+  $(".message .switchSigninForm").each(function(){
+    $(this).off("click touch").on("click touch", function(e){
+      e.preventDefault();
+      switchSigninForm(function(){
+        $('html').animate({
+          scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
+        }, scrollDelay, "easeInOutExpo");
+        $(".loginPage .signinForm:visible").find("input[name='email']").focus();
+      });
     });
   });
   
-  $(".message a.returnSignin").on("click touch", function(e){
+  $(".message .switchSignupForm").each(function(){
+    $(this).off("click touch").on("click touch", function(e){
+      e.preventDefault();
+      switchSignupForm(function(){
+        $('html').animate({
+          scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
+        }, scrollDelay, "easeInOutExpo");
+        $(".loginPage .signupForm:visible").find("input[name='email']").focus();
+      });
+    });
+  });
+  
+  $(".message a.passwordReset").off("click touch").on("click touch", function(e){
     e.preventDefault();
     switchResetForm(function(){
-      $('html, body').animate({
-        scrollTop: $(".loginPage")[0].getBoundingClientRect().top
-      }, 1000, "easeInOutExpo");
-      $("#signinForm input[name='email']").focus();
+      $('html').animate({
+        scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
+      }, scrollDelay, "easeInOutExpo");
+      $(".loginPage .resetForm:visible").find("input[name='email']").focus();
+    });
+  });
+  
+  $(".message a.returnSignin").off("click touch").on("click touch", function(e){
+    e.preventDefault();
+    switchResetForm(function(){
+      $('html').animate({
+        scrollTop: document.documentElement.scrollTop + $(".loginPage:visible")[0].getBoundingClientRect().top - $("#mainNav").height()
+      }, scrollDelay, "easeInOutExpo");
+      $(".loginPage .signinForm:visible").find("input[name='email']").focus();
     });
   });
 
-  $("#resetBtn").on("touch click", function(e){
+  $(".resetBtn").off("click touch").on("touch click", function(e){
     e.preventDefault();
     e.stopPropagation();
-    if($("#resetForm").valid()){
+    if($(this).parents(".resetForm").valid()){
       $.post("/resetPassword", {email:$(this).prev().val()})
       .done(function(){
         alert("비밀번호 초기화 메일을 보냈습니다. 메일을 확인해주세요!");

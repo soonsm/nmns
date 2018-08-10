@@ -243,6 +243,10 @@ hr.star-white:after {
   top:0;
   height:100%;
 }
+.carousel-flex .position-absolute{
+  top:50%;
+  transform: translateY(-50%);
+}
 .carousel-item img{
   max-height:800px;
 }

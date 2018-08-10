@@ -54,36 +54,33 @@
   </nav>
 
   <div id="carouselWrapper" class="col-md-12 position-relative px-0">
-    <div id="mainIndicators" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators">
-        <li data-target="#mainIndicators" data-slide-to="0" class="active"></li>
-      </ol>
+    <div id="mainIndicators" class="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img class="d-block w-100 mx-auto" src="/nmns/img/portfolio/carousel-img3.jpg" alt="노쇼 전적 확인">
           <div class="carousel-caption col-8 col-md-4 text-center text-md-left carousel-flex">
-            <div class="m-auto">
+            <div class="m-auto position-absolute">
               <h3>No More No Show 예약관리 시스템</h3>
-              <p>No More No Show는 노쇼 예방에 특화된 예약관리시스템입니다.</p>
-              <p class="carouselLastLine">No More No Show와 함께 노쇼 없이 예약 관리 하세요.</p>
+              <p>No More No Show는 노쇼 예방에 특화된 예약관리 시스템입니다.</p>
+              <p class="carouselLastLine">No More No Show와 함께 노쇼 없이 예약을 관리해보세요.</p>
             </div>
           </div>
         </div>
       </div>
       <div class="carousel-flex d-none d-md-flex col-4 offset-6 px-0">
-        <div class="loginPage my-auto">
+        <div class="loginPage my-auto position-absolute">
           <div class="form mx-auto">
-            <form id="signupForm" class=(input.type==="signin" && "hide") method="post" action="/signup">
+            <form class=["signupForm", (input.type==="signin" && "hide")] method="post" action="/signup">
               <div class="form-group">
                 <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
                 <input id="signupPassword" type="password" name="password" class="form-control" placeholder="비밀번호"/>
                 <input type="password" name="passwordRepeat" class="form-control" placeholder="비밀번호 확인"/>
-                <button id="signupBtn" class="btn-primary">회원가입</button>
+                <button class="btn-primary signupBtn">회원가입</button>
                 <p class="message text-danger" if(input.type === "signup" && input.message)>${input.message}</p>
-                <p class=["message", "text-secondary", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchForm">로그인</a>해주세요.</p>
+                <p class=["message", "text-secondary", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchSigninForm">로그인</a>해주세요.</p>
               </div>
             </form>
-            <form id="signinForm" class=(input.type!=="signin" && "hide") method="post" action="/signin">
+            <form class=["signinForm", (input.type!=="signin" && "hide")] method="post" action="/signin">
               <div class="form-group">
                 <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
                 <input type="password" name="password" class="form-control" placeholder="비밀번호"/>
@@ -92,16 +89,16 @@
                   <label for="rememberMeCheck"></label>
                   <label class="form-check-label align-text-top mb-3" for="rememberMeCheck">자동 로그인</label>
                 </div>
-                <button id="signinBtn" class="btn-primary">로그인</button>
+                <button class="btn-primary signinBtn">로그인</button>
                 <p class="message text-danger" if(input.type === "signin" && input.message)>${input.message}</p>
-                <p class=["message", "text-secondary", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchForm">간편하게 가입</a>해보세요.</p>
+                <p class=["message", "text-secondary", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchSignupForm">간편하게 가입</a>해보세요.</p>
                 <p class="message mt-1"><a class="passwordReset text-primary" href="#">비밀번호를 잊으셨나요?</a></p>
               </div>
             </form>
-            <form id="resetForm" class="hide" method="post" action="/resetPassword">
+            <form class="resetForm hide" method="post" action="/resetPassword">
               <div class="form-group">
                 <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
-                <button id="resetBtn" class="btn-primary">비밀번호 재설정</button>
+                <button class="btn-primary resetBtn">비밀번호 재설정</button>
                 <p class="message">비밀번호를 찾으셨다면<br class="d-lg-none d-md-inline-block d-sm-none"/><a class="returnSignin text-primary" href="#"> 다시 로그인</a>해주세요.</p>
               </div>
             </form>
@@ -111,35 +108,35 @@
     </div>
     <div class="loginPage d-md-none">
       <div class="form mx-auto">
-        <form id="signupForm" class=(input.type==="signin" && "hide") method="post" action="/signup">
+        <form class=["signupForm", (input.type==="signin" && "hide")] method="post" action="/signup">
           <div class="form-group">
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
-            <input id="signupPassword" type="password" name="password" class="form-control" placeholder="비밀번호"/>
+            <input id="signupPassword2" type="password" name="password" class="form-control" placeholder="비밀번호"/>
             <input type="password" name="passwordRepeat" class="form-control" placeholder="비밀번호 확인"/>
-            <button id="signupBtn" class="btn-primary">회원가입</button>
+            <button class="btn-primary signupBtn">회원가입</button>
             <p class="message text-danger" if(input.type === "signup" && input.message)>${input.message}</p>
-            <p class=["message", "text-secondary", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchForm">로그인</a>해주세요.</p>
+            <p class=["message", "text-secondary", (input.type === "signup" && input.message && "mt-1")]>계정이 있으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchSigninForm">로그인</a>해주세요.</p>
           </div>
         </form>
-        <form id="signinForm" class=(input.type!=="signin" && "hide") method="post" action="/signin">
+        <form class=["signinForm", (input.type!=="signin" && "hide")] method="post" action="/signin">
           <div class="form-group">
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
             <input type="password" name="password" class="form-control" placeholder="비밀번호"/>
             <div class="form-check text-left">
-              <input type="checkbox" class="form-check-input" id="rememberMeCheck" name="rememberMe" value="true" checked="checked"/>
-              <label for="rememberMeCheck"></label>
-              <label class="form-check-label align-text-top mb-3" for="rememberMeCheck">자동 로그인</label>
+              <input type="checkbox" class="form-check-input" id="rememberMeCheck2" name="rememberMe" value="true" checked="checked"/>
+              <label for="rememberMeCheck2"></label>
+              <label class="form-check-label align-text-top mb-3" for="rememberMeCheck2">자동 로그인</label>
             </div>
-            <button id="signinBtn" class="btn-primary">로그인</button>
+            <button class="btn-primary signinBtn">로그인</button>
             <p class="message text-danger" if(input.type === "signin" && input.message)>${input.message}</p>
-            <p class=["message", "text-secondary", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchForm">간편하게 가입</a>해보세요.</p>
+            <p class=["message", "text-secondary", (input.type === "signin" && input.message && "mt-1")]>아직 계정이 없으신가요?<br class="d-lg-none d-md-inline-block d-sm-none"/> <a href="#" class="text-primary switchSignupForm">간편하게 가입</a>해보세요.</p>
             <p class="message mt-1"><a class="passwordReset text-primary" href="#">비밀번호를 잊으셨나요?</a></p>
           </div>
         </form>
-        <form id="resetForm" class="hide" method="post" action="/resetPassword">
+        <form class="hide resetForm" method="post" action="/resetPassword">
           <div class="form-group">
             <input type="email" name="email" class="form-control" placeholder="nomore@noshow.com" value="${input.email}"/>
-            <button id="resetBtn" class="btn-primary">비밀번호 재설정</button>
+            <button class="btn-primary resetBtn">비밀번호 재설정</button>
             <p class="message">비밀번호를 찾으셨다면<br class="d-lg-none d-md-inline-block d-sm-none"/><a class="returnSignin text-primary" href="#"> 다시 로그인</a>해주세요.</p>
           </div>
         </form>
