@@ -341,13 +341,13 @@
   function createNewSchedule(e) {
     e.preventDefault();
     var now = moment(new Date());
-    if(now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0,2)) && now.minute()+ 30 > Number(NMNS.info.bizEndTime.substring(2)))){
+    if(now.hour() >= Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour()+1 == Number(NMNS.info.bizEndTime.substring(0,2)) && now.minute()+ 30 > Number(NMNS.info.bizEndTime.substring(2)))){
       now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
     }else if(now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))){
       now = moment(NMNS.info.bizBeginTime, "HHmm");        
     }else{
       now.minute(Math.ceil(now.minute()/10) * 10);
-    }
+    }console.log(now);
     NMNS.calendar.openCreationPopup({
         start: now.toDate(),
         end: now.add(30, "m").toDate()
@@ -711,9 +711,26 @@
     
     $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
       var item = $(this).parents(".infoManagerItem");
+      if(item.siblings(".infoManagerItem:visible").length == 0){
+        alert("담당자는 반드시 1명 이상 있어야합니다!");
+        return;
+      }
       item.hide();
+      $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
       item.attr("data-delete", "true");
       NMNS.infoModalScroll.update();
+    });
+    $(".infoManagerItem input.form-control").off("keyup").on("keyup", function(e){
+      if(e.which === 27){
+        var item = $(this).parents(".infoManagerItem");
+        if(item.siblings(".infoManagerItem:visible").length == 0){
+          return;
+        }
+        item.hide();
+        $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
+        item.attr("data-delete", "true");
+        NMNS.infoModalScroll.update();
+      }
     });
     $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
       showColorPickerPopup($(this));
@@ -859,21 +876,20 @@
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
         var id=generateRandom();
         var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm pr-0'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1'></i></div></div>");
-        newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function(){
-          filterNonNumericCharacter($(this));
-        });
+        if($("#noShowSearchList .empty").length){
+          $("#noShowSearchList").html(newRow);
+        }else{
+          $("#noShowSearchList").append(newRow);
+        }
         newRow.find(".noShowSearchAddSubmit").off("touch click").on("touch click", function(){
           submitAddNoShow($(this));
         });
         newRow.find(".noShowSearchAddCancel").off("touch click").on("touch click", function(){
           cancelAddNoShow($(this));
         });
-        if($("#noShowSearchList .empty").length){
-          $("#noShowSearchList").html(newRow);
-        }else{
-          $("#noShowSearchList").append(newRow);
-        }
-        newRow.find("div:first-child input").focus();
+        newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function(){
+          filterNonNumericCharacter($(this));
+        }).val($("#noShowSearchContact").val()).select().focus();
         newRow.data("datetimepicker", flatpickr("#noShowSearchAddDate"+id, datetimepickerOption));
       });
       $("#noShowSearchContact, #noShowAddContact, #noShowScheduleContact").off("blur").on("blur", function(){
@@ -881,16 +897,19 @@
       });
       $("#noShowSearchContact").on("keyup", function(e){
         if(e.which === 13){
+          filterNonNumericCharacter($(this));
           $("#noShowSearchBtn").trigger("click");
         }
       });
       $("#noShowAddContact").on("keyup", function(e){
         if(e.which === 13){
+          filterNonNumericCharacter($(this));
           $("#noShowAddBtn").trigger("click");
         }
       });
       $("#noShowScheduleContact").off("keyup").on("keyup", function(e){
         if(e.which === 13){
+          filterNonNumericCharacter($(this));
           $("#noShowScheduleSearch").trigger("click");
         }
       });
@@ -1636,7 +1655,7 @@
     var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
     var list = $(this).prev();
     var clazz = list.attr("id") === "lnbManagerList"? "lnbManagerItem" : "infoManagerItem";
-    var row = $("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:"+color+"; border-color:"+color+";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' data-id='"+NMNS.email + generateRandom() +"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>");
+    var row = $("<div class='"+clazz+" addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:"+color+"; border-color:"+color+";' data-color='"+color+"'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='"+color+"' data-id='"+NMNS.email + generateRandom() +"' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem"? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>":"<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>")+"</div>");
     list.append(row);
     if(clazz === "lnbManagerItem"){
       row.find(".submitAddManager").off("touch click").on("touch click", function(){
@@ -1650,21 +1669,34 @@
           submitAddManager(this);
         }
       });
+      row.find(".cancelAddManager").off("touch click").on("touch click", function(){
+        cancelAddManager(this);
+        list.find("div:last-child input[type='text']").focus();
+      });
     }else{
       row.find("input[type='text']").off("keyup").on("keyup", function(e){
         if(e.which === 27){
+          if(list.children(".infoManagerItem:visible").length == 1){
+            return;
+          }
           cancelAddManager(this);
           list.find("div:last-child input[type='text']").focus();
+          NMNS.infoModalScroll.update();
         }
       });
       row.find(".addManagerColor").off("touch click").on("touch click", function(){
         showColorPickerPopup($(this));
       });
+      row.find(".cancelAddManager").off("touch click").on("touch click", function(){
+        if(list.children(".infoManagerItem:visible").length == 1){
+          alert("담당자는 반드시 1명 이상 있어야합니다!");
+          return;
+        }
+        cancelAddManager(this);
+        list.find("div:last-child input[type='text']").focus();
+        NMNS.infoModalScroll.update();
+      });
     }
-    row.find(".cancelAddManager").off("touch click").on("touch click", function(){
-      cancelAddManager(this);
-      list.find("div:last-child input[type='text']").focus();
-    });
     list.find("div:last-child input[type='text']").focus();
   });
 //notification handling start
