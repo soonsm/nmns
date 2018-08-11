@@ -163,6 +163,10 @@ app.delete('/friend/:user_key', (req, res)=>{
    }
 });
 
+app.get('*', function(req, res){
+    res.redirect("/");
+});
+
 
 //socket.io.handler
 require('./bin/socket.io.handler')(server, sessionStore, passport, cookieParser);
