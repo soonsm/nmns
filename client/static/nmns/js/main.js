@@ -1088,20 +1088,26 @@
       flatpickr("#taskEndDate", datetimepickerOption).setDate(now.add(30, "m").toDate());
       $("#taskModalSave").on("touch click", function(){
         var id = NMNS.email + generateRandom();
+        var start = $("#taskStartDate")[0]._flatpickr.selectedDates[0];
+        var end = $("#taskEndDate")[0]._flatpickr.selectedDates[0];
+        if(start.getTime() > end.getTime()){
+          start = [end, end = start][0];
+        }
         NMNS.calendar.createSchedules([{
           id:id,
           calendarId:$("#taskManager").data("calendar-id"),
           title:$("#taskName").val(),
-          start:$("#taskStartDate")[0]._flatpickr.selectedDates[0],
-          end:$("#taskEndDate")[0]._flatpickr.selectedDates[0],
-          isAllDay:!moment($("#taskStartDate")[0]._flatpickr.selectedDates[0]).isSame(moment($("#taskEndDate")[0]._flatpickr.selectedDates[0]), "day"),
+          start: start,
+          end: end,
+          isAllDay:!moment(start).isSame(moment(end), "day"),
           category:"task",
           dueDateClass:"",
           color:getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
           bgColor:$("#taskManager").data("bgcolor"),
           borderColor:$("#taskManager").data("bgcolor"),
           raw:{
-            contents:$("#taskContents").val()
+            contents:$("#taskContents").val(),
+            status:"RESERVED"
           }
         }]);
         NMNS.history.push({
@@ -1112,11 +1118,12 @@
           id:id,
           manager:$("#taskManager").data("calendar-id"),
           name:$("#taskName").val(),
-          start:moment($("#taskStartDate")[0]._flatpickr.selectedDates[0]).format("YYYYMMDDHHmm"),
-          end:moment($("#taskEndDate")[0]._flatpickr.selectedDates[0]).format("YYYYMMDDHHmm"),
-          isAllDay:!moment($("#taskStartDate")[0]._flatpickr.selectedDates[0]).isSame(moment($("#taskEndDate")[0]._flatpickr.selectedDates[0]), "day"),
+          start:moment(start).format("YYYYMMDDHHmm"),
+          end:moment(end).format("YYYYMMDDHHmm"),
+          isAllDay:!moment(start).isSame(moment(end), "day"),
           type:"T",
-          contents:$("#taskContents").val()
+          contents:$("#taskContents").val(),
+          status:"RESERVED"
         });
         $("#taskModal").modal("hide");
       });
