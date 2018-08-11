@@ -112,10 +112,6 @@ app.use(passport.session());
 app.use('/', indexRouter(passport));
 app.use('/noShow', noShowRouter);
 
-app.get('/a', function (req, res) {
-    res.marko(require('./client/template/reservationCancel'), { title: '예약취소안내', message: '예약취소완료', contents: '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.' })
-});
-
 app.get('/keyboard', (req, res)=>{
     res.status(200).json(message.homeKeyboard);
 });
@@ -165,6 +161,10 @@ app.delete('/friend/:user_key', (req, res)=>{
    }else{
        res.status(403);
    }
+});
+
+app.get('*', function(req, res){
+    res.redirect("/");
 });
 
 
