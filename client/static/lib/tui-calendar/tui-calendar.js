@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.7.0 | Sat Aug 11 2018
+ * @version 1.7.0 | Sun Aug 12 2018
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -8955,17 +8955,23 @@ Calendar.prototype._onClickDayname = function(clickScheduleData) {
  */
 Calendar.prototype._onBeforeCreate = function(createScheduleData) {
     if (this._options.useCreationPopup && !createScheduleData.useCreationPopup) {
-        if (this._showCreationPopup) {
+        // NMNS CUSTOMIZING START
+        if (this._showCreationPopup && createScheduleData.category !== 'task') {
             this._showCreationPopup(createScheduleData);
 
-            // NMNS CUSTOMIZING START
             document.body.classList.add('modal-open');
             document.getElementsByClassName(config.classname('screen'))[0].style.visibility = 'visible';// show screen
             document.getElementsByClassName(config.classname('screen'))[0].style.opacity = 0.5;// show screen
 
-            // NMNS CUSTOMIZING END
             return;
         }
+        if (this._showCreationPopup) {
+            NMNS.initTaskModal(createScheduleData);
+            $('#taskModal').modal('show');
+
+            return;
+        }
+        // NMNS CUSTOMIZING END
     }
     /**
      * Fire this event when select time period in daily, weekly, monthly.
@@ -10130,11 +10136,7 @@ module.exports = function(baseController, layoutContainer, dragHandler, options)
             util.extend(scheduleData, {
                 useCreationPopup: true
             });
-            // NMNS CUSTOMIZING START
-            if (scheduleData.category === 'task') {
-                NMNS.initTaskModal(scheduleData);
-                $('#taskModal').modal('show');
-            } else if (scheduleData.isAllDay) {// NMNS CUSTOMIZING END
+            if (scheduleData.isAllDay) {
                 weekView.handler.creation.allday.fire('beforeCreateSchedule', scheduleData);
             } else {
                 weekView.handler.creation.time.fire('beforeCreateSchedule', scheduleData);

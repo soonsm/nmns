@@ -1173,10 +1173,10 @@
       document.getElementById("taskStartDate")._flatpickr.setDate(task.start.toDate());
       document.getElementById("taskEndDate")._flatpickr.setDate(task.end.toDate());
       $("#taskName").val(task.title || "");
-      $("#taskContents").val(task.raw.contents || "");
-      selected = NMNS.calendar.getCalendars().find(function(item){
+      $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
+      selected = task.calendarId?NMNS.calendar.getCalendars().find(function(item){
         return item.id === task.calendarId;
-      });
+      }):NMNS.calendar.getCalendars()[0];
     }else{
       $("#taskModal").data("edit", false).removeData("task");
       var now = moment(new Date());
@@ -1189,6 +1189,8 @@
       }
       document.getElementById("taskStartDate")._flatpickr.setDate(now.toDate());
       document.getElementById("taskEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
+      $("#taskName").val("");
+      $("#taskContents").val("");
       selected = NMNS.calendar.getCalendars()[0];
     }
     $("#taskManager").next().html(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function(){
