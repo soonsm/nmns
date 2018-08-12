@@ -661,3 +661,6 @@ footer{
 .tooltip-inner{
   max-width:265px;
 }
+*:focus{
+  outline:none;
+}
