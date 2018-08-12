@@ -1717,6 +1717,13 @@
       $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
     }
   });
+  $("#taskModal").on("hide.bs.modal", function(){
+    var task = $(this).data("task");
+    if(task.guide){
+      task.guide.clearGuideElement();
+      task.guide = null;
+    }
+  });
   $("#mainRow").on("touch click", function(){
     if($("#navbarResponsive").hasClass("show")){
       $("#navbarResponsive").collapse("hide");
