@@ -87,7 +87,7 @@ exports.getCustomerInfo = async function (data) {
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
                 if (contact) {
-                    if (member.contact.includes(contact)) {
+                    if (member.contact && member.contact.includes(contact)) {
                         returnMemberList.push(member);
                     }
                 }
