@@ -1077,6 +1077,11 @@
       flatpickr("#taskStartDate", datetimepickerOption);
       flatpickr("#taskEndDate", datetimepickerOption);
       $("#taskModalSave").on("touch click", function(){
+        if($("#taskName").val() === ""){
+          alert("일정 이름을 입력해주세요!");
+          $("#taskName").focus();
+          return;
+        }
         var id, start = $("#taskStartDate")[0]._flatpickr.selectedDates[0], end = $("#taskEndDate")[0]._flatpickr.selectedDates[0];
         if(start.getTime() > end.getTime()){
           start = [end, end = start][0];

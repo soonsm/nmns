@@ -104,3 +104,7 @@ a.text-primary {
   box-shadow:none;
   border-color:#ced4da;
 }
+.modal.fade .modal-dialog{
+  transform:none;
+  -webkit-transform:none;
+}

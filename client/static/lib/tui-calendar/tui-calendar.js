@@ -23090,7 +23090,7 @@ Time.prototype.getScheduleViewBound = function(viewModel, options) {
         width = null;
     }
 
-    if (height + top > baseHeight) {
+    if (height + top > baseHeight + 2) {
         height = baseHeight - top;
         cropped = true;
     }

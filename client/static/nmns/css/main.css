@@ -85,7 +85,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-p
   background-color:black;
   transition:opacity 0.15s linear;
   visibility:"hidden";
-  z-index:1;
+  z-index:3;
 }
 .tui-full-calendar-vlayout-area, .tui-full-calendar-week-container{
   height:auto !important;
@@ -607,6 +607,9 @@ button.moveDate:focus{
 #taskModal i{
   width:2rem;
   background-color:white;
+}
+#taskModal .modal-body{
+  height:310px;
 }
 #taskModal .close{
   position:absolute;
