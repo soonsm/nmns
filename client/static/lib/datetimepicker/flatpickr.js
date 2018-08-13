@@ -1001,8 +1001,8 @@
         }
 
         var currentMonth = createElement("div", "flatpickr-current-month");
-        currentMonth.appendChild(monthElement);
         currentMonth.appendChild(yearInput);
+        currentMonth.appendChild(monthElement);
         monthNavFragment.appendChild(currentMonth);
         container.appendChild(monthNavFragment);
         return {
