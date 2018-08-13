@@ -237,6 +237,9 @@ hr.star-white:after {
 .carousel-caption {
   bottom:unset;
 }
+.carousel-caption{
+  font-weight:400;
+}
 .carousel-flex{
   position:absolute;
   display:flex;
