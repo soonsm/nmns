@@ -438,9 +438,9 @@
           var source = args[_i];
 
           if (source) {
-            Object.keys(source).forEach(function (key) {
-              return target[key] = source[key];
-            });
+            for(var key in source){
+              target[key] = source[key];
+            }
           }
         };
 
