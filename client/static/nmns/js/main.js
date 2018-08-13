@@ -618,6 +618,9 @@
       $("#infoBizEndTime").focus();
       return;
     }
+    if(beginTime.isAfter(endTime, 'hour')){
+      beginTime = [endTime, endTime = beginTime][0];
+    }
     //validation end
     //update info start
     var parameters = {}, history = {id:"info"};
@@ -644,6 +647,7 @@
       NMNS.info.bizType = parameters.bizType;
     }
     if(Object.keys(parameters).length){
+      NMNS.history.push(history);
       NMNS.socket.emit("update info", parameters);
     }
     //update info end
@@ -812,9 +816,7 @@
         defaultDate: new Date(),
         appendTo:document.getElementById("noShowModal"),
         locale:"ko",
-        onChange:function(a, b, c){
-          c.close();
-        }
+        closeOnSelect:true
       };
       
       if(!NMNS.noShowModalSearchScroll){
@@ -1072,11 +1074,10 @@
         defaultDate: new Date(),
         appendTo:document.getElementById("taskModal"),
         locale:"ko",
-        onChange:function(a, b, c){
-          c.close();
-        },
         minuteIncrement:10,
-        time_24hr : true
+        time_24hr : true,
+        minTime: moment((NMNS.info.bizBeginTime || '0900'), 'HHmm').format('HH:mm'),
+        maxTime: moment((NMNS.info.bizEndTime || '2300'), 'HHmm').format('HH:mm')
       };
       flatpickr("#taskStartDate", datetimepickerOption);
       flatpickr("#taskEndDate", datetimepickerOption);
@@ -1169,7 +1170,7 @@
     }
     var selected;
     if(task.start && task.end){
-      $("#taskModal").data("edit", true).data("task", task);
+      $("#taskModal").data("edit", task.id?true:false).data("task", task);
       document.getElementById("taskStartDate")._flatpickr.setDate(task.start.toDate());
       document.getElementById("taskEndDate")._flatpickr.setDate(task.end.toDate());
       $("#taskName").val(task.title || "");
@@ -1719,7 +1720,7 @@
   });
   $("#taskModal").on("hide.bs.modal", function(){
     var task = $(this).data("task");
-    if(task.guide){
+    if(task && task.guide){
       task.guide.clearGuideElement();
       task.guide = null;
     }
