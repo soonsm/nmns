@@ -88,7 +88,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         }
                     }
                     catch (e) {
-                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.'));
+                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.' + e));
                     }
                 }
             });
