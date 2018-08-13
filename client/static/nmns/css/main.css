@@ -679,3 +679,6 @@ footer{
 .flatpickr-current-month span.cur-month{
   font-weight: 400;
 }
+input[name='name'], input[name='title'], input[name='contents'], input[name='etc']{
+  ime-mode:active;
+}
