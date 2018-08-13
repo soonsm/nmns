@@ -1178,6 +1178,9 @@
       selected = task.calendarId?NMNS.calendar.getCalendars().find(function(item){
         return item.id === task.calendarId;
       }):NMNS.calendar.getCalendars()[0];
+      if(!selected){
+        selected = {id:task.calendarId, bgColor:task.bgColor, name:"삭제된 담당자"};
+      }
     }else{
       $("#taskModal").data("edit", false).removeData("task");
       var now = moment(new Date());
