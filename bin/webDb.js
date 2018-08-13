@@ -265,6 +265,8 @@ exports.getReservationSummaryList = async function (email, data) {
                     filteredList.length -= 1;
                 }else if(data.name && reservation.name !== data.name){
                     filteredList.length -= 1;
+                }else if(reservation.type == 'T'){
+                    filteredList.length -= 1;
                 }
             }
         }
