@@ -9,6 +9,12 @@ var merge = require('merge-stream');
 // Copy third party libraries from /node_modules into /client/static/lib
 gulp.task('lib', async function() {
 
+  // Bootstrap
+  gulp.src('./node_modules/bootstrap/dist/css/bootstrap.min.css*')
+    .pipe(gulp.dest('./client/static/lib/bootstrap/css'));
+  gulp.src('./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js*')
+    .pipe(gulp.dest('./client/static/lib/bootstrap/js'));
+
   // Font Awesome
   gulp.src(['./node_modules/@fortawesome/fontawesome-free/css/all.css',
     './node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css'])
@@ -83,6 +89,7 @@ gulp.task('js:library', function() {
   return gulp.src([
       './client/static/lib/**/*.js',
       '!./client/static/lib/socket.io/socket.io.slim.js',
+      '!./client/static/lib/tui-calendar/tui-calendar.js',
       '!./client/static/lib/**/*.min.js'
     ])
     .pipe(uglify())
