@@ -31,11 +31,6 @@
     useDetailPopup:true,
     disableDblClick:true,
     template:{
-/*      monthGridHeader: function(model){
-        var date = new Date(model.date);
-        var template = "<span class='tui-full-calendar-weekday-grid-date'>"+date.getDate() + "</span>";
-        return template;
-      },*/
       allday:function(schedule){
         return getTimeSchedule(schedule, schedule.isAllDay);
       },
@@ -79,7 +74,7 @@
       },
       weekDayname: function(model) {
 	        var classDate = 'tui-full-calendar-dayname-date';
-	        var className = 'tui-full-calendar-dayname-name';
+	        var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar.getViewName() === 'week'?' weekViewDayName':'');
 	        var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === model.renderDate}):undefined;
           if(holiday){
             className += " tui-full-calendar-holiday";
@@ -1099,7 +1094,7 @@
               title:$("#taskName").val(),
               start: start,
               end: end,
-              isAllDay:!moment(start).isSame(moment(end), "day"),
+              isAllDay:false,
               category:"task",
               dueDateClass:"",
               color:getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
@@ -1115,7 +1110,7 @@
               title:$("#taskName").val(),
               start: start,
               end: end,
-              isAllDay:!moment(start).isSame(moment(end), "day"),
+              isAllDay:false,
               raw:{
                 contents:$("#taskContents").val()
               }
@@ -1127,7 +1122,7 @@
             name:$("#taskName").val(),
             start:moment(start).format("YYYYMMDDHHmm"),
             end:moment(end).format("YYYYMMDDHHmm"),
-            isAllDay:!moment(start).isSame(moment(end), "day"),
+            isAllDay:false,
             contents:$("#taskContents").val()
           });
         }else{//신규 일정 추가
@@ -1138,7 +1133,7 @@
             title:$("#taskName").val(),
             start: start,
             end: end,
-            isAllDay:!moment(start).isSame(moment(end), "day"),
+            isAllDay:false,
             category:"task",
             dueDateClass:"",
             color:getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
@@ -1159,7 +1154,7 @@
             name:$("#taskName").val(),
             start:moment(start).format("YYYYMMDDHHmm"),
             end:moment(end).format("YYYYMMDDHHmm"),
-            isAllDay:!moment(start).isSame(moment(end), "day"),
+            isAllDay:false,
             type:"T",
             contents:$("#taskContents").val(),
             status:"RESERVED"
@@ -1583,7 +1578,7 @@
     }
   }, true));
 
-  NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){console.log(e);
+  NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e){
     if(e.data.contact === $("#creationPopupContact").val() && $("#creationPopup").data("contact") !== e.data.contact){
       if(e.data.etc){
         $("#creationPopupEtc").val(e.data.etc);

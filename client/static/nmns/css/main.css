@@ -98,6 +98,14 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-p
 .tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator{
   background-color:#009688;
 }
+.tui-full-calendar-dayname-name.weekViewDayName{
+  display:none;
+}
+@media(min-width:400px){
+  .tui-full-calendar-dayname-name.weekViewDayName{
+    display:inline;
+  }
+}
 .tui-full-calendar-time-schedule{
   text-overflow:ellipsis;
   white-space: nowrap;
@@ -324,6 +332,7 @@ button.moveDate:focus{
 .tui-full-calendar-popup-detail .tui-full-calendar-icon.tui-full-calendar-calendar-dot{
   margin-left:4px;
   margin-right:5px;
+  vertical-align: text-bottom;
 }
 /* infoForm */
 #infoForm{
@@ -663,4 +672,7 @@ footer{
 }
 *:focus{
   outline:none;
+}
+.flatpickr-current-month span.cur-month{
+  font-weight: 400;
 }
