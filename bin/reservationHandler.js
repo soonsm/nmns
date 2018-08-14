@@ -186,23 +186,25 @@ exports.addReservation = async function (data) {
         이름과 연락처가 일치하는 고객이 없으면 추가
          */
         let user = await db.getWebUser(email);
-        let memberList = user.memberList;
-        let newMember = true;
-        for (let i = 0; i < memberList.length; i++) {
-            let member = memberList[i];
-            if (data.contact === member.contact) {
-                newMember = false;
-                if (data.name && data.name !== member.name) {
-                    member.name = data.name;
-                    memberList[i] = member;
-                    await db.updateWebUser(email, {memberList: memberList});
+        if(data.contact){
+            let memberList = user.memberList;
+            let newMember = true;
+            for (let i = 0; i < memberList.length; i++) {
+                let member = memberList[i];
+                if (data.contact === member.contact) {
+                    newMember = false;
+                    if (data.name && data.name !== member.name) {
+                        member.name = data.name;
+                        memberList[i] = member;
+                        await db.updateWebUser(email, {memberList: memberList});
+                    }
+                    break;
                 }
-                break;
             }
-        }
-        if (newMember) {
-            memberList.push({contact: data.contact, name: data.name});
-            await db.updateWebUser(email, {memberList: memberList});
+            if (newMember) {
+                memberList.push({contact: data.contact, name: data.name});
+                await db.updateWebUser(email, {memberList: memberList});
+            }
         }
 
         let reservation = db.newReservation(data);

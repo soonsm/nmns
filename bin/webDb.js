@@ -295,7 +295,12 @@ exports.getReservationList = async function (email, start, end) {
             let filteredList = [];
             for (var i = 0; i < list.length; i++) {
                 let reservation = list[i];
-                if (reservation.start >= start && reservation.end <= end) {
+
+                if(reservation.end <= end && reservation.end >= start){
+                    filteredList.push(reservation);
+                }else if(reservation.start >= start && reservation.start <= end ){
+                    filteredList.push(reservation);
+                }else if(reservation.start <= start && reservation.end >= end){
                     filteredList.push(reservation);
                 }
             }
@@ -310,7 +315,7 @@ exports.newStaff = function (staff) {
     return {
         id: staff.id,
         name: staff.name,
-        color: staff.color || '#ff00ff' //TODO: Default color 값 확인
+        color: staff.color || '#009688'
     };
 }
 exports.getStaffList = async function (email) {

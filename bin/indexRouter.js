@@ -15,7 +15,7 @@ module.exports = function (passport) {
     router.get('/index', function (req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
-            res.marko(require('../client/template/main'), {user: req.user});
+            res.redirect("/");
         } else {
             res.marko(require('../client/template/index'), {
                 type: "signin",
