@@ -90,6 +90,18 @@ if(!Array.prototype.find){
     return undefined;
   }
 }
+if(!Array.prototype.findIndex){
+  Array.prototype.findIndex = function(test){
+    var i=0;
+    while(i < this.length){
+      if(test(this[i])){
+        return i;
+      }
+      ++i;
+    }
+    return -1;
+  }
+}
 function getColorFromBackgroundColor(background){
   var o = Math.round(((parseInt(background.substring(1,3), 16) * 299) +
                       (parseInt(background.substring(3,5), 16) * 587) +

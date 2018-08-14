@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.7.0 | Mon Aug 13 2018
+ * @version 1.7.0 | Tue Aug 14 2018
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -9738,15 +9738,18 @@ function createMonthView(baseController, layoutContainer, dragHandler, options) 
             $('.detailPopupLabel').off('mouseenter').on('mouseenter', function () {
                 if (!$(this).hasClass('show')) {
                     $('.dropdown-toggle', this).dropdown('toggle');
+                    $(this).addClass('show');
                 }
             });
             $('.detailPopupLabel').off('mouseleave').on('mouseleave', function () {
                 if ($(this).hasClass('show')) {
                     $('.dropdown-toggle', this).dropdown('toggle');
+                    $(this).removeClass('show');
                 }
             });
-            $('.detailPopupLabel .dropdown-menu a').off('click touch').on('click touch', function () {
+            $('.detailPopupLabel .dropdown-menu a').off('click touch').on('click touch', function (e) {
                 var status = $(this).data('badge');
+                e.preventDefault();
                 if (status === 'light') {// delete
                     creationHandler.fire('beforeDeleteSchedule', eventData);
                 } else {
@@ -10185,15 +10188,18 @@ module.exports = function (baseController, layoutContainer, dragHandler, options
             $('.detailPopupLabel').off('mouseenter touch click').on('mouseenter touch click', function () {
                 if (!$(this).hasClass('show')) {
                     $('.dropdown-toggle', this).dropdown('toggle');
+                    $(this).addClass('show');
                 }
             });
             $('.detailPopupLabel').off('mouseleave').on('mouseleave', function () {
                 if ($(this).hasClass('show')) {
                     $('.dropdown-toggle', this).dropdown('toggle');
+                    $(this).removeClass('show');
                 }
             });
-            $('.detailPopupLabel .dropdown-menu a').off('click touch').on('click touch', function () {
+            $('.detailPopupLabel .dropdown-menu a').off('click touch').on('click touch', function (e) {
                 var status = $(this).data('badge');
+                e.preventDefault();
                 if (status === 'light') {// delete
                     if (eventData.schedule.isAllDay) {
                         weekView.handler.creation.allday.fire('beforeDeleteSchedule', eventData);
@@ -19132,6 +19138,7 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
                 start: startDate,
                 end: endDate,
                 isAllDay: isAllDay,
+                category: isAllDay ? 'allday' : 'time',
                 manager: calendarId,
                 name: title,
                 contents: contents,
