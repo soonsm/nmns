@@ -19053,41 +19053,81 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
         return false;
     }
     if (!this.validator) {
-        this.validator = $('#creationPopupForm').validate({
-            rules: {
-                contact: {
-                    required: true,
-                    digits: true
+        if ($('#tui-full-calendar-schedule-start-date').attr('type') === 'hidden') { // mobile handling
+            this.validator = $('#creationPopupForm').validate({
+                rules: {
+                    contact: {
+                        required: true,
+                        digits: true
+                    }
                 },
-                start: {
-                    required: true
+                messages: {
+                    contact: {
+                        required: '연락처를 입력해주세요.',
+                        digits: '숫자만 입력해주세요.'
+                    }
                 },
-                end: {
-                    required: true
+                errorElement: 'p',
+                errorClass: 'message text-danger my-1 pl-4 pl-sm-0 ml-3',
+                errorPlacement: function (error, element) {
+                    error.appendTo(element.parent().parent());
+                },
+                highlight: function (element, errorClass) {
+                    $(element).removeClass(errorClass);
                 }
-            },
-            messages: {
-                contact: {
-                    required: '연락처를 입력해주세요.',
-                    digits: '숫자만 입력해주세요.'
+            });
+        } else {
+            this.validator = $('#creationPopupForm').validate({
+                rules: {
+                    contact: {
+                        required: true,
+                        digits: true
+                    },
+                    start: {
+                        required: true
+                    },
+                    end: {
+                        required: true
+                    }
                 },
-                start: '시작시간을 입력해주세요.',
-                end: '종료시간을 입력해주세요.'
-            },
-            errorElement: 'p',
-            errorClass: 'message text-danger my-1 pl-4 pl-sm-0 ml-3',
-            errorPlacement: function (error, element) {
-                error.appendTo(element.parent().parent());
-            },
-            highlight: function (element, errorClass) {
-                $(element).removeClass(errorClass);
-            }
-        });
+                messages: {
+                    contact: {
+                        required: '연락처를 입력해주세요.',
+                        digits: '숫자만 입력해주세요.'
+                    },
+                    start: '시작시간을 입력해주세요.',
+                    end: '종료시간을 입력해주세요.'
+                },
+                errorElement: 'p',
+                errorClass: 'message text-danger my-1 pl-4 pl-sm-0 ml-3',
+                errorPlacement: function (error, element) {
+                    error.appendTo(element.parent().parent());
+                },
+                highlight: function (element, errorClass) {
+                    $(element).removeClass(errorClass);
+                }
+            });
+        }
     }
-    if (!this.validator.form()) {
-        this.validator.showErrors();
+    try {
+        startDate = new TZDate($('#tui-full-calendar-schedule-start-date')[0]._flatpickr.selectedDates[0]);
+        endDate = new TZDate($('#tui-full-calendar-schedule-end-date')[0]._flatpickr.selectedDates[0]);
+        if (!this.validator.form()) {
+            this.validator.showErrors();
 
-        return true;
+            return true;
+        }
+    } catch (e) {
+        if (!startDate || !endDate) {
+            alert('시간을 입력해주세요!');
+
+            return true;
+        }
+        if ($('#creationPopupContact').val() === '') {
+            alert('연락처를 입력해주세요!');
+
+            return true;
+        }
     }
     calendarId = $('#creationPopupManager').data('calendarid');
     manager = this.calendars.find(function (cal) {
@@ -19103,10 +19143,10 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
             borderColor: '#b2dfdb'
         };
     }
-    startDate = new TZDate($('#tui-full-calendar-schedule-start-date')[0]._flatpickr.selectedDates[0]);
-    endDate = new TZDate($('#tui-full-calendar-schedule-end-date')[0]._flatpickr.selectedDates[0]);
 
-    if (!startDate && !endDate) {
+    if (!startDate || !endDate) {
+        alert('시간을 입력해주세요!');
+
         return true;
     }
     if (datetime.compare(startDate, endDate) > 0) {// swap two dates

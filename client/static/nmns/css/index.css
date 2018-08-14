@@ -138,7 +138,11 @@ hr.star-white:after {
     font-size: 3rem;
   }
 }
-
+@media (max-width: 438px){
+  .lead{
+    text-align:center;
+  }
+}
 
 /*login form*/
 
@@ -250,7 +254,7 @@ hr.star-white:after {
   top:50%;
   transform: translateY(-50%);
 }
-.carousel-item img{
+.carousel-item{
   max-height:800px;
 }
 .carouselLastLine{
