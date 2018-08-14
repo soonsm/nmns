@@ -324,6 +324,7 @@ button.moveDate:focus{
 .detailPopupLabel .dropdown-menu{
   min-width:5.4rem;
   width:5.4rem;
+  top:2px !important;
 }
 .detailPopupLabel .dropdown-item{
   padding-left:1.5rem;

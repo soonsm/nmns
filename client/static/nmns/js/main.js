@@ -3,7 +3,7 @@
   NMNS.isIE = /*@cc_on!@*/false || !!document.documentMode;
   NMNS.needInit = true;
   NMNS.history = [];
-  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#555555", "#94c7b6", "#b2d379", "#c5b085", "#f4a983", "#c2b3e0", "#ccccc8", "#673ab7", "#ffba00", "#a3e400", "#228dff", "#9c00ff", "#ff5722", "#000000"];
+  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#e91e63", "#4caf50", "#ffc107", "#ffeb3b", "#795548", "#607d8b", "#9e9e9e", "#673ab7", "#ffba00", "#cddc39", "#228dff", "#ff5252", "#ff9800", "#000000"];
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
@@ -914,8 +914,9 @@
       });
       flatpickr("#noShowScheduleStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
       flatpickr("#noShowScheduleEndDate", datetimepickerOption).setDate(moment().add(1, "M").toDate());
-      $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(){
+      $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(e){
         var dropdown = $(this).parent();
+        e.preventDefault();
         NMNS.history.push({id:dropdown.data("id"), calendarId:dropdown.data("manager"), raw:{status:dropdown.data("status")}});
         NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), {raw:{status:$(this).data("status")}});
         NMNS.socket.emit("update reserv", {id:dropdown.data("id"), status:$(this).data("status"), noShowCase:$(this).data("type")});
@@ -936,6 +937,9 @@
       $("#noShowScheduleDropdown .noShowScheduleCheck").off("touch click").on("touch click", function(){
         submitNoShowEtcReason($(this).parent());
       });
+      $("#noShowScheduleDropdown .dropdown-item-etc").off("touch click").on("touch click", function(e){
+        e.preventDefault();
+      });
       $("#noShowScheduleDropdown .dropdown-item-etc input").off("keyup").on("keyup", function(e){
         switch (e.which){
           case 13:
@@ -945,6 +949,10 @@
             $(this).parent().parent().hide(300);
             break;
         }
+      }).off("touch click").on("touch click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).focus();
       });
       
       $("#noShowAddContact").autocomplete({
