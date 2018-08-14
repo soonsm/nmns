@@ -301,6 +301,13 @@
   
   $(".contract").off("touch click").on("touch click", function(e){
     e.preventDefault();
-    $(this).parent().parent().next().toggle();
+    var contractDom = $(this).parent().parent().next();
+    if(contractDom.html() === ""){
+      contractDom.html($("<small></small>").html($("#contractText").html()));
+    }
+    if(!contractDom.data("scroll")){//init
+      contractDom.data("scroll", new PerfectScrollbar(contractDom[0]));
+    }
+    contractDom.toggle();
   });
 })(jQuery);

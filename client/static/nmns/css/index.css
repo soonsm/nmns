@@ -296,3 +296,6 @@ hr.star-white:after {
 .signupForm .form-check-label{
   display:inline;
 }
+.contractContents{
+  height:120px;
+}
