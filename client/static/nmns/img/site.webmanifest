@@ -1,0 +1,19 @@
+{
+    "name": "No More No Show",
+    "short_name": "No More No Show",
+    "icons": [
+        {
+            "src": "/client/static/nmns/img/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/client/static/nmns/img/android-chrome-256x256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#009688",
+    "background_color": "#009688",
+    "display": "standalone"
+}
