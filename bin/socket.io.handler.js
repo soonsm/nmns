@@ -50,7 +50,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         // var email = 'soonsm@gmail.com';
         // var user = await db.getWebUser(email);
-        //user.authStatus = 'EMAIL_VERIFICATED';
+        // user.authStatus = 'EMAIL_VERIFICATED';
         console.log('socket io email:', email);
 
         if(!email || !socket.request.user.logged_in){
@@ -73,6 +73,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
+                console.log(eventName, data);
                 if (user.authStatus !== 'EMAIL_VERIFICATED' && !EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
                     socket.emit(eventName, makeResponse(false, data, '이메일 인증 후 사용하시기 바랍니다.'));
                 }
@@ -87,7 +88,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         }
                     }
                     catch (e) {
-                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.'));
+                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.' + e));
                     }
                 }
             });

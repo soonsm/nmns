@@ -3,6 +3,7 @@
 const db = require('./webDb');
 const util = require('./util');
 const hangul = require('hangul-js');
+const sha256 = require('js-sha256');
 
 exports.getCustomerDetail = async function(data){
     let email = this.email;
@@ -19,10 +20,20 @@ exports.getCustomerDetail = async function(data){
         if(status){
 
             let noShow = await db.getNoShow(contact);
-            resultData.totalNoShow = noShow.noShowCount;
+            if(noShow){
+                resultData.totalNoShow = noShow.noShowCount;
+            }else{
+                resultData.totalNoShow = 0;
+            }
 
             let myNoShowList = await db.getMyNoShow(email);
-            resultData.myNoShow = myNoShowList.length;
+            resultData.myNoShow = 0;
+            let key = sha256(contact);
+            for(let i=0; i < myNoShowList.length; i ++){
+                if(key === myNoShowList[i].noShowKey){
+                    resultData.myNoShow += 1;
+                }
+            }
 
             let reservationList = await db.getReservationList(email);
             await reservationList.sort((a, b) => {
@@ -76,7 +87,7 @@ exports.getCustomerInfo = async function (data) {
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
                 if (contact) {
-                    if (member.contact.includes(contact)) {
+                    if (member.contact && member.contact.includes(contact)) {
                         returnMemberList.push(member);
                     }
                 }

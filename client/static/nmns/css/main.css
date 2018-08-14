@@ -559,7 +559,9 @@ button.moveDate:focus{
   margin-left:.4rem;
   border-radius:0;
 }
-
+#noShowModal .modal-body{
+  height:310px;
+}
 /* notification */
 #notifications{
   position:absolute;
@@ -607,9 +609,6 @@ button.moveDate:focus{
 #taskModal i{
   width:2rem;
   background-color:white;
-}
-#taskModal .modal-body{
-  height:310px;
 }
 #taskModal .close{
   position:absolute;
@@ -673,9 +672,13 @@ footer{
 .tooltip-inner{
   max-width:265px;
 }
-*:focus{
+*:focus,.btn:focus{
   outline:none;
+  box-shadow:none;
 }
 .flatpickr-current-month span.cur-month{
   font-weight: 400;
+}
+input[name='name'], input[name='title'], input[name='contents'], input[name='etc']{
+  ime-mode:active;
 }

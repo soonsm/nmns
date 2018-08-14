@@ -15,4 +15,4 @@ client/static/lib/bootstrap/css/nmns.css
 **/*.ttf
 **/*.woff
 **/*.woff2
-
+yarn.lock
