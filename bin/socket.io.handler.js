@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = global.nmns.LOGGER;
+
 const db = require('./webDb');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
@@ -51,10 +53,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         // var email = 'soonsm@gmail.com';
         // var user = await db.getWebUser(email);
         // user.authStatus = 'EMAIL_VERIFICATED';
-        console.log('socket io email:', email);
+        logger.log('socket io email:', email);
 
         if(!email || !socket.request.user.logged_in){
-            console.log(`User ${email} is not logged in`);
+            logger.log(`User ${email} is not logged in`);
             return;
         }
 
@@ -73,7 +75,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
-                console.log(eventName, data);
+                logger.log(eventName, data);
                 if (user.authStatus !== 'EMAIL_VERIFICATED' && !EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
                     socket.emit(eventName, makeResponse(false, data, '이메일 인증 후 사용하시기 바랍니다.'));
                 }

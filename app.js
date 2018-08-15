@@ -1,12 +1,15 @@
 'use strict';
 
+require('./bin/logger');
 require('./bin/constant');
+
+const logger = global.nmns.LOGGER;
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == process.nmns.MODE.PRODUCTION ) ? process.nmns.MODE.PRODUCTION : process.nmns.MODE.DEVELOPMENT;
 if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
-    console.log("Production Mode");
+    logger.info("Production Mode");
 } else if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
-    console.log("Development Mode");
+    logger.info("Development Mode");
 }
 
 
@@ -126,7 +129,7 @@ app.post('/message', (req, res)=>{
     let type = body.type;
     let content = body.content;
 
-    console.log('/message: ' + JSON.stringify(body));
+    logger.info('/message: ' + JSON.stringify(body));
 
     //Common Validation(각 항목이 있는지, type은 text인지 등)
     if(userKey === undefined || userKey === null || type === undefined || type === null || type !== 'text'){
@@ -142,7 +145,7 @@ app.post('/friend', (req, res)=>{
    let body = req.body;
    let userKey = body.user_key;
 
-   console.log('/friend: ' + JSON.stringify(body));
+   logger.info('/friend: ' + JSON.stringify(body));
 
    if(userKey){
        kakaoEventHandler.friendAddHandler(userKey, res);
@@ -154,7 +157,7 @@ app.post('/friend', (req, res)=>{
 app.delete('/friend/:user_key', (req, res)=>{
    let userKey = req.params.user_key;
 
-    console.log('/friend delete: ' + userKey);
+    logger.info('/friend delete: ' + userKey);
 
    if(userKey){
        kakaoEventHandler.friendDelHandler(userKey, res);
@@ -172,5 +175,5 @@ app.get('*', function(req, res){
 require('./bin/socket.io.handler')(server, sessionStore, passport, cookieParser);
 
 // Sets server port and logs message on success
-server.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => console.log('nmns is listening at ' + server.address().address + " : " + server.address().port));
+server.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => logger.info('nmns is listening at ' + server.address().address + " : " + server.address().port));
 

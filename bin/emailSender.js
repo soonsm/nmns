@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = global.nmns.LOGGER;
+
 const nodemailer = require('nodemailer');
 const srcEmail = 'nomorenoshow@gmail.com';
 const transporter = nodemailer.createTransport({
@@ -14,10 +16,10 @@ function sendMail(mailOptions){
     return new Promise((resolve) => {
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-                console.log('Email send fail: ', error);
+                logger.log('Email send fail: ', error);
                 resolve(false);
             } else {
-                console.log('Email sent: ' + info.response);
+                logger.log('Email sent: ' + info.response);
                 resolve(true);
             }
         });

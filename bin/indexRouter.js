@@ -9,6 +9,8 @@ const
 
 const moment = require('moment');
 
+const logger = global.nmns.LOGGER;
+
 module.exports = function (passport) {
 
 
@@ -97,7 +99,7 @@ module.exports = function (passport) {
      * 그 외 에러: 나도 몰라, 근데 {message: 블라블라} 이런 형태로 리턴이 올 것임
      */
     router.post("/signin", function (req, res) {
-        console.log(req.body);
+        logger.log(req.body);
         let email = req.body.email;
         res.cookie('email', email);
         passport.authenticate('local', (err, user, info) => {
@@ -120,10 +122,11 @@ module.exports = function (passport) {
             res.cookie('email', email);
             req.logout();
             req.session.destroy(function (err) {
-                console.log('fail to destroy session: ', err);
+                if(err){
+                    logger.log('fail to destroy session: ', err);
+                }
+                res.redirect("/");
             });
-
-            res.redirect("/");
         }else{
             res.sendStatus(404);
         }
