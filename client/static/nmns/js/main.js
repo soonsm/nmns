@@ -1928,15 +1928,12 @@
     
     if(NMNS.notification === "GRANTED"){//native notification
       try{
-        var noti = new Notification(notification.title, {
+        new Notification(notification.title, {
           requireInteraction:true,
           lang:"ko-KR",
           body:notification.body,
           icon:"/nmns/img/favicon-32x32.png"
         });
-        noti.onclick = function(e){
-          noti.close();
-        };
         return;
       }catch(exception){
         console.error(exception);
