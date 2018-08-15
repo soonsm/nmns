@@ -10,9 +10,11 @@ var merge = require('merge-stream');
 gulp.task('lib', async function() {
 
   // Bootstrap
-  gulp.src('./node_modules/bootstrap/dist/css/bootstrap.min.css*')
+  gulp.src(['./node_modules/bootstrap/dist/css/bootstrap.min.css',
+    './node_modules/bootstrap/dist/css/bootstrap.min.css.map'])
     .pipe(gulp.dest('./client/static/lib/bootstrap/css'));
-  gulp.src('./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js*')
+  gulp.src(['./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
+    './node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map'])
     .pipe(gulp.dest('./client/static/lib/bootstrap/js'));
 
   // Font Awesome

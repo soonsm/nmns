@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.7.0 | Tue Aug 14 2018
+ * @version 1.7.0 | Wed Aug 15 2018
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -19625,7 +19625,8 @@ ScheduleCreationPopup.prototype._createDatepicker = function (start, end) {
         minuteIncrement: 10,
         minTime: beginTime,
         maxTime: endTime,
-        time_24hr: true
+        time_24hr: true,
+        applyBtn: true
     }).setDate(start);
     flatpickr('#tui-full-calendar-schedule-end-date', {
         format: 'Y-m-d H:i',
@@ -19635,7 +19636,8 @@ ScheduleCreationPopup.prototype._createDatepicker = function (start, end) {
         minuteIncrement: 10,
         minTime: beginTime,
         maxTime: endTime,
-        time_24hr: true
+        time_24hr: true,
+        applyBtn: true
     }).setDate(end);
     // NMNS CUSTOMIZING END
 };

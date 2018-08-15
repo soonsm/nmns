@@ -136,7 +136,7 @@ button.moveDate:focus{
   background-color:white;
 }
 .flatpickr-calendar.hasTime.noCalendar{
-  max-width:134px;
+  max-width:240px;
 }
 .flatpickr-calendar.hadTime.noCalendar .flatpickr-time{
   border-top:0;
@@ -258,8 +258,9 @@ button.moveDate:focus{
 }
 .tui-full-calendar-dash{
   font-size:0.5rem;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display:inline-flex;
 }
 #creationPopupManagerIcon{
   padding-left: 8px;
@@ -679,6 +680,16 @@ footer{
 }
 .flatpickr-current-month span.cur-month{
   font-weight: 400;
+}
+.flatpickr-calendar.noCalendar.hasTime .flatpickr-time{
+  border-top:0;
+}
+span.flatpickr-apply-btn.flatpickr-am-pm{
+  background-color:#009688;
+  color:white;
+}
+span.flatpickr-apply-btn.flatpickr-am-pm:hover, span.flatpickr-apply-btn.flatpickr-am-pm:focus{
+  background-color:#00796b;
 }
 input[name='name'], input[name='title'], input[name='contents'], input[name='etc']{
   ime-mode:active;

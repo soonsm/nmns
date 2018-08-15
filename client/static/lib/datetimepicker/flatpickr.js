@@ -745,6 +745,15 @@
               updateTime(e);
               triggerChange();
             }));
+          } else if (self.btn !== undefined) {
+            bind(self.btn, "click", onClick(function(e){
+              e.stopPropagation();
+              focusAndClose();
+            }));
+            bind(self.btn, "touch", onClick(function(e){
+              e.stopPropagation();
+              focusAndClose();
+            }));
           }
         }
       }
@@ -1103,6 +1112,11 @@
           self.amPM.title = self.l10n.toggleTitle;
           self.amPM.tabIndex = -1;
           self.timeContainer.appendChild(self.amPM);
+        } else if (self.config.applyBtn) {
+          self.btn = createElement("span", "flatpickr-apply-btn flatpickr-am-pm", "확인");
+          self.btn.title = "확인";
+          self.btn.tabIndex = -1;
+          self.timeContainer.appendChild(self.btn);
         }
 
         return self.timeContainer;
@@ -1422,6 +1436,8 @@
               updateValue();
               break;
           }
+        } else if(self.btn !== undefined && e.target === self.btn) {
+          self.close();
         }
 
         triggerEvent("onKeyDown", e);

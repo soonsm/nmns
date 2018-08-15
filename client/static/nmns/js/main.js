@@ -1,6 +1,26 @@
 /*global jQuery, location, moment, tui, NMNS, io*/
 (function($) {
   NMNS.isIE = /*@cc_on!@*/false || !!document.documentMode;
+  if(NMNS.isIE){
+    var word; 
+    var agent = navigator.userAgent.toLowerCase(); 
+
+    // IE old version ( IE 10 or Lower ) 
+    if ( navigator.appName == "Microsoft Internet Explorer" ) word = "msie "; 
+    // IE 11 
+    else if ( agent.search( "trident" ) > -1 ) word = "trident/.*rv:"; 
+    // Microsoft Edge  
+    else if ( agent.search( "edge/" ) > -1 ) word = "edge/"; 
+
+    var reg = new RegExp( word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})" ); 
+
+    if ( reg.exec( agent ) !== null && parseFloat( RegExp.$1 + RegExp.$2 ) < 10 ){
+      if(!confirm("오래된 IE" + parseFloat( RegExp.$1 + RegExp.$2 ) + " 브라우저를 사용하고 계십니다.\n 계속하시면 페이지가 정확히 표시되지 않을 수 있습니다. 그래도 계속하시겠습니까?\n *No More No Show는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
+        location.href = '/signout';
+        return;
+      }
+    }
+  }
   NMNS.needInit = true;
   NMNS.history = [];
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#e91e63", "#4caf50", "#ffc107", "#ffeb3b", "#795548", "#607d8b", "#9e9e9e", "#673ab7", "#ffba00", "#cddc39", "#228dff", "#ff5252", "#ff9800", "#000000"];
@@ -75,7 +95,7 @@
       },
       weekDayname: function(model) {
 	        var classDate = 'tui-full-calendar-dayname-date';
-	        var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar.getViewName() === 'week'?' weekViewDayName':'');
+	        var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar && NMNS.calendar.getViewName() === 'week'?' weekViewDayName':'');
 	        var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === model.renderDate}):undefined;
           if(holiday){
             className += " tui-full-calendar-holiday";
@@ -750,7 +770,8 @@
         minuteIncrement:10,
         noCalendar:true,
         enableTime:true,
-        appendTo:document.getElementById("infoModal")
+        appendTo:document.getElementById("infoModal"),
+        applyBtn:true
       }).setDate(moment((NMNS.info.bizBeginTime? NMNS.info.bizBeginTime : "0900"), "HHmm").toDate());
       flatpickr("#infoBizEndTime", {
         dateFormat: "H:i",
@@ -760,7 +781,8 @@
         minuteIncrement:10,
         noCalendar:true,
         enableTime:true,
-        appendTo:document.getElementById("infoModal")
+        appendTo:document.getElementById("infoModal"),
+        applyBtn:true
       }).setDate(moment((NMNS.info.bizEndTime? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());
       if(!NMNS.infoModalScroll){
         NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
@@ -1081,7 +1103,8 @@
         minuteIncrement:10,
         time_24hr : true,
         minTime: moment((NMNS.info.bizBeginTime || '0900'), 'HHmm').format('HH:mm'),
-        maxTime: moment((NMNS.info.bizEndTime || '2300'), 'HHmm').format('HH:mm')
+        maxTime: moment((NMNS.info.bizEndTime || '2300'), 'HHmm').format('HH:mm'),
+        applyBtn : true
       };
       flatpickr("#taskStartDate", datetimepickerOption);
       flatpickr("#taskEndDate", datetimepickerOption);
@@ -1730,7 +1753,7 @@
       $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
     }
   });
-  $("#taskModal").on("hide.bs.modal", function(){
+  $("#taskModal").on("hide.bs.modal", function(e){
     var task = $(this).data("task");
     if(task && task.guide){
       task.guide.clearGuideElement();
@@ -1906,7 +1929,7 @@
           requireInteraction:true,
           lang:"ko-KR",
           body:notification.body,
-          icon:""
+          icon:"/nmns/img/favicon-32x32.png"
         });
         noti.onclick = function(e){
           noti.close();
@@ -1931,7 +1954,6 @@
     });
     $("#notifications").height(height + "px");
   }
-  NMNS.showNotification = showNotification;
   NMNS.socket.emit("get noti");
   NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e){
     e.data.data.forEach(function(item){

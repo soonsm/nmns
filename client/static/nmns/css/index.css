@@ -237,6 +237,7 @@ hr.star-white:after {
 }
 #carouselWrapper{
   margin-top:4rem;
+  overflow:hidden;
 }
 .carousel-caption {
   bottom:unset;
