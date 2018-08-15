@@ -293,8 +293,12 @@
       $.post("/resetPassword", {email:$(this).prev().val()})
       .done(function(){
         alert("비밀번호 초기화 메일을 보냈습니다. 메일을 확인해주세요!");
-      }).fail(function(){
-        alert("메일 보내기에 실패했습니다. 다시 시도해주세요!");
+      }).fail(function(xhr){
+        if(xhr && xhr.status === 404){
+          alert("등록되지 않은 이메일입니다. 이메일 주소를 확인해주세요!");
+        }else{
+          alert("메일 보내기에 실패했습니다. 다시 시도해주세요!");
+        }
       });
     }
   });
