@@ -120,10 +120,11 @@ module.exports = function (passport) {
             res.cookie('email', email);
             req.logout();
             req.session.destroy(function (err) {
-                console.log('fail to destroy session: ', err);
+                if(err){
+                    console.log('fail to destroy session: ', err);
+                }
+                res.redirect("/");
             });
-
-            res.redirect("/");
         }else{
             res.sendStatus(404);
         }
