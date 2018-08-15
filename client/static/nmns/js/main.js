@@ -243,6 +243,11 @@
     NMNS.email = e.data.email || NMNS.email;
     NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
     $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
+    if(NMNS.info.isFirstVisit && NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION"){
+      alert("No More No Show에 오신 것을 환영합니다!\n계정 인증을 위하여 이메일 주소로 메일을 보냈으니 확인해주세요 :)");
+    } else if(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrBefore(moment(), 'day')) {
+      alert("아직 이메일 인증을 받지 않으셨네요!\n 인증 메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다.");
+    }
   }));
   
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
@@ -1795,7 +1800,7 @@
           }
       }
     }, false);
-}
+  }
   swipedetect(document.getElementById('mainRow'), function(swipedir){
     if(swipedir === "left"){
       $("#renderRange").next().trigger("click");
