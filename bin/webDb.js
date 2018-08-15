@@ -193,7 +193,7 @@ exports.updateWebUser = async function (email, properties) {
 exports.getShopInfo = async function (email) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
-        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpDate, shopName, bizType, alrimTalkInfo, isFirstVisit",
+        ProjectionExpression: "email, authStatus, bizBeginTime, bizEndTime, signUpDate, shopName, bizType, alrimTalkInfo, isFirstVisit",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
             "#key": "email"
