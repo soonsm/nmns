@@ -1,5 +1,25 @@
 /*global jQuery, location*/
 (function($) {
+  if(/*@cc_on!@*/false || !!document.documentMode){
+    var word; 
+    var agent = navigator.userAgent.toLowerCase(); 
+
+    // IE old version ( IE 10 or Lower ) 
+    if ( navigator.appName == "Microsoft Internet Explorer" ) word = "msie "; 
+    // IE 11 
+    else if ( agent.search( "trident" ) > -1 ) word = "trident/.*rv:"; 
+    // Microsoft Edge  
+    else if ( agent.search( "edge/" ) > -1 ) word = "edge/"; 
+
+    var reg = new RegExp( word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})" ); 
+
+    if ( reg.exec( agent ) !== null && parseFloat( RegExp.$1 + RegExp.$2 ) < 10 ){
+      if(confirm("오래된 IE" + parseFloat( RegExp.$1 + RegExp.$2 ) + " 브라우저를 사용하고 계십니다. 최신 브라우저 이용을 권장드립니다.\n 확인을 누르시면 Chrome 브라우저 다운로드 페이지로 이동합니다.\n *No More No Show는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
+        location.href = 'https://www.google.com/intl/ko_ALL/chrome/';
+        return;
+      }
+    }
+  }
   var scrollDelay = (/*@cc_on!@*/false || !!document.documentMode? 0:1000);
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {

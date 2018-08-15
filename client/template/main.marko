@@ -30,6 +30,7 @@
   <link href="/lib/datetimepicker/flatpickr.min.css" rel="stylesheet">
   <!--[if IE 9]>
   <link href="/lib/datetimepicker/ie.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
   <![endif]-->
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
@@ -191,7 +192,7 @@
                         <input id="infoBizBeginTime" class="form-control rounded-0" aria-describedby="infoBizBeginTimeIcon" autocomplete="off"/>
                       </div>
                     </div>
-                    <span class="px-2 pt-1">—</span>
+                    <span class="px-2 pt-1 d-inline-flex align-top">—</span>
                     <div class="px-0 d-inline-block infoBizTime">
                       <div id="infoBizEndTimePicker" class="input-group input-group-sm">
                         <div class="input-group-prepend">
@@ -365,15 +366,15 @@
                   </div>
                 </div>
                 <div id="noShowSearchSummary" class="row col-12 px-0"></div>
-                <div class="row col-12"><span class="mx-auto">우리매장 노쇼 목록</span></div>
+                <div class="row col-12"><span class="mx-auto d-inline-flex">우리매장 노쇼 목록</span></div>
                 <div class="row col-12 px-0">
                   <div class="col-12 border-left border-right border-top row px-0">
-                    <span class="col-4 pr-0">전화번호</span>
-                    <span class="col-4 pr-0">노쇼 날짜</span>
-                    <span class="col-3">유형</span>
-                    <span class="col-1"></span>
+                    <span class="col-4 pr-0 d-inline-flex">전화번호</span>
+                    <span class="col-4 pr-0 d-inline-flex">노쇼 날짜</span>
+                    <span class="col-3 d-inline-flex">유형</span>
+                    <span class="col-1 d-inline-flex"></span>
                   </div>
-                  <div id="noShowSearchList" class="col-12 border px-0"><div class="row col-12 px-0 mt-2 empty"><span class="col-12 text-center">전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div></div>
+                  <div id="noShowSearchList" class="col-12 border px-0"><div class="row col-12 px-0 mt-2 empty text-center"><span class="d-inline-flex mx-auto">전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div></div>
                 </div>
                 <div id="noShowSearchAdd" class="ml-3 px-0 btn">
                   <p class="text-secondary align-top mb-0">
@@ -420,11 +421,11 @@
                 </div>
                 <div class="row col-12 px-0">
                   <div class="col-12 border-left border-right border-top row text-left px-0">
-                    <span class="col-3 col-lg-2 pr-0">날짜</span>
-                    <span class="col-4 col-lg-3">고객이름</span>
-                    <span class="col-3 col-lg-2 px-0">전화번호</span>
+                    <span class="col-3 col-lg-2 pr-0 d-inline-flex">날짜</span>
+                    <span class="col-4 col-lg-3 d-inline-flex">고객이름</span>
+                    <span class="col-3 col-lg-2 px-0 d-inline-flex">전화번호</span>
                     <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
-                    <span class="col-2 px-0">상태</span>
+                    <span class="col-2 px-0 d-inline-flex">상태</span>
                   </div>
                 </div>
                 <div id="noShowScheduleList" class="row col-12 border px-0"><div class="row col-12 px-0 mt-2"><span class="col-12 text-center">검색버튼을 눌러 예약을 검색하여 노쇼로 추가해보세요!</span></div></div>

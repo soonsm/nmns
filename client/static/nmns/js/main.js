@@ -1,6 +1,26 @@
 /*global jQuery, location, moment, tui, NMNS, io*/
 (function($) {
   NMNS.isIE = /*@cc_on!@*/false || !!document.documentMode;
+  if(NMNS.isIE){
+    var word; 
+    var agent = navigator.userAgent.toLowerCase(); 
+
+    // IE old version ( IE 10 or Lower ) 
+    if ( navigator.appName == "Microsoft Internet Explorer" ) word = "msie "; 
+    // IE 11 
+    else if ( agent.search( "trident" ) > -1 ) word = "trident/.*rv:"; 
+    // Microsoft Edge  
+    else if ( agent.search( "edge/" ) > -1 ) word = "edge/"; 
+
+    var reg = new RegExp( word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})" ); 
+
+    if ( reg.exec( agent ) !== null && parseFloat( RegExp.$1 + RegExp.$2 ) < 10 ){
+      if(!confirm("오래된 IE" + parseFloat( RegExp.$1 + RegExp.$2 ) + " 브라우저를 사용하고 계십니다.\n 계속하시면 페이지가 정확히 표시되지 않을 수 있습니다. 그래도 계속하시겠습니까?\n *No More No Show는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
+        location.href = '/signout';
+        return;
+      }
+    }
+  }
   NMNS.needInit = true;
   NMNS.history = [];
   NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#e91e63", "#4caf50", "#ffc107", "#ffeb3b", "#795548", "#607d8b", "#9e9e9e", "#673ab7", "#ffba00", "#cddc39", "#228dff", "#ff5252", "#ff9800", "#000000"];
@@ -75,7 +95,7 @@
       },
       weekDayname: function(model) {
 	        var classDate = 'tui-full-calendar-dayname-date';
-	        var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar.getViewName() === 'week'?' weekViewDayName':'');
+	        var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar && NMNS.calendar.getViewName() === 'week'?' weekViewDayName':'');
 	        var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === model.renderDate}):undefined;
           if(holiday){
             className += " tui-full-calendar-holiday";
