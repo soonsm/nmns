@@ -120,7 +120,7 @@ exports.newWebUser = function (user) {
         staffList: [{
             id: user.email + moment().format('YYYYMMDDHHmmssSSS'),
             name: '기본관리자',
-            color: '#ff00ff'
+            color: '#009688'
         }],
         alrimTalkInfo: {
             useYn: 'N',
