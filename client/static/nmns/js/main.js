@@ -1929,7 +1929,7 @@
           requireInteraction:true,
           lang:"ko-KR",
           body:notification.body,
-          icon:""
+          icon:"/nmns/img/favicon-32x32.png"
         });
         noti.onclick = function(e){
           noti.close();
@@ -1954,7 +1954,6 @@
     });
     $("#notifications").height(height + "px");
   }
-  NMNS.showNotification = showNotification;
   NMNS.socket.emit("get noti");
   NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e){
     e.data.data.forEach(function(item){
