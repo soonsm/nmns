@@ -38,17 +38,15 @@ exports.updatePwd = async function (data) {
 exports.getShop = async function () {
     let status = true,
         message = null;
-    let resultData = await db.getWebUser(this.email);
+    let resultData = await db.getShopInfo(this.email);
     if (!resultData) {
         status = false;
         message = '잘못된 접근입니다.';
     }
     else {
-        delete resultData.password;
-    }
-
-    if(resultData.isFirstVisit){
-        await db.updateWebUser(email, {isFirstVisit: false});
+        if(resultData.isFirstVisit){
+            await db.updateWebUser(this.email, {isFirstVisit: false});
+        }
     }
 
     return {

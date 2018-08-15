@@ -152,7 +152,7 @@ exports.signUp = async function (newUser) {
 exports.getWebUser = async function (email) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
-        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpdate, shopName, bizType, alrimTalkInfo, memberList",
+        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpDate, shopName, bizType, alrimTalkInfo, memberList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
             "#key": "email"
@@ -188,6 +188,22 @@ exports.updateWebUser = async function (email, properties) {
     params.UpdateExpression = updateExpression;
 
     return await update(params);
+};
+
+exports.getShopInfo = async function (email) {
+    let items = await query({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpDate, shopName, bizType, alrimTalkInfo, isFirstVisit",
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val": email
+        }
+    });
+
+    return items[0];
 };
 
 exports.newReservation = function (reservation) {
