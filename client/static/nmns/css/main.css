@@ -584,9 +584,10 @@ button.moveDate:focus{
 	width: calc(100% - 20px);
 }
 .alert-minimalist .notification-icon {
-	height: 3rem;
-	margin-right: .6rem;
-	line-height:1.5rem;
+	height: 1rem;
+	margin-right: .3rem;
+  line-height:1.5rem;
+  color:#009688;
 }
 .alert-minimalist .notification-title {
 	color: rgb(51, 51, 51);
@@ -594,12 +595,15 @@ button.moveDate:focus{
 	font-weight: bold;
 	white-space: nowrap;
 	overflow-x:hidden;
-	text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  margin-bottom:.2rem;
 }
 .alert-minimalist .notification-body {
 	font-size: 80%;
 	overflow-wrap: break-word;
-	word-wrap: break-word;
+  word-wrap: break-word;
+  display:inline-block;
+  text-indent:5px;
 }
 /* taskModal */
 #taskModal{
