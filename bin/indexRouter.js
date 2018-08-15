@@ -27,10 +27,6 @@ module.exports = function (passport) {
         }
     });
 
-    router.get('/privacy', function (req,res){
-        res.marko(require('../client/template/privacy'));
-    });
-
     router.post("/signup", async function (req, res) {
         let data = req.body;
         let email = data.email;

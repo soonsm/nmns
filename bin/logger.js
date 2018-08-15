@@ -55,9 +55,4 @@ const
             logger.error(formatArgs(arguments));
         }
     };
-
-    global.nmns.LOGGER.info('Logger configuration is done');
-
-
-
 })();
