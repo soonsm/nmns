@@ -244,9 +244,15 @@
     NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
     $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
     if(NMNS.info.isFirstVisit && NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION"){
-      alert("No More No Show에 오신 것을 환영합니다!\n계정 인증을 위하여 이메일 주소로 메일을 보냈으니 확인해주세요 :)");
-    } else if(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrBefore(moment(), 'day')) {
-      alert("아직 이메일 인증을 받지 않으셨네요!\n 인증 메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다.");
+      showNotification({
+        title:"No More No Show에 오신 것을 환영합니다!",
+        body:"계정 인증을 위하여 이메일 주소로 메일을 보냈으니 확인해주세요 :)"
+      });
+    } else if(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
+      showNotification({
+        title:"이메일을 인증해주세요!",
+        body:"인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
+      });
     }
   }));
   
@@ -1879,10 +1885,6 @@
                 url: "#",
                 element: "#notifications",
                 icon_type: "class",
-                icon: "far fa-bell",
-                onClose: function(){
-                  NMNS.socket.emit("delete noti", {id:$(this).data("id")});
-                },
                 onClosed: function(){
                   var height = 10;
                   $("#notifications .alert").each(function(index, item){
@@ -1908,10 +1910,6 @@
           url: "#",
           element: "#notifications",
           icon_type: "class",
-          icon: "far fa-bell",
-          onClose: function(data){
-            NMNS.socket.emit("delete noti", {id:$(this).data("id")});
-          },
           onClosed: function(){
             var height = 10;
             $("#notifications .alert").each(function(index, item){
@@ -1930,18 +1928,12 @@
     
     if(NMNS.notification === "GRANTED"){//native notification
       try{
-        var noti = new Notification(notification.title, {
+        new Notification(notification.title, {
           requireInteraction:true,
           lang:"ko-KR",
           body:notification.body,
           icon:"/nmns/img/favicon-32x32.png"
         });
-        noti.onclick = function(e){
-          noti.close();
-        };
-        noti.onclose = function(e){
-          NMNS.socket.emit("delete noti", {id:notification.id});
-        }
         return;
       }catch(exception){
         console.error(exception);
@@ -1949,7 +1941,7 @@
     }
     //bootstrap notification
     $.notify({
-      icon: "far fa-bell",
+      icon: "fas fa-bell",
       title: notification.title,
       message: notification.body
     }, {});
