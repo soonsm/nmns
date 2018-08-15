@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = global.nmns.LOGGER;
+
 const db = require('./webDb');
 const moment = require('moment');
 const util = require('./util');
@@ -12,7 +14,7 @@ exports.getNoShow = async function(data) {
     let email = this.email;
     let contact = data.contact;
 
-    console.log(data);
+    logger.log(data);
 
     if (!contact) {
         status = false;

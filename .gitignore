@@ -1,4 +1,5 @@
 node_modules/*
+logs/*
 shared-local-instance.db
 .idea
 server.js

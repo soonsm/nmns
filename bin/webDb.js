@@ -1,4 +1,5 @@
-const util = require('./db');
+const logger = global.nmns.LOGGER;
+
 const moment = require('moment');
 const sha256 = require('js-sha256');
 
@@ -23,10 +24,10 @@ function get(param) {
     return new Promise((resolve) => {
         docClient.get(param, (err, data) => {
             if (!err) {
-                console.log("GetItem succeeded:", JSON.stringify(data.Item, null, 2));
+                logger.log("GetItem succeeded:", JSON.stringify(data.Item, null, 2));
                 resolve(data.Item);
             } else {
-                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+                logger.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
                 resolve();
             }
         });
@@ -37,10 +38,10 @@ function getList(param) {
     return new Promise((resolve) => {
         docClient.scan(param, (err, data) => {
             if (!err) {
-                console.log("Scan succeeded");
+                logger.log("Scan succeeded");
                 resolve(data.Items);
             } else {
-                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                logger.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
                 resolve();
             }
         });
@@ -51,10 +52,10 @@ function put(param) {
     return new Promise((resolve => {
         docClient.put(param, function (err, data) {
             if (err) {
-                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
+                logger.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
                 resolve(null);
             } else {
-                console.log("Added item:", JSON.stringify(param.Item));
+                logger.log("Added item:", JSON.stringify(param.Item));
                 resolve(param.Item);
             }
         });
@@ -65,10 +66,10 @@ function query(params) {
     return new Promise((resolve => {
         docClient.query(params, function (err, data) {
             if (err) {
-                console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
+                logger.log("Unable to query. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                console.log("Query succeeded. Data:", data);
+                logger.log("Query succeeded. Data:", data);
                 resolve(data.Items);
             }
         });
@@ -79,10 +80,10 @@ function update(params) {
     return new Promise((resolve => {
         docClient.update(params, function (err, data) {
             if (err) {
-                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                logger.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
                 resolve(false);
             } else {
-                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                logger.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
                 resolve(true);
             }
         });
@@ -93,10 +94,10 @@ function del(param) {
     return new Promise((resolve => {
         docClient.delete(param, function (err, data) {
             if (err) {
-                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
+                logger.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
                 resolve(false);
             } else {
-                console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
+                logger.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
                 resolve(true);
             }
         });
@@ -553,39 +554,7 @@ exports.getAlrimTalk = async function (reservationKey) {
     });
 };
 
-exports.setUserStatus = async function (userKey, userStatus, propertyToIncrement) {
-    let user = await exports.getUser(userKey);
-    if (!user) {
-        user = newUser(userKey);
-    }
-    user.userStatus = userStatus;
-    user.lastVisitDate = util.getToday();
-    if (propertyToIncrement) {
-        user[propertyToIncrement] = (user[propertyToIncrement] || 0) + 1;
-    }
 
-    return await put({
-        TableName: 'KaKaoUserList',
-        Item: user
-    });
-};
-
-exports.setUserAlrimTalkSend = async function (user) {
-    if (user) {
-        user.userStatus = userStatus.beforeSelection;
-        let today = util.getToday();
-        user.lastVisitDate = today;
-        user.sendConfirmCount = (user.sendConfirmCount || 0) + 1;
-        let log = user['sendConfirmCountDayLog'] || {};
-        log[today] = (log[today] || 0) + 1;
-        user['sendConfirmCountDayLog'] = log;
-
-        return await put({
-            TableName: 'KaKaoUserList',
-            Item: user
-        });
-    }
-};
 
 exports.saveUser = async function (user) {
     return await put({
@@ -632,7 +601,7 @@ exports.addAlrimTalk = async function (userKey, phone, date, time) {
             Item: user
         });
     } else {
-        console.error(`등록되지 않은 사용자가 알림톡 전송을 합니다. ${userKey}`);
+        logger.error(`등록되지 않은 사용자가 알림톡 전송을 합니다. ${userKey}`);
     }
 };
 
@@ -642,27 +611,3 @@ exports.saveAlrimTalk = async function (alrimTalk) {
         Item: alrimTalk
     });
 };
-
-exports.cancelReservation = async function (alrimTalk, user) {
-    if (!user.sendCancelCount) {
-        user.sendCancelCount = 0;
-    }
-    user.sendCancelCount += 1;
-
-    let today = util.getToday();
-    let log = user['sendCancelCountDayLog'] || {};
-    log[today] = (log[today] || 0) + 1;
-    user['sendCancelCountDayLog'] = log;
-
-    await put({
-        TableName: 'KaKaoUserList',
-        Item: user
-    });
-
-    alrimTalk.isCanceled = true;
-    await put({
-        TableName: 'AlrimTalk',
-        Item: alrimTalk
-    });
-
-}

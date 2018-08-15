@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = global.nmns.LOGGER;
+
 const db = require('./webDb');
 
 exports.getManagerList = async function () {
