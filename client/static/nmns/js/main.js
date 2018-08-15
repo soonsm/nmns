@@ -665,9 +665,6 @@
       parameters.shopName = $("#infoShopName").val();
       NMNS.info.shopName = parameters.shopName;
     }
-    if($("#infoPassword").val() !== ""){
-      NMNS.socket.emit("update password", {password: $("#infoPassword").val()});
-    }
     if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
       history.bizType = NMNS.info.bizType;
       parameters.bizType = $("#infoBizType").val();
@@ -677,9 +674,14 @@
       NMNS.history.push(history);
       NMNS.socket.emit("update info", parameters);
     }
+    var diff = false;
+    if($("#infoPassword").val() !== ""){
+      NMNS.socket.emit("update password", {password: $("#infoPassword").val()});
+      $("#infoPassword").val("");
+      diff = true;
+    }
     //update info end
     //update manager start
-    var diff = false;
     $(".infoManagerItem").each(function(){
       if($(this).hasClass("addManagerItem")){//추가
         diff = true;
