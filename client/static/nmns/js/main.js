@@ -770,7 +770,8 @@
         minuteIncrement:10,
         noCalendar:true,
         enableTime:true,
-        appendTo:document.getElementById("infoModal")
+        appendTo:document.getElementById("infoModal"),
+        applyBtn:true
       }).setDate(moment((NMNS.info.bizBeginTime? NMNS.info.bizBeginTime : "0900"), "HHmm").toDate());
       flatpickr("#infoBizEndTime", {
         dateFormat: "H:i",
@@ -780,7 +781,8 @@
         minuteIncrement:10,
         noCalendar:true,
         enableTime:true,
-        appendTo:document.getElementById("infoModal")
+        appendTo:document.getElementById("infoModal"),
+        applyBtn:true
       }).setDate(moment((NMNS.info.bizEndTime? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());
       if(!NMNS.infoModalScroll){
         NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
@@ -1101,7 +1103,8 @@
         minuteIncrement:10,
         time_24hr : true,
         minTime: moment((NMNS.info.bizBeginTime || '0900'), 'HHmm').format('HH:mm'),
-        maxTime: moment((NMNS.info.bizEndTime || '2300'), 'HHmm').format('HH:mm')
+        maxTime: moment((NMNS.info.bizEndTime || '2300'), 'HHmm').format('HH:mm'),
+        applyBtn : true
       };
       flatpickr("#taskStartDate", datetimepickerOption);
       flatpickr("#taskEndDate", datetimepickerOption);
@@ -1750,7 +1753,7 @@
       $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
     }
   });
-  $("#taskModal").on("hide.bs.modal", function(){
+  $("#taskModal").on("hide.bs.modal", function(e){
     var task = $(this).data("task");
     if(task && task.guide){
       task.guide.clearGuideElement();
