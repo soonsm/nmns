@@ -70,14 +70,14 @@ async function sendReservationCancelNotify(user, alrimTalk){
 
 async function sendReservationConfirm(user, alrimTalk) {
 
-    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')}\n방문시준비사항: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
+    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')}\n안내말씀: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
 
     return await sendAlrimTalk({
         phone: alrimTalk.receiverPhone,
         callback: '01028904311',
         msg: msg,
         template_code: 'A003',
-        url: `http://ec2-13-125-29-64.ap-northeast-2.compute.amazonaws.com/cancel/key=${alrimTalk.reservationKey}`,
+        url: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
         url_button_txt: '예약취소',
         apiVersion: 1,
         client_id: apiStoreId

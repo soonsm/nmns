@@ -132,7 +132,7 @@ exports.updateReservation = async function (newReservation) {
 
                 //번호가 바뀌었을 때는 알림톡 재전송(새 예약정보의 status가 바뀌지 않고, 기존 예약 상태가 예약 상태일 때만)
                 let needAlirmTalk = false;
-                if(newReservation.contact && newReservation.contact !== reservation.contact && (!newReservation.status || newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED) && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
+                if(newReservation.contact && newReservation.contact !== '' && newReservation.contact !== reservation.contact && (!newReservation.status || newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED) && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
                     needAlirmTalk = true;
                 }
 
@@ -215,7 +215,7 @@ exports.addReservation = async function (data) {
             message = '시스템 오류입니다.(DB Update Error';
         }
 
-        if (status) {
+        if (status && data.contact) {
             await alrimTalk.sendReservationConfirm(user, reservation);
         }
     }
@@ -259,13 +259,10 @@ const reservationValidationForUdate = function (email, data) {
         else if (data.type && data.type !== 'R' && data.type !== 'T') {
             message = `type은 R(예약) 또는 T(일정)만 가능합니다. type:${data.type}`;
         }
-        else if(data.type === 'R' && !data.contact){
-            message = '예약은 전화번호가 필수입니다.';
-        }
         else if(data.type === 'T' && !data.name){
             message = '일정은 이름이 필수입니다.';
         }
-        else if (data.contact && !util.phoneNumberValidation(data.contact)) {
+        else if (data.contact && data.contact !== '' && !util.phoneNumberValidation(data.contact)) {
             message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
         }
         else if (data.status && (data.status !== 'RESERVED' && data.status !== 'CANCELED' && data.status !== 'DELETED' && data.status !== 'NOSHOW')) {
@@ -309,9 +306,7 @@ const reservationValidationForAdd = function (email, data) {
         }else if(!data.isAllDay && (!moment(data.start, 'YYYYMMDDHHmm').isValid() || !moment(data.end, 'YYYYMMDDHHmm').isValid())){
             // message = `날짜가 형식에 맞지 않습니다.(YYYMMDDHHmm) start:${data.start}, end:${data.end}`;
             message = `날짜가 형식에 맞지 않습니다.(${data.start}, ${data.end})`;
-        }else if(data.type === 'R' && !data.contact){
-            message = '예약추가시에는 연락처가 필수입니다.';
-        }else if(data.type === 'R' && !util.phoneNumberValidation(data.contact)) {
+        }else if(data.type === 'R' && data.contact && data.contact !== '' && !util.phoneNumberValidation(data.contact)) {
             message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
         }else if(data.type === 'T' && !data.name){
             message = '일정추가시에는 이름이 필수입니다.';
