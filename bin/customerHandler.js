@@ -41,7 +41,7 @@ exports.getCustomerDetail = async function(data){
             });
             for(let i=reservationList.length-1; i >=0; i--){
                 let reservation = reservationList[i];
-                if(reservation.contact === contact){
+                if(reservation.contact && reservation.contact === contact){
                     resultData.contact = reservation.contact;
                     resultData.isAllDay = reservation.isAllDay;
                     resultData.manager = reservation.manager;

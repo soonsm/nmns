@@ -217,7 +217,7 @@ exports.newReservation = function (reservation) {
         contents: reservation.contents || null,
         manager: reservation.manager || null,
         etc: reservation.etc || null,
-        contact: reservation.contact,
+        contact: reservation.contact || null,
         status: reservation.status || process.nmns.RESERVATION_STATUS.RESERVED,
         cancelDate: null
     };
