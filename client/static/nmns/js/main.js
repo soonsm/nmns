@@ -597,6 +597,15 @@
     if(Object.keys(parameters).length){
       NMNS.history.push(history);
       NMNS.socket.emit("update alrim", parameters);
+    }
+    if($("#alrimShopName").val() !== (NMNS.info.shopName || "")){
+      NMNS.history.push({id:"info", shopName:NMNS.info.shopName});
+      parameters = {shopName: $("#alrimShopName").val()};
+      NMNS.info.shopName = parameters.shopName;
+      NMNS.socket.emit("update info", parameters);
+      $("#mainShopName").text(parameters.shopName);
+    } 
+    if(Object.keys(parameters).length){
       alert("정상적으로 요청하였습니다.");
     }else{
       alert("변경된 내역이 없습니다.");
@@ -676,6 +685,7 @@
       history.shopName = NMNS.info.shopName;
       parameters.shopName = $("#infoShopName").val();
       NMNS.info.shopName = parameters.shopName;
+      $("#mainShopName").text(parameters.shopName);
     }
     if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
       history.bizType = NMNS.info.bizType;
@@ -1546,6 +1556,9 @@
     var history = NMNS.history.find(function(item){return item.id === "info"});
     if(history.bizBeginTime || history.bizEndTime){
       NMNS.calendar.setOptions({week:{hourStart:history.bizBeginTime?history.bizBeginTime.substring(0, 2):NMNS.info.bizBeginTime.substring(0,2), hourEnd : history.bizEndTime?history.bizEndTime.substring(0,2):NMNS.info.bizEndTime.substring(0,2)}});
+    }
+    if(history.shopName){
+      $("#mainShopName").text(history.shopName);
     }
     NMNS.info.shopName = history.shopName || NMNS.info.shopName;
     NMNS.info.bizType = history.bizType;

@@ -49,7 +49,7 @@
     <a class="navbar-brand js-scroll-trigger" href="/">No More No Show</a>
     <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fa fa-bars d-block d-sm-none"></i>
-      <span class="d-none d-sm-block"><if(input.user.shopName)>${input.user.shopName}<small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
+      <span class="d-none d-sm-block"><if(input.user.shopName)><span id="mainShopName">${input.user.shopName}</span><small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav text-white mr-auto godo normal w700">
