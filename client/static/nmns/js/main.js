@@ -1784,6 +1784,16 @@
   $("#noMoreTips").on("touch click", function(){
     document.cookie = "showTips=false";
   });
+  $("#showTips").on("touch click", function(e){
+    e.preventDefault();
+    $("#noMoreTips").remove();
+    $("#tipsModal").modal("show");
+  }).tooltip({
+    title:"Tip 보기",
+    placement: "right",
+    trigger:"hover",
+    html: true
+  });
   //Modal events end
   //mobile horizontal scroll handling
   // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml

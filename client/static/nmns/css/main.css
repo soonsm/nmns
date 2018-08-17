@@ -698,3 +698,17 @@ span.flatpickr-apply-btn.flatpickr-am-pm:hover, span.flatpickr-apply-btn.flatpic
 input[name='name'], input[name='title'], input[name='contents'], input[name='etc']{
   ime-mode:active;
 }
+.float{
+	position:absolute;
+	width:60px;
+	height:60px;
+	bottom:40px;
+	left:50%;
+	background-color:#009688;
+	color:#FFF;
+	text-align:center;
+  box-shadow: 2px 2px 3px #999;
+  padding-top:12px;
+  font-size:1.5rem;
+  transform:translateX(-50%);
+}
