@@ -47,7 +47,6 @@ exports.getReservationList = async function(data) {
     let status = true;
     let message = null;
     let resultData = null;
-    logger.log(data);
     if (!data || !data.start || !data.end) {
         // message = '예약정보 조회에 필요한 데이터가 없습니다.({"start":${조회 시작 일자, string, YYYYMMDDHHmm}, "end":${조회 종료 일자, string, YYYYMMDDHHmm}})';
         message = '조회하려는 날짜를 입력하세요.';

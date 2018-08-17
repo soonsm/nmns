@@ -2,6 +2,7 @@ const logger = global.nmns.LOGGER;
 
 const moment = require('moment');
 const sha256 = require('js-sha256');
+const util = require('util');
 
 var AWS = require("aws-sdk");
 
@@ -69,7 +70,7 @@ function query(params) {
                 logger.log("Unable to query. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                logger.log("Query succeeded. Data:", data);
+                logger.log("Query succeeded. Data:", util.format(data.Items));
                 resolve(data.Items);
             }
         });
@@ -204,6 +205,20 @@ exports.getShopInfo = async function (email) {
     });
 
     return items[0];
+};
+
+exports.logVisitHistory = async function (email) {
+    return await update({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set visitLog = list_append(visitLog, :visitLog)",
+        ExpressionAttributeValues: {
+            ":visitLog": [{visitDate: moment().format('YYYYMMDDhhmmss')}]
+        },
+        ReturnValues: "NONE"
+    });
 };
 
 exports.newReservation = function (reservation) {

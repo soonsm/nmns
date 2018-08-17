@@ -5,6 +5,7 @@ const logger = global.nmns.LOGGER;
 const db = require('./webDb');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
+const util = require('util');
 
 const noShowHandler = require('./noShowHandler');
 const reservationHandler = require('./reservationHandler');
@@ -53,7 +54,6 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         // var email = 'soonsm@gmail.com';
         // var user = await db.getWebUser(email);
         // user.authStatus = 'EMAIL_VERIFICATED';
-        logger.log('socket io email:', email);
 
         if(!email || !socket.request.user.logged_in){
             logger.log(`User ${email} is not logged in`);
@@ -69,13 +69,15 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         process.nmns.ONLINE[email] = socket;
 
-        socket.on('disconnect', async function(reason){
+        db.logVisitHistory(email);
+
+        socket.on('disconnect', async function(){
             delete process.nmns.ONLINE[email];
         });
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
-                logger.log(eventName, data);
+                logger.log(`email: ${email} eventName: ${eventName} data: ${util.format(data)}`);
                 if (user.authStatus !== 'EMAIL_VERIFICATED' && !EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
                     socket.emit(eventName, makeResponse(false, data, '이메일 인증 후 사용하시기 바랍니다.'));
                 }
@@ -90,7 +92,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         }
                     }
                     catch (e) {
-                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.' + e));
+                        socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.'));
+                        logger.log(`email: ${email} eventName: ${eventName} data: ${data} error: ${e}`);
                     }
                 }
             });

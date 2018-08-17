@@ -41,7 +41,7 @@ exports.sendReservationCancelNotify =async function (user, reservation){
         phone: user.alrimTalkInfo.callbackPhone,
         callback: '01028904311',
         msg: msg,
-        template_code: 'A002',
+        template_code: 'A003',
         apiVersion: 1,
         client_id: apiStoreId
     });
@@ -59,7 +59,7 @@ exports.sendReservationConfirm = async function (user, reservation) {
             phone: reservation.contact,
             callback: '01028904311',
             msg: msg,
-            template_code: 'A003',
+            template_code: 'A001',
             url: `https://www.nomorenoshow.co.kr/web_cancel/key=${reservation.id}&&email=${user.email}`,
             //url: `http://ec2-13-125-29-64.ap-northeast-2.compute.amazonaws.com/web_cancel/key=${reservation.id}&&email=${user.email}`,
             url_button_txt: '예약취소',
