@@ -545,6 +545,7 @@
       $("#alrimScreen").show();
     }
     $("#alrimCallbackPhone").val(NMNS.info.alrimTalkInfo.callbackPhone || "");
+    $("#alrimShopName").val(NMNS.info.shopName || "");
     $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
     $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
     $("#noticeByteCount").text($("#alrimNotice").val().length);
@@ -556,11 +557,22 @@
       $("#alrimNotice").focus();
       return;
     }
-    if($("#alrimUseYn").prop("checked") && $("#alrimCallbackPhone").val() === ""){
-      alert("알림톡을 사용하시려면 반드시 휴대폰번호를 입력해주세요!");
-      $("#alrimCallbackPhone").focus();
-      return;
-    }
+    if($("#alrimUseYn").prop("checked")){
+      if($("#alrimCallbackPhone").val() === ""){
+        alert("알림톡을 사용하시려면 반드시 휴대폰번호를 입력해주세요!");
+        $("#alrimCallbackPhone").focus();
+        return;
+      } else if(!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val()))){
+        alert("입력하신 휴대폰번호가 정확하지 않은 것 같습니다.\n휴대폰번호를 정확히 입력해주세요!");
+        $("#alrimCallbackPhone").focus();
+        return;
+      }
+      if($("#alrimShopName").val() === ""){
+        alert("알림톡을 사용하시려면 고객에게 보여줄 매장 이름을 입력해주세요!");
+        $("#alrimShopName").focus();
+        return;
+      }
+    } 
     var parameters = {}, history = {id:"alrimInfo"};
     if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
       history.useYn = NMNS.info.alrimTalkInfo.useYn;
@@ -1738,6 +1750,9 @@
     }
     var changed = false;
     if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
+      changed = true;
+    }
+    if(!changed && $("#alrimShopName").val() !== (NMNS.info.shopName || "")){
       changed = true;
     }
     if(!changed && $("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")){
