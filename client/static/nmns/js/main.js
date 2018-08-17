@@ -536,6 +536,18 @@
     return html;
   }
   
+  function changeMainShopName(shopName){
+    if($("#mainShopName").length){
+      if(shopName !== ""){
+        $("#mainShopName").text(shopName);
+      }else{
+        $("#navbarResponsive").prev().children("span").html(NMNS.email);
+      }
+    }else if(shopName !== ""){
+      $("#navbarResponsive").prev().children("span").html("<span id='mainShopName'>"+shopName+"</span><small class='d-none d-md-inline-block'>("+NMNS.email+")</small>");
+    }
+  }
+
   function refreshAlrimModal(){
     if(NMNS.info.alrimTalkInfo.useYn === "Y"){
       $("#alrimUseYn").prop("checked", true);
@@ -573,7 +585,16 @@
         return;
       }
     } 
-    var parameters = {}, history = {id:"alrimInfo"};
+    var parameters = {}, history = {id:"alrimInfo"}, diff = false;
+    if($("#alrimShopName").val() !== (NMNS.info.shopName || "")){
+      NMNS.history.push({id:"info", shopName:NMNS.info.shopName});
+      parameters = {shopName: $("#alrimShopName").val()};
+      NMNS.info.shopName = parameters.shopName;
+      NMNS.socket.emit("update info", parameters);
+      changeMainShopName(parameters.shopName);
+      parameters = {};
+      diff = true;
+    }
     if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
       history.useYn = NMNS.info.alrimTalkInfo.useYn;
       parameters.useYn = $("#alrimUseYn").prop("checked")?"Y":"N";
@@ -598,14 +619,7 @@
       NMNS.history.push(history);
       NMNS.socket.emit("update alrim", parameters);
     }
-    if($("#alrimShopName").val() !== (NMNS.info.shopName || "")){
-      NMNS.history.push({id:"info", shopName:NMNS.info.shopName});
-      parameters = {shopName: $("#alrimShopName").val()};
-      NMNS.info.shopName = parameters.shopName;
-      NMNS.socket.emit("update info", parameters);
-      $("#mainShopName").text(parameters.shopName);
-    } 
-    if(Object.keys(parameters).length){
+    if(Object.keys(parameters).length || diff){
       alert("정상적으로 요청하였습니다.");
     }else{
       alert("변경된 내역이 없습니다.");
@@ -669,6 +683,11 @@
     if(beginTime.isAfter(endTime, 'hour')){
       beginTime = [endTime, endTime = beginTime][0];
     }
+    if($("#infoShopName").val() === "" && NMNS.info.alrimTalkInfo.useYn === "Y"){
+      alert("알림톡을 사용하고 계실 때는 예약고객에게 보여드릴 매장이름이 반드시 있어야 합니다.\n매장이름을 삭제하고 싶으시다면 알림톡 사용을 먼저 해제해주세요.");
+      $("#infoShopName").val(NMNS.info.shopName);
+      return;
+    }
     //validation end
     //update info start
     var parameters = {}, history = {id:"info"};
@@ -685,7 +704,7 @@
       history.shopName = NMNS.info.shopName;
       parameters.shopName = $("#infoShopName").val();
       NMNS.info.shopName = parameters.shopName;
-      $("#mainShopName").text(parameters.shopName);
+      changeMainShopName(parameters.shopName);
     }
     if($("#infoBizType").val() !== (NMNS.info.bizType || "")){
       history.bizType = NMNS.info.bizType;
@@ -1558,7 +1577,7 @@
       NMNS.calendar.setOptions({week:{hourStart:history.bizBeginTime?history.bizBeginTime.substring(0, 2):NMNS.info.bizBeginTime.substring(0,2), hourEnd : history.bizEndTime?history.bizEndTime.substring(0,2):NMNS.info.bizEndTime.substring(0,2)}});
     }
     if(history.shopName){
-      $("#mainShopName").text(history.shopName);
+      changeMainShopName(history.shopName);
     }
     NMNS.info.shopName = history.shopName || NMNS.info.shopName;
     NMNS.info.bizType = history.bizType;

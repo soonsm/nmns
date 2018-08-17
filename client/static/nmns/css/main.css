@@ -712,3 +712,6 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
   font-size:1.5rem;
   transform:translateX(-50%);
 }
+.float:focus{
+  background-color:#00796b;
+}
