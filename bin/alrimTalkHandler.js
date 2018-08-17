@@ -26,7 +26,7 @@ exports.updateAlrimTalkInfo = async function (data) {
     let user = await db.getWebUser(email);
     let alrimTalkInfo = user.alrimTalkInfo;
 
-    if (!data.useYn || (data.useYn && data.useYn !== 'Y' && data.useYn !== 'N')) {
+    if (data.useYn && data.useYn !== 'Y' && data.useYn !== 'N') {
         status = false;
         // message = `useYn은 Y 또는 N 값만 가질 수 있습니다.(${data.useYn})`;
         message = `알림톡 사용여부 값이 잘못됐습니다.(${data.useYn})`;
@@ -35,16 +35,14 @@ exports.updateAlrimTalkInfo = async function (data) {
         status = false;
         // message = `callbackPhone이 전화번호 형식에 맞지 않습니다.(${data.callbackPhone})`;
         message = `휴대폰 번호 형식에 맞지 않습니다.(${data.callbackPhone})`;
-    }else if(!data.shopName){
-        message = '알림톡 전송을 위해 매장이름이 필요합니다.';
     }
 
     if (status && alrimTalkInfo.useYn === 'N' && data.useYn === 'Y') {
         //알림톡 미사용 -> 사용으로 변경 할 때
-        if (!alrimTalkInfo.callbackPhone && !data.callbackPhone) {
+        if ((!alrimTalkInfo.callbackPhone && !data.callbackPhone) || (!user.shopName && !data.shopName)) {
             status = false;
             // message = '알림톡 미사용에서 사용으로 변경 할 때는 DB에 또는 업데이트 요청에 callbackPhone에 전화번호가 있어야 합니다.';
-            message = '알림톡 미사용에서 사용으로 변경 할 때는 휴대폰 번호가 있어야 합니다.';
+            message = '알림톡 미사용에서 사용으로 변경 할 때는 휴대폰 번호와 매장명이 있어야 합니다.';
         }
     }
 
@@ -52,7 +50,13 @@ exports.updateAlrimTalkInfo = async function (data) {
         for (let x in alrimTalkInfo) {
             alrimTalkInfo[x] = data[x] || alrimTalkInfo[x];
         }
-        if (!await db.updateWebUser(email, {alrimTalkInfo: alrimTalkInfo, shopName: data.shopName})) {
+        let params = {
+            alrimTalkInfo: alrimTalkInfo
+        };
+        if(data.shopName){
+            params.shopName = data.shopName;
+        }
+        if (!await db.updateWebUser(email, params)) {
             status = false;
             message = '시스템 오류입니다.(DB Update Error)';
         }
