@@ -1412,6 +1412,9 @@
   setDropdownCalendarType();
   setRenderRangeText();
   setEventListener();
+  if(getCookie("showTips") === "true" || getCookie("showTips") === undefined){
+    $("#tipsModal").modal("show");
+  }
 //after calendar initialization end
 //websocket response start
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
@@ -1777,6 +1780,9 @@
     if($("#navbarResponsive").hasClass("show")){
       $("#navbarResponsive").collapse("hide");
     }
+  });
+  $("#noMoreTips").on("touch click", function(){
+    document.cookie = "showTips=false";
   });
   //Modal events end
   //mobile horizontal scroll handling

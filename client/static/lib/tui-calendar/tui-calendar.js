@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.7.0 | Wed Aug 15 2018
+ * @version 1.7.0 | Fri Aug 17 2018
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -19053,36 +19053,9 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
         return false;
     }
     if (!this.validator) {
-        if ($('#tui-full-calendar-schedule-start-date').attr('type') === 'hidden') { // mobile handling
+        if ($('#tui-full-calendar-schedule-start-date').attr('type') !== 'hidden') { // mobile handling
             this.validator = $('#creationPopupForm').validate({
                 rules: {
-                    contact: {
-                        required: true,
-                        digits: true
-                    }
-                },
-                messages: {
-                    contact: {
-                        required: '연락처를 입력해주세요.',
-                        digits: '숫자만 입력해주세요.'
-                    }
-                },
-                errorElement: 'p',
-                errorClass: 'message text-danger my-1 pl-4 pl-sm-0 ml-3',
-                errorPlacement: function (error, element) {
-                    error.appendTo(element.parent().parent());
-                },
-                highlight: function (element, errorClass) {
-                    $(element).removeClass(errorClass);
-                }
-            });
-        } else {
-            this.validator = $('#creationPopupForm').validate({
-                rules: {
-                    contact: {
-                        required: true,
-                        digits: true
-                    },
                     start: {
                         required: true
                     },
@@ -19091,10 +19064,6 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
                     }
                 },
                 messages: {
-                    contact: {
-                        required: '연락처를 입력해주세요.',
-                        digits: '숫자만 입력해주세요.'
-                    },
                     start: '시작시간을 입력해주세요.',
                     end: '종료시간을 입력해주세요.'
                 },
@@ -19112,7 +19081,7 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
     try {
         startDate = new TZDate($('#tui-full-calendar-schedule-start-date')[0]._flatpickr.selectedDates[0]);
         endDate = new TZDate($('#tui-full-calendar-schedule-end-date')[0]._flatpickr.selectedDates[0]);
-        if (!this.validator.form()) {
+        if (this.validator && !this.validator.form()) {
             this.validator.showErrors();
 
             return true;
@@ -19120,11 +19089,6 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
     } catch (e) {
         if (!startDate || !endDate) {
             alert('시간을 입력해주세요!');
-
-            return true;
-        }
-        if ($('#creationPopupContact').val() === '') {
-            alert('연락처를 입력해주세요!');
 
             return true;
         }
@@ -19161,6 +19125,12 @@ ScheduleCreationPopup.prototype._onClickSaveSchedule = function (target) {
 
     if (manager) {
         calendarId = manager.id;
+    }
+
+    if (NMNS.info.alrimTalkInfo.useYn === 'Y' && !(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test(contact))) {
+        if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등록하시겠어요?')) {
+            return true;
+        }
     }
 
     if (this._isEditMode) {
@@ -19361,6 +19331,11 @@ ScheduleCreationPopup.prototype.render = function (viewModel) {
         });
     }
     layer.show();
+    if (NMNS.info.alrimTalkInfo.useYn === 'N') {
+        $('#alrimContactInfo').addClass('d-sm-inline-block');
+    } else {
+        $('#alrimContactInfo').removeClass('d-sm-inline-block');
+    }
     if (this._isEditMode) {
         $('#creationPopup').data('contact', viewModel.raw.contact);
         onContactBlur();
@@ -21168,9 +21143,9 @@ module.exports = (Handlebars['default'] || Handlebars).template({"1":function(co
     + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
     + "popup-container\" autocomplete=\"off\">\n        <div class=\"row mb-2 mb-sm-3\">\n            <label for=\"creationPopupName\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label\">고객이름</label>\n            <div class=\"col-9 col-sm-5 input-group input-group-sm\">\n                <div class=\"d-inline-block input-group-prepend d-sm-none\">\n                    <i id=\"creationPopupNameIcon\" class=\"input-group-text fas fa-user\" title=\"고객이름\"></i>\n                </div>\n                <input type=\"text\" class=\"form-control\" id=\"creationPopupName\" name=\"name\" placeholder=\"고객이름\" aria-describedby=\"creationPopupNameIcon\"\n                    autocomplete=\"off\" value=\""
     + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
-    + "\">\n            </div>\n        </div>\n        <div class=\"row mb-2 mb-sm-3\">\n            <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처\n                <span class=\"text-danger\">*</span>\n            </label>\n            <div class=\"col-9 col-sm-5 input-group input-group-sm\">\n                <div class=\"d-inline-block input-group-prepend d-sm-none\">\n                    <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone fa-rotate-90\" title=\"고객 연락처\"></i>\n                </div>\n                <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\"\n                    placeholder=\"고객연락처\" autocomplete=\"off\" value=\""
+    + "\">\n            </div>\n        </div>\n        <div class=\"row mb-2 mb-sm-3\">\n            <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처</label>\n            <div class=\"col-9 col-sm-5 input-group input-group-sm\">\n                <div class=\"d-inline-block input-group-prepend d-sm-none\">\n                    <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone fa-rotate-90\" title=\"고객 연락처\"></i>\n                </div>\n                <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\"\n                    placeholder=\"고객연락처\" autocomplete=\"off\" value=\""
     + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper)))
-    + "\">\n            </div>\n        </div>\n\n        <div class=\"row mb-1 mb-sm-3\">\n            <div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 "
+    + "\">\n            </div>\n            <small id=\"alrimContactInfo\" class=\"text-secondary d-none col-5 pl-0\"><span class=\"text-danger\">*</span>알림톡을 사용하도록 설정하시면<br/>고객에게 예약 알림톡을 보낼 수 있습니다!</small>\n        </div>\n\n        <div class=\"row mb-1 mb-sm-3\">\n            <div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 "
     + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
     + "section-start-date\">\n                <div class=\"input-group-prepend\">\n                    <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar\" title=\"예약 시작시간\"></i>\n                </div>\n                <input id=\""
     + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
