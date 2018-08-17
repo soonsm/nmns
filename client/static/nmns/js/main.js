@@ -1414,6 +1414,8 @@
   setEventListener();
   if(getCookie("showTips") === "true" || getCookie("showTips") === undefined){
     $("#tipsModal").modal("show");
+  } else {
+    $("#showTips").removeClass("d-none");
   }
 //after calendar initialization end
 //websocket response start
