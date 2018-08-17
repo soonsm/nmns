@@ -229,7 +229,7 @@ module.exports = function (passport) {
                         contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
                     } else {
                         //알림톡 전송
-                        // await alrimTalk.sendReservationCancelNotify(user, reservation);
+                        await alrimTalk.sendReservationCancelNotify(user, reservation);
                         returnMsg = '예약취소완료';
                         contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
                     }

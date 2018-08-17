@@ -29,7 +29,7 @@ function sendMail(mailOptions){
 
 exports.sendEmailVerification = async function(email, token){
 
-    const authLinkParams=`emailVerification?email=${email}&token=${token}`;
+    const authLinkParams=`emailVerification/email=${email}&token=${token}`;
 
     return await sendMail({
         from: srcEmail,
