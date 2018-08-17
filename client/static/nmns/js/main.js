@@ -1414,6 +1414,8 @@
   setEventListener();
   if(getCookie("showTips") === "true" || getCookie("showTips") === undefined){
     $("#tipsModal").modal("show");
+  } else {
+    $("#showTips").removeClass("d-none");
   }
 //after calendar initialization end
 //websocket response start
@@ -1783,6 +1785,16 @@
   });
   $("#noMoreTips").on("touch click", function(){
     document.cookie = "showTips=false";
+  });
+  $("#showTips").on("touch click", function(e){
+    e.preventDefault();
+    $("#noMoreTips").remove();
+    $("#tipsModal").modal("show");
+  }).tooltip({
+    title:"Tip 보기",
+    placement: "right",
+    trigger:"hover",
+    html: true
   });
   //Modal events end
   //mobile horizontal scroll handling
