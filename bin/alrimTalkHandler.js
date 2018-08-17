@@ -39,10 +39,10 @@ exports.updateAlrimTalkInfo = async function (data) {
 
     if (status && alrimTalkInfo.useYn === 'N' && data.useYn === 'Y') {
         //알림톡 미사용 -> 사용으로 변경 할 때
-        if ((!alrimTalkInfo.callbackPhone && !data.callbackPhone) || (!user.shopName && !data.shopName)) {
+        if (!alrimTalkInfo.callbackPhone && !data.callbackPhone) {
             status = false;
             // message = '알림톡 미사용에서 사용으로 변경 할 때는 DB에 또는 업데이트 요청에 callbackPhone에 전화번호가 있어야 합니다.';
-            message = '알림톡 미사용에서 사용으로 변경 할 때는 휴대폰 번호와 매장명이 있어야 합니다.';
+            message = '알림톡 미사용에서 사용으로 변경 할 때는 휴대폰 번호가 있어야 합니다.';
         }
     }
 
@@ -50,13 +50,7 @@ exports.updateAlrimTalkInfo = async function (data) {
         for (let x in alrimTalkInfo) {
             alrimTalkInfo[x] = data[x] || alrimTalkInfo[x];
         }
-        let params = {
-            alrimTalkInfo: alrimTalkInfo
-        };
-        if(data.shopName){
-            params.shopName = data.shopName;
-        }
-        if (!await db.updateWebUser(email, params)) {
+        if (!await db.updateWebUser(email, {alrimTalkInfo: alrimTalkInfo})) {
             status = false;
             message = '시스템 오류입니다.(DB Update Error)';
         }
