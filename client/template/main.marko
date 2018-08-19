@@ -21,9 +21,11 @@
   <meta name="format-detection" content="telephone=no">
   <title>No More No Show - 노쇼그만</title>
   <!-- Bootstrap core CSS -->
-  <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/lib/font-awesome/css/all.min.css" rel="stylesheet">
-  <link href="/lib/font-awesome/css/v4-shims.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
+  <!-- <link href="/lib/font-awesome/css/all.min.css" rel="stylesheet">
+  <link href="/lib/font-awesome/css/v4-shims.min.css" rel="stylesheet"> -->
   
   <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
   <link href="/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
@@ -39,7 +41,8 @@
   <link href="/nmns/css/en_font.min.css" rel="stylesheet">
   
   <link href="/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
-  <link href="/lib/bootstrap-notify/animate.min.css" rel="stylesheet">
+  <!-- <link href="/lib/bootstrap-notify/animate.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
 </head>
 
 <body id="page-top">
@@ -552,22 +555,29 @@
 </script>
 <![endif]-->
   <!-- Bootstrap core JavaScript -->
-  <script src="/lib/jquery/jquery.min.js"></script>
-  <script src="/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
 
   <!-- Plugin JavaScript -->
   <script src="/nmns/js/util.min.js"></script>
-  <script src="/lib/moment/moment-with-locales.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js" integrity="sha256-VrmtNHAdGzjNsUNtWYG55xxE9xDTz4gF63x/prKXKH0=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/ko.js" integrity="sha256-qkVUOqyWLNnWgXE3Xd2HmUE9GQ/4Z6zRSk3P7JYAAOk=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js" integrity="sha256-pOydVY7re8c1n+fEgg3uoslR/di9NMsOFXJ0Esf2xjQ=" crossorigin="anonymous"></script>
+  <!-- <script src="/lib/moment/moment-with-locales.min.js"></script>
   <script src="/lib/moment/locales.min.js"></script>
-  <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+  <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>-->
   <script src="/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
-  <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script>
+  <!-- <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script> -->
   <script src="/lib/datetimepicker/flatpickr.min.js"></script>
   <script src="/lib/datetimepicker/ko.min.js"></script>
   <script src="/lib/tui-calendar/tui-calendar.min.js"></script>
-  <script src="/lib/socket.io/socket.io.slim.js"></script>
+  <!-- <script src="/lib/socket.io/socket.io.slim.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
+  <!-- <script src="/lib/jquery-validation/jquery.validate.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
   <!-- Custom scripts for this template -->
-  <script src="/lib/jquery-validation/jquery.validate.min.js"></script>
   <script>
     var NMNS = {email:"${input.user.email}"};
   </script>
