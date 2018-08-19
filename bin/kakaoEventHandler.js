@@ -61,7 +61,7 @@ async function sendReservationCancelNotify(user, alrimTalk){
         phone: user.userPhone,
         callback: '01028904311',
         msg: msg,
-        template_code: 'A002',
+        template_code: 'A003',
         apiVersion: 1,
         client_id: apiStoreId
     });
@@ -76,7 +76,7 @@ async function sendReservationConfirm(user, alrimTalk) {
         phone: alrimTalk.receiverPhone,
         callback: '01028904311',
         msg: msg,
-        template_code: 'A003',
+        template_code: 'A002',
         url: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
         url_button_txt: '예약취소',
         apiVersion: 1,
@@ -185,8 +185,9 @@ exports.messageHandler = async function(userKey, content, res){
         if(user){
             switch(user.userStatus){
                 case userStatus.beforeRegister:
+
                     if(util.phoneNumberValidation(content)){
-                        await db.addToNoShowList(content);
+                        await db.addToNoShowList(user, content);
                         returnMessage = message.messageWithHomeKeyboard('등록되었습니다.');
                         await db.setUserStatus(userKey, userStatus.beforeSelection, 'registerCount');
                     }else{
@@ -195,13 +196,23 @@ exports.messageHandler = async function(userKey, content, res){
                     break;
                 case userStatus.beforeRetrieve:
                     if(util.phoneNumberValidation(content)){
+
+                        let resultMessage = "노쇼전적\n";
+                        let myNoShow = await db.getMyNoShow(user, content);
+                        if(myNoShow){
+                            const lastNoShowDate = myNoShow.lastNoShowDate;
+                            const lastNoShowDateStr = `${lastNoShowDate.substring(0,4)}년 ${lastNoShowDate.substring(4,6)}월 ${lastNoShowDate.substring(6)}일`;
+                            resultMessage += `우리 매장에서 ${myNoShow.noShowCount}번\n마지막 노쇼: ${lastNoShowDateStr}\n`;
+                        }
+
                         let noShow = await db.getNoShow(content);
                         if(noShow && noShow.noShowCount > 0){
                             const lastNoShowDate = noShow.lastNoShowDate;
                             const lastNoShowDateStr = `${lastNoShowDate.substring(0,4)}년 ${lastNoShowDate.substring(4,6)}월 ${lastNoShowDate.substring(6)}일`;
-                            returnMessage = message.messageWithHomeKeyboard(`입력하신 번호는 NoShow 전적이 ${noShow.noShowCount}번 있습니다.\n(마지막 NoShow: ${lastNoShowDateStr})`);
+                            resultMessage += `전체 매장에서 ${noShow.noShowCount}번\n마지막 노쇼: ${lastNoShowDateStr}`;
+                            returnMessage = message.messageWithHomeKeyboard(resultMessage);
                         }else{
-                            returnMessage = message.messageWithHomeKeyboard('입력하신 전화번호는 NoShow 전적이 없습니다.');
+                            returnMessage = message.messageWithHomeKeyboard('노쇼 전적이 없습니다.');
                         }
                         await db.setUserStatus(userKey, userStatus.beforeSelection, 'searchCount');
                     }else{
@@ -322,7 +333,7 @@ exports.cancelReservation = async function(reservationKey, res){
         }
     }
     // res.status(200).send(returnMsg);
-    res.render('reservationCancel.pug', { title: '예약취소안내', message: returnMsg, contents: contents });
+    res.marko(require('../client/template/reservationCancel'), {title: returnMsg, contents: contents});
 };
 
 exports.friendAddHandler = async function(userKey, res){
