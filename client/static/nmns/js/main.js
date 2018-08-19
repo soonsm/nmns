@@ -254,6 +254,11 @@
         body:"인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
       });
     }
+    if(NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.7)){
+      $("#tipsModal").modal("show");
+    } else if (getCookie("showTips") !== "true") {
+      $("#showTips").removeClass("d-none");
+    }
   }));
   
   NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e){
@@ -769,6 +774,7 @@
   
   function refreshInfoModal(){
     $("#infoEmail").text(NMNS.email);
+    $("#infoPassword").val("");
     $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION"? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function(){
       NMNS.socket.emit("send verification", {});
       alert("인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!");
@@ -1453,11 +1459,6 @@
   setDropdownCalendarType();
   setRenderRangeText();
   setEventListener();
-  if(getCookie("showTips") === "true" || getCookie("showTips") === undefined){
-    $("#tipsModal").modal("show");
-  } else {
-    $("#showTips").removeClass("d-none");
-  }
 //after calendar initialization end
 //websocket response start
   NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){

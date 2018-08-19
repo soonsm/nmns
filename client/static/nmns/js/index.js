@@ -237,6 +237,10 @@
   
   $(".signupBtn").off("click touch").on("click touch", function(e){
     e.preventDefault();
+    if(($("#agreeContract").next().is(":visible") && !$("#agreeContract").prop("checked")) || ($("#agreeContract2").next().is(":visible") && !$("#agreeContract2").prop("checked"))){
+      alert("이용약관에 동의해주세요!");
+      return false;
+    }
     if($(this).parents(".signupForm").valid()){
       $(this).parents(".signupForm").submit();
     }
