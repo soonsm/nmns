@@ -1,4 +1,5 @@
 /*global jQuery, location, moment, tui, NMNS, io*/
+window.tui.usageStatistics = false;
 (function($) {
   NMNS.isIE = /*@cc_on!@*/false || !!document.documentMode;
   if(NMNS.isIE){
