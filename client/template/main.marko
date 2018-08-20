@@ -22,7 +22,10 @@
   <title>No More No Show - 노쇼그만</title>
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/solid.css" integrity="sha384-wnAC7ln+XN0UKdcPvJvtqIH3jOjs9pnKnq9qX68ImXvOGz2JuFoEiCjT8jyZQX2z" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/regular.css" integrity="sha384-zkhEzh7td0PG30vxQk1D9liRKeizzot4eqkJ8gB3/I+mZ1rjgQk+BSt2F6rT2c+I" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css" integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
   <!-- <link href="/lib/font-awesome/css/all.min.css" rel="stylesheet">
   <link href="/lib/font-awesome/css/v4-shims.min.css" rel="stylesheet"> -->
@@ -49,33 +52,33 @@
 
   <!-- Navigation -->
   <nav class="navbar bg-primary navbar-shrink" id="mainNav">
-    <a class="navbar-brand js-scroll-trigger" href="/">No More No Show</a>
-    <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="fa fa-bars d-block d-sm-none"></i>
+    <a class="navbar-brand js-scroll-trigger" href="/" aria-label="메인">No More No Show</a>
+    <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
+      <i class="fa fa-bars d-block d-sm-none" aria-label="메뉴"></i>
       <span class="d-none d-sm-block"><if(input.user.shopName)><span id="mainShopName">${input.user.shopName}</span><small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav text-white mr-auto godo normal w700">
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal"><i class="fas fa-store fa-fw align-middle"></i> 내 매장 정보</a>
+          <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal" aria-label="내 매장 정보"><i class="fas fa-store fa-fw align-middle"></i> 내 매장 정보</a>
         </li>
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
+          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal" aria-label="알림톡 정보"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-plus fa-fw align-middle"></i> 노쇼 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가"><i class="fas fa-plus fa-fw align-middle"></i> 노쇼 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal"><i class="fas fa-search fa-fw align-middle"></i> 노쇼 찾기</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기"><i class="fas fa-search fa-fw align-middle"></i> 노쇼 찾기</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#"><i class="fas fa-calendar-plus fa-fw align-middle"></i> 예약 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#"><i class="fas fa-calendar-plus fa-fw align-middle" aria-label="예약 추가"></i> 예약 추가</a>
         </li>
         <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
         </li>
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout"><i class="fas fa-sign-out-alt fa-fw align-middle"></i> 로그아웃</a>
+          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout" aria-label="로그아웃"><i class="fas fa-sign-out-alt fa-fw align-middle"></i> 로그아웃</a>
         </li>
       </ul>
     </div>
@@ -86,25 +89,25 @@
   <div id="mainRow" class="row col px-0 mx-auto">
     <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded px-0">
       <ul class="list-group">
-        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 추가</span>
           </div>
         </a>
-        <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal">
+        <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기">
           <div class="d-flex w-100 align-items-center">
             <span class="fas fa-search fa-fw mr-3"></span>
             <span class="menu-collapsed">노쇼 찾기</span>
           </div>
         </a>
-        <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0">
+        <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" aria-label="예약 추가">
           <div class="d-flex w-100 align-items-center">
             <span class="far fa-calendar-plus fa-fw mr-3"></span>
             <span class="menu-collapsed">예약 추가</span>
           </div>
         </a>
-        <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal">
+        <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가">
           <div class="d-flex w-100 align-items-center">
             <span class="far fa-calendar-check fa-fw mr-3"></span>
             <span class="menu-collapsed">일정 추가</span>
@@ -129,24 +132,24 @@
           </div>
         </li>
       </ul>
-      <a id="showTips" href="#" class="float rounded-circle d-none"><i class="far fa-lightbulb"></i></a>
+      <a id="showTips" href="#" class="float rounded-circle d-none" aria-label="Tip 보기"><i class="far fa-lightbulb"></i></a>
     </div>
     <div id="mainContents" class="col px-0">
       <div id="mainCalendarTools" class="text-center align-middle bg-light">
-        <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button"><i class="fas fa-chevron-left"></i></button>
+        <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전"><i class="fas fa-chevron-left"></i></button>
         <span id="renderRange" class="align-middle"></span>
-        <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button"><i class="fas fa-chevron-right"></i></button>
+        <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button" aria-label="다음"><i class="fas fa-chevron-right"></i></button>
         <div class="btn-group btn-group-sm position-absolute py-2 d-none d-md-inline-flex calendarTypeGroup" role="group" aria-label="캘린더 종류">
-          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-daily"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></button>
-          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></button>
-          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-monthly"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></button>
+          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></button>
+          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-weekly" aria-label="1주"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></button>
+          <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-monthly" aria-label="1달"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></button>
         </div>
         <div class="btn-group btn-group-sm d-inline-flex d-md-none position-absolute py-2 calendarTypeGroup" role="group">
-          <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+          <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="다른 단위로 보기"></button>
           <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
-            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></a>
-            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></a>
-            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily" aria-label="1일"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly" aria-label="1주"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></a>
+            <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly" aria-label="1달"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></a>
           </div>
         </div>
       </div>
@@ -158,7 +161,7 @@
         <div class="modal-content rounded-0">
           <div class="modal-header">
             <h5 id="infoModalTitle">내 매장 정보</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -218,7 +221,7 @@
                   <div id="infoManagerList" class="col-12 col-sm-8 pr-4"></div>
                   <div class="ml-3 px-0 btn addManager">
                     <p class="text-secondary align-top mb-0">
-                      <i class="fas fa-plus"></i> 담당자 추가하기
+                      <i class="fas fa-plus" aria-label="담당자 추가하기"></i> 담당자 추가하기
                     </p>
                   </div>
                 </div>
@@ -226,9 +229,9 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" id="infoModalRefresh" class="btn btn-light btn-flat border">초기화</button>
-            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
-            <button type="button" id="infoModalSave" class="btn btn-primary btn-flat">저장</button>
+            <button type="button" id="infoModalRefresh" class="btn btn-light btn-flat border" aria-label="초기화">초기화</button>
+            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
+            <button type="button" id="infoModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
           </div>
           <div id="infoModalColorPicker" class="position-absolute bg-white border">
             <div class="bg-light py-1 px-2">
@@ -236,27 +239,27 @@
               <span id="infoModalColorPickerClose" class="float-right mr-1">×</span>
             </div>
             <div class="infoModalColors py-1 px-2 text-center">
-              <i class="fas fa-circle infoModalColor" data-color="#b2dfdb" style="color:#b2dfdb"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#757575" style="color:#757575"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#009688" style="color:#009688"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#303f9f" style="color:#303f9f"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#cc333f" style="color:#cc333f"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#eb6841" style="color:#eb6841"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#edc951" style="color:#edc951"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#e91e63" style="color:#e91e63"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#4caf50" style="color:#4caf50"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#ffc107" style="color:#ffc107"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#c5b085" style="color:#c5b085"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#795548" style="color:#795548"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#607d8b" style="color:#607d8b"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#9e9e9e" style="color:#9e9e9e"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#673ab7" style="color:#673ab7"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#ffba00" style="color:#ffba00"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#cddc39" style="color:#cddc39"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#228dff" style="color:#228dff"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#ff5252" style="color:#ff5252"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#ff9800" style="color:#ff9800"></i>
-              <i class="fas fa-circle infoModalColor" data-color="#000000" style="color:#000000"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#b2dfdb" style="color:#b2dfdb" aria-label="#b2dfdb"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#757575" style="color:#757575" aria-label="#757575"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#009688" style="color:#009688" aria-label="#009688"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#303f9f" style="color:#303f9f" aria-label="#303f9f"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#cc333f" style="color:#cc333f" aria-label="#cc333f"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#eb6841" style="color:#eb6841" aria-label="#eb6841"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#edc951" style="color:#edc951" aria-label="#edc951"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#e91e63" style="color:#e91e63" aria-label="#e91e63"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#4caf50" style="color:#4caf50" aria-label="#4caf50"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#ffc107" style="color:#ffc107" aria-label="#ffc107"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#c5b085" style="color:#c5b085" aria-label="#c5b085"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#795548" style="color:#795548" aria-label="#795548"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#607d8b" style="color:#607d8b" aria-label="#607d8b"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#9e9e9e" style="color:#9e9e9e" aria-label="#9e9e9e"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#673ab7" style="color:#673ab7" aria-label="#673ab7"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#ffba00" style="color:#ffba00" aria-label="#ffba00"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#cddc39" style="color:#cddc39" aria-label="#cddc39"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#228dff" style="color:#228dff" aria-label="#228dff"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#ff5252" style="color:#ff5252" aria-label="#ff5252"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#ff9800" style="color:#ff9800" aria-label="#ff9800"></i>
+              <i class="fas fa-circle infoModalColor" data-color="#000000" style="color:#000000" aria-label="#000000"></i>
             </div>
           </div>
         </div>
@@ -268,7 +271,7 @@
         <div class="modal-content rounded-0">
           <div class="modal-header">
             <h5 id="alrimModalTitle">알림톡 정보</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -323,9 +326,9 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" id="alrimModalRefresh" class="btn btn-light btn-flat border">초기화</button>
-            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
-            <button type="button" id="alrimModalSave" class="btn btn-primary btn-flat">저장</button>
+            <button type="button" id="alrimModalRefresh" class="btn btn-light btn-flat border" aria-label="초기화">초기화</button>
+            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
+            <button type="button" id="alrimModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
           </div>
         </div>
       </div>
@@ -336,11 +339,11 @@
         <div class="modal-content rounded-0">
           <div class="modal-header p-0 mx-0">
             <ul id="noShowTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;">
-              <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true"><i class="fas fa-plus"></i> 노쇼 추가</a></li>
-              <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0" href="#noShowSearch" data-toggle="tab"><i class="fas fa-search"></i> 노쇼 찾기</a></li>
-              <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0" href="#noShowSchedule" data-toggle="tab"><i class="far fa-calendar-plus"></i> 예약에서 추가</a></li>
+              <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true" aria-label="노쇼 추가"><i class="fas fa-plus"></i> 노쇼 추가</a></li>
+              <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0" href="#noShowSearch" data-toggle="tab" aria-label="노쇼 찾기"><i class="fas fa-search"></i> 노쇼 찾기</a></li>
+              <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0" href="#noShowSchedule" data-toggle="tab" aria-label="예약에서 추가"><i class="far fa-calendar-plus"></i> 예약에서 추가</a></li>
             </ul>
-            <button type="button" class="close m-0 p-0 pr-3 pt-2" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close m-0 p-0 pr-3 pt-2" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -368,10 +371,10 @@
               <div id="noShowSearch" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div class="row mb-2 col-12 px-0">
                   <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0">
-                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" aria-describedby="noShowSearchContactIcon" autocomplete="false">
+                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" autocomplete="false">
                     <div id="noShowSearchBtn" class="input-group-append">
-                      <i id="noShowSearchContactIcon" class="input-group-text fas fa-search d-sm-none rounded-0"></i>
-                      <span id="noShowSearchContactIcon" class="input-group-text d-none d-sm-block rounded-0">검색</span>
+                      <i class="input-group-text fas fa-search d-sm-none rounded-0"></i>
+                      <span class="input-group-text d-none d-sm-block rounded-0">검색</span>
                     </div>
                   </div>
                 </div>
@@ -387,18 +390,18 @@
                   <div id="noShowSearchList" class="col-12 border px-0"><div class="row col-12 px-0 mt-2 empty text-center"><span class="d-inline-flex mx-auto">전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div></div>
                 </div>
                 <div id="noShowSearchAdd" class="ml-3 px-0 btn">
-                  <p class="text-secondary align-top mb-0">
+                  <p class="text-secondary align-top mb-0" aria-label="노쇼 직접 추가하기">
                     <i class="fas fa-plus"></i> 노쇼 직접 추가하기
                   </p>
                 </div>
               </div>
               <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0 col-3">
-  	    			    <a href="#" class="dropdown-item" data-status="RESERVED"><span class="badge badge-success">정상</span></a>
-  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각"><span class="badge badge-danger">노쇼(지각)</span></a>
-  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수"><span class="badge badge-danger">노쇼(잠수)</span></a>
-  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소"><span class="badge badge-danger">노쇼(직전취소)</span></a>
-  	    			    <a href="#" class="dropdown-item dropdown-item-etc d-inline-flex"><input type="text" class="form-control form-control-sm rounded-0" placeholder="노쇼 유형(기타)"><i class="fas fa-check noShowScheduleCheck pt-2"></i></a>
+  	    			    <a href="#" class="dropdown-item" data-status="RESERVED" aria-label="정상"><span class="badge badge-success">정상</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각" aria-label="노쇼(지각)"><span class="badge badge-danger">노쇼(지각)</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수" aria-label="노쇼(잠수)"><span class="badge badge-danger">노쇼(잠수)</span></a>
+  	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소" aria-label="노쇼(직전취소)"><span class="badge badge-danger">노쇼(직전취소)</span></a>
+  	    			    <a href="#" class="dropdown-item dropdown-item-etc d-inline-flex" aria-label="노쇼(기타)"><input type="text" class="form-control form-control-sm rounded-0" placeholder="노쇼 유형(기타)"><i class="fas fa-check noShowScheduleCheck pt-2" aria-label="확인"></i></a>
     			      </div>
                 <div class="row col-12 px-0">
                   <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>
@@ -450,7 +453,7 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content rounded-0">
           <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
             <form id="taskForm">
@@ -502,8 +505,8 @@
               </div>
             </form>
             <div id="taskModalButtons">
-              <button type="button" class="btn btn-light btn-flat" data-dismiss="modal">취소</button>
-              <button type="button" id="taskModalSave" class="btn btn-primary btn-flat">저장</button>
+              <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
+              <button type="button" id="taskModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
             </div>
           </div>
         </div>
@@ -516,7 +519,7 @@
           <div class="modal-header">
             <h5 class="modal-title"><if(input.tips)>${input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
             <small class="text-secondary">Tip!</small>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -524,8 +527,8 @@
             <p><if(input.tips)>$!{input.tips.body}</if><else>화면 오른쪽 상단의 회색버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
           </div>
           <div class="modal-footer">
-              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal">더이상 Tip 보지않기</button>
-              <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal">닫기</button>
+              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 Tip 보지않기</button>
+              <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
           </div>
         </div>
       </div>
@@ -542,7 +545,7 @@
 
   <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
   <div class="scroll-to-top d-lg-none position-fixed ">
-    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top" aria-label="맨 위로">
       <i class="fas fa-chevron-up"></i>
     </a>
   </div>
@@ -561,22 +564,28 @@
 
   <!-- Plugin JavaScript -->
   <script src="/nmns/js/util.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js" integrity="sha256-VrmtNHAdGzjNsUNtWYG55xxE9xDTz4gF63x/prKXKH0=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/ko.js" integrity="sha256-qkVUOqyWLNnWgXE3Xd2HmUE9GQ/4Z6zRSk3P7JYAAOk=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js" integrity="sha256-pOydVY7re8c1n+fEgg3uoslR/di9NMsOFXJ0Esf2xjQ=" crossorigin="anonymous"></script>
+
   <!-- <script src="/lib/moment/moment-with-locales.min.js"></script>
   <script src="/lib/moment/locales.min.js"></script>
   <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>-->
+
   <script src="/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script>
-  <!-- <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script> -->
+  <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
+
   <script src="/lib/datetimepicker/flatpickr.min.js"></script>
   <script src="/lib/datetimepicker/ko.min.js"></script>
   <script src="/lib/tui-calendar/tui-calendar.min.js"></script>
+
   <!-- <script src="/lib/socket.io/socket.io.slim.js"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
   <!-- <script src="/lib/jquery-validation/jquery.validate.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
+
   <!-- Custom scripts for this template -->
   <script>
     var NMNS = {email:"${input.user.email}"};
