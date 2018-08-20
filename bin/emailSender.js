@@ -2,15 +2,19 @@
 
 const logger = global.nmns.LOGGER;
 
+const srcEmail = process.env.EMAIL_SOURCE;
 const nodemailer = require('nodemailer');
-const srcEmail = 'nomorenoshow@gmail.com';
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.EMAIL_HOST,
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
-        user: srcEmail,
-        pass: '1313nomorenoshow!!'
+        user: process.env.EMAIL_ID, // generated ethereal user
+        pass: process.env.EMAIL_PASSWORD // generated ethereal password
     }
 });
+
+
 
 function sendMail(mailOptions){
     return new Promise((resolve) => {
@@ -94,7 +98,7 @@ const getEmailVerificaitonText = function(param){
         '<tr>\n' +
         '<td style="font-size:13px;line-height:20px;color:#666">\n' +
         '<a href="https://www.nomorenoshow.co.kr">No More No Show</a><br>\n' +
-        '이메일 : <a href="mailto:nomorenoshow@gmail.com" style="color:#666;text-decoration:none" target="_blank">nomorenoshow@gmail.com</a><br>\n' +
+        '이메일 : <a href="mailto:support@nomorenoshow.co.kr" style="color:#666;text-decoration:none" target="_blank">support@nomorenoshow.co.kr</a><br>\n' +
         '©No More No Show</td>\n' +
         '</tr>\n' +
         '</tbody>\n' +
@@ -153,7 +157,7 @@ const getPasswordResetText = function(newPassword){
         '<tr>\n' +
         '<td style="font-size:13px;line-height:20px;color:#666">\n' +
         '<a href="https://www.nomorenoshow.co.kr">No More No Show</a><br>\n' +
-        '이메일 : <a href="mailto:nomorenoshow@gmail.com" style="color:#666;text-decoration:none" target="_blank">nomorenoshow@gmail.com</a><br>\n' +
+        '이메일 : <a href="mailto:support@nomorenoshow.co.kr" style="color:#666;text-decoration:none" target="_blank">support@nomorenoshow.co.kr</a><br>\n' +
         '©No More No Show</td>\n' +
         '</tr>\n' +
         '</tbody>\n' +
