@@ -3,55 +3,53 @@ var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
-var through = require('through2');
-var merge = require('merge-stream');
-
+var gzip = require('gulp-gzip');
 // Copy third party libraries from /node_modules into /client/static/lib
 gulp.task('lib', async function() {
 
   // Bootstrap
-  gulp.src(['./node_modules/bootstrap/dist/css/bootstrap.min.css',
-    './node_modules/bootstrap/dist/css/bootstrap.min.css.map'])
-    .pipe(gulp.dest('./client/static/lib/bootstrap/css'));
-  gulp.src(['./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
-    './node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map'])
-    .pipe(gulp.dest('./client/static/lib/bootstrap/js'));
+  // gulp.src(['./node_modules/bootstrap/dist/css/bootstrap.min.css',
+  //   './node_modules/bootstrap/dist/css/bootstrap.min.css.map'])
+  //   .pipe(gulp.dest('./client/static/lib/bootstrap/css'));
+  // gulp.src(['./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
+  //   './node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map'])
+  //   .pipe(gulp.dest('./client/static/lib/bootstrap/js'));
 
   // Font Awesome
-  gulp.src(['./node_modules/@fortawesome/fontawesome-free/css/all.css',
-    './node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css'])
-    .pipe(gulp.dest('./client/static/lib/font-awesome/css'));
-  gulp.src(['./node_modules/@fortawesome/fontawesome-free/webfonts/*',
-    '!./node_modules/@fortawesome/fontawesome-free/webfonts/*brands*'])
-    .pipe(gulp.dest('./client/static/lib/font-awesome/webfonts'));
+  // gulp.src(['./node_modules/@fortawesome/fontawesome-free/css/all.css',
+  //   './node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css'])
+  //   .pipe(gulp.dest('./client/static/lib/font-awesome/css'));
+  // gulp.src(['./node_modules/@fortawesome/fontawesome-free/webfonts/*',
+  //   '!./node_modules/@fortawesome/fontawesome-free/webfonts/*brands*'])
+  //   .pipe(gulp.dest('./client/static/lib/font-awesome/webfonts'));
 
   // jQuery
-  gulp.src([
-      './node_modules/jquery/dist/*',
-      '!./node_modules/jquery/dist/core.js'
-    ])
-    .pipe(gulp.dest('./client/static/lib/jquery'));
+  // gulp.src([
+  //     './node_modules/jquery/dist/*',
+  //     '!./node_modules/jquery/dist/core.js'
+  //   ])
+  //   .pipe(gulp.dest('./client/static/lib/jquery'));
 
   // jQuery Easing
-  gulp.src('./node_modules/jquery.easing/*.js')
-    .pipe(gulp.dest('./client/static/lib/jquery-easing'));
+  // gulp.src('./node_modules/jquery.easing/*.js')
+  //   .pipe(gulp.dest('./client/static/lib/jquery-easing'));
 
   // jQuery Validator
-  gulp.src('./node_modules/jquery-validation/dist/jquery.validate.min.js')
-    .pipe(gulp.dest('./client/static/lib/jquery-validation'));
+  // gulp.src('./node_modules/jquery-validation/dist/jquery.validate.min.js')
+  //   .pipe(gulp.dest('./client/static/lib/jquery-validation'));
     
   //socket.io
-  gulp.src("./node_modules/socket.io-client/dist/*slim.js*")
-    .pipe(gulp.dest("./client/static/lib/socket.io"));
+  // gulp.src("./node_modules/socket.io-client/dist/*slim.js*")
+  //   .pipe(gulp.dest("./client/static/lib/socket.io"));
     
   // Toast UI calendar
-  gulp.src('./node_modules/tui-code-snippet/dist/*min*')
-    .pipe(gulp.dest('./client/static/lib/tui-calendar'));
+  // gulp.src('./node_modules/tui-code-snippet/dist/*min*')
+  //   .pipe(gulp.dest('./client/static/lib/tui-calendar'));
     
   //moment
-  gulp.src(["./node_modules/moment/min/moment-with-locales.min.js",
-    "./node_modules/moment/min/locales.min.js"])
-    .pipe(gulp.dest("./client/static/lib/moment"));
+  // gulp.src(["./node_modules/moment/min/moment-with-locales.min.js",
+  //   "./node_modules/moment/min/locales.min.js"])
+  //   .pipe(gulp.dest("./client/static/lib/moment"));
     
   //datetimepicker
   gulp.src(["./node_modules/flatpickr/dist/*min.css",
@@ -80,6 +78,7 @@ gulp.task('css:minify', function() {
     .pipe(rename({
       suffix: '.min'
     }))
+    .pipe(gzip())
     .pipe(gulp.dest('./client/'));
 });
 
@@ -98,6 +97,7 @@ gulp.task('js:library', function() {
     .pipe(rename({
       suffix: '.min'
     }))
+    .pipe(gzip())
     .pipe(gulp.dest('./client/static/lib'));
 });
 
@@ -111,6 +111,7 @@ gulp.task('js:custom', function() {
     .pipe(rename({
       suffix: '.min'
     }))
+    .pipe(gzip())
     .pipe(gulp.dest('./client/static/nmns/js'));
 });
 gulp.task("js", gulp.parallel("js:custom", "js:library"));
