@@ -1,6 +1,6 @@
 {
     "name": "No More No Show",
-    "short_name": "No More No Show",
+    "short_name": "NoMoreNoShow",
     "icons": [
         {
             "src": "/client/static/nmns/img/android-chrome-192x192.png",
