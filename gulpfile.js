@@ -3,7 +3,7 @@ var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
-var gzip = require('gulp-gzip');
+
 // Copy third party libraries from /node_modules into /client/static/lib
 gulp.task('lib', async function() {
 
@@ -78,7 +78,6 @@ gulp.task('css:minify', function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gzip())
     .pipe(gulp.dest('./client/'));
 });
 
@@ -97,7 +96,6 @@ gulp.task('js:library', function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gzip())
     .pipe(gulp.dest('./client/static/lib'));
 });
 
@@ -111,7 +109,6 @@ gulp.task('js:custom', function() {
     .pipe(rename({
       suffix: '.min'
     }))
-    .pipe(gzip())
     .pipe(gulp.dest('./client/static/nmns/js'));
 });
 gulp.task("js", gulp.parallel("js:custom", "js:library"));

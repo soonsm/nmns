@@ -27,6 +27,7 @@ const
     session = require('express-session'),
     app = express(),
     server = Server(app),
+    compression = require('compression'),
     morgan = require("morgan"),
     cookieParser = require('cookie-parser');
     
@@ -37,6 +38,9 @@ const
     noShowRouter = require('./bin/noShowRouter'),
     db = require('./bin/webDb')
 ;
+
+//compression
+app.use(compression());
 
 //favicon
 app.use(favicon(__dirname + '/client/static/nmns/img/favicon.ico'));
