@@ -108,7 +108,7 @@ function del(param) {
 exports.newWebUser = function (user) {
     return {
         email: user.email,
-        authStatus: user.authStatus || process.nmns.AUTH_STATUS.EMAIL_VERIFICATED, //BEFORE_EMAIL_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
+        authStatus: user.authStatus || process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION, //BEFORE_EMAIL_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
         emailAuthToken: user.emailAuthToken || null,
         password: user.password,
         numOfWrongPassword: 0,
