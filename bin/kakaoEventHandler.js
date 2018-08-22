@@ -315,21 +315,26 @@ exports.cancelReservation = async function(reservationKey, res){
     let returnMsg = '예약 정보가 없습니다.';
     let contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
     let alrimTalk = await db.getAlrimTalk(reservationKey);
-    if(alrimTalk && !alrimTalk.isCanceled){
-        let user = await db.getUser(alrimTalk.userKey);
-        if(user){
-            //알림톡 전송
-            const sendResult = await sendReservationCancelNotify(user, alrimTalk);
-            if(sendResult){
-                //알림톡 Update (취소) && User Update (취소 카운트 up)
-                await db.cancelReservation(alrimTalk, user)
-                returnMsg = '예약취소완료';
+    if(alrimTalk){
+        if(alrimTalk.isCanceled){
+            returnMsg = '이미 취소된 예약';
+            contents = '이미 취소된 예약압니다.';
+        }else if(!alrimTalk.isCanceled){
+            let user = await db.getUser(alrimTalk.userKey);
+            if(user){
+                //알림톡 전송
+                const sendResult = await sendReservationCancelNotify(user, alrimTalk);
+                if(sendResult){
+                    //알림톡 Update (취소) && User Update (취소 카운트 up)
+                    await db.cancelReservation(alrimTalk, user)
+                    returnMsg = '예약취소완료';
+                }else{
+                    returnMsg = '예약취소실패';
+                    contents = `예약취소를 실패했습니다.\n${formatPhone(user.userPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
+                }
             }else{
-                returnMsg = '예약취소실패';
-                contents = `예약취소를 실패했습니다.\n${formatPhone(user.userPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
+                returnMsg = '사용자 정보가 없습니다.';
             }
-        }else{
-            returnMsg = '사용자 정보가 없습니다.';
         }
     }
     // res.status(200).send(returnMsg);

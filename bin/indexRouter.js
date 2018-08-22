@@ -192,46 +192,51 @@ module.exports = function (passport) {
             let reservationList = await db.getReservationList(email);
             for (var i = 0; i < reservationList.length; i++) {
                 let reservation = reservationList[i];
-                if (reservation.id === id && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED) {
-                    reservation.status = process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED;
-                    reservation.cancelDate = moment().format('YYYYMMDD');
-                    reservationList[i] = reservation;
+                if (reservation.id === id) {
+                    if(reservation.status === process.nmns.RESERVATION_STATUS.CANCELED || reservation.status === process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED){
+                        returnMsg = '이미 취소된 예약';
+                        contents = '이미 취소된 예약입니다.';
+                    }else if(reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
+                        reservation.status = process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED;
+                        reservation.cancelDate = moment().format('YYYYMMDD');
+                        reservationList[i] = reservation;
 
-                    let user = await db.getWebUser(email);
-                    let socket = process.nmns.ONLINE[email];
+                        let user = await db.getWebUser(email);
+                        let socket = process.nmns.ONLINE[email];
 
-                    let msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시 mm분')}`;
-                    if(reservation.start.endsWith('00')){
-                        msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시')}`;
-                    }
-                    msg +=  ' 예약이 취소되었습니다.'
-                    let push = {
-                        id: moment().format('YYYYMMDDHHmmssSSS'),
-                        title: '예약취소알림',
-                        body: msg,
-                        data: {
-                            type: 'cancel reserv',
-                            id: reservation.id,
-                            manager: reservation.manager
-                        },
-                        confirmed: false
-                    };
-                    if (socket) {
-                        push.confirmed = true;
-                        await socket.sendPush(push);
-                    }
+                        let msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시 mm분')}`;
+                        if(reservation.start.endsWith('00')){
+                            msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시')}`;
+                        }
+                        msg +=  ' 예약이 취소되었습니다.'
+                        let push = {
+                            id: moment().format('YYYYMMDDHHmmssSSS'),
+                            title: '예약취소알림',
+                            body: msg,
+                            data: {
+                                type: 'cancel reserv',
+                                id: reservation.id,
+                                manager: reservation.manager
+                            },
+                            confirmed: false
+                        };
+                        if (socket) {
+                            push.confirmed = true;
+                            await socket.sendPush(push);
+                        }
 
-                    let pushList = user.pushList || [];
-                    pushList.push(push);
-                    await db.updateWebUser(email, {pushList: pushList});
+                        let pushList = user.pushList || [];
+                        pushList.push(push);
+                        await db.updateWebUser(email, {pushList: pushList});
 
-                    if (!await db.updateReservation(email, reservationList)) {
-                        contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
-                    } else {
-                        //알림톡 전송
-                        await alrimTalk.sendReservationCancelNotify(user, reservation);
-                        returnMsg = '예약취소완료';
-                        contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
+                        if (!await db.updateReservation(email, reservationList)) {
+                            contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
+                        } else {
+                            //알림톡 전송
+                            await alrimTalk.sendReservationCancelNotify(user, reservation);
+                            returnMsg = '예약취소완료';
+                            contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
+                        }
                     }
                     break;
                 }
