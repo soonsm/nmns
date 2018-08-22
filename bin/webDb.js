@@ -223,7 +223,7 @@ exports.logVisitHistory = async function (email) {
     let list = items[0].visitLog;
     let lastVisitDate = '20180101';
     if(list.length > 0){
-        lastVisitDate = list[list.length - 1].visitDate;
+        lastVisitDate = list[list.length - 1];
     }
     let today = moment().format('YYYYMMDD');
 
@@ -235,7 +235,7 @@ exports.logVisitHistory = async function (email) {
             },
             UpdateExpression: "set visitLog = list_append(visitLog, :visitLog)",
             ExpressionAttributeValues: {
-                ":visitLog": [{visitDate: moment().format('YYYYMMDD')}]
+                ":visitLog": [moment().format('YYYYMMDD')]
             },
             ReturnValues: "NONE"
         });
