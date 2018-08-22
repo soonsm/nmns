@@ -208,17 +208,38 @@ exports.getShopInfo = async function (email) {
 };
 
 exports.logVisitHistory = async function (email) {
-    return await update({
+    let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
-        Key: {
-            'email': email,
+        ProjectionExpression: "visitLog",
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "email"
         },
-        UpdateExpression: "set visitLog = list_append(visitLog, :visitLog)",
         ExpressionAttributeValues: {
-            ":visitLog": [{visitDate: moment().format('YYYYMMDDhhmmss')}]
-        },
-        ReturnValues: "NONE"
+            ":val": email
+        }
     });
+
+    let list = items[0].visitLog;
+    let lastVisitDate = '20180101';
+    if(list.length > 0){
+        lastVisitDate = list[list.length - 1].visitDate;
+    }
+    let today = moment().format('YYYYMMDD');
+
+    if(today > lastVisitDate){
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set visitLog = list_append(visitLog, :visitLog)",
+            ExpressionAttributeValues: {
+                ":visitLog": [{visitDate: moment().format('YYYYMMDD')}]
+            },
+            ReturnValues: "NONE"
+        });
+    }
 };
 
 exports.newReservation = function (reservation) {
