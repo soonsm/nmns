@@ -1455,6 +1455,41 @@ window.tui.usageStatistics = false;
       noShowScheduleBadge($(this));
     });
   };
+
+  $("#nextTips").one("touch click", function(){
+    NMNS.socket.emit("get tips");
+    $("#waitTips").parent().addClass("wait");
+    NMNS.tips = [{title: $("#tipsTitle").text(), body:$("#tipsBody").text()}];
+    $(this).on("touch click", function(){
+      if($(this).hasClass("disabled")) return;
+      if(!$("#waitTips").is(":visible")){
+        var index = $("#tipsModal").data("index") + 1;
+        if(NMNS.tips && index < NMNS.tips.length){
+          $("#tipsModal").data("index", index);
+          if(index === NMNS.tips.length - 1){
+            $("#nextTips").addClass("disabled");
+          }
+          $("#tipsTitle").text(NMNS.tips[index].title);
+          $("#tipsBody").text(NMNS.tips[index].body);
+        }
+      }
+    });
+    $("#prevTips").on("touch click", function(){
+      if($(this).hasClass("disabled")) return;
+      var index = $("#tipsModal").data("index") - 1;
+      if(!$("#waitTips").is(":visible")){
+        if(index >= 0 && NMNS.tips){
+          $("#tipsModal").data("index", index);
+          if(index === 0){
+            $("#prevTips").addClass("disabled");
+          }
+          $("#tipsTitle").text(NMNS.tips[index].title);
+          $("#tipsBody").text(NMNS.tips[index].body);
+        }
+      }
+    });
+  });
+
 //business specific functions about general features end
 //after calendar initialization start
   setDropdownCalendarType();
@@ -1462,7 +1497,21 @@ window.tui.usageStatistics = false;
   setEventListener();
 //after calendar initialization end
 //websocket response start
-  NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
+  NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e){
+    if(e.data && e.data.length>0){
+      NMNS.tips = NMNS.tips.concat(e.data);
+      $("#tipsModal").data("index", 1);
+      $("#tipsModal #tipsTitle").text(NMNS.tips[1].title);
+      $("#tipsModal #tipsBody").text(NMNS.tips[1].body);
+      $("#prevTips").removeClass("disabled");
+      if(NMNS.tips.length === 2){
+        $("#nextTips").addClass("disabled");
+      }
+    }else{
+      $("#nextTips").add("disabled");
+    }
+    $("#waitTips").parent().removeClass("wait");
+  })).on("get summary", socketResponse("예약정보 가져오기", function(e){
     var html = "";
     if(e.data.length===0){
      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>";

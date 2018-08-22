@@ -513,21 +513,24 @@
       </div>
     </div>
 
-    <div id="tipsModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
+    <div id="tipsModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
       <div class="modal-dialog" role="document">
         <div class="modal-content rounded-0">
           <div class="modal-header">
-            <h5 class="modal-title"><if(input.tips)>${input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
+            <h5 class="modal-title" id="tipsTitle"><if(input.tips)>${input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
             <small class="text-secondary">Tip!</small>
             <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p><if(input.tips)>$!{input.tips.body}</if><else>화면 오른쪽 상단의 회색버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
+            <i id="waitTips" class="fas fa-spinner fa-spin"></i>
+            <p id="tipsBody"><if(input.tips)>$!{input.tips.body}</if><else>오른쪽 상단의 버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
           </div>
           <div class="modal-footer">
-              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 Tip 보지않기</button>
+              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 <span class="d-none d-sm-inline">Tip</span> 보지않기</button>
+              <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><i class="fas fa-chevron-left d-inline-block d-sm-none"></i></button>
+              <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><i class="fas fa-chevron-right d-inline-block d-sm-none"></i></button>
               <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
           </div>
         </div>
@@ -574,8 +577,8 @@
   <script src="/lib/perfect-scrollbar/perfect-scrollbar.min.js"></script>-->
 
   <script src="/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script> -->
-  <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script>
+  <!-- <script src="/lib/tui-calendar/tui-code-snippet.min.js"></script> -->
 
   <script src="/lib/datetimepicker/flatpickr.min.js"></script>
   <script src="/lib/datetimepicker/ko.min.js"></script>
