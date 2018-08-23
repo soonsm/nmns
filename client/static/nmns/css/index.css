@@ -302,3 +302,7 @@ hr.star-white:after {
 .contractContents{
   height:120px;
 }
+input[type=text], input[type=email], input[type=password]{
+  height:3rem;
+  line-height:3rem;
+}

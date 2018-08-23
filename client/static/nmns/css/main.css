@@ -254,8 +254,9 @@ button.moveDate:focus{
 }
 .tui-full-calendar-dash{
   font-size:0.5rem;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  height:31px;
   display:inline-flex;
 }
 #creationPopupManagerIcon{
@@ -276,7 +277,8 @@ button.moveDate:focus{
   top:45%;
 }
 .tui-full-calendar-section-allday{
-  line-height:35px;
+  line-height:30px;
+  height:31px;
 }
 .tui-full-calendar-section-allday #creationPopupAllDay + label{
   width:15px;
@@ -287,6 +289,9 @@ button.moveDate:focus{
 }
 .compactLabel{
   letter-spacing: -1px;
+}
+#alrimContactInfo{
+  line-height:.9rem;
 }
 /* detail popup */
 #detailPopup .tui-full-calendar-section-button{
