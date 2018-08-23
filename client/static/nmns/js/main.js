@@ -1,8 +1,7 @@
 /*global jQuery, location, moment, tui, NMNS, io*/
 window.tui.usageStatistics = false;
 (function($) {
-  NMNS.isIE = /*@cc_on!@*/false || !!document.documentMode;
-  if(NMNS.isIE){
+  if(/*@cc_on!@*/false || !!document.documentMode){
     var word; 
     var agent = navigator.userAgent.toLowerCase(); 
 
@@ -189,8 +188,7 @@ window.tui.usageStatistics = false;
     beforeDeleteSchedule:function(e){
       NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
-      e.schedule.status = "DELETED";
-      NMNS.socket.emit("update reserv", e.schedule);
+      NMNS.socket.emit("update reserv", {id:e.schedule.id, status:"DELETED"});
     },
     afterRenderSchedule:function(e){
       if(NMNS.calendar.getViewName() !== "month"){
@@ -957,7 +955,7 @@ window.tui.usageStatistics = false;
       });
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
         var id=generateRandom();
-        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4 pr-0'><input type='text' class='form-control "+(NMNS.isIE?"":"form-control-sm")+" rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm pr-0'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle' title='저장'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1' title='취소'></i></div></div>");
+        var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='"+id+"'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker"+id+"' class='col-4 input-group input-group-sm pr-0'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon"+id+"' class='input-group-text far fa-calendar rounded-0'></i></div><input id='noShowSearchAddDate"+id+"' type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon"+id+"'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle' title='저장'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1' title='취소'></i></div></div>");
         if($("#noShowSearchList .empty").length){
           $("#noShowSearchList").html(newRow);
         }else{
@@ -1455,6 +1453,41 @@ window.tui.usageStatistics = false;
       noShowScheduleBadge($(this));
     });
   };
+
+  $("#nextTips").one("touch click", function(){
+    NMNS.socket.emit("get tips");
+    $("#waitTips").parent().addClass("wait");
+    NMNS.tips = [{title: $("#tipsTitle").text(), body:$("#tipsBody").text()}];
+    $(this).on("touch click", function(){
+      if($(this).hasClass("disabled")) return;
+      if(!$("#waitTips").is(":visible")){
+        var index = $("#tipsModal").data("index") + 1;
+        if(NMNS.tips && index < NMNS.tips.length){
+          $("#tipsModal").data("index", index);
+          if(index === NMNS.tips.length - 1){
+            $("#nextTips").addClass("disabled");
+          }
+          $("#tipsTitle").text(NMNS.tips[index].title);
+          $("#tipsBody").text(NMNS.tips[index].body);
+        }
+      }
+    });
+    $("#prevTips").on("touch click", function(){
+      if($(this).hasClass("disabled")) return;
+      var index = $("#tipsModal").data("index") - 1;
+      if(!$("#waitTips").is(":visible")){
+        if(index >= 0 && NMNS.tips){
+          $("#tipsModal").data("index", index);
+          if(index === 0){
+            $("#prevTips").addClass("disabled");
+          }
+          $("#tipsTitle").text(NMNS.tips[index].title);
+          $("#tipsBody").text(NMNS.tips[index].body);
+        }
+      }
+    });
+  });
+
 //business specific functions about general features end
 //after calendar initialization start
   setDropdownCalendarType();
@@ -1462,7 +1495,21 @@ window.tui.usageStatistics = false;
   setEventListener();
 //after calendar initialization end
 //websocket response start
-  NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e){
+  NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e){
+    if(e.data && e.data.length>0){
+      NMNS.tips = NMNS.tips.concat(e.data);
+      $("#tipsModal").data("index", 1);
+      $("#tipsModal #tipsTitle").text(NMNS.tips[1].title);
+      $("#tipsModal #tipsBody").text(NMNS.tips[1].body);
+      $("#prevTips").removeClass("disabled");
+      if(NMNS.tips.length === 2){
+        $("#nextTips").addClass("disabled");
+      }
+    }else{
+      $("#nextTips").add("disabled");
+    }
+    $("#waitTips").parent().removeClass("wait");
+  })).on("get summary", socketResponse("예약정보 가져오기", function(e){
     var html = "";
     if(e.data.length===0){
      html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>";
@@ -1610,7 +1657,7 @@ window.tui.usageStatistics = false;
         html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!<br/>이분이 노쇼를 하셨다면 아래 추가 버튼을 눌러 다른 매장에도 공유해주세요.</span></div>";
       }
     }else{
-      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.");
+      $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.").show();
       html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>이분은 노쇼를 한 적이 없으시네요! 안심하세요 :)</span></div>";
     }
     $("#noShowSearchList").html(html);

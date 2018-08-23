@@ -192,13 +192,9 @@ button.moveDate:focus{
 /* creation popup */
 #creationPopup{
   position:fixed;
-  left:calc(50% - 150px);
-  top:200px;
-}
-@media(min-width:576px){
-  #creationPopup{
-    left:calc(50% - 267.5px);
-  }
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
 }
 #creationPopup #tui-full-calendar-popup-arrow{
   display:none;
@@ -236,7 +232,7 @@ button.moveDate:focus{
   margin-top:0;
   padding: .25rem 0;
   border-radius: 0;
-  width:235px;
+  width:calc(100% - 60px);
 }
 #creationPopup .dropdown-menu .dropdown-item{
   padding-left:0.5rem;
@@ -247,9 +243,7 @@ button.moveDate:focus{
     width: 535px;
   }
   #creationPopup #creationPopupManager + div.dropdown-menu, #taskForm #taskManager + .dropdown-menu{
-    width:367px;
-    margin-left:15px;
-    transform: translate3d(0px, 35px, 0px) !important;
+    width:calc(100% - 30px);
   }
 }
 #creationPopupForm{
@@ -258,15 +252,15 @@ button.moveDate:focus{
 }
 .tui-full-calendar-dash{
   font-size:0.5rem;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  line-height:31px;
+  height:31px;
   display:inline-flex;
 }
 #creationPopupManagerIcon{
   padding-left: 8px;
 }
 #creationPopupStartDateIcon, #creationPopupEndDateIcon{
-  line-height: 1.8;
+  line-height: 1.7;
 }
 #creationPopupManager{
   border: .05rem solid #ced4da;
@@ -280,7 +274,8 @@ button.moveDate:focus{
   top:45%;
 }
 .tui-full-calendar-section-allday{
-  line-height:35px;
+  line-height:30px;
+  height:31px;
 }
 .tui-full-calendar-section-allday #creationPopupAllDay + label{
   width:15px;
@@ -291,6 +286,9 @@ button.moveDate:focus{
 }
 .compactLabel{
   letter-spacing: -1px;
+}
+#alrimContactInfo{
+  line-height:.9rem;
 }
 /* detail popup */
 #detailPopup .tui-full-calendar-section-button{
@@ -376,7 +374,7 @@ button.moveDate:focus{
   margin:2px 2.5px;
 }
 #infoModal .infoBizTime{
-  width:calc(50% - 14px);
+  width:calc(50% - 16px);
 }
 #infoModal .scroll-wrapper{
   max-width:300px;
@@ -420,6 +418,7 @@ button.moveDate:focus{
 #noShowModal .input-group-prepend i{
   background-color:white;
   border-width:.06rem;
+  line-height:1.4rem;
 }
 #noShowModal #noShowSearchSummary{
   height:45px;
@@ -461,7 +460,7 @@ button.moveDate:focus{
   white-space: nowrap;
 }
 #noShowModal .noShowScheduleDate{
-  width:calc(50% - 15px);
+  width:calc(50% - 16px);
 }
 #noShowModal #noShowScheduleName{
   width:calc(60% - 37px);
@@ -536,23 +535,34 @@ button.moveDate:focus{
 #noShowAdd .input-group{
   height:65px;
 }
+#noShowAddContent{
+  line-height:31px;
+}
 #noShowAddContent span{
   margin-right:.5rem;
 }
 #noShowAddContent .noShowAddCase{
   line-height:1rem;
   height:1.5rem;
+  margin-top:.25rem;
+}
+#noShowAddContent .noShowAddCase.badge-danger:hover{
+  background-color:#dc3545;
+  border-color: #f8f9fa;
+  color: #fff;
 }
 #noShowAddContent .noShowAddCase:focus{
   box-shadow:none;
 }
 #noShowAddContent input{
   line-height:1rem;
-  width: calc(100% - 105px);
+  margin-top:.5rem;
+  width: calc(100% - 78px);
 }
-@media(min-width:576px){
+@media(min-width:420px){
   #noShowAddContent input{
-    width: calc(100% - 258px);
+    margin-top:0;
+    width: calc(100% - 248px);
   }
 }
 #noShowModal .noShowScheduleNoShow, #noShowModal .noShowScheduleNormal{
@@ -650,9 +660,7 @@ button.moveDate:focus{
 }
 @media (min-width: 576px){
   #taskForm #taskManager + .dropdown-menu{
-    margin-left:15px;
-    width:342px;
-    transform: translate3d(0px, 34px, 0px) !important;
+    width:calc(100% - 30px);
   }
 }
 #taskModal .input-group-prepend i{
@@ -660,7 +668,7 @@ button.moveDate:focus{
   background-color:white;
 }
 #taskModal #taskStartDatePicker, #taskModal #taskEndDatePicker{
-  width: calc(50% - 13.5px);
+  width: calc(50% - 13px);
 }
 #taskModal #taskModalButtons{
   text-align: right;
@@ -714,4 +722,23 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 }
 .float:focus{
   background-color:#00796b;
+}
+#tipsModal .modal-body #waitTips{
+  display:none;
+  top:calc(50% - .5rem);
+  left:calc(50% - .5rem);
+  position:absolute;
+  font-size:1.3rem;
+}
+#tipsModal .modal-body.wait #waitTips{
+  display:block;
+}
+#tipsModal .modal-body #tipsBody{
+  opacity:1;
+}
+#tipsModal .modal-body.wait #tipsBody{
+  opacity:.5;
+}
+.flatpickr-mobile{
+  overflow:hidden;
 }

@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="description" content="No More No Show - 노쇼그만, 예약관리와 노쇼공유를 한번에">
   <meta name="author" content="Koru">
+  
   <link rel="apple-touch-icon" sizes="180x180" href="/nmns/img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/nmns/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/nmns/img/android-chrome-192x192.png">
@@ -27,7 +28,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css" integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
   
-  <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
+  <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
   <link href="/lib/datetimepicker/flatpickr.min.css" rel="stylesheet">
   <!--[if IE 9]>
@@ -355,12 +356,12 @@
                     </div>
                     <div id="noShowAddContent" class="row col-12 px-0 mt-2">
                       <span>노쇼 유형 : </span>
-                      <span class="btn badge badge-light noShowAddCase" data-value="지각">지각</span>
-                      <span class="btn badge badge-danger noShowAddCase" data-value="잠수">잠수</span>
-                      <span class="btn badge badge-light noShowAddCase" data-value="직전취소">직전취소</span>
+                      <span class="btn btn-light badge badge-light noShowAddCase" data-value="지각">지각</span>
+                      <span class="btn btn-light badge badge-danger noShowAddCase" data-value="잠수">잠수</span>
+                      <span class="btn btn-light badge badge-light noShowAddCase" data-value="직전취소">직전취소</span>
                       <br class="d-lg-none d-inline-block"/>
-                      <span id="noShowAddCaseEtc" class="btn badge badge-light noShowAddCase">기타</span>
-                      <input type="text" class="form-control form-control-sm rounded-0 mt-2 mt-sm-0" placeholder="직접입력" disabled>
+                      <span id="noShowAddCaseEtc" class="btn btn-light badge badge-light noShowAddCase">기타</span>
+                      <input type="text" class="form-control form-control-sm rounded-0" placeholder="직접입력" disabled>
                     </div>
                   </div>
                 </div>
@@ -376,7 +377,7 @@
                   </div>
                 </div>
                 <div id="noShowSearchSummary" class="row col-12 px-0"></div>
-                <div class="row col-12"><span class="mx-auto d-inline-flex">우리매장 노쇼 목록</span></div>
+                <div class="row col-12"><span class="mx-auto d-inline-flex"><b>우리매장</b>&nbsp;노쇼 목록</span></div>
                 <div class="row col-12 px-0">
                   <div class="col-12 border-left border-right border-top row px-0">
                     <span class="col-4 pr-0 d-inline-flex">전화번호</span>
@@ -425,7 +426,7 @@
                 <div class="row col-12 px-0 mb-2">
                   <input type="text" class="form-control form-control-sm rounded-0 ml-0" id="noShowScheduleName" placeholder="고객 이름" autocomplete="false">
                   <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호" autocomplete="false">
-                  <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-secondary ml-3">
+                  <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-primary ml-3">
                     <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
                   </div>
                 </div>
@@ -456,7 +457,7 @@
             <form id="taskForm">
               <div class="form-group">
                 <div class="row mb-2 mb-sm-3">
-                  <label for="taskName" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label">일정이름<span class="text-danger">*</span></label>
+                  <label for="taskName" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label col-form-label-sm">일정이름<span class="text-danger">*</span></label>
                   <div class="col-9 col-sm-5 input-group input-group-sm">
                     <div class="d-inline-block input-group-prepend d-sm-none">
                       <i id="taskNameIcon" class="input-group-text far fa-calendar-check" title="일정이름"></i>
@@ -480,8 +481,8 @@
                   </div>
                 </div>
                 <div class="row mb-2 mb-sm-3">
-                  <label for="taskContents" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label">일정내용</label>
-                  <div class="col-9 input-group input-group-sm">
+                  <label for="taskContents" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label col-form-label-sm">일정내용</label>
+                  <div class="col-sm-9 col-11 input-group input-group-sm">
                     <div class="d-inline-block input-group-prepend d-sm-none">
                       <i id="taskContentsIcon" class="input-group-text fas fa-list-ul" title="일정내용"></i>
                     </div>
@@ -489,8 +490,8 @@
                   </div>
                 </div>
                 <div class="row mb-2 mb-sm-3">
-                  <label for="taskManager" class="col-2 pr-0 col-form-label d-sm-inline-block d-none">담당자</label>
-                  <div class="input-group input-group-sm btn-group dropdown col-9">
+                  <label for="taskManager" class="col-2 pr-0 col-form-label col-form-label-sm d-sm-inline-block d-none">담당자</label>
+                  <div class="input-group input-group-sm btn-group dropdown col-sm-9 col-11">
                     <div class="d-inline-block input-group-prepend d-sm-none">
                       <i id="taskManagerIcon" class="input-group-text fas fa-user-tie" title="담당자"></i>
                     </div>
@@ -510,21 +511,24 @@
       </div>
     </div>
 
-    <div id="tipsModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
+    <div id="tipsModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
       <div class="modal-dialog" role="document">
         <div class="modal-content rounded-0">
           <div class="modal-header">
-            <h5 class="modal-title"><if(input.tips)>${input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
+            <h5 class="modal-title" id="tipsTitle"><if(input.tips)>${input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
             <small class="text-secondary">Tip!</small>
             <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p><if(input.tips)>$!{input.tips.body}</if><else>화면 오른쪽 상단의 회색버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
+            <i id="waitTips" class="fas fa-spinner fa-spin"></i>
+            <p id="tipsBody"><if(input.tips)>$!{input.tips.body}</if><else>오른쪽 상단의 버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
           </div>
           <div class="modal-footer">
-              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 Tip 보지않기</button>
+              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 <span class="d-none d-sm-inline">Tip</span> 보지않기</button>
+              <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><i class="fas fa-chevron-left d-inline-block d-sm-none"></i></button>
+              <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><i class="fas fa-chevron-right d-inline-block d-sm-none"></i></button>
               <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
           </div>
         </div>
@@ -536,7 +540,7 @@
   <!-- Footer -->
   <footer class="footer text-center px-0 bg-light">
     <div class="py-2 text-center text-secondary container">
-      <small>Copyright &copy; nomorenoshow.co.kr 2018</small><small class="godo text-light">.</small>
+      <small>Copyright &copy; nomorenoshow.co.kr 2018</small><small class="godo">.</small>
     </div>
   </footer>
 
