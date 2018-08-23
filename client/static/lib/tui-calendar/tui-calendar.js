@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Calendar
- * @version 1.7.0 | Mon Aug 20 2018
+ * @version 1.7.0 | Thu Aug 23 2018
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -21147,7 +21147,7 @@ module.exports = (Handlebars['default'] || Handlebars).template({"1":function(co
     + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
     + "\">\n            </div>\n        </div>\n        <div class=\"row mb-2 mb-sm-3\">\n            <label for=\"creationPopupContact\" class=\"col-2 pr-sm-0 d-sm-inline-block d-none col-form-label compactLabel\">고객연락처</label>\n            <div class=\"col-9 col-sm-5 input-group input-group-sm\">\n                <div class=\"d-inline-block input-group-prepend d-sm-none\">\n                    <i id=\"creationPopupContactIcon\" class=\"input-group-text fas fa-phone fa-rotate-90\" title=\"고객 연락처\"></i>\n                </div>\n                <input type=\"text\" class=\"form-control\" id=\"creationPopupContact\" name=\"contact\" aria-describedby=\"creationPopupContactIcon\"\n                    placeholder=\"고객연락처\" autocomplete=\"off\" value=\""
     + alias4(((helper = (helper = helpers.contact || (depth0 != null ? depth0.contact : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"contact","hash":{},"data":data}) : helper)))
-    + "\">\n            </div>\n            <small id=\"alrimContactInfo\" class=\"text-secondary d-none col-5 pl-0\"><span class=\"text-danger\">*</span>알림톡을 사용하도록 설정하시면<br/>고객에게 예약 알림톡을 보낼 수 있습니다!</small>\n        </div>\n\n        <div class=\"row mb-1 mb-sm-3\">\n            <div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 "
+    + "\">\n            </div>\n            <small id=\"alrimContactInfo\" class=\"text-secondary d-none col-5 pl-0\"><span class=\"text-danger\">*</span>알림톡을 사용하도록 설정하시면<br/>고객에게 예약알림을 보낼 수 있습니다!</small>\n        </div>\n\n        <div class=\"row mb-1 mb-sm-3\">\n            <div id=\"creationPopupStartDate\" class=\"input-group input-group-sm col-5 col-sm-4 pr-0 "
     + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))
     + "section-start-date\">\n                <div class=\"input-group-prepend\">\n                    <i id=\"creationPopupStartDateIcon\" class=\"input-group-text far fa-calendar-alt\" title=\"예약 시작시간\"></i>\n                </div>\n                <input id=\""
     + alias4(((helper = (helper = helpers.CSS_PREFIX || (depth0 != null ? depth0.CSS_PREFIX : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"CSS_PREFIX","hash":{},"data":data}) : helper)))

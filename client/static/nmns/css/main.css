@@ -192,13 +192,9 @@ button.moveDate:focus{
 /* creation popup */
 #creationPopup{
   position:fixed;
-  left:calc(50% - 150px);
-  top:200px;
-}
-@media(min-width:576px){
-  #creationPopup{
-    left:calc(50% - 267.5px);
-  }
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
 }
 #creationPopup #tui-full-calendar-popup-arrow{
   display:none;
@@ -376,7 +372,7 @@ button.moveDate:focus{
   margin:2px 2.5px;
 }
 #infoModal .infoBizTime{
-  width:calc(50% - 14px);
+  width:calc(50% - 16px);
 }
 #infoModal .scroll-wrapper{
   max-width:300px;
@@ -461,7 +457,7 @@ button.moveDate:focus{
   white-space: nowrap;
 }
 #noShowModal .noShowScheduleDate{
-  width:calc(50% - 15px);
+  width:calc(50% - 16px);
 }
 #noShowModal #noShowScheduleName{
   width:calc(60% - 37px);
@@ -714,4 +710,7 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 }
 .float:focus{
   background-color:#00796b;
+}
+.flatpickr-mobile{
+  overflow:hidden;
 }

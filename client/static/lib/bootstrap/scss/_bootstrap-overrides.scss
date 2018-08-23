@@ -108,9 +108,9 @@ a.text-primary {
   transform:none;
   -webkit-transform:none;
 }
-.modal-dialog-centered {
-  height: calc(100% - (.5rem * 2));
-}
+// .modal-dialog-centered {
+//   height: calc(100% - (.5rem * 2));
+// }
 @media(min-width:576px){
   .modal-dialog-centered {
     height: calc(100% - (1.75rem * 2));

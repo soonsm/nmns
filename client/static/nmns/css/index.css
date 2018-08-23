@@ -266,11 +266,8 @@ hr.star-white:after {
     display:inline-flex;
   }
 }
-@media(min-width:370px){
-  #mainIndicators + .loginPage{
-    margin-top:3rem;
-    margin-bottom:3rem;
-  }
+#mainIndicators + .loginPage .form{
+  box-shadow:none;
 }
 .d-xs-none{
   display:none;
