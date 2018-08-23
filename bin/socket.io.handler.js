@@ -33,8 +33,9 @@ const GetAlrimTalkInfo = 'get alrim',
 const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
 const SendNoti = 'message', GetNoti = 'get noti';
+const GetTips = 'get tips';
 
-const EVENT_LIST_NO_NEED_VERIFICATION = [GetCustomerInfo, GetCustomerDetail, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
+const EVENT_LIST_NO_NEED_VERIFICATION = [GetTips, GetCustomerInfo, GetCustomerDetail, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
@@ -98,6 +99,15 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                 }
             });
         };
+
+        /**
+         * Tip 조회
+         */
+        addEvent(GetTips, async function(){
+            let tips = require('./tips').getTips();
+            socket.emit(GetTips, makeResponse(true, tips, null));
+        });
+
 
         /**
          * 이메일 인증 보내기
