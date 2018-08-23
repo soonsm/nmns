@@ -731,6 +731,7 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 }
 #tipsModal .modal-body.wait #tipsBody{
   opacity:.5;
+}
 .flatpickr-mobile{
   overflow:hidden;
 }
