@@ -257,6 +257,11 @@ hr.star-white:after {
 }
 .carousel-item{
   max-height:800px;
+  height:60vw;
+}
+.carousel-item img{
+  position:absolute;
+  bottom:0;
 }
 .carouselLastLine{
   display:none;
@@ -266,11 +271,8 @@ hr.star-white:after {
     display:inline-flex;
   }
 }
-@media(min-width:370px){
-  #mainIndicators + .loginPage{
-    margin-top:3rem;
-    margin-bottom:3rem;
-  }
+#mainIndicators + .loginPage .form{
+  box-shadow:none;
 }
 .d-xs-none{
   display:none;
@@ -299,4 +301,8 @@ hr.star-white:after {
 }
 .contractContents{
   height:120px;
+}
+input[type=text], input[type=email], input[type=password]{
+  height:3rem;
+  line-height:3rem;
 }

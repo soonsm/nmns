@@ -5,8 +5,8 @@ const util = require('./util');
 const request = require('request');
 
 const
-    apiStoreId = 'soonsm',
-    apiStoreKey = 'Nzc4MS0xNTIwNDI3MTgxMzc4LTMyMTQ4M2I1LTBiODUtNDYxNC05NDgzLWI1MGI4NWY2MTQzNw==';
+    apiStoreId = process.env.ALRIMTALK_ID,
+    apiStoreKey = process.env.ALRIMTALK_KEY;
 
 
 async function sendAlrimTalk(param){

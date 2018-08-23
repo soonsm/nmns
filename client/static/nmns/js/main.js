@@ -189,8 +189,7 @@ window.tui.usageStatistics = false;
     beforeDeleteSchedule:function(e){
       NMNS.history.push(e.schedule);
       NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
-      e.schedule.status = "DELETED";
-      NMNS.socket.emit("update reserv", e.schedule);
+      NMNS.socket.emit("update reserv", {id:e.schedule.id, status:"DELETED"});
     },
     afterRenderSchedule:function(e){
       if(NMNS.calendar.getViewName() !== "month"){

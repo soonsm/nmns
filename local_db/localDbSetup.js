@@ -9,6 +9,66 @@ AWS.config.update({
 });
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
+var params = {
+    TableName : "KaKaoUserList",
+    KeySchema: [
+        { AttributeName: "userKey", KeyType: "HASH"},  //Partition key
+    ],
+    AttributeDefinitions: [
+        { AttributeName: "userKey", AttributeType: "S" },
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+    }
+};
+dynamodb.createTable(params, function(err, data) {
+    if (err) {
+        console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+    }
+});
+params = {
+    TableName : "AlrimTalkUser",
+    KeySchema: [
+        { AttributeName: "key", KeyType: "HASH"},  //Partition key
+    ],
+    AttributeDefinitions: [
+        { AttributeName: "key", AttributeType: "S" },
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+    }
+};
+dynamodb.createTable(params, function(err, data) {
+    if (err) {
+        console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+    }
+});
+params = {
+    TableName : "AlrimTalk",
+    KeySchema: [
+        { AttributeName: "reservationKey", KeyType: "HASH"},  //Partition key
+    ],
+    AttributeDefinitions: [
+        { AttributeName: "reservationKey", AttributeType: "S" },
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+    }
+};
+dynamodb.createTable(params, function(err, data) {
+    if (err) {
+        console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    } else {
+        console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+    }
+});
 /*
 var params = {
     TableName : "WebSecheduler",
@@ -68,7 +128,7 @@ docClient.put(params, function(err, data) {
     }
 });
 */
-
+/*
 var params = {
     TableName: "WebSecheduler",
     Key: {
@@ -89,6 +149,7 @@ docClient.update(params, function(err, data) {
         console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
     }
 });
+*/
 /*
 //예약정보 Insert
 var reservation = db.newReservation({

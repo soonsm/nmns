@@ -192,13 +192,9 @@ button.moveDate:focus{
 /* creation popup */
 #creationPopup{
   position:fixed;
-  left:calc(50% - 150px);
-  top:200px;
-}
-@media(min-width:576px){
-  #creationPopup{
-    left:calc(50% - 267.5px);
-  }
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
 }
 #creationPopup #tui-full-calendar-popup-arrow{
   display:none;
@@ -258,8 +254,9 @@ button.moveDate:focus{
 }
 .tui-full-calendar-dash{
   font-size:0.5rem;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  height:31px;
   display:inline-flex;
 }
 #creationPopupManagerIcon{
@@ -280,7 +277,8 @@ button.moveDate:focus{
   top:45%;
 }
 .tui-full-calendar-section-allday{
-  line-height:35px;
+  line-height:30px;
+  height:31px;
 }
 .tui-full-calendar-section-allday #creationPopupAllDay + label{
   width:15px;
@@ -291,6 +289,9 @@ button.moveDate:focus{
 }
 .compactLabel{
   letter-spacing: -1px;
+}
+#alrimContactInfo{
+  line-height:.9rem;
 }
 /* detail popup */
 #detailPopup .tui-full-calendar-section-button{
@@ -376,7 +377,7 @@ button.moveDate:focus{
   margin:2px 2.5px;
 }
 #infoModal .infoBizTime{
-  width:calc(50% - 14px);
+  width:calc(50% - 16px);
 }
 #infoModal .scroll-wrapper{
   max-width:300px;
@@ -461,7 +462,7 @@ button.moveDate:focus{
   white-space: nowrap;
 }
 #noShowModal .noShowScheduleDate{
-  width:calc(50% - 15px);
+  width:calc(50% - 16px);
 }
 #noShowModal #noShowScheduleName{
   width:calc(60% - 37px);
@@ -730,4 +731,6 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 }
 #tipsModal .modal-body.wait #tipsBody{
   opacity:.5;
+.flatpickr-mobile{
+  overflow:hidden;
 }
