@@ -356,12 +356,12 @@
                     </div>
                     <div id="noShowAddContent" class="row col-12 px-0 mt-2">
                       <span>노쇼 유형 : </span>
-                      <span class="btn badge badge-light noShowAddCase" data-value="지각">지각</span>
-                      <span class="btn badge badge-danger noShowAddCase" data-value="잠수">잠수</span>
-                      <span class="btn badge badge-light noShowAddCase" data-value="직전취소">직전취소</span>
+                      <span class="btn btn-light badge badge-light noShowAddCase" data-value="지각">지각</span>
+                      <span class="btn btn-light badge badge-danger noShowAddCase" data-value="잠수">잠수</span>
+                      <span class="btn btn-light badge badge-light noShowAddCase" data-value="직전취소">직전취소</span>
                       <br class="d-lg-none d-inline-block"/>
-                      <span id="noShowAddCaseEtc" class="btn badge badge-light noShowAddCase">기타</span>
-                      <input type="text" class="form-control form-control-sm rounded-0 mt-2 mt-sm-0" placeholder="직접입력" disabled>
+                      <span id="noShowAddCaseEtc" class="btn btn-light badge badge-light noShowAddCase">기타</span>
+                      <input type="text" class="form-control form-control-sm rounded-0" placeholder="직접입력" disabled>
                     </div>
                   </div>
                 </div>
@@ -377,7 +377,7 @@
                   </div>
                 </div>
                 <div id="noShowSearchSummary" class="row col-12 px-0"></div>
-                <div class="row col-12"><span class="mx-auto d-inline-flex">우리매장 노쇼 목록</span></div>
+                <div class="row col-12"><span class="mx-auto d-inline-flex"><b>우리매장</b>&nbsp;노쇼 목록</span></div>
                 <div class="row col-12 px-0">
                   <div class="col-12 border-left border-right border-top row px-0">
                     <span class="col-4 pr-0 d-inline-flex">전화번호</span>
@@ -426,7 +426,7 @@
                 <div class="row col-12 px-0 mb-2">
                   <input type="text" class="form-control form-control-sm rounded-0 ml-0" id="noShowScheduleName" placeholder="고객 이름" autocomplete="false">
                   <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호" autocomplete="false">
-                  <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-secondary ml-3">
+                  <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-primary ml-3">
                     <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
                   </div>
                 </div>
@@ -457,7 +457,7 @@
             <form id="taskForm">
               <div class="form-group">
                 <div class="row mb-2 mb-sm-3">
-                  <label for="taskName" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label">일정이름<span class="text-danger">*</span></label>
+                  <label for="taskName" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label col-form-label-sm">일정이름<span class="text-danger">*</span></label>
                   <div class="col-9 col-sm-5 input-group input-group-sm">
                     <div class="d-inline-block input-group-prepend d-sm-none">
                       <i id="taskNameIcon" class="input-group-text far fa-calendar-check" title="일정이름"></i>
@@ -481,8 +481,8 @@
                   </div>
                 </div>
                 <div class="row mb-2 mb-sm-3">
-                  <label for="taskContents" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label">일정내용</label>
-                  <div class="col-9 input-group input-group-sm">
+                  <label for="taskContents" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label col-form-label-sm">일정내용</label>
+                  <div class="col-sm-9 col-11 input-group input-group-sm">
                     <div class="d-inline-block input-group-prepend d-sm-none">
                       <i id="taskContentsIcon" class="input-group-text fas fa-list-ul" title="일정내용"></i>
                     </div>
@@ -490,8 +490,8 @@
                   </div>
                 </div>
                 <div class="row mb-2 mb-sm-3">
-                  <label for="taskManager" class="col-2 pr-0 col-form-label d-sm-inline-block d-none">담당자</label>
-                  <div class="input-group input-group-sm btn-group dropdown col-9">
+                  <label for="taskManager" class="col-2 pr-0 col-form-label col-form-label-sm d-sm-inline-block d-none">담당자</label>
+                  <div class="input-group input-group-sm btn-group dropdown col-sm-9 col-11">
                     <div class="d-inline-block input-group-prepend d-sm-none">
                       <i id="taskManagerIcon" class="input-group-text fas fa-user-tie" title="담당자"></i>
                     </div>

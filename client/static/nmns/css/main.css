@@ -232,7 +232,7 @@ button.moveDate:focus{
   margin-top:0;
   padding: .25rem 0;
   border-radius: 0;
-  width:235px;
+  width:calc(100% - 60px);
 }
 #creationPopup .dropdown-menu .dropdown-item{
   padding-left:0.5rem;
@@ -243,9 +243,7 @@ button.moveDate:focus{
     width: 535px;
   }
   #creationPopup #creationPopupManager + div.dropdown-menu, #taskForm #taskManager + .dropdown-menu{
-    width:367px;
-    margin-left:15px;
-    transform: translate3d(0px, 35px, 0px) !important;
+    width:calc(100% - 30px);
   }
 }
 #creationPopupForm{
@@ -254,8 +252,7 @@ button.moveDate:focus{
 }
 .tui-full-calendar-dash{
   font-size:0.5rem;
-  padding-top: 7px;
-  padding-bottom: 7px;
+  line-height:31px;
   height:31px;
   display:inline-flex;
 }
@@ -263,7 +260,7 @@ button.moveDate:focus{
   padding-left: 8px;
 }
 #creationPopupStartDateIcon, #creationPopupEndDateIcon{
-  line-height: 1.8;
+  line-height: 1.7;
 }
 #creationPopupManager{
   border: .05rem solid #ced4da;
@@ -421,6 +418,7 @@ button.moveDate:focus{
 #noShowModal .input-group-prepend i{
   background-color:white;
   border-width:.06rem;
+  line-height:1.4rem;
 }
 #noShowModal #noShowSearchSummary{
   height:45px;
@@ -537,23 +535,34 @@ button.moveDate:focus{
 #noShowAdd .input-group{
   height:65px;
 }
+#noShowAddContent{
+  line-height:31px;
+}
 #noShowAddContent span{
   margin-right:.5rem;
 }
 #noShowAddContent .noShowAddCase{
   line-height:1rem;
   height:1.5rem;
+  margin-top:.25rem;
+}
+#noShowAddContent .noShowAddCase.badge-danger:hover{
+  background-color:#dc3545;
+  border-color: #f8f9fa;
+  color: #fff;
 }
 #noShowAddContent .noShowAddCase:focus{
   box-shadow:none;
 }
 #noShowAddContent input{
   line-height:1rem;
-  width: calc(100% - 105px);
+  margin-top:.5rem;
+  width: calc(100% - 78px);
 }
-@media(min-width:576px){
+@media(min-width:420px){
   #noShowAddContent input{
-    width: calc(100% - 258px);
+    margin-top:0;
+    width: calc(100% - 248px);
   }
 }
 #noShowModal .noShowScheduleNoShow, #noShowModal .noShowScheduleNormal{
@@ -651,9 +660,7 @@ button.moveDate:focus{
 }
 @media (min-width: 576px){
   #taskForm #taskManager + .dropdown-menu{
-    margin-left:15px;
-    width:342px;
-    transform: translate3d(0px, 34px, 0px) !important;
+    width:calc(100% - 30px);
   }
 }
 #taskModal .input-group-prepend i{
@@ -661,7 +668,7 @@ button.moveDate:focus{
   background-color:white;
 }
 #taskModal #taskStartDatePicker, #taskModal #taskEndDatePicker{
-  width: calc(50% - 13.5px);
+  width: calc(50% - 13px);
 }
 #taskModal #taskModalButtons{
   text-align: right;

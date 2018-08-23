@@ -304,5 +304,5 @@ hr.star-white:after {
 }
 input[type=text], input[type=email], input[type=password]{
   height:3rem;
-  line-height:3rem;
+  line-height:1rem;
 }
