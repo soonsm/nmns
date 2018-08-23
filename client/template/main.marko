@@ -8,6 +8,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="description" content="No More No Show - 노쇼그만, 예약관리와 노쇼공유를 한번에">
   <meta name="author" content="Koru">
+  
+  <if(out.global.baseUrl)>
+    <base href="${out.global.baseUrl}">
+  </if>
+  
   <link rel="apple-touch-icon" sizes="180x180" href="/nmns/img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/nmns/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/nmns/img/android-chrome-192x192.png">
@@ -27,7 +32,7 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css" integrity="sha384-HbmWTHay9psM8qyzEKPc8odH4DsOuzdejtnr+OFtDmOcIVnhgReQ4GZBH7uwcjf6" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/v4-shims.css">
   
-  <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
+  <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
   <link href="/lib/datetimepicker/flatpickr.min.css" rel="stylesheet">
   <!--[if IE 9]>
