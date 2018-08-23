@@ -257,6 +257,11 @@ hr.star-white:after {
 }
 .carousel-item{
   max-height:800px;
+  height:60vw;
+}
+.carousel-item img{
+  position:absolute;
+  bottom:0;
 }
 .carouselLastLine{
   display:none;
