@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "start": "./ddb  | NODE_ENV=development node ./app",
-    "startLocalDb": "./ddb",
-    "test": "jasmine",
-    "testDebug": "node %NODE_DEBUG_OPTION% ./node_modules/jasmine/bin/jasmine.js"
+    "startLocalDb": "./ddb"
   },
   "dependencies": {
     "aws-sdk": "^2.282.1",
@@ -33,7 +31,6 @@
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
     "password-validator": "^4.1.1",
-    "propper": "^1.0.3",
     "request": "^2.87.0",
     "socket.io": "^2.1.1",
     "winston": "^3.0.0",
@@ -44,7 +41,6 @@
     "gulp-clean-css": "^3.9.4",
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.1",
-    "gulp-uglify": "^3.0.1",
-    "through2": "^2.0.3"
+    "gulp-uglify": "^3.0.1"
   }
 }
