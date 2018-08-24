@@ -17,8 +17,9 @@ module.exports = function (passport) {
     router.get("/", function (req, res) {//main calendar page
         if (req.user) {
             let tips = tip.getTips();
-            res.marko(require('../client/template/main'), {user: req.user, tips: tips.splice(2,1)[0]});
-            req.session.tips = tips;
+            req.session.tipToRemove = 2;
+            res.marko(require('../client/template/main'), {user: req.user, tips: tips[2]});
+
         } else {
             //로그인 되지 않은 상태이므로 index page로 이동
             res.redirect("/index");
