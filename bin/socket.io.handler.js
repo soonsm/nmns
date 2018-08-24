@@ -6,6 +6,7 @@ const db = require('./webDb');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
 const util = require('util');
+const tip = require('./tips');
 
 const noShowHandler = require('./noShowHandler');
 const reservationHandler = require('./reservationHandler');
@@ -56,12 +57,12 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         // var user = await db.getWebUser(email);
         // user.authStatus = 'EMAIL_VERIFICATED';
 
-        if(!email || !socket.request.user.logged_in){
+        if (!email || !socket.request.user.logged_in) {
             logger.log(`User ${email} is not logged in`);
             return;
         }
 
-        socket.sendPush = async function(data){
+        socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
                 type: 'push',
                 data: [data]
@@ -72,7 +73,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         db.logVisitHistory(email);
 
-        socket.on('disconnect', async function(){
+        socket.on('disconnect', async function () {
             delete process.nmns.ONLINE[email];
         });
 
@@ -88,7 +89,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         fn.socket = socket;
                         fn.eventName = eventName;
                         let result = await fn.apply(fn, [data]);
-                        if(result){
+                        if (result) {
                             socket.emit(eventName, makeResponse(result.status, result.data, result.message));
                         }
                     }
@@ -103,9 +104,14 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         /**
          * Tip 조회
          */
-        addEvent(GetTips, async function(){
-            let tips = require('./tips').getTips();
-            socket.emit(GetTips, makeResponse(true, tips, null));
+        addEvent(GetTips, async function () {
+            sessionStore.get(socket.request.sessionID, function (err, session) {
+                if(!err){
+                    let tips = tip.getTips();
+                    tips.slice(session.tipToRemove, 1);
+                    socket.emit(GetTips, makeResponse(true, tips, null));
+                }
+            });
         });
 
 
@@ -129,7 +135,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         /**
          * 알림 조회
          */
-        addEvent(GetNoti, async function(){
+        addEvent(GetNoti, async function () {
             let resultData = {
                 type: 'push',
                 data: []
@@ -137,12 +143,12 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             let user = await db.getWebUser(email);
             let pushList = user.pushList || [];
-            for(let i=pushList.length-1; i>=0; i--){
+            for (let i = pushList.length - 1; i >= 0; i--) {
                 let push = pushList[i];
-                if(push.confirmed === false){
+                if (push.confirmed === false) {
                     resultData.data.push(push);
                     pushList[i].confirmed = true;
-                }else{
+                } else {
                     break;
                 }
             }

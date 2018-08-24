@@ -63,7 +63,6 @@ let optionForDynamoStroe = {
     region: 'ap-northeast-2',
     tableName: 'SessionTable',
     cleanupInterval: 0, // session is not expired unless log-out
-    touchAfter: 0,
     autoCreate: true
 };
 if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {

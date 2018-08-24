@@ -77,8 +77,10 @@ async function sendReservationConfirm(user, alrimTalk) {
         callback: '01028904311',
         msg: msg,
         template_code: 'A002',
-        url: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
-        url_button_txt: '예약취소',
+        btn_types: '웹링크',
+        btn_txts: '예약취소',
+        btn_urls1: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls2: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
         apiVersion: 1,
         client_id: apiStoreId
     });
