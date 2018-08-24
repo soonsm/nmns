@@ -108,7 +108,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             sessionStore.get(socket.request.sessionID, function (err, session) {
                 if(!err){
                     let tips = tip.getTips();
-                    tips.slice(session.tipToRemove, 1);
+                    let indexToRemove = session.tipToRemove;
+                    if(Number.isInteger(indexToRemove) && indexToRemove >= 0 && indexToRemove < tips.length){
+                        tips.splice(session.tipToRemove, 1);
+                    }
                     socket.emit(GetTips, makeResponse(true, tips, null));
                 }
             });
