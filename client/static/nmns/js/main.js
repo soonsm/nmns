@@ -1467,8 +1467,9 @@ window.tui.usageStatistics = false;
           if(index === NMNS.tips.length - 1){
             $("#nextTips").addClass("disabled");
           }
-          $("#tipsTitle").text(NMNS.tips[index].title);
-          $("#tipsBody").text(NMNS.tips[index].body);
+          $("#tipsTitle").html(NMNS.tips[index].title);
+          $("#tipsBody").html(NMNS.tips[index].body);
+          $("#prevTips").removeClass("disabled");
         }
       }
     });
@@ -1481,8 +1482,9 @@ window.tui.usageStatistics = false;
           if(index === 0){
             $("#prevTips").addClass("disabled");
           }
-          $("#tipsTitle").text(NMNS.tips[index].title);
-          $("#tipsBody").text(NMNS.tips[index].body);
+          $("#tipsTitle").html(NMNS.tips[index].title);
+          $("#tipsBody").html(NMNS.tips[index].body);
+          $("#nextTips").removeClass("disabled");
         }
       }
     });
@@ -1499,8 +1501,8 @@ window.tui.usageStatistics = false;
     if(e.data && e.data.length>0){
       NMNS.tips = NMNS.tips.concat(e.data);
       $("#tipsModal").data("index", 1);
-      $("#tipsModal #tipsTitle").text(NMNS.tips[1].title);
-      $("#tipsModal #tipsBody").text(NMNS.tips[1].body);
+      $("#tipsModal #tipsTitle").html(NMNS.tips[1].title);
+      $("#tipsModal #tipsBody").html(NMNS.tips[1].body);
       $("#prevTips").removeClass("disabled");
       if(NMNS.tips.length === 2){
         $("#nextTips").addClass("disabled");

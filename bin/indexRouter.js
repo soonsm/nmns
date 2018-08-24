@@ -5,6 +5,7 @@ const
     db = require('./webDb'),
     util = require('./util'),
     alrimTalk = require('./alrimTalkSender'),
+    tip = require('./tips'),
     emailSender = require('./emailSender');
 
 const moment = require('moment');
@@ -13,6 +14,16 @@ const logger = global.nmns.LOGGER;
 
 module.exports = function (passport) {
 
+    router.get("/", function (req, res) {//main calendar page
+        if (req.user) {
+            let tips = tip.getTips();
+            res.marko(require('../client/template/main'), {user: req.user, tips: tips.splice(2,1)[0]});
+            req.session.tips = tips;
+        } else {
+            //로그인 되지 않은 상태이므로 index page로 이동
+            res.redirect("/index");
+        }
+    });
 
     router.get('/index', function (req, res) {
         if (req.user) {
@@ -127,15 +138,6 @@ module.exports = function (passport) {
             res.sendStatus(404);
         }
     })
-
-    router.get("/", function (req, res) {//main calendar page
-        if (req.user) {
-            res.marko(require('../client/template/main'), {user: req.user});
-        } else {
-            //로그인 되지 않은 상태이므로 index page로 이동
-            res.redirect("/index");
-        }
-    });
 
     //http://localhost:8088/emailVerification/email=soonsm@gmail.com&token=297356b5ba41255cfe85cc692ecabbf3a0caf5423e62b9c0974e8ef73676b32a
     router.get("/emailVerification/email=:email&token=:token", async function (req, res) {
