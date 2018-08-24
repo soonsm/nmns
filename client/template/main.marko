@@ -515,8 +515,10 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content rounded-0">
           <div class="modal-header">
-            <h5 class="modal-title" id="tipsTitle"><if(input.tips)>${input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
-            <small class="text-secondary">Tip!</small>
+            <span>
+              <h5 class="modal-title" id="tipsTitle"><if(input.tips)>$!{input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
+              <small class="text-secondary">Tip!</small>
+            </span>
             <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>

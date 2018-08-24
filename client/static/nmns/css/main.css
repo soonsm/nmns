@@ -723,6 +723,13 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 .float:focus{
   background-color:#00796b;
 }
+/* tipsModal */
+#tipsModal .modal-header #tipsTitle{
+  display:initial;
+}
+#tipsModal .modal-header small{
+  vertical-align: super;
+}
 #tipsModal .modal-body #waitTips{
   display:none;
   top:calc(50% - .5rem);
