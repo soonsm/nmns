@@ -1457,7 +1457,7 @@ window.tui.usageStatistics = false;
   $("#nextTips").one("touch click", function(){
     NMNS.socket.emit("get tips");
     $("#waitTips").parent().addClass("wait");
-    NMNS.tips = [{title: $("#tipsTitle").text(), body:$("#tipsBody").text()}];
+    NMNS.tips = [{title: $("#tipsTitle").html(), body:$("#tipsBody").html()}];
     $(this).on("touch click", function(){
       if($(this).hasClass("disabled")) return;
       if(!$("#waitTips").is(":visible")){
