@@ -575,12 +575,17 @@
   <script src="${input.cdn}/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script>
   <script>
-    var NMNS = {email:"${input.user.email}"};
-    // if(window.tui){
-    //   window.tui.usageStatistics = false;
-    // }else{
-    //   window.tui = {usageStatistics : false};
-    // }
+    var NMNS = {
+      email:"${input.user.email}",
+      needInit : true,
+      history : [],
+      colorTemplate : ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#e91e63", "#4caf50", "#ffc107", "#ffeb3b", "#795548", "#607d8b", "#9e9e9e", "#673ab7", "#ffba00", "#cddc39", "#228dff", "#ff5252", "#ff9800", "#000000"]
+    };
+    if(window.tui){
+      window.tui.usageStatistics = false;
+    }else{
+      window.tui = {usageStatistics : false};
+    }
   </script>
   
   <script src="${input.cdn}/lib/datetimepicker/flatpickr.min.js"></script>
