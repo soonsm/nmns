@@ -225,11 +225,7 @@ window.tui.usageStatistics = false;
     };
   };
 
-  if(window.location.hostname === 'localhost'){
-    NMNS.socket = io();
-  }else{
-    NMNS.socket = io('https://socket.nomorenoshow.co.kr');
-  }
+  NMNS.socket = io();
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
   
