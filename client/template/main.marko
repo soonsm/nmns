@@ -12,6 +12,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="${input.cdn}/nmns/img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="${input.cdn}/nmns/img/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="${input.cdn}/nmns/img/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="256x256" href="${input.cdn}/nmns/img/android-chrome-256x256.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="${input.cdn}/nmns/img/android-chrome-512x512.png">
   <link rel="icon" type="image/png" sizes="16x16" href="${input.cdn}/nmns/img/favicon-16x16.png">
   <link rel="manifest" href="${input.cdn}/nmns/img/site.webmanifest">
   <link rel="mask-icon" href="${input.cdn}/nmns/img/safari-pinned-tab.svg" color="#009688">
@@ -87,30 +89,38 @@
   <div id="mainRow" class="row col px-0 mx-auto">
     <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded px-0">
       <ul class="list-group">
-        <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가">
-          <div class="d-flex w-100 align-items-center">
-            <span class="fas fa-plus fa-fw mr-3"></span>
-            <span class="menu-collapsed">노쇼 추가</span>
-          </div>
-        </a>
-        <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기">
-          <div class="d-flex w-100 align-items-center">
-            <span class="fas fa-search fa-fw mr-3"></span>
-            <span class="menu-collapsed">노쇼 찾기</span>
-          </div>
-        </a>
-        <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" aria-label="예약 추가">
-          <div class="d-flex w-100 align-items-center">
-            <span class="far fa-calendar-plus fa-fw mr-3"></span>
-            <span class="menu-collapsed">예약 추가</span>
-          </div>
-        </a>
-        <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가">
-          <div class="d-flex w-100 align-items-center">
-            <span class="far fa-calendar-check fa-fw mr-3"></span>
-            <span class="menu-collapsed">일정 추가</span>
-          </div>
-        </a>
+        <li>
+          <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가">
+            <div class="d-flex w-100 align-items-center">
+              <span class="fas fa-plus fa-fw mr-3"></span>
+              <span class="menu-collapsed">노쇼 추가</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="getNoShowLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기">
+            <div class="d-flex w-100 align-items-center">
+              <span class="fas fa-search fa-fw mr-3"></span>
+              <span class="menu-collapsed">노쇼 찾기</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" aria-label="예약 추가">
+            <div class="d-flex w-100 align-items-center">
+              <span class="far fa-calendar-plus fa-fw mr-3"></span>
+              <span class="menu-collapsed">예약 추가</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가">
+            <div class="d-flex w-100 align-items-center">
+              <span class="far fa-calendar-check fa-fw mr-3"></span>
+              <span class="menu-collapsed">일정 추가</span>
+            </div>
+          </a>
+        </li>
         <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0 pb-1">
           <div class="border-bottom">
               <div class="lnbManagerItem">
