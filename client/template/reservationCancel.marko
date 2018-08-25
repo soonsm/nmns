@@ -9,21 +9,21 @@
   <meta name="description" content="No More No Show - 노쇼그만, 예약관리와 노쇼공유를 한번에">
   <meta name="author" content="Koru">
   
-  <link rel="apple-touch-icon" sizes="180x180" href="/nmns/img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/nmns/img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/nmns/img/android-chrome-192x192.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/nmns/img/favicon-16x16.png">
-  <link rel="manifest" href="/nmns/img/site.webmanifest">
-  <link rel="mask-icon" href="/nmns/img/safari-pinned-tab.svg" color="#009688">
-  <link rel="shortcut icon" href="/nmns/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="${input.cdn}/nmns/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="${input.cdn}/nmns/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="${input.cdn}/nmns/img/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="${input.cdn}/nmns/img/favicon-16x16.png">
+  <link rel="manifest" href="${input.cdn}/nmns/img/site.webmanifest">
+  <link rel="mask-icon" href="${input.cdn}/nmns/img/safari-pinned-tab.svg" color="#009688">
+  <link rel="shortcut icon" href="${input.cdn}/nmns/img/favicon.ico">
   <meta name="msapplication-TileColor" content="#009688">
-  <meta name="msapplication-TileImage" content="/nmns/img/mstile-144x144.png">
-  <meta name="msapplication-config" content="/nmns/img/browserconfig.xml">
+  <meta name="msapplication-TileImage" content="${input.cdn}/nmns/img/mstile-144x144.png">
+  <meta name="msapplication-config" content="${input.cdn}/nmns/img/browserconfig.xml">
   <title>${input.title}</title>
-  <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
-  <link href="/nmns/css/ko_font.min.css" rel="stylesheet">
-  <link href="/nmns/css/en_font.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous" />
+  <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet">
+  <link href="${input.cdn}/nmns/css/ko_font.min.css" rel="stylesheet">
+  <link href="${input.cdn}/nmns/css/en_font.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -34,8 +34,9 @@
       <p class="card-text">${input.contents}</p>
     </div>
   </div>
-  <script src="/lib/jquery/jquery.min.js"></script>
-  <script src="/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
 </body>
 
 </html>
