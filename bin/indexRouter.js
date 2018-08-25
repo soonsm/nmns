@@ -16,17 +16,22 @@ const mainView = require('../client/template/main');
 const indexView = require('../client/template/index');
 const cancelView = require('../client/template/reservationCancel');
 
+let render = function (res, view, data){
+    if(!data){
+        data = {};
+    }
+    data.cdn = global.nmns.cdn;
+    res.marko(view, data);
+}
+
 module.exports = function (passport) {
 
     router.get("/", function (req, res) {//main calendar page
         if (req.user) {
             let tips = tip.getTips();
             req.session.tipToRemove = 2;
-            res.marko(mainView, {
-                user: req.user, tips: tips[2],
-                $global: {
-                    cdn: global.nmns.cdn
-                }
+            render(res, mainView, {
+                user: req.user, tips: tips[2]
             });
 
         } else {
@@ -40,7 +45,7 @@ module.exports = function (passport) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
         } else {
-            res.marko(indexView, {
+            render(res, indexView, {
                 type: "signin",
                 email: req.cookies.email,
                 message: req.session.errorMessage
@@ -64,27 +69,27 @@ module.exports = function (passport) {
         if (!emailValidator.validate(email)) {
             //email validation fail
             error.message = '올바른 이메일 형식이 아닙니다.';
-            return res.marko(indexView, error);
+            return render(res, indexView, error);
         }
 
         //password validation
         if (password !== passwordRepeat) {
             error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
-            return res.marko(indexView, error);
+            return render(res, indexView, error);
         }
 
         //password strength check
         let strenthCheck = util.passwordStrengthCheck(password);
         if (strenthCheck.result === false) {
             error.message = strenthCheck.message;
-            return res.marko(indexView, error);
+            return render(res, indexView, error);
         }
 
         //기존 사용자 체크
         let user = await db.getWebUser(email);
         if (user) {
             error.message = '이미 존재하는 사용자입니다.';
-            return res.marko(indexView, error);
+            return render(res, indexView, error);
         }
 
         const emailAuthToken = require('js-sha256')(email);
@@ -100,7 +105,7 @@ module.exports = function (passport) {
             });
         } else {
             error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
-            return res.marko(indexView, error);
+            return render(res, indexView, error);
         }
     });
 
@@ -255,7 +260,7 @@ module.exports = function (passport) {
             }
         }
 
-        return res.marko(cancelView, {title: returnMsg, contents: contents});
+        return render(res, cancelView, {title: returnMsg, contents: contents});
     });
 
     return router;
