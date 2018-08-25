@@ -12,13 +12,22 @@ const moment = require('moment');
 
 const logger = global.nmns.LOGGER;
 
+const mainView = require('../client/template/main');
+const indexView = require('../client/template/index');
+const cancelView = require('../client/template/reservationCancel');
+
 module.exports = function (passport) {
 
     router.get("/", function (req, res) {//main calendar page
         if (req.user) {
             let tips = tip.getTips();
             req.session.tipToRemove = 2;
-            res.marko(require('../client/template/main'), {user: req.user, tips: tips[2]});
+            res.marko(mainView, {
+                user: req.user, tips: tips[2],
+                $global: {
+                    cdn: global.nmns.cdn
+                }
+            });
 
         } else {
             //로그인 되지 않은 상태이므로 index page로 이동
@@ -31,7 +40,7 @@ module.exports = function (passport) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
         } else {
-            res.marko(require('../client/template/index'), {
+            res.marko(indexView, {
                 type: "signin",
                 email: req.cookies.email,
                 message: req.session.errorMessage
@@ -55,27 +64,27 @@ module.exports = function (passport) {
         if (!emailValidator.validate(email)) {
             //email validation fail
             error.message = '올바른 이메일 형식이 아닙니다.';
-            return res.marko(require('../client/template/index'), error);
+            return res.marko(indexView, error);
         }
 
         //password validation
         if (password !== passwordRepeat) {
             error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
-            return res.marko(require('../client/template/index'), error);
+            return res.marko(indexView, error);
         }
 
         //password strength check
         let strenthCheck = util.passwordStrengthCheck(password);
         if (strenthCheck.result === false) {
             error.message = strenthCheck.message;
-            return res.marko(require('../client/template/index'), error);
+            return res.marko(indexView, error);
         }
 
         //기존 사용자 체크
         let user = await db.getWebUser(email);
         if (user) {
             error.message = '이미 존재하는 사용자입니다.';
-            return res.marko(require('../client/template/index'), error);
+            return res.marko(indexView, error);
         }
 
         const emailAuthToken = require('js-sha256')(email);
@@ -86,12 +95,12 @@ module.exports = function (passport) {
 
         if (user) {
             //로그인처리
-            req.logIn(user, function(){
+            req.logIn(user, function () {
                 res.redirect("/");
             });
         } else {
             error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
-            return res.marko(require('../client/template/index'), error);
+            return res.marko(indexView, error);
         }
     });
 
@@ -125,17 +134,17 @@ module.exports = function (passport) {
     });
 
     router.get("/signout", (req, res) => {
-        if(req.user) {
+        if (req.user) {
             let email = req.user.email;
             res.cookie('email', email);
             req.logout();
             req.session.destroy(function (err) {
-                if(err){
+                if (err) {
                     logger.log('fail to destroy session: ', err);
                 }
                 res.redirect("/");
             });
-        }else{
+        } else {
             res.sendStatus(404);
         }
     })
@@ -148,7 +157,7 @@ module.exports = function (passport) {
         let user = await db.getWebUser(email);
         if (user && user.emailAuthToken === token && user.authStatus !== process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
             await db.updateWebUser(email, {authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED});
-            req.logIn(user, function(){
+            req.logIn(user, function () {
                 res.redirect("/");
             });
             return;
@@ -196,10 +205,10 @@ module.exports = function (passport) {
             for (var i = 0; i < reservationList.length; i++) {
                 let reservation = reservationList[i];
                 if (reservation.id === id) {
-                    if(reservation.status === process.nmns.RESERVATION_STATUS.CANCELED || reservation.status === process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED){
+                    if (reservation.status === process.nmns.RESERVATION_STATUS.CANCELED || reservation.status === process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED) {
                         returnMsg = '이미 취소된 예약';
                         contents = '이미 취소된 예약입니다.';
-                    }else if(reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
+                    } else if (reservation.status === process.nmns.RESERVATION_STATUS.RESERVED) {
                         reservation.status = process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED;
                         reservation.cancelDate = moment().format('YYYYMMDD');
                         reservationList[i] = reservation;
@@ -208,10 +217,10 @@ module.exports = function (passport) {
                         let socket = process.nmns.ONLINE[email];
 
                         let msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시 mm분')}`;
-                        if(reservation.start.endsWith('00')){
+                        if (reservation.start.endsWith('00')) {
                             msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시')}`;
                         }
-                        msg +=  ' 예약이 취소되었습니다.'
+                        msg += ' 예약이 취소되었습니다.'
                         let push = {
                             id: moment().format('YYYYMMDDHHmmssSSS'),
                             title: '예약취소알림',
@@ -246,7 +255,7 @@ module.exports = function (passport) {
             }
         }
 
-        return res.marko(require('../client/template/reservationCancel'), {title: returnMsg, contents: contents});
+        return res.marko(cancelView, {title: returnMsg, contents: contents});
     });
 
     return router;
