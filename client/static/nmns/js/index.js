@@ -318,4 +318,32 @@
     }
     contractDom.toggle();
   });
+  $("#copyEmail").on("touch click", function(e){
+    e.preventDefault();
+		var range = document.createRange();
+		range.selectNodeContents($(this)[0]);
+		var sel = window.getSelection? window.getSelection() : document.selection;
+		sel.removeAllRanges();
+		sel.addRange(range);
+		var title = "";
+		if(document.execCommand('copy')){
+		  title = "메일주소가 복사되었습니다.";
+		}else{
+	    title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사해주세요.";
+		}
+		$(this).attr("title", title).tooltip({
+		  trigger: "manual",
+		  delay:{"hide":1000}
+		});
+	  $(this).tooltip("show");
+	  setTimeout(function(){
+	    $("#copyEmail").attr("title", "메일주소 복사").tooltip("dispose");
+	  }, 1500);
+	  if(sel.empty){// Chrome, IE
+	    sel.empty();
+	  }else if(sel.removeAllRanges){ // Firefox
+	    sel.removeAllRanges();
+	  }
+		return false;
+  });
 })(jQuery);
