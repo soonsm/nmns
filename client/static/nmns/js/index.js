@@ -346,4 +346,18 @@
 	  }
 		return false;
   });
+  $("#openInstagram").on("touch click", function(e){
+    var targetURL = $(this).attr("href");
+    var ua = navigator.userAgent.toLowerCase();
+
+    if (ua.indexOf("android") > -1) {
+      e.preventDefault();
+      navigator.app.loadUrl(targetURL); // Android only
+      return false;
+    } else if (ua.indexOf("ipod")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipad")>-1) {
+      e.preventDefault();
+      window.open(targetURL, "_system");
+      return false;
+    }
+  });
 })(jQuery);
