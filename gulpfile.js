@@ -52,11 +52,8 @@ gulp.task('lib', async function() {
   //   .pipe(gulp.dest("./client/static/lib/moment"));
     
   //datetimepicker
-  gulp.src(["./node_modules/flatpickr/dist/*min.css",
-    "./node_modules/flatpickr/dist/ie.css",
-    "./node_modules/flatpickr/dist/l10n/ko.js"
-    ])
-    .pipe(gulp.dest("./client/static/lib/datetimepicker"));
+  // gulp.src("./node_modules/flatpickr/dist/*min.css")
+  //   .pipe(gulp.dest("./client/static/lib/datetimepicker"));
 });
 
 //Compile SCSS
@@ -113,7 +110,7 @@ gulp.task('js:custom', function() {
 });
 gulp.task("js", gulp.parallel("js:custom", "js:library"));
 //Default task
-gulp.task('default', gulp.series(gulp.parallel("lib"), gulp.parallel('js', 'css')));
+gulp.task('default', gulp.parallel('js', 'css'));
 
 gulp.task('watch', function() {
   gulp.watch(['./client/static/nmns/css/*.css', '!./client/static/nmns/css/*.min.css'], gulp.parallel('css'));

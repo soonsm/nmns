@@ -1,5 +1,4 @@
 /*global jQuery, location, moment, tui, NMNS, io*/
-window.tui.usageStatistics = false;
 (function($) {
   if(/*@cc_on!@*/false || !!document.documentMode){
     var word; 
@@ -21,9 +20,7 @@ window.tui.usageStatistics = false;
       }
     }
   }
-  NMNS.needInit = true;
-  NMNS.history = [];
-  NMNS.colorTemplate = ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#e91e63", "#4caf50", "#ffc107", "#ffeb3b", "#795548", "#607d8b", "#9e9e9e", "#673ab7", "#ffba00", "#cddc39", "#228dff", "#ff5252", "#ff9800", "#000000"];
+  
   // Smooth scrolling using jQuery easing
   $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
     if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
