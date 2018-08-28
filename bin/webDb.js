@@ -131,6 +131,7 @@ exports.newWebUser = function (user) {
         },
         noShowList: [],
         visitLog: [],
+        deviceLog: [],
         reservationList: [],
         memberList: [],
         reservationConfirmAlrimTalkList: [],
@@ -206,6 +207,48 @@ exports.getShopInfo = async function (email) {
 
     return items[0];
 };
+
+exports.logDeviceLog = async function(email, log){
+    let items = await query({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        ProjectionExpression: "deviceLog",
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val": email
+        }
+    });
+
+    if (items[0].deviceLog) {
+        let list = items[0].deviceLog;
+        list.push(log);
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set deviceLog = list_append(deviceLog, :deviceLog)",
+            ExpressionAttributeValues: {
+                ":deviceLog": [log]
+            },
+            ReturnValues: "NONE"
+        });
+    }else{
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set deviceLog = :deviceLog",
+            ExpressionAttributeValues: {
+                ":deviceLog": [log]
+            },
+            ReturnValues: "NONE"
+        });
+    }
+}
 
 exports.logVisitHistory = async function (email) {
     let items = await query({

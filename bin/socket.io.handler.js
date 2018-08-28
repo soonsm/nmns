@@ -3,6 +3,7 @@
 const logger = global.nmns.LOGGER;
 
 const db = require('./webDb');
+const MobileDetect = require('mobile-detect');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
 const util = require('util');
@@ -72,6 +73,9 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         process.nmns.ONLINE[email] = socket;
 
         db.logVisitHistory(email);
+
+        let md = new MobileDetect(socket.request.headers['user-agent']);
+        db.logDeviceLog(email, md.mobile() || 'pc');
 
         socket.on('disconnect', async function () {
             delete process.nmns.ONLINE[email];
