@@ -603,9 +603,6 @@ button.moveDate:focus{
 	color: rgb(51, 51, 51);
 	display: block;
 	font-weight: bold;
-	white-space: nowrap;
-	overflow-x:hidden;
-  text-overflow: ellipsis;
   margin-bottom:.2rem;
 }
 .alert-minimalist .notification-body {
