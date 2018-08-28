@@ -161,6 +161,9 @@ button.moveDate:focus{
 #sidebarContainer{
   max-width:230px;
 }
+#sidebarContainer ul li{
+  list-style: none;
+}
 #lnbManagerList div:first-child{
   margin-top:.7rem;
 }
