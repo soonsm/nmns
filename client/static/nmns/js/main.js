@@ -2008,6 +2008,19 @@
 	  }
 		return false;
   });
+  $(".openAppLink").off("touch click").on("touch click", function(e){
+    var ua = navigator.userAgent.toLowerCase();
+
+    if (ua.indexOf("android") > -1) {
+      e.preventDefault();
+      navigator.app.loadUrl($(this).data("android")); // Android only
+      return false;
+    } else if (ua.indexOf("ipod")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipad")>-1) {
+      e.preventDefault();
+      window.open($(this).data("ios"), "_system");
+      return false;
+    }
+  });
   //notification handling start
   function showNotification(notification){
     if(!NMNS.notification){//not inited

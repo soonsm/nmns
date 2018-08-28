@@ -346,17 +346,16 @@
 	  }
 		return false;
   });
-  $("#openInstagram").on("touch click", function(e){
-    var targetURL = $(this).attr("href");
-    var ua = navigator.userAgent.toLowerCase();
+  $(".openAppLink").off("touch click").on("touch click", function(e){
+    var ua = navigator.userAgent.toLocaleLowerCase();
 
     if (ua.indexOf("android") > -1) {
       e.preventDefault();
-      navigator.app.loadUrl(targetURL); // Android only
+      navigator.app.loadUrl($(this).data("android")); // Android only
       return false;
     } else if (ua.indexOf("ipod")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipad")>-1) {
       e.preventDefault();
-      window.open(targetURL, "_system");
+      window.open($(this).data("ios"), "_system");
       return false;
     }
   });
