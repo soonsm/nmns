@@ -2009,16 +2009,17 @@
 		return false;
   });
   $(".openAppLink").off("touch click").on("touch click", function(e){
-    var ua = navigator.userAgent.toLowerCase();
+    var ua = navigator.userAgent.toLocaleLowerCase();
 
     if (ua.indexOf("android") > -1) {
-      e.preventDefault();
-      navigator.app.loadUrl($(this).data("android")); // Android only
-      return false;
+      // e.preventDefault();
+      // navigator.app.loadUrl($(this).data("android")); // Android only
+      // return false;
     } else if (ua.indexOf("ipod")>-1 || ua.indexOf("iphone")>-1 || ua.indexOf("ipad")>-1) {
-      e.preventDefault();
+      // setTimeout(function(){
+      //   window.location = $(this).data("ios-install");
+      // }, 25);
       window.open($(this).data("ios"), "_system");
-      return false;
     }
   });
   //notification handling start
