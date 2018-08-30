@@ -314,7 +314,7 @@
         break;
     }
     
-    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<br/><span title='"+type+"내용:"+schedule.raw.contents+"'><i class='fas fa-list calendar-font-icon'></i> ":" ")+ schedule.raw.contents + "</span>") : "") + (schedule.raw.contact?"<br/><span title='연락처:"+schedule.raw.contact+"'><i class='fas fa-phone fa-rotate-90 calendar-font-icon'></i> " + schedule.raw.contact + "</span>": "") + "</div>";
+    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<span title='"+type+"내용:"+schedule.raw.contents+"'><i class='fas fa-list calendar-font-icon'></i> ":" ")+ schedule.raw.contents + "</span>") : "") + (schedule.raw.contact?"<br/><span title='연락처:"+schedule.raw.contact+"'><i class='fas fa-phone fa-rotate-90 calendar-font-icon'></i> " + schedule.raw.contact + "</span>": "") + "</div>";
     return html;
   }
   
