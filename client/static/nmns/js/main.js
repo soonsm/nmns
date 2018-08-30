@@ -55,6 +55,9 @@
       time:function(schedule){
         return getTimeSchedule(schedule, schedule.isAllDay);
       },
+      task:function(schedule){
+        return getTimeSchedule(schedule, schedule.isAllDay);
+      },
       alldayTitle:function(){
         return "<span class='tui-full-calendar-left-content'>하루종일</span>";
       },
@@ -142,13 +145,18 @@
       'week.currentTimeLineToday.border': '1px solid #009688',
       "common.border": ".07rem solid #e5e5e5",
       "common.saturday.color": "#304ffe",
+      'common.dayname.color': '#212121',
       "week.timegridOneHour.height":"68px",
       "week.timegridHalfHour.height":"34px",
       "week.vpanelSplitter.height":"5px",
       "week.pastDay.color": "#212121",
       "week.futureDay.color": "#212121",
       "week.pastTime.color": "#212121",
-      "week.futureTime.color": "#212121"
+      "week.futureTime.color": "#212121",
+      'month.schedule.marginLeft': '0px',
+      'month.schedule.marginRight': '0px',
+      'week.timegrid.paddingRight': '0px',
+      'week.dayGridSchedule.marginRight': '0px'
     }
   });
 
@@ -280,26 +288,33 @@
 
 //business specific functions about calendar start
   function getTimeSchedule(schedule, isAllDay){
-    var html = "";
-    if (!isAllDay) {
-      html+="<strong>" + moment(schedule.start.toDate()).format("HH:mm") + "</strong> ";
-    }else{
-      html+="<span class='calendar-font-icon far fa-clock'></span> ";
+    var type = schedule.category === 'task'? "일정" : "예약";
+    var html = "<div class='tui-full-calendar-schedule-cover'>";
+    if(schedule.title){
+      html += "<span title='"+type+"이름:"+schedule.title+"'>";
+      if(schedule.category === 'task'){
+        html += "<span title='일정이름:"+schedule.title+"'><span class='calendar-font-icon'># </span>";
+      } else if (!isAllDay) {
+          html+="<strong class='calendar-font-icon'>" + moment(schedule.start.toDate()).format("HH:mm") + "</strong> ";
+      } else{
+        html+="<span class='calendar-font-icon far fa-clock'></span> ";
+      }
+      
+      html += schedule.title + "</span><br/>";
     }
-    html += schedule.title;
     switch(schedule.raw.status){
       case "CANCELED":
-        html += "<br/><span class='badge badge-light'>취소</span>";
+        html += "<span title='상태/"+type+"내용'><span class='badge badge-light'>취소</span>";
         break;
       case "NOSHOW":
-        html += "<br/><span class='badge badge-danger'>노쇼</span>";
+        html += "<span title='상태/"+type+"내용'><span class='badge badge-danger'>노쇼</span>";
         break;
       case "CUSTOMERCANCELED":
-        html += "<br/><span class='badge badge-light'>고객취소</span>";
+        html += "<span title='상태/"+type+"내용'><span class='badge badge-light'>고객취소</span>";
         break;
     }
     
-    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<br/><span class='fas fa-list' title='예약내용'></span> ":" ")+ schedule.raw.contents) : "") + (schedule.raw.contact?"<br/><span class='fas fa-phone fa-rotate-90' title='연락처'></span> " + schedule.raw.contact : "");
+    html += (schedule.raw.contents?((schedule.raw.status==="RESERVED"?"<br/><span title='"+type+"내용:"+schedule.raw.contents+"'><i class='fas fa-list calendar-font-icon'></i> ":" ")+ schedule.raw.contents + "</span>") : "") + (schedule.raw.contact?"<br/><span title='연락처:"+schedule.raw.contact+"'><i class='fas fa-phone fa-rotate-90 calendar-font-icon'></i> " + schedule.raw.contact + "</span>": "") + "</div>";
     return html;
   }
   
