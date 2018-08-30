@@ -98,6 +98,9 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-p
 .tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator{
   background-color:#009688;
 }
+.tui-full-calendar-dayname-layout .tui-full-calendar-past, .tui-full-calendar-timegrid-timezone .tui-full-calendar-past, .tui-full-calendar-month .tui-full-calendar-past:not(.tui-full-calendar-extra-date) span, .tui-full-calendar-time-date-schedule-block.tui-full-calendar-past{
+  opacity:.8;
+}
 .tui-full-calendar-dayname-name.weekViewDayName{
   display:none;
 }

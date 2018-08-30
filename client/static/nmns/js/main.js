@@ -144,7 +144,11 @@
       "common.saturday.color": "#304ffe",
       "week.timegridOneHour.height":"68px",
       "week.timegridHalfHour.height":"34px",
-      "week.vpanelSplitter.height":"5px"
+      "week.vpanelSplitter.height":"5px",
+      "week.pastDay.color": "#212121",
+      "week.futureDay.color": "#212121",
+      "week.pastTime.color": "#212121",
+      "week.futureTime.color": "#212121"
     }
   });
 
