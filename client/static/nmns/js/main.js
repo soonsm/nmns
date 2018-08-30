@@ -116,7 +116,7 @@
         if(holiday){
           classNames.push("tui-full-calendar-holiday");
         }
-        return '<span class="' + classNames.join(' ') + '">' + date + (holiday?("["+holiday.title+"]"):"") +'</span>';
+        return '<span class="' + classNames.join(' ') + '">' + date + (holiday?("<small class='d-none d-sm-inline'>["+holiday.title+"]</small>"):"") +'</span>';
       },
       monthGridHeaderExceed: function(hiddenSchedules) {
 	        return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="숨겨진 항목 더보기">+' + hiddenSchedules + '</span>';
@@ -126,12 +126,13 @@
         var holiday = NMNS.holiday?NMNS.holiday.find(function(item){return item.date === dateFormat}):undefined;
         var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일"?" tui-full-calendar-holiday-sun":"") + (holiday?" tui-full-calendar-holiday":"") + (dayname==="토"?" tui-full-calendar-holiday-sat":"");
 
-        return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday?("["+holiday.title+"]"):"") + '</span>';
+        return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday?("<small class='d-none d-sm-inline'>["+holiday.title+"]</small>"):"") + '</span>';
 	    }
     },
     month:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
-      scheduleFilter:function(){return true;}
+      scheduleFilter:function(){return true;},
+      grid:{header:{height:26}}
     },
     week:{
       daynames:["일", "월", "화", "수", "목", "금", "토"],
@@ -154,9 +155,10 @@
       "week.pastTime.color": "#212121",
       "week.futureTime.color": "#212121",
       'month.schedule.marginLeft': '0px',
-      'month.schedule.marginRight': '0px',
-      'week.timegrid.paddingRight': '0px',
-      'week.dayGridSchedule.marginRight': '0px'
+      'month.schedule.marginRight': '1px',
+      'month.schedule.height': '20px',
+      'week.timegrid.paddingRight': '1px',
+      'week.dayGridSchedule.marginRight': '1px'
     }
   });
 
