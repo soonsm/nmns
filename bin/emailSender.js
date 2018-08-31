@@ -168,4 +168,4 @@ const getPasswordResetText = function(newPassword){
         '</table>\n' +
         '</div>\n' +
         '</div>';
-}
+};
