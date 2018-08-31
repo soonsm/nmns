@@ -2052,7 +2052,7 @@
       window.open($(this).data("ios"), "_system");
     }
   });
-  $(".mfb-component__button--child i").off("touch click").on("touch click", function(e){
+  $(".mfb-component__button--child").off("touch click").on("touch click", function(e){
     document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
   });
   //notification handling start
