@@ -79,13 +79,13 @@
       popupDetailDate:function(isAllDay, start, end){
         var startDate = moment(start instanceof Date? start : start.toDate()), endDate = moment(end instanceof Date? end : end.toDate());
         var isSameDate = startDate.isSame(endDate, 'day');
-        var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'h:mm a';
+        var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'a h:mm';
 
         if (isAllDay) {
             return startDate.format('YYYY.MM.DD') + (isSameDate ? '' : ' - ' + endDate.format('YYYY.MM.DD'));
         }
 
-        return (startDate.format('YYYY.MM.DD h:mm a') + ' - ' + endDate.format(endFormat));
+        return (startDate.format('YYYY.MM.DD a h:mm') + ' - ' + endDate.format(endFormat));
       },
       popupEdit: function(){
         return "수정";
@@ -157,6 +157,9 @@
       'month.schedule.marginLeft': '0px',
       'month.schedule.marginRight': '1px',
       'month.schedule.height': '20px',
+      'common.creationGuide.backgroundColor': 'rgba(68, 138, 255, 0.05)',
+      'common.creationGuide.border': '1px solid #448aff',
+      'week.creationGuide.color': '#448aff',
       'week.timegrid.paddingRight': '1px',
       'week.dayGridSchedule.marginRight': '1px'
     }
