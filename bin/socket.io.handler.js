@@ -36,32 +36,33 @@ const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
 const SendNoti = 'message', GetNoti = 'get noti';
 const GetTips = 'get tips';
+const AadFeedback = "submit feedback";
 
-const EVENT_LIST_NO_NEED_VERIFICATION = [GetTips, GetCustomerInfo, GetCustomerDetail, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
+const EVENT_LIST_NO_NEED_VERIFICATION = [AadFeedback, GetTips, GetCustomerInfo, GetCustomerDetail, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetNoShow, AddNoShow, DelNoShow, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
 
-    io.use(passportSocketIo.authorize({
-        key: 'connect.sid',
-        secret: 'rilahhuma',
-        store: sessionStore,
-        passport: passport,
-        cookieParser: cookieParser
-    }));
+    // io.use(passportSocketIo.authorize({
+    //     key: 'connect.sid',
+    //     secret: 'rilahhuma',
+    //     store: sessionStore,
+    //     passport: passport,
+    //     cookieParser: cookieParser
+    // }));
 
     io.on('connection', async function (socket) {
-        const user = socket.request.user;
-        const email = user.email;
+        // const user = socket.request.user;
+        // const email = user.email;
 
-        // var email = 'soonsm@gmail.com';
-        // var user = await db.getWebUser(email);
+        var email = 'soonsm@gmail.com';
+        var user = await db.getWebUser(email);
         // user.authStatus = 'EMAIL_VERIFICATED';
 
-        if (!email || !socket.request.user.logged_in) {
-            logger.log(`User ${email} is not logged in`);
-            return;
-        }
+        // if (!email || !socket.request.user.logged_in) {
+        //     logger.log(`User ${email} is not logged in`);
+        //     return;
+        // }
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
@@ -121,6 +122,13 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             });
         });
 
+        /**
+         * Feedback 제출
+         */
+        addEvent(AadFeedback, async function(data){
+            //TODO: feedback save
+            db.submitFeedback(email, data.data);
+        });
 
         /**
          * 이메일 인증 보내기

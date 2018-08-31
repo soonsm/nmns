@@ -137,7 +137,8 @@ exports.newWebUser = function (user) {
         reservationConfirmAlrimTalkList: [],
         cancelAlrimTalkList: [],
         pushList: [],
-        isFirstVisit: true
+        isFirstVisit: true,
+        feedback: []
     };
 };
 
@@ -207,7 +208,47 @@ exports.getShopInfo = async function (email) {
 
     return items[0];
 };
+exports.submitFeedback = async function(email, feedback){
+    let items = await query({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        ProjectionExpression: "feedback",
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val": email
+        }
+    });
 
+    if (items[0].feedback) {
+        let list = items[0].feedback;
+        list.push(feedback);
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set feedback = list_append(feedback, :feedback)",
+            ExpressionAttributeValues: {
+                ":feedback": [feedback]
+            },
+            ReturnValues: "NONE"
+        });
+    }else{
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set feedback = :feedback",
+            ExpressionAttributeValues: {
+                ":feedback": [feedback]
+            },
+            ReturnValues: "NONE"
+        });
+    }
+}
 exports.logDeviceLog = async function(email, log){
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
