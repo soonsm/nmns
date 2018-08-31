@@ -87,7 +87,8 @@ gulp.task('js:library', function() {
       './client/static/lib/**/*.js',
       '!./client/static/lib/socket.io/socket.io.slim.js',
       '!./client/static/lib/tui-calendar/tui-calendar.js',
-      '!./client/static/lib/**/*.min.js'
+      '!./client/static/lib/**/*.min.js',
+      '!./client/static/lib/**/*.touch.js'
     ])
     .pipe(uglify())
     .pipe(rename({

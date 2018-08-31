@@ -21,20 +21,6 @@
     }
   }
   
-  // Smooth scrolling using jQuery easing
-  $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
-    if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
-      var target = $(this.hash);
-      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-      if (target.length) {
-        $('html, body').animate({
-          scrollTop: (target.offset().top - 60)
-        }, 1000, "easeInOutExpo");
-        return false;
-      }
-    }
-  });
-
   // Closes responsive menu when a scroll trigger link is clicked
   $('.js-scroll-trigger').click(function() {
     $('.navbar-collapse').collapse('hide');
@@ -401,7 +387,7 @@
       now = moment(NMNS.info.bizBeginTime, "HHmm");        
     }else{
       now.minute(Math.ceil(now.minute()/10) * 10);
-    }console.log(now);
+    }
     NMNS.calendar.openCreationPopup({
         start: now.toDate(),
         end: now.add(30, "m").toDate()
@@ -1512,6 +1498,26 @@
     });
   });
 
+  $("#submitFeedback").off("touch click").on("touch click", function(e){
+    var text = $("#feedbackBody").val();
+    if(text && text.trim().length > 0){
+      NMNS.socket.emit("submit feedback", {data:text.trim()});
+      $("#feedbackModal").modal("hide");
+      var x = document.getElementById("snackbar");
+      if(!x){
+        x = document.createElement("div");
+        x.setAttribute("id", "snackbar");
+        x.innerHTML = "제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.";
+        document.getElementById("mainContents").appendChild(x);
+      }
+      x.className = "show";
+      setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+      $("#feedbackBody").val("");
+    }else{
+      alert("제안/문의하실 내용을 입력해주세요!");
+      return;
+    }
+  });
 //business specific functions about general features end
 //after calendar initialization start
   setDropdownCalendarType();
@@ -2045,6 +2051,9 @@
       // }, 25);
       window.open($(this).data("ios"), "_system");
     }
+  });
+  $(".mfb-component__button--child").off("touch click").on("touch click", function(e){
+    document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
   });
   //notification handling start
   function showNotification(notification){

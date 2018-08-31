@@ -11,3 +11,5 @@ spec/*
 client/static/lib/bootstrap/css/nmns.css
 yarn.lock
 ecosystem.config.js
+client/static/lib/material-floating-button/mfb.css*
+client/static/lib/material-floating-button/mfb.js*

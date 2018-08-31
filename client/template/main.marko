@@ -31,6 +31,7 @@
   <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
   <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="stylesheet">
+  <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="stylesheet">
   <!--[if IE 9]>
   <link href="/lib/datetimepicker/ie.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
@@ -536,17 +537,68 @@
             <p id="tipsBody"><if(input.tips)>$!{input.tips.body}</if><else>오른쪽 상단의 버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
           </div>
           <div class="modal-footer">
-              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 <span class="d-none d-sm-inline">Tip</span> 보지않기</button>
-              <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><i class="fas fa-chevron-left d-inline-block d-sm-none"></i></button>
-              <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><i class="fas fa-chevron-right d-inline-block d-sm-none"></i></button>
-              <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
+            <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 <span class="d-none d-sm-inline">Tip</span> 보지않기</button>
+            <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><i class="fas fa-chevron-left d-inline-block d-sm-none"></i></button>
+            <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><i class="fas fa-chevron-right d-inline-block d-sm-none"></i></button>
+            <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="feedbackModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content rounded-0">
+          <div class="modal-header">
+            <span>
+              <h5 class="modal-title" id="feedbackTitle">제안/문의하기</h5>
+            </span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <textarea id="feedbackBody" placeholder="제안 혹은 문의내용을 적어주세요 :)"></textarea>
+            <p><small>No More No Show를 이용하시다가 불편하시거나 바라는 점이 있으신가요?<br/> 원하시는 점을 적어주시면 최대한 빨리 확인하여 조치 내용을 이메일로 답변드리겠습니다!</small></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
+            <button type="button" id="submitFeedback" class="btn btn-primary btn-flat" aria-label="등록">등록</button>
           </div>
         </div>
       </div>
     </div>
     
-    
   </div>
+  <ul id="floatingButton" class="mfb-component--br mfb-slidein d-sm-none" data-mfb-toggle="hover" data-mfb-state="closed">
+    <li class="mfb-component__wrap">
+      <!-- the main menu button -->
+      <a class="mfb-component__button--main">
+        <!-- the main button icon visibile by default -->
+        <i class="mfb-component__main-icon--resting fas fa-times"></i>
+        <!-- the main button icon visibile when the user is hovering/interacting with the menu -->
+        <i class="mfb-component__main-icon--active fas fa-times"></i>
+      </a>
+      <ul class="mfb-component__list">
+        <!-- a child button, repeat as many times as needed -->
+        <li>
+          <a href="#" data-mfb-label="예약추가" class="mfb-component__button--child" aria-label="예약추가">
+            <i class="mfb-component__child-icon fas fa-calendar-plus addReservLink"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#" data-mfb-label="일정추가" class="mfb-component__button--child" aria-label="일정추가">
+            <i class="mfb-component__child-icon fas fa-calendar-check addTaskLink" data-toggle="modal" data-target="#taskModal"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#" data-mfb-label="제안/문의" class="mfb-component__button--child" aria-label="제안/문의">
+            <i class="mfb-component__child-icon fas fa-pen" data-toggle="modal" data-target="#feedbackModal"></i>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
   <!-- Footer -->
   <footer class="footer text-center px-0 bg-light">
     <div class="py-2 text-center text-secondary container">
@@ -557,12 +609,6 @@
     </div>
   </footer>
 
-  <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-  <div class="scroll-to-top d-lg-none position-fixed ">
-    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top" aria-label="맨 위로">
-      <i class="fas fa-chevron-up"></i>
-    </a>
-  </div>
 <!--[if lte IE 8]>
 <script type="text/jscript">
   document.getElementById("page-top").innerHTML = "";
@@ -609,5 +655,6 @@
   <!-- Custom scripts for this template -->
   <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
   <script src="/nmns/js/main.min.js"></script>
+  <script src="/lib/material-floating-button/mfb.min.js"></script>
 </body>
 </html>
