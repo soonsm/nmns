@@ -132,6 +132,7 @@ exports.newWebUser = function (user) {
         noShowList: [],
         visitLog: [],
         deviceLog: [],
+        deviceHist: {},
         reservationList: [],
         memberList: [],
         reservationConfirmAlrimTalkList: [],
@@ -249,6 +250,38 @@ exports.submitFeedback = async function(email, feedback){
         });
     }
 }
+
+exports.logDeviceHist = async function(email, device){
+    let items = await query({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        ProjectionExpression: "deviceHist",
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val": email
+        }
+    });
+    let deviceHist = items[0].deviceHist || {};
+    if(deviceHist[device]){
+        deviceHist[device] += 1;
+    }else{
+        deviceHist[device] = 1;
+    }
+    return await update({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set deviceHist = :deviceHist",
+        ExpressionAttributeValues: {
+            ":deviceHist": deviceHist
+        },
+        ReturnValues: "NONE"
+    });
+};
+
 exports.logDeviceLog = async function(email, log){
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,

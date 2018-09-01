@@ -45,9 +45,11 @@ exports.getReservationSummaryList = async function(data) {
 let log = async function(email, socket){
     db.logVisitHistory(email);
 
+    // db.logDeviceHist()
+
     const MobileDetect = require('mobile-detect');
     let md = new MobileDetect(socket.request.headers['user-agent']);
-    db.logDeviceLog(email, md.mobile() || 'pc');
+    db.logDeviceHist(email, md.mobile() || 'pc');
 }
 
 exports.getReservationList = async function(data) {
