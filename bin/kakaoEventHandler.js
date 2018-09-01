@@ -151,7 +151,7 @@ exports.messageHandler = async function(userKey, content, res){
                 returnMessage = message.typeAlrimTalkInfo();
             }else{
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
-                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)\n(등록키 발급은 nomorenoshow@gmail.com으로 문의주세요.)');
+                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)\n(등록키 발급 방법: 노쇼그만 카카오톡 프로필 클릭 -> 화면 하단의 "알림톡 등록키 발급 방법" 확인)');
             }
         }
     }else if(content === message.yesAlrmTalkInfo || content === message.noAlrmTalkInfo){

@@ -1,6 +1,6 @@
 exports.noshowRegister = 'NoShow 등록하기';
 exports.noshowRetrieve = 'NoShow 조회하기';
-exports.confirmReservation = '예약취소버튼 보내기(베타실시중)';
+exports.confirmReservation = '예약취소버튼 보내기';
 
 exports.yesAlrmTalkInfo = "예(전송)";
 exports.noAlrmTalkInfo = "아니오(다시입력)";
