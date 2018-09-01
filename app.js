@@ -46,8 +46,6 @@ const
     util = require('./bin/util')
 ;
 
-db.password();
-
 //compression
 app.use(compression());
 
