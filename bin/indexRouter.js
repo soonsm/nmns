@@ -182,7 +182,7 @@ module.exports = function (passport) {
                 numbers: true
             });
 
-            if (await db.updateWebUser(email, {password: password})) {
+            if (await db.updateWebUser(email, {password: util.sha512(password)})) {
 
                 await emailSender.sendTempPasswordEmail(email, password);
 

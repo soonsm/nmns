@@ -42,8 +42,11 @@ const
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
     indexRouter = require('./bin/indexRouter'),
     noShowRouter = require('./bin/noShowRouter'),
-    db = require('./bin/webDb')
+    db = require('./bin/webDb'),
+    util = require('./bin/util')
 ;
+
+db.password();
 
 //compression
 app.use(compression());
@@ -90,7 +93,7 @@ passport.use(new LocalStrategy({
     async function(username, password, done) {
         let user = await db.getWebUser(username);
         if(user){
-            if(password === user.password){
+            if(util.sha512(password) === user.password){
                 return done(null, {email: user.email, password: user.password});
             }else{
                 return done(null, false, { message: '비밀번호가 잘못되었습니다.' });

@@ -21,7 +21,7 @@ exports.updatePwd = async function (data) {
         }
 
         if (status) {
-            if (!await db.updateWebUser(this.email, {password: pwd})) {
+            if (!await db.updateWebUser(this.email, {password: util.sha512(pwd)})) {
                 status = false;
                 message = '시스템 오류입니다.(DB Update Error)';
             }

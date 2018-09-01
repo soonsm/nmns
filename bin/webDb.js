@@ -3,6 +3,7 @@ const logger = global.nmns.LOGGER;
 const moment = require('moment');
 const sha256 = require('js-sha256');
 const util = require('util');
+const nmnsUtil = require('./util');
 
 var AWS = require("aws-sdk");
 
@@ -75,6 +76,20 @@ function query(params) {
             }
         });
     }));
+};
+
+function scan(params) {
+    return new Promise((resolve => {
+        docClient.scan(params, function (err, data) {
+            if (err) {
+                logger.log("Unable to scan. Error:", JSON.stringify(err, null, 2));
+                resolve(null);
+            } else {
+                logger.log("Scan succeeded. Data:", util.format(data.Items));
+                resolve(data.Items);
+            }
+        });
+    }));
 }
 
 function update(params) {
@@ -103,6 +118,20 @@ function del(param) {
             }
         });
     }));
+};
+
+exports.password = async function(){
+    let items = await scan({
+        TableName: process.nmns.TABLE.WebSecheduler
+    });
+
+    let users = items;
+
+    for(let i =0; i<users.length; i++){
+        let user = users[i];
+
+        exports.updateWebUser(user.email, {password: nmnsUtil.sha512(user.password)});
+    }
 }
 
 exports.newWebUser = function (user) {
@@ -110,7 +139,7 @@ exports.newWebUser = function (user) {
         email: user.email,
         authStatus: user.authStatus || process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION, //BEFORE_EMAIL_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
         emailAuthToken: user.emailAuthToken || null,
-        password: user.password,
+        password: nmnsUtil.sha512(user.password),
         numOfWrongPassword: 0,
         bizBeginTime: user.bizBeginTime || '0900',
         bizEndTime: user.bizEndTime || '2300',

@@ -53,4 +53,8 @@ exports.formatPhone = function(phone){
     }catch(e){
         return '';
     }
+};
+
+exports.sha512 = function(plain){
+    return require('sha512')(plain).toString('hex');
 }
