@@ -155,7 +155,7 @@ module.exports = function (passport) {
                 res.redirect("/");
             });
         } else {
-            res.sendStatus(404);
+            res.redirect("/");
         }
     })
 
@@ -173,7 +173,7 @@ module.exports = function (passport) {
             return;
         }
 
-        res.sendStatus(404);
+        res.redirect("/");
     });
 
     router.post('/resetPassword', async function (req, res) {
@@ -196,7 +196,7 @@ module.exports = function (passport) {
             }
         }
 
-        res.sendStatus(404);
+        res.redirect("/");
     });
 
     router.get('/web_cancel/key=:reservationKey&&email=:email', async (req, res) => {
