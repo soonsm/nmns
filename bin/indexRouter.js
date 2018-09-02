@@ -5,7 +5,6 @@ const
     db = require('./webDb'),
     util = require('./util'),
     alrimTalk = require('./alrimTalkSender'),
-    tip = require('./tips'),
     emailSender = require('./emailSender');
 
 const moment = require('moment');
@@ -28,10 +27,16 @@ module.exports = function (passport) {
 
     router.get("/", function (req, res) {//main calendar page
         if (req.user) {
-            let tips = tip.getTips();
-            req.session.tipToRemove = 2;
+            let tips = require('./tips').getTips();
+            let index = 7;
+            if(req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION){
+                tips.splice(7,1);
+                index = Math.floor(Math.random() * (tips.length));
+            }
+            let tip = tips[index];
+            req.session.tipToRemove = index;
             render(res, mainView, {
-                user: req.user, tips: tips[2]
+                user: req.user, tips: tip
             });
 
         } else {
