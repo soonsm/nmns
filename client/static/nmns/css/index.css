@@ -1,3 +1,14 @@
+@media (max-width:315px){html{font-size:10px;}}
+@media (min-width:316px) and (max-width:339px){html{font-size:11px;}}
+@media (min-width:340px) and (max-width:364px){html{font-size:12px;}}
+@media (min-width:365px) and (max-width:388px){html{font-size:13px;}}
+@media (min-width:389px) and (max-width:413px){html{font-size:14px;}}
+@media (min-width:414px) and (max-width:767px){html{font-size:15px;}}
+@media (min-width:768px) and (max-width:794px){html{font-size:13px;}}
+@media (min-width:795px) and (max-width:844px){html{font-size:14px;}}
+@media (min-width:845px) and (max-width:894px){html{font-size:15px;}}
+@media (min-width:895px){html{font-size:16px;}}
+
 section h2 {
   font-size: 2.25rem;
   line-height: 2rem;
@@ -239,6 +250,9 @@ hr.star-white:after {
   margin-top:4rem;
   overflow:hidden;
 }
+#mainIndicators{
+  margin-top:2.5rem;
+}
 .carousel-caption {
   bottom:unset;
 }
@@ -282,6 +296,9 @@ hr.star-white:after {
   .d-xs-none{
     display:inline-block;
   }
+}
+#mainNav{
+  height:4rem;
 }
 #mainNav button{
   display:none;
