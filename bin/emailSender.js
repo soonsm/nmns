@@ -28,7 +28,6 @@ function sendMail(mailOptions){
             }
         });
     });
-
 };
 
 exports.sendEmailVerification = async function(email, token){
@@ -49,6 +48,15 @@ exports.sendTempPasswordEmail = async function(email, pwd){
         to: email,
         subject: 'NoMoreNoShow 임시 비밀번호 발급 이메일입니다.',
         html: getPasswordResetText(pwd)
+    });
+};
+
+exports.sendFeedbackAlrim = async function(email, feedback){
+    return await sendMail({
+        from: srcEmail,
+        to: srcEmail,
+        subject: 'NoMoreNoShow 피드백 알림',
+        text: `피드백 내용: ${feedback} \n 발신자: ${email}`
     });
 };
 

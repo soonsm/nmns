@@ -122,6 +122,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(AadFeedback, async function(data){
             //TODO: feedback save
             db.submitFeedback(email, data.data);
+
+            emailSender.sendFeedbackAlrim(email, data.data);
         });
 
         /**
