@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125242064-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-125242064-1');
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -120,7 +128,7 @@
             </div>
           </a>
         </li>
-        <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0 pb-1">
+        <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0 border-bottom-0 pb-1">
           <div class="border-bottom">
               <div class="lnbManagerItem">
                   <label>
@@ -138,8 +146,19 @@
             </small>
           </div>
         </li>
+        <li id="lnbLastMenu">
+          <a href="#" class="list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 bg-white" aria-label="기타메뉴">
+            <div class="d-flex w-100 align-items-center" data-toggle="modal" data-target="#feedbackModal" aria-label="제안/문의하기">
+              <small class="far fa-heart fa-fw mr-1"></small>
+              <small class="menu-collapsed">제안/문의하기</small>
+            </div>
+            <div id="showTips" class="d-flex w-100 align-items-center mt-1" aria-label="팁 보기">
+              <small class="far fa-lightbulb fa-fw mr-1"></small>
+              <small class="menu-collapsed">팁 보기</small>
+            </div>
+          </a>
+        </li>
       </ul>
-      <a id="showTips" href="#" class="float rounded-circle d-none" aria-label="Tip 보기"><i class="far fa-lightbulb"></i></a>
     </div>
     <div id="mainContents" class="col px-0">
       <div id="mainCalendarTools" class="text-center align-middle bg-light">

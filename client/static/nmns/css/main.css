@@ -189,6 +189,12 @@ button.moveDate:focus{
 #lnbManagerList .addManagerItem .addManagerColor{
   cursor:default;
 }
+#lnbLastMenu a{
+  cursor:default;
+}
+#lnbLastMenu a div{
+  cursor:pointer;
+}
 .addManagerItem label{
   width: calc(100% - 35px);
 }

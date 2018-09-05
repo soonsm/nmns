@@ -256,8 +256,6 @@
     }
     if(NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.7)){
       $("#tipsModal").modal("show");
-    } else if (getCookie("showTips") !== "true") {
-      $("#showTips").removeClass("d-none");
     }
   }));
   
@@ -543,7 +541,7 @@
     var html = "";
     managerList.forEach(function(item){
       html += "<div class='lnbManagerItem' data-value='"+item.id+"'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-      html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"'></span><small>"+item.name+"</small></label></div>";
+      html += "<span style='background-color:"+item.bgColor+"; border-color:"+item.borderColor+"' title='이 담당자의 예약 가리기/보이기'></span><small>"+item.name+"</small></label></div>";
     });
     return html;
   }
@@ -1916,11 +1914,9 @@
     e.preventDefault();
     $("#noMoreTips").remove();
     $("#tipsModal").modal("show");
-  }).tooltip({
-    title:"Tip 보기",
-    placement: "right",
-    trigger:"hover",
-    html: true
+  });
+  $("#lnbLastMenu a").on("touch click", function(e){
+    e.preventDefault();
   });
   //Modal events end
   //mobile horizontal scroll handling
@@ -1984,6 +1980,7 @@
         cancelAddManager(this);
         list.find("div:last-child input[type='text']").focus();
       });
+      row.find(".addManagerColor").attr("title", "담당자 색상은 저장 후 내 매장 정보 메뉴에서 바꾸실 수 있습니다.");
     }else{
       row.find("input[type='text']").off("keyup").on("keyup", function(e){
         if(e.which === 27){
