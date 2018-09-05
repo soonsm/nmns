@@ -294,7 +294,7 @@ hr.star-white:after {
     display:inline-block;
   }
 }
-#mainNav{
+#mainNav.collapsed{
   height:4rem;
 }
 #mainNav button{

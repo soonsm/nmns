@@ -360,4 +360,9 @@
       window.open($(this).data("ios"), "_system");
     }
   });
+  $(".navbar-collapse").on("show.bs.collapse", function(){
+    $("#mainNav").removeClass("collapsed");
+  }).on("hidden.bs.collapse", function(){
+    $("#mainNav").addClass("collapsed");
+  });
 })(jQuery);
