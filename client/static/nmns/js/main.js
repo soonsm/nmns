@@ -2116,18 +2116,17 @@
     
     if(NMNS.notification === "GRANTED"){//native notification
       try{
-        var noti = new Notification(notification.title, {
+        new Notification(notification.title, {
           requireInteraction:true,
           lang:"ko-KR",
           body:notification.body,
           icon:"/nmns/img/favicon-32x32.png"
-        });
-        if(notification.data && notification.data.url){
-          noti.onclick = function(e){
-            e.preventDefault();
+        }).onclick = function(e){
+          e.preventDefault();
+          if(notification.data && notification.data.url){
             window.open(notification.data.url, "_blank");
           }
-        }
+        };
         return;
       }catch(exception){
         console.error(exception);
