@@ -29,7 +29,8 @@ module.exports = function (passport) {
         if (req.user) {
             let tips = require('./tips').getTips();
             let index = 7;
-            if(req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION){
+            let num = Math.random();
+            if(req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7){
                 tips.splice(7,1);
                 index = Math.floor(Math.random() * (tips.length));
             }
