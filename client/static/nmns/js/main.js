@@ -2105,7 +2105,7 @@
             });
             $("#notifications").height(height + "px");
           },
-          template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="'+notification.id+'"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+          template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="'+notification.id+'"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span><a href="{3}" target="{4}" data-notify="url"></a></div>'
         });
       }
     }
@@ -2116,12 +2116,18 @@
     
     if(NMNS.notification === "GRANTED"){//native notification
       try{
-        new Notification(notification.title, {
+        var noti = new Notification(notification.title, {
           requireInteraction:true,
           lang:"ko-KR",
           body:notification.body,
           icon:"/nmns/img/favicon-32x32.png"
         });
+        if(notification.data && notification.data.url){
+          noti.onclick = function(e){
+            e.preventDefault();
+            window.open(notification.data.url, "_blank");
+          }
+        }
         return;
       }catch(exception){
         console.error(exception);
@@ -2131,7 +2137,8 @@
     $.notify({
       icon: "fas fa-bell",
       title: notification.title,
-      message: notification.body
+      message: notification.body,
+      url: (notification.data && notification.data.url ? notification.data.url : "#")
     }, {});
     var height = 10;
     $("#notifications .alert").each(function(index, item){

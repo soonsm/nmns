@@ -636,6 +636,18 @@ button.moveDate:focus{
   display:inline-block;
   text-indent:5px;
 }
+.alert-minimalist button{
+  position:relative;
+  z-index:1;
+}
+.alert-minimalist a:not([href="#"]){
+  width:100%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:0;
+}
 /* taskModal */
 #taskModal{
   font-size:.9rem;
