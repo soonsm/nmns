@@ -2156,4 +2156,17 @@
     });
   }));
 //notification handling end
+//customer management start
+$(".customerMenuLink").off("touch click").on("touch click", function(e){
+  e.preventDefault();
+  $(".calendarMenu").addClass("d-none");
+  $(".customerMenu").css("display", "block");
+});
+$(".calendarMenuLink").off("touch click").on("touch click", function(e){
+  e.preventDefault();
+  $(".customerMenu").css("display", "none");
+  $(".calendarMenu").removeClass("d-none");
+  NMNS.calendar.render();
+});
+//customer management end
 })(jQuery);

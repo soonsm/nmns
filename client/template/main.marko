@@ -72,16 +72,22 @@
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
           <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal" aria-label="알림톡 정보"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
+        <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left customerMenuLink" href ="#" aria-label="고객관리"><i class="fas fa-user-cog fa-fw align-middle"></i> 고객관리</a>
+        </li>
+        <li class="nav-item mx-0 d-lg-none customerMenu" data-toggle="collapse" data-target="#navbarResponsive">
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left calendarMenuLink" href ="#" aria-label="예약시간표"><i class="far fa-calendar-alt fa-fw align-middle"></i> 예약시간표</a>
+        </li>
+        <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가"><i class="fas fa-plus fa-fw align-middle"></i> 노쇼 추가</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
+        <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기"><i class="fas fa-search fa-fw align-middle"></i> 노쇼 찾기</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
+        <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#"><i class="fas fa-calendar-plus fa-fw align-middle" aria-label="예약 추가"></i> 예약 추가</a>
         </li>
-        <li class="nav-item mx-0 d-block d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
+        <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
         </li>
         <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
@@ -112,7 +118,7 @@
             </div>
           </a>
         </li>
-        <li>
+        <li class="calendarMenu">
           <a href="#" class="addReservLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" aria-label="예약 추가">
             <div class="d-flex w-100 align-items-center">
               <span class="far fa-calendar-plus fa-fw mr-2"></span>
@@ -120,7 +126,7 @@
             </div>
           </a>
         </li>
-        <li>
+        <li class="calendarMenu">
           <a href="#" class="addTaskLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가">
             <div class="d-flex w-100 align-items-center">
               <span class="far fa-calendar-check fa-fw mr-2"></span>
@@ -128,7 +134,23 @@
             </div>
           </a>
         </li>
-        <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0 border-bottom-0 pb-1">
+        <li class="calendarMenu">
+          <a href="#" class="customerMenuLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" aria-label="고객관리">
+            <div class="d-flex w-100 align-items-center">
+              <span class="fas fa-user-cog fa-fw mr-2"></span>
+              <span class="menu-collapsed">고객관리</span>
+            </div>
+          </a>
+        </li>
+        <li class="customerMenu">
+          <a href="#" class="calendarMenuLink list-group-item list-group-item-action rounded-0 border-left-0 border-right-0 border-bottom-0" aria-label="예약시간표">
+            <div class="d-flex w-100 align-items-center">
+              <span class="far fa-calendar-alt fa-fw mr-2"></span>
+              <span class="menu-collapsed">예약시간표</span>
+            </div>
+          </a>
+        </li>
+        <li id="managerElements" class="list-group-item sidebar-separator-title rounded-0 border-left-0 border-right-0 border-bottom-0 pb-1 calendarMenu">
           <div class="border-bottom">
               <div class="lnbManagerItem">
                   <label>
@@ -161,7 +183,7 @@
       </ul>
     </div>
     <div id="mainContents" class="col px-0">
-      <div id="mainCalendarTools" class="text-center align-middle bg-light">
+      <div id="mainCalendarTools" class="text-center align-middle bg-light calendarMenu">
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전"><i class="fas fa-chevron-left"></i></button>
         <span id="renderRange" class="align-middle"></span>
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button" aria-label="다음"><i class="fas fa-chevron-right"></i></button>
@@ -179,7 +201,8 @@
           </div>
         </div>
       </div>
-      <div id="mainCalendar"></div>
+      <div id="mainCalendar" class="calendarMenu"></div>
+      <div id="mainCustomer" class="customerMenu">customer menu!</div>
     </div>
 
     <div id="infoModal" class="modal fade" tabIndex="-1" role="dialog" aria-labelledby="#infoModalTitle" aria-hidden="true">
@@ -598,7 +621,7 @@
         <!-- the main button icon visibile when the user is hovering/interacting with the menu -->
         <i class="mfb-component__main-icon--active fas fa-times"></i>
       </a>
-      <ul class="mfb-component__list">
+      <ul class="mfb-component__list calendarMenu">
         <!-- a child button, repeat as many times as needed -->
         <li>
           <a href="#" data-mfb-label="예약추가" class="mfb-component__button--child" aria-label="예약추가">
@@ -613,6 +636,24 @@
         <li>
           <a href="#" data-mfb-label="일정추가" class="mfb-component__button--child" aria-label="일정추가">
             <i class="mfb-component__child-icon fas fa-calendar-check addTaskLink" data-toggle="modal" data-target="#taskModal"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#" data-mfb-label="제안/문의" class="mfb-component__button--child" aria-label="제안/문의">
+            <i class="mfb-component__child-icon fas fa-pen" data-toggle="modal" data-target="#feedbackModal"></i>
+          </a>
+        </li>
+      </ul>
+      <ul class="mfb-component__list customerMenu">
+        <!-- a child button, repeat as many times as needed -->
+        <li>
+          <a href="#" data-mfb-label="고객추가" class="mfb-component__button--child" aria-label="고객추가">
+            <i class="mfb-component__child-icon fas fa-user-plus addCustomerLink"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#" data-mfb-label="노쇼추가" class="mfb-component__button--child" aria-label="노쇼추가">
+            <i class="mfb-component__child-icon fas fa-plus addNoShowLink" data-toggle="modal" data-target="#noShowModal"></i>
           </a>
         </li>
         <li>
