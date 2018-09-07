@@ -1793,10 +1793,14 @@
   }, undefined, true));
 
   NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e){
-    e.data.forEach(function(item){
-      showNotification(item);
-    });
-  }));
+    if(e.type === "push"){
+      e.data.forEach(function(item){
+        showNotification(item);
+      });
+    } else if(e.type === "alert") {
+      alert(e.data.body);
+    }
+  }, undefined, true));
 //websocket response end
 //Modal events start  
   $("#infoModal").on("hide.bs.modal", function(){
