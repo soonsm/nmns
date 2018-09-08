@@ -3,6 +3,7 @@
 const moment = require('moment');
 const util = require('./util');
 const request = require('request');
+const db = require('./webDb');
 
 const
     apiStoreId = process.env.ALRIMTALK_ID,
@@ -38,7 +39,7 @@ exports.sendReservationConfirm = async function (user, reservation) {
 
         logger.log(msg);
 
-        return await sendAlrimTalk({
+        let param = {
             phone: reservation.contact,
             callback: '01028904311',
             msg: msg,
@@ -50,7 +51,13 @@ exports.sendReservationConfirm = async function (user, reservation) {
             //url: `http://ec2-13-125-29-64.ap-northeast-2.compute.amazonaws.com/web_cancel/key=${reservation.id}&&email=${user.email}`,
             apiVersion: 1,
             client_id: apiStoreId
-        });
+        };
+
+        let result = await sendAlrimTalk(param);
+        param.sendResult = result;
+        param.reservation = reservation;
+        await db.addReservationConfirmAlrimTalkHist(user.email, param);
+        return result;
     }
 };
 
@@ -60,14 +67,20 @@ exports.sendReservationCancelNotify =async function (user, reservation){
 
     logger.log(msg);
 
-    return await sendAlrimTalk({
+    let param = {
         phone: user.alrimTalkInfo.callbackPhone,
         callback: '01028904311',
         msg: msg,
         template_code: 'A003',
         apiVersion: 1,
         client_id: apiStoreId
-    });
+    };
+
+    let result = await sendAlrimTalk(param);
+    param.sendResult = result;
+    param.reservation = reservation;
+    await db.addReservationCancelAlrimTalkHist(user.email, param);
+    return result;
 };
 
 

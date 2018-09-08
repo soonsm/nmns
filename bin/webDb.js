@@ -419,6 +419,34 @@ exports.addNewReservation = async function (email, newReservation) {
     });
 };
 
+exports.addReservationConfirmAlrimTalkHist = async function (email, alrimTalk) {
+    return await update({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set reservationConfirmAlrimTalkList = list_append(reservationConfirmAlrimTalkList, :alrimTalk)",
+        ExpressionAttributeValues: {
+            ":alrimTalk": [alrimTalk]
+        },
+        ReturnValues: "NONE"
+    });
+};
+
+exports.addReservationCancelAlrimTalkHist = async function (email, alrimTalk) {
+    return await update({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set cancelAlrimTalkList = list_append(cancelAlrimTalkList, :alrimTalk)",
+        ExpressionAttributeValues: {
+            ":alrimTalk": [alrimTalk]
+        },
+        ReturnValues: "NONE"
+    });
+};
+
 exports.updateReservation = async function (email, reservationList) {
     
     return await update({
