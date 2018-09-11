@@ -7,6 +7,18 @@ const moment = require('moment');
 const util = require('./util');
 const alrimTalk = require('./alrimTalkSender');
 
+let alertSendAlrimTalk = function(socket, success){
+    let message = '알림톡이 고객에게 전송되었습니다.';
+    if(success === false){
+        message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
+    }
+    socket.emit('message', {
+        type: 'alert',
+        data: {
+            body: message
+        }
+    });
+}
 
 exports.getReservationSummaryList = async function(data) {
 
@@ -168,7 +180,9 @@ exports.updateReservation = async function (newReservation) {
 
                     //알림톡 전송
                     if(needAlirmTalk){
-                        await alrimTalk.sendReservationConfirm(user, reservation);
+                        alertSendAlrimTalk(this.socket, await alrimTalk.sendReservationConfirm(user, reservation));
+
+
                     }
 
                     status = true;
@@ -228,7 +242,7 @@ exports.addReservation = async function (data) {
         }
 
         if (status && data.contact) {
-            await alrimTalk.sendReservationConfirm(user, reservation);
+            alertSendAlrimTalk(this.socket, await alrimTalk.sendReservationConfirm(user, reservation));
         }
     }
 
