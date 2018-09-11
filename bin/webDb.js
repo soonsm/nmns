@@ -185,7 +185,7 @@ exports.signUp = async function (newUser) {
 exports.getWebUser = async function (email) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
-        ProjectionExpression: "email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpDate, shopName, bizType, alrimTalkInfo, memberList",
+        ProjectionExpression: "pushList, email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpDate, shopName, bizType, alrimTalkInfo, memberList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
             "#key": "email"
@@ -414,6 +414,34 @@ exports.addNewReservation = async function (email, newReservation) {
         UpdateExpression: "set reservationList = list_append(reservationList, :newReservation)",
         ExpressionAttributeValues: {
             ":newReservation": [newReservation]
+        },
+        ReturnValues: "NONE"
+    });
+};
+
+exports.addReservationConfirmAlrimTalkHist = async function (email, alrimTalk) {
+    return await update({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set reservationConfirmAlrimTalkList = list_append(reservationConfirmAlrimTalkList, :alrimTalk)",
+        ExpressionAttributeValues: {
+            ":alrimTalk": [alrimTalk]
+        },
+        ReturnValues: "NONE"
+    });
+};
+
+exports.addReservationCancelAlrimTalkHist = async function (email, alrimTalk) {
+    return await update({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email,
+        },
+        UpdateExpression: "set cancelAlrimTalkList = list_append(cancelAlrimTalkList, :alrimTalk)",
+        ExpressionAttributeValues: {
+            ":alrimTalk": [alrimTalk]
         },
         ReturnValues: "NONE"
     });
