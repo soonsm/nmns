@@ -2154,9 +2154,12 @@
       x.setAttribute("id", "snackbar");
       document.getElementById("mainContents").appendChild(x);
     }
+    if(NMNS.snackbar){
+      clearTimeout(NMNS.snackbar);
+    }
     x.innerHTML = innerHtml;
     x.className = "show";
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    NMNS.snackbar = setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
   }
 //snackbar handling end
 })(jQuery);
