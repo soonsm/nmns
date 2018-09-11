@@ -213,9 +213,7 @@
             failCallback(res);
           }
         }
-      }else if(res && res.type === "push"){
-        console.log("server push!");
-        console.log(res);
+      }else if(res && (res.type === "push" || res.type === "alert")){
         if(successCallback){
           successCallback(res);
         }
