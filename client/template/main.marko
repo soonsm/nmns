@@ -309,9 +309,10 @@
                     <input type="checkbox" id="alrimUseYn">
                     <label for="alrimUseYn"></label>
                     <label for="alrimUseYn">알림톡 사용여부</label>
+                    <button id="alrimSwitchBtn" class="btn btn-sm btn-flat btn-secondary float-right">알림톡 사용내역</button>
                   </div>
                 </div>
-                <div>
+                <div class="alrimData">
                   <div id="alrimScreen"></div>
                   <div class="row mb-2">
                     <label for="alrimShopName" class="col-12 col-sm-4 col-form-label col-form-label-sm">매장이름</label>
@@ -347,6 +348,9 @@
                     <small>고객에게 보낸 알림톡 안에 별도의 안내문구로 추가됩니다. 이 시간 이후에도 예약취소 기능은 작동합니다. 비어있으면 별도의 안내문구가 추가되지 않습니다.
                     <br/>예) "- 예약취소는 <b>3시간</b> 전까지 가능합니다."라는 문구로 표기됩니다.</small>
                   </div>
+                </div>
+                <div class="alrimData d-none">
+                  알림톡 사용내역
                 </div>
               </div>
             </form>
