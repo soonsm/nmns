@@ -8,7 +8,7 @@ const util = require('./util');
 const alrimTalk = require('./alrimTalkSender');
 
 let alertSendAlrimTalk = function(socket, success){
-    let message = '고객에게 예약알림톡을 전송하였습니다.';
+    let message = '고객님께 예약알림을 전송하였습니다.';
     if(success === false){
         message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
     }
