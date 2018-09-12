@@ -759,6 +759,9 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 .flatpickr-mobile{
   overflow:hidden;
 }
+input.han, textarea.han{
+  ime-mode:active;
+}
 /* tipsModal */
 #tipsModal .modal-header #tipsTitle{
   display:initial;
