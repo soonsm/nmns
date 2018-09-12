@@ -1499,15 +1499,7 @@
     if(text && text.trim().length > 0){
       NMNS.socket.emit("submit feedback", {data:text.trim()});
       $("#feedbackModal").modal("hide");
-      var x = document.getElementById("snackbar");
-      if(!x){
-        x = document.createElement("div");
-        x.setAttribute("id", "snackbar");
-        x.innerHTML = "제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.";
-        document.getElementById("mainContents").appendChild(x);
-      }
-      x.className = "show";
-      setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+      showSnackBar("제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.");
       $("#feedbackBody").val("");
     }else{
       alert("제안/문의하실 내용을 입력해주세요!");
@@ -1796,7 +1788,7 @@
         showNotification(item);
       });
     } else if(e.type === "alert") {
-      alert(e.data.body);
+      showSnackBar(e.data.body);
     }
   }, undefined, true));
 //websocket response end
@@ -2154,4 +2146,20 @@
     });
   }));
 //notification handling end
+//snackbar handling start
+  function showSnackBar(innerHtml){
+    var x = document.getElementById("snackbar");
+    if(!x){
+      x = document.createElement("div");
+      x.setAttribute("id", "snackbar");
+      document.getElementById("mainContents").appendChild(x);
+    }
+    if(NMNS.snackbar){
+      clearTimeout(NMNS.snackbar);
+    }
+    x.innerHTML = innerHtml;
+    x.className = "show";
+    NMNS.snackbar = setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
+  }
+//snackbar handling end
 })(jQuery);
