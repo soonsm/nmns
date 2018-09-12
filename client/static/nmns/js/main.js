@@ -1912,12 +1912,16 @@
   $("#lnbLastMenu a").on("touch click", function(e){
     e.preventDefault();
   });
+  $("#alrimSwitchBtn").on("touch click", function(e){
+    e.preventDefault();
+    $("#alrimModal .alrimData").toggleClass("d-none");
+  });
   //Modal events end
   //mobile horizontal scroll handling
   // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
   function swipedetect(el, callback){
     var touchsurface = el, swipedir, startX, distX, 
-      threshold = 150, //required min distance traveled to be considered swipe
+      threshold = 100, //required min distance traveled to be considered swipe
       allowedTime = 300, // maximum time allowed to travel that distance
       elapsedTime,
       startTime,
