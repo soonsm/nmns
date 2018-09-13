@@ -784,15 +784,7 @@ exports.getCustomerList = async function(email, name, contact, managerName, opti
      */
 };
 
-exports.addCustomer = async function(email, id, name, contact, etc){
-    /**
-     * 없으면 추가하고
-     *
-     * 있으면 업데이트
-     */
-
-    //TODO
-
+exports.addCustomer = async function(email, id, name, contact, manager, etc){
     let user = exports.getWebUser(email);
     let memberList = user.memberList;
 
@@ -808,9 +800,10 @@ exports.addCustomer = async function(email, id, name, contact, etc){
     if(index){
         //member update
         let member = memberList[index];
-        member.name = name;
-        member.contact = contact;
-        member.etc = etc;
+        member.name = name || member.name;
+        member.contact = contact || member.contact;
+        member.manager = manager || member.manager;
+        member.etc = etc || member.etc;
 
         return await update({
             TableName: process.nmns.TABLE.WebSecheduler,
@@ -834,6 +827,7 @@ exports.addCustomer = async function(email, id, name, contact, etc){
                     id: id,
                     name: name,
                     contact: contact,
+                    manager: manager,
                     etc: etc
                 }]
             },

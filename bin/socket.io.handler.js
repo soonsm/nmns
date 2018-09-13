@@ -32,7 +32,7 @@ const GetShop = 'get info',
 const GetAlrimTalkInfo = 'get alrim',
     UpdateAlirmTalk = 'update alrim';
 const SendVerification = 'send verification';
-const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list";
+const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer';
 const SendNoti = 'message', GetNoti = 'get noti';
 const GetTips = 'get tips';
 const AadFeedback = "submit feedback";
@@ -175,6 +175,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetCustomerInfo, customerHandler.getCustomerInfo);
         addEvent(GetCustomerDetail, customerHandler.getCustomerDetail);
         addEvent(GetCustomerList, customerHandler.getCustomerList);
+        addEvent(AddCustomer, customerHandler.addCustomer);
 
         /**
          * AlrimTalk

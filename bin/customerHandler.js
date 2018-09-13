@@ -214,13 +214,13 @@ exports.addCustomer = async function(data){
     let id = data.id;
     let name = data.name;
     let contact = data.contact;
-    let etc = data.etc;
+
 
     if(!id && !name && !contact){
         status = false
-        message = '이름과 연락처는 필수입니다.';
+        message = '이름과 연락처 중 하나는 필수입니다.';
     }else{
-        await db.addCustomer(email, id, name, contact, etc);
+        await db.addCustomer(email, id, name, contact, data.manager, data.etc);
     }
 
     return {
