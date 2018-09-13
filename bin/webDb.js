@@ -518,8 +518,8 @@ exports.getReservationList = async function (email, start, end) {
         return [];
     } else {
         let list = items[0].reservationList;
+        let filteredList = [];
         if (start && end) {
-            let filteredList = [];
             for (var i = 0; i < list.length; i++) {
                 let reservation = list[i];
 
@@ -531,10 +531,16 @@ exports.getReservationList = async function (email, start, end) {
                     filteredList.push(reservation);
                 }
             }
-            return filteredList;
-        } else {
-            return list;
+            list = filteredList;
         }
+        filteredList = [];
+        for(let i=0; i<list.length; i++){
+            let reservation = list[i];
+            if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
+                filteredList.push(reservation);
+            }
+        }
+        return filteredList;
     }
 };
 
@@ -740,6 +746,101 @@ exports.deleteNoShow = async function (email, id) {
     }
 }
 
+exports.getCustomerList = async function(email, name, contact, managerName, option){
+
+    if(!name && !contact && !manager){
+        return null
+    }
+
+    /**
+     * 이름이랑 연락처, 메모를 memberList에서 가져와
+     * 1. contact
+     * 2. name
+     */
+
+    let user = exports.getWebUser(email);
+    let memeberList = user.memberList;
+
+    let filteredMemeberList = [];
+
+    for(let i = 0; i < memeberList.length; i++){
+        let memeber = memeberList[i];
+
+        if(member.contact === contact){
+
+        }
+    }
+
+    /**
+     * NoShow 조회
+     * 1. contact
+     * 2. name
+     */
+
+    /**
+     * 내 예약에서 해당 고객에 해당 하는 예약 가져오자
+     * 1. contact
+     * 2. name
+     */
+};
+
+exports.addCustomer = async function(email, id, name, contact, etc){
+    /**
+     * 없으면 추가하고
+     *
+     * 있으면 업데이트
+     */
+
+    //TODO
+
+    let user = exports.getWebUser(email);
+    let memberList = user.memberList;
+
+    let index = undefined;
+    for(let i=0; i<memberList.length; i++){
+        let member = memberList[i];
+        if(member.id === id){
+            index = i;
+            break;
+        }
+    }
+
+    if(index){
+        //member update
+        let member = memberList[index];
+        member.name = name;
+        member.contact = contact;
+        member.etc = etc;
+
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set memberList = :memberList",
+            ExpressionAttributeValues: memberList,
+            ReturnValues: "NONE"
+        });
+    }else{
+       //memeber add
+        return await update({
+            TableName: process.nmns.TABLE.WebSecheduler,
+            Key: {
+                'email': email,
+            },
+            UpdateExpression: "set memberList = list_append(memberList, :memberList)",
+            ExpressionAttributeValues: {
+                ":memberList": [{
+                    id: id,
+                    name: name,
+                    contact: contact,
+                    etc: etc
+                }]
+            },
+            ReturnValues: "NONE"
+        });
+    }
+};
 
 function newAlrimTalk(reservationKey, userKey, phone, date, time) {
     return {
