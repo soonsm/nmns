@@ -32,7 +32,7 @@ const GetShop = 'get info',
 const GetAlrimTalkInfo = 'get alrim',
     UpdateAlirmTalk = 'update alrim';
 const SendVerification = 'send verification';
-const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer';
+const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list";
 const SendNoti = 'message', GetNoti = 'get noti';
 const GetTips = 'get tips';
 const AadFeedback = "submit feedback";
@@ -173,7 +173,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * 고객정보
          */
         addEvent(GetCustomerInfo, customerHandler.getCustomerInfo);
-        addEvent(GetCustomerDetail, customerHandler.getCustomerDetail)
+        addEvent(GetCustomerDetail, customerHandler.getCustomerDetail);
+        addEvent(GetCustomerList, customerHandler.getCustomerList);
 
         /**
          * AlrimTalk
