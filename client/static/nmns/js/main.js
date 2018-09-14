@@ -910,7 +910,7 @@
       $(".noShowAddCase").off("touch click").on("touch click", function(){
         $(".noShowAddCase").not($(this)).removeClass("badge-danger").addClass("badge-light");
         if($(this).removeClass("badge-light").addClass("badge-danger").is("#noShowAddCaseEtc")){
-          $(this).next().removeAttr("disabled");
+          $(this).next().removeAttr("disabled").focus();
         }else{
           $(this).siblings("input").attr("disabled", "disabled");
         }
