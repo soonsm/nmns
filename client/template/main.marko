@@ -204,14 +204,14 @@
       <div id="mainCalendar" class="calendarMenu"></div>
       <div id="mainCustomerTools" class="customerMenu row col-12 text-center">
         <div class="customerSearchTypeLabel d-inline-block text-center">
-          <span id="customerSearchType" class="dropdown-toggle dropdown-toggle-up" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
+          <span id="customerSearchType" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
             <span class="badge badge-light">전체검색</span>
           </span>
           <div class="dropdown-menu text-center rounded-0" aria-labelledby="customerSearchType">
             <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">전체검색</span></a>
             <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">고객이름</span></a>
             <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">고객연락처</span></a>
-            <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">담당자별</span></a>
+            <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">담당자이름</span></a>
           </div>
         </div>
         <div id="customerSearchTarget" class="d-inline-block col-5">
@@ -219,13 +219,13 @@
           <button id="customerSearchManager" type="button" aria-describedby="customerSearchManagerIcon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="customerSearchManager" role="menu"></div>
         </div>
-        <button id="customerSearchBtn" type="button" aria-label="고객 조회" class="btn btn-sm btn-flat btn-primary">
+        <button id="customerSearchBtn" type="button" aria-label="고객 검색" class="btn btn-sm btn-flat btn-primary">
           <i class="fas fa-search d-inline-flex d-sm-none"></i>
-          <span class="d-none d-sm-inline-flex">조회</span>
+          <span class="d-none d-sm-inline-flex">검색</span>
         </button>
         <div class="customerSortLabel d-inline-block text-center pl-3">
-          <span id="customerSort" class="dropdown-toggle dropdown-toggle-up" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
-            <span>이름순</span>
+          <span id="customerSort" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
+            <span>이름순</span>&nbsp;
             <i class="fas fa-sort"></i>
           </span>
           <div class="dropdown-menu text-center rounded-0" aria-labelledby="customerSort">
@@ -236,6 +236,7 @@
         </div>
       </div>
       <div id="mainCustomer" class="customerMenu">
+        <div id="mainCustomerList"></div>
       </div>
     </div>
 
