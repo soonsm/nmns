@@ -119,3 +119,114 @@ exports.getCustomerInfo = async function (data) {
         message: message
     };
 };
+
+exports.getCustomerList = async function(data){
+    let email = this.email;
+    let status = true,
+        message = '',
+        resultData = {};
+    /**
+     * name, contact 둘 다 optional
+     *
+     * contact 먼저 있으면 조회
+     *
+     * name이 있으면 contact 일치하고 name도 일치하는 애로
+     *
+     * contact없으면 name으로만 조회
+     */
+
+    /**
+     * 사전 검정
+     * name, contact 둘 다 없으면 에러
+     */
+
+    let type = data.type;
+    let target = data.target;
+
+    if(!type){
+        status = false;
+        message = '검색 타입을 지정하세요.';
+    }
+
+
+    resultData = [];
+    resultData.push({
+        name: '김승민',
+        contact: '01028904311',
+        reservCount: 12,
+        totalNoShow: 34,
+        myNoShow: 30,
+        etc: '외로움',
+        history: [
+            {
+                data: '201809021330',
+                managerName: '김스탭',
+                managerColor: '#009688',
+                contents: '브라질리언 왁싱',
+                status: 'RESERVED'
+            },
+            {
+                data: '201809011330',
+                managerName: '정스탭',
+                managerColor: '#009688',
+                contents: '삭발',
+                status: 'RESERVED'
+            }
+        ]
+    },{
+        name: '정태호',
+        contact: '01011112222',
+        reservCount: 3,
+        totalNoShow: 1,
+        myNoShow: 1,
+        etc: '심심함',
+        history: [
+            {
+                data: '201808231330',
+                managerName: '김스탭',
+                managerColor: '#009688',
+                contents: '쏙 젤',
+                status: 'RESERVED'
+            },
+            {
+                data: '201808221330',
+                managerName: '정스탭',
+                managerColor: '#009688',
+                contents: '손톱 다 뽑기',
+                status: 'RESERVED'
+            }
+        ]
+    });
+
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    }
+};
+
+exports.addCustomer = async function(data){
+    let email = this.email;
+    let status = true,
+        message = '',
+        resultData = {};
+    let id = data.id;
+    let name = data.name;
+    let contact = data.contact;
+
+
+    if(!id && !name && !contact){
+        status = false
+        message = '이름과 연락처 중 하나는 필수입니다.';
+    }else{
+        await db.addCustomer(email, id, name, contact, data.manager, data.etc);
+    }
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    }
+
+};

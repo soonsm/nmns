@@ -762,6 +762,9 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 .customerMenu{
  display:none; 
 }
+input.han, textarea.han{
+  ime-mode:active;
+}
 /* tipsModal */
 #tipsModal .modal-header #tipsTitle{
   display:initial;
@@ -808,8 +811,8 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 }
 #snackbar.show {
   visibility: visible;
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
+  animation: fadein 0.5s, fadeout 0.5s 4.5s;
 }
 @-webkit-keyframes fadein {
   from {bottom: 0; opacity: 0;} 
