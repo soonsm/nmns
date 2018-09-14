@@ -252,7 +252,7 @@
         body:"인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
       });
     }
-    if(NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.7)){
+    if(NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5)){
       $("#tipsModal").modal("show");
     }
   }));
@@ -2150,6 +2150,7 @@
 $(".customerMenuLink").off("touch click").on("touch click", function(e){
   e.preventDefault();
   $(".calendarMenu").addClass("d-none");
+  NMNS.socket.emit("get customer list", {"type":"all"});
   $(".customerMenu").css("display", "block");
 });
 $(".calendarMenuLink").off("touch click").on("touch click", function(e){
@@ -2158,6 +2159,10 @@ $(".calendarMenuLink").off("touch click").on("touch click", function(e){
   $(".calendarMenu").removeClass("d-none");
   NMNS.calendar.render();
 });
+NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e){
+  NMNS.customerList = e.data;
+  console.log(e);
+}));
 //customer management end
 //snackbar handling start
   function showSnackBar(innerHtml){

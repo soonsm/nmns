@@ -31,7 +31,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-p
   right:0.5rem;
   height:50px;
 }
-#mainCalendarTools{
+#mainCalendarTools, #mainCustomerTools{
   min-height:50px;
   line-height:50px;
 }
@@ -765,6 +765,17 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 input.han, textarea.han{
   ime-mode:active;
 }
+/*
+input[type="text"]:not(.border), .input-group-text:not(.fa-rotate-90), button.form-control{
+  border-top:0;
+  border-left:0;
+  border-right:0;
+}
+.input-group-text.fa-rotate-90{
+  border-top:0;
+  border-left:0;
+  border-bottom:0;
+}*/
 /* tipsModal */
 #tipsModal .modal-header #tipsTitle{
   display:initial;
@@ -829,4 +840,18 @@ input.han, textarea.han{
 @keyframes fadeout {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
+}
+/* customer menu */
+#mainCustomerTools #customerSearchManager{
+  display:none;
+}
+#mainCustomerTools #customerSearchType .badge{
+  vertical-align:text-top;
+}
+#mainCustomerTools .dropdown-item{
+  height:30px;
+  line-height:15px;
+}
+#mainCustomerTools #customerSort:after{
+  display:none;
 }
