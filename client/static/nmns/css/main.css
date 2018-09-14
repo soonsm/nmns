@@ -287,7 +287,7 @@ button.moveDate:focus{
   line-height: 1.7;
 }
 #creationPopupManager{
-  border: .05rem solid #ced4da;
+  border-bottom: .05rem solid #ced4da;
 }
 #creationPopupManager:focus{
   box-shadow:none;
@@ -765,7 +765,6 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 input.han, textarea.han{
   ime-mode:active;
 }
-/*
 input[type="text"]:not(.border), .input-group-text:not(.fa-rotate-90), button.form-control{
   border-top:0;
   border-left:0;
@@ -775,7 +774,10 @@ input[type="text"]:not(.border), .input-group-text:not(.fa-rotate-90), button.fo
   border-top:0;
   border-left:0;
   border-bottom:0;
-}*/
+}
+.form-control:disabled, .form-control[readonly]{
+  background-color:#fff;
+}
 /* tipsModal */
 #tipsModal .modal-header #tipsTitle{
   display:initial;
