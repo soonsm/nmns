@@ -768,7 +768,7 @@ input.han, textarea.han{
 .dropdown-menu{
   font-size:.9rem;
 }
-input[type="text"]:not(.border), input[type="password"]:not(.border), .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
+input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.border), .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
   border-top:0;
   border-left:0;
   border-right:0;
