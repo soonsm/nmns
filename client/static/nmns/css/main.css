@@ -765,6 +765,9 @@ input[name='name'], input[name='title'], input[name='contents'], input[name='etc
 input.han, textarea.han{
   ime-mode:active;
 }
+.dropdown-menu{
+  font-size:.9rem;
+}
 input[type="text"]:not(.border), input[type="password"]:not(.border), .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
   border-top:0;
   border-left:0;
@@ -844,11 +847,22 @@ input[type="text"]:not(.border), input[type="password"]:not(.border), .input-gro
   to {bottom: 0; opacity: 0;}
 }
 /* customer menu */
+#mainCustomerTools{
+  font-size:.9rem;
+}
 #mainCustomerTools #customerSearchManager{
   display:none;
 }
 #mainCustomerTools #customerSearchType .badge{
   vertical-align:text-top;
+}
+#mainCustomerTools #customerSearchType + .dropdown-menu{
+  font-size:1rem;
+  min-width:5rem;
+}
+#mainCustomerTools .dropdown-item{
+  padding-left:.5rem;
+  padding-right:.5rem;
 }
 #mainCustomerTools .dropdown-item{
   height:30px;
@@ -856,4 +870,10 @@ input[type="text"]:not(.border), input[type="password"]:not(.border), .input-gro
 }
 #mainCustomerTools #customerSort:after{
   display:none;
+}
+#mainCustomerTools #customerSearchType, #mainCustomerTools #customerSort{
+  cursor:pointer;
+}
+#mainCustomer{
+  height:1080px;
 }
