@@ -124,21 +124,7 @@ exports.getCustomerList = async function(data){
     let email = this.email;
     let status = true,
         message = '',
-        resultData = {};
-    /**
-     * name, contact 둘 다 optional
-     *
-     * contact 먼저 있으면 조회
-     *
-     * name이 있으면 contact 일치하고 name도 일치하는 애로
-     *
-     * contact없으면 name으로만 조회
-     */
-
-    /**
-     * 사전 검정
-     * name, contact 둘 다 없으면 에러
-     */
+        resultData = [];
 
     let type = data.type;
     let target = data.target;
@@ -146,57 +132,79 @@ exports.getCustomerList = async function(data){
     if(!type){
         status = false;
         message = '검색 타입을 지정하세요.';
-    }
-
-    let user = await db.getWebUser(email);
-    let memberList = user.memberList;
-    if(target && target.trim().length > 0){
-        let filteredList = [];
-        for(let i=0; i< memberList.length; i++){
-            let member = memberList[i];
-            if((type === 'name' || type === 'all') && member.name && member.name.contains(target)){
-                filteredList.push(member);
-            }
-            if((type === 'contact' || type === 'all') && member.contact && member.contact.contains(target)){
-                filteredList.push(member);
-            }
-            if((type === 'manager' || type === 'all') && member.manager && member.manager === target){
-                filteredList.push(member);
-            }
-        }
-        memberList = filteredList;
-    }
-
-    for(let i=0;i<memberList.length; i++){
-        let member = memberList[i];
-        member.myNoShow = 0;
-        member.totalNoShow = 0;
-        if(member.contact){
-            let totalNoShow = await db.getNoShow(data.contact);
-            if(totalNoShow){
-                member.totalNoShow = totalNoShow.noShowCount;
-            }
-            let myNoShowList = await db.getMyNoShow(email);
-            let key = sha256(member.contact);
-            let myNoShowCount = 0;
-            for (let i = 0; i < myNoShowList.length; i++) {
-                let noShow = myNoShowList[i];
-                if (noShow.noShowKey === key) {
-                    myNoShowCount++;
+    }else{
+        let user = await db.getWebUser(email);
+        let memberList = user.memberList;
+        if(target && target.trim().length > 0){
+            let filteredList = [];
+            for(let i=0; i< memberList.length; i++){
+                let member = memberList[i];
+                if((type === 'name' || type === 'all') && member.name && member.name.contains(target)){
+                    filteredList.push(member);
+                }
+                if((type === 'contact' || type === 'all') && member.contact && member.contact.contains(target)){
+                    filteredList.push(member);
+                }
+                if((type === 'manager' || type === 'all') && member.manager && member.manager === target){
+                    filteredList.push(member);
                 }
             }
-            member.myNoShow = myNoShowCount;
+            memberList = filteredList;
         }
+
+        for(let i=0;i<memberList.length; i++){
+            let member = memberList[i];
+            member.myNoShow = 0;
+            member.totalNoShow = 0;
+            if(member.contact){
+                let totalNoShow = await db.getNoShow(member.contact);
+                if(totalNoShow){
+                    member.totalNoShow = totalNoShow.noShowCount;
+                }
+                let myNoShowList = await db.getMyNoShow(email);
+                let key = sha256(member.contact);
+                let myNoShowCount = 0;
+                for (let i = 0; i < myNoShowList.length; i++) {
+                    let noShow = myNoShowList[i];
+                    if (noShow.noShowKey === key) {
+                        myNoShowCount++;
+                    }
+                }
+                member.myNoShow = myNoShowCount;
+            }
+
+            let reservationList = await db.getReservationList(email);
+            let managerList = await db.getStaffList(email);
+            member.history = [];
+            await reservationList.forEach(async function(reservation){
+                if(reservation.memberId === member.id){
+
+                    let manager = {
+                        managerName: undefined,
+                        managerColor: undefined
+                    };
+
+                    for(let j=0; j<managerList.length;j++){
+                        let staff = managerList[j];
+                        if(staff.id === reservation.manager){
+                            manager.managerName = staff.name;
+                            manager.managerColor = staff.color;
+                            break;
+                        }
+                    }
+
+                    member.history.push({
+                        date: reservation.start,
+                        contents: reservation.etc,
+                        status: reservation.status,
+                        managerName: manager.managerName,
+                        managerColor: manager.managerColor
+                    });
+                }
+            });
+        }
+        resultData = memberList;
     }
-
-    //noshow 조회
-
-    //history 조회
-
-
-    resultData = [];
-    resultData.push(getDummy());
-
 
     return {
         status: status,
