@@ -20,6 +20,10 @@ let alertSendAlrimTalk = function(socket, success){
     });
 }
 
+let newCustomerId = function(email){
+    return email + moment().format('YYYYMMDDhhmmss.SSS') + Math.random() * 100;
+}
+
 exports.getReservationSummaryList = async function(data) {
 
     let email = this.email;
@@ -123,19 +127,17 @@ exports.updateReservation = async function (newReservation) {
             let newMember = true;
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
-                if (newReservation.contact === member.contact) {
+                if (newReservation.contact === member.contact && newReservation.name === member.name) {
                     newMember = false;
-                    if (newReservation.name && newReservation.name !== member.name) {
-                        member.name = newReservation.name;
-                        memberList[i] = member;
-                        await db.updateWebUser(email, {memberList: memberList});
-                    }
+                    newReservation.memberId = member.memberId;
                     break;
                 }
             }
             if (newMember) {
-                memberList.push({contact: newReservation.contact, name: newReservation.name});
+                let memberId = newCustomerId(email);
+                memberList.push({id: memberId, contact: newReservation.contact, name: newReservation.name});
                 await db.updateWebUser(email, {memberList: memberList});
+                newReservation.memberId = memberId;
             }
         }
 
@@ -179,10 +181,8 @@ exports.updateReservation = async function (newReservation) {
                     }
 
                     //알림톡 전송
-                    if(needAlirmTalk){
+                    if(needAlirmTalk && user.alrimTalkInfo.useYn === 'Y'){
                         alertSendAlrimTalk(this.socket, await alrimTalk.sendReservationConfirm(user, reservation));
-
-
                     }
 
                     status = true;
@@ -219,19 +219,17 @@ exports.addReservation = async function (data) {
             let newMember = true;
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
-                if (data.contact === member.contact) {
+                if(data.contact === member.contact && data.name === member.name){
+                    data.memberId = member.id;
                     newMember = false;
-                    if (data.name && data.name !== member.name) {
-                        member.name = data.name;
-                        memberList[i] = member;
-                        await db.updateWebUser(email, {memberList: memberList});
-                    }
                     break;
                 }
             }
-            if (newMember) {
-                memberList.push({contact: data.contact, name: data.name});
+            if (newMember && data.contact && data.name) {
+                let memberId = newCustomerId(email);
+                memberList.push({id: memberId, contact: data.contact, name: data.name});
                 await db.updateWebUser(email, {memberList: memberList});
+                data.memberId = memberId;
             }
         }
 
@@ -241,7 +239,7 @@ exports.addReservation = async function (data) {
             message = '시스템 오류입니다.(DB Update Error';
         }
 
-        if (status && data.contact) {
+        if (status && data.contact && user.alrimTalkInfo.useYn === 'Y') {
             alertSendAlrimTalk(this.socket, await alrimTalk.sendReservationConfirm(user, reservation));
         }
     }
