@@ -882,7 +882,8 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   background-color: #b2dfdb !important;
 }
 #mainCustomer{
-  height:1080px;
+  min-height:800px;
+  max-height:1080px;
 }
 #mainCustomerList .card{
   border-left:0;
