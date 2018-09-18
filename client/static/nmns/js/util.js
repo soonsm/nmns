@@ -174,3 +174,29 @@ if (!Object.keys) {
     };
   }());
 }
+
+//common websocket response wrapper
+var socketResponse = function(requestName, successCallback, failCallback, silent){
+  return function(res){
+    if(res && res.type === "response"){
+      if(res.status){//success
+        if(successCallback){
+          successCallback(res);
+        }
+      }else{//fail
+        if(!silent){
+          alert(requestName + "에 실패했습니다." + (res.message?"(" + res.message + ")":""));
+        }
+        if(failCallback){
+          failCallback(res);
+        }
+      }
+    }else if(res && (res.type === "push" || res.type === "alert")){
+      if(successCallback){
+        successCallback(res);
+      }
+    }else{
+      console.error(res);
+    }
+  };
+};
