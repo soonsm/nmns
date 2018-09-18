@@ -671,7 +671,7 @@
     </div>
 
     <div id="customerModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content rounded-0">
           <div class="modal-header">
             <span>
@@ -682,12 +682,53 @@
             </button>
           </div>
           <div class="modal-body">
-            <textarea id="feedbackBody" placeholder="제안 혹은 문의내용을 적어주세요 :)" class="han"></textarea>
-            <p class="mb-0"><small>No More No Show를 이용하시다가 불편하시거나 바라는 점이 있으신가요?<br/>원하시는 점을 적어주시면 최대한 빨리 확인하여 이메일로 답변드리겠습니다!</small></p>
+            <div class="form-group">
+              <div class="row mb-2">
+                <label for="customerName" class="col-12 col-sm-3 col-form-label col-form-label-sm">이름</label>
+                <div class="col-12 col-sm-9 py-1 px-sm-0">
+                  <input id="customerName" type="text" placeholder="이름" class="form-control form-control-sm rounded-0"/>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="customerContact" class="col-12 col-sm-3 col-form-label col-form-label-sm">연락처</label>
+                <div class="col-12 col-sm-9 pl-sm-0">
+                  <input id="customerContact" type="text" placeholder="연락처" class="form-control form-control-sm rounded-0"/>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="customerEtc" class="col-12 col-sm-3 col-form-label col-form-label-sm">메모</label>
+                <div class="col-12 col-sm-9 pl-sm-0">
+                  <textarea id="customerEtc" type="text" placeholder="고객에 대한 메모" class="form-control form-control-sm rounded-0 han"></textarea>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="customerManager" class="col-12 col-sm-3 col-form-label col-form-label-sm">담당자</label>
+                <div class="col-12 col-sm-9 pl-sm-0">
+                  <span class="tui-full-calendar-icon tui-full-calendar-calendar-dot"></span>
+                  <span class="customerManager"></span>
+                  <p class="mb-0"><small>담당자 정보는 고객의 마지막 예약의 담당자로 자동으로 표시됩니다.</small></p>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label for="customerNoShow" class="col-12 col-sm-3 col-form-label col-form-label-sm">노쇼내역</label>
+                <div class="col-12 col-sm-9 pl-sm-0">
+                  <span id="customerNoShow"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="customerHistory" class="col-form-label col-form-label-sm">예약내역</label>
+                <div id="customerHistory" class="col-12 col-sm-8 pr-4"></div>
+                <div class="ml-3 px-0 btn addHistory">
+                  <p class="text-secondary align-top mb-0">
+                    <i class="fas fa-plus" aria-label="예약 추가하기"></i> 예약 추가하기
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
-            <button type="button" id="submitCustomer" class="btn btn-primary btn-flat d-none" aria-label="저장">저장</button>
+            <button type="button" id="submitCustomer" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
           </div>
         </div>
       </div>
