@@ -195,7 +195,7 @@ exports.getCustomerList = async function(data){
 
                     member.history.push({
                         date: reservation.start,
-                        contents: reservation.etc,
+                        contents: reservation.contents,
                         status: reservation.status,
                         managerName: manager.managerName,
                         managerColor: manager.managerColor
