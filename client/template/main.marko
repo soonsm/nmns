@@ -202,40 +202,63 @@
         </div>
       </div>
       <div id="mainCalendar" class="calendarMenu"></div>
-      <div id="mainCustomerTools" class="customerMenu row col-12 text-center">
-        <div class="customerSearchTypeLabel d-inline-block text-center">
-          <span id="customerSearchType" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
-            <span class="badge badge-light">전체검색</span>
-          </span>
-          <div class="dropdown-menu text-center rounded-0" aria-labelledby="customerSearchType">
-            <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">전체검색</span></a>
-            <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">고객이름</span></a>
-            <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">고객연락처</span></a>
-            <a href="#" class="dropdown-item" data-badge="light"><span class="badge badge-light">담당자이름</span></a>
+      <div id="mainCustomerTools" class="customerMenu col-12 text-center">
+        <h4 class="text-left my-3">고객관리</h4>
+        <div id="customerAddForm" class="row col-12 col-sm-10 mx-auto border py-2 px-3 mt-2">
+          <div class="text-left col-12 my-2">
+            <b>신규 고객등록</b>
+          </div>
+          <div class="form-group col-12 mb-2 d-inline-flex">
+            <label for="customerAddName" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">이름</label>
+            <div class="col-9 col-sm-5 input-group input-group-sm">
+              <div class="d-inline-block input-group-prepend d-sm-none">
+                <i id="customerAddNameIcon" class="input-group-text fas fa-user" title="고객 이름"></i>
+              </div>
+              <input type="text" class="form-control han" id="customerAddName" name="name" placeholder="고객 이름" aria-describedby="customerAddNameIcon">
+            </div>
+            <label for="customerAddContact" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm compactLabel">연락처</label>
+            <div class="col-9 col-sm-5 input-group input-group-sm pr-0">
+              <div class="d-inline-block input-group-prepend d-sm-none">
+                <i id="customerAddContactIcon" class="input-group-text fas fa-phone fa-rotate-90" title="고객 연락처"></i>
+              </div>
+              <input type="text" class="form-control" id="customerAddContact" name="contact" aria-describedby="customerAddContactIcon" placeholder="고객 연락처">
+            </div>
+          </div>
+          <div class="form-group col-12 mb-2 d-inline-flex">
+            <label for="customerAddEtc" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">메모</label>
+            <div class="col-sm-10 input-group input-group-sm">
+              <div class="d-inline-block input-group-prepend d-sm-none">
+                <i id="customerAddEtcIcon" class="input-group-text far fa-bookmark" title="고객 메모"></i>
+              </div>
+              <input type="text" class="form-control han" id="customerAddEtc" name="etc" aria-describedby="customerAddEtcIcon" placeholder="고객 메모">
+            </div>
+            <button type="button" class="col-1 btn btn-sm btn-primary btn-flat">등록</button>
           </div>
         </div>
-        <div id="customerSearchTarget" class="d-inline-block col-5">
-          <input type="text" class="form-control form-control-sm rounded-0" placeholder="전체검색에서는 이름, 연락처, 담당자이름으로 모두 검색합니다."/>
-          <button id="customerSearchManager" type="button" aria-describedby="customerSearchManagerIcon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="customerSearchManager" role="menu"></div>
-        </div>
-        <button id="customerSearchBtn" type="button" aria-label="고객 검색" class="btn btn-sm btn-flat btn-primary">
-          <i class="fas fa-search d-inline-flex d-sm-none"></i>
-          <span class="d-none d-sm-inline-flex">검색</span>
-        </button>
-        <div class="customerSortLabel d-inline-block text-center pl-3">
-          <span id="customerSort" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
-            <span>이름순</span>&nbsp;
-            <i class="fas fa-sort"></i>
-          </span>
-          <div class="dropdown-menu text-center rounded-0" aria-labelledby="customerSort">
-            <a href="#" class="dropdown-item"><span>이름순</span></a>
-            <a href="#" class="dropdown-item"><span>예약일순</span></a>
-            <a href="#" class="dropdown-item"><span>담당자순</span></a>
+        <div class="row col-12 col-sm-10 mx-auto mt-3 mb-2 px-0">
+          <div class="col-auto mr-auto px-0">
+            <div class="btn-group btn-group-sm d-none d-sm-inline-flex" role="group" aria-label="고객 정렬">
+              <button type="button" class="btn btn-flat customerSortType active" data-action="sort-name" aria-label="이름순">이름순</button>
+              <button type="button" class="btn btn-flat customerSortType" data-action="sort-date" aria-label="예약일순">예약일순</button>
+              <button type="button" class="btn btn-flat customerSortType" data-action="sort-manager" aria-label="담당자순">담당자순</button>
+            </div>
+            <button type="button" id="customerSort" class="btn btn-light btn-flat border d-inline-flex d-sm-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="고객 정렬하기"><span>이름순</span>&nbsp;<i class="fas fa-sort"></i></button>
+            <div class="dropdown-menu text-center" aria-labelledby="customerSort">
+              <a class="dropdown-item px-0 customerSortType active" href="#" data-action="sort-name" aria-label="이름순">이름순</a>
+              <a class="dropdown-item px-0 customerSortType" href="#" data-action="sort-date" aria-label="예약일순">예약일순</a>
+              <a class="dropdown-item px-0 customerSortType" href="#" data-action="sort-manager" aria-label="담당자순">담당자순</a>
+            </div>
+          </div>
+          <div id="customerSearch" class="input-group input-group-sm col-4 pr-0">
+            <input type="text" class="form-control form-control-sm rounded-0" id="customserSearchTarget" placeholder="고객 이름, 연락처, 담당자이름" aria-describedby="customerSearchBtn">
+            <div id="customerSearchBtn" class="input-group-append rounded-0 btn btn-sm btn-flat btn-secondary">
+              <i class="fas fa-search d-inline-flex d-sm-none"></i>
+              <span class="d-none d-sm-inline-flex">검색</span>
+            </div>
           </div>
         </div>
       </div>
-      <div id="mainCustomer" class="customerMenu">
+      <div id="mainCustomer" class="customerMenu col-12">
         <div id="mainCustomerList"></div>
       </div>
     </div>

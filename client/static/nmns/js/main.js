@@ -2159,8 +2159,25 @@ $(".calendarMenuLink").off("touch click").on("touch click", function(e){
   $(".calendarMenu").removeClass("d-none");
   NMNS.calendar.render();
 });
+function drawCustomerList(){
+  var html = "";
+  if(NMNS.customerList && NMNS.customerList.length > 0){
+    NMNS.customerList.forEach(function(customer, index){
+      html += '<div class="card row col-12 col-sm-10" style="border-left-color:'+(customer.history && customer.history.length>0?customer.history[0].managerColor : '#b2dfdb')+'"><div class="card-body"><h5 class="card-title">'+(!customer.name || customer.name === ''? '(이름없음)':customer.name)
+            +(!customer.contact || customer.contact === ''? '' : '<a href="tel:'+customer.contact+'"><small class="card-subtitle text-muted"> '+dashContact(customer.contact)+'</small></a>')
+            +'</h5><div class="col-12 row px-0"><div class="col-4 border-right"><small class="text-muted">담당자</small><br/>'+(customer.history && customer.history.length>0?'<span class="" style="background-color:'+customer.history[0].managerColor+'"></span><span>'+customer.history[0].managerName+'</span>':'')+'</div><div class="col-8"><small class="text-muted">메모</small><br/><span>'+(customer.etc || '')+'</span></div></div>'
+            +'</div><small class="customerSubInfo text-muted">'+(customer.reservCount > 0?'총 '+customer.reservCount+'회 방문':'')+ (customer.history && customer.history.length>0?(customer.reservCount>0?' | ':'') + '마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD"):'')+'</small></div></div>';
+      if(index > 0 && index % 50 == 0){
+        $("#mainCustomerList").append(html);
+        html = "";
+      }
+    });
+    $("#mainCustomerList").append(html);
+  }
+}
 NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e){
   NMNS.customerList = e.data;
+  drawCustomerList();
   console.log(e);
 }));
 //customer management end
