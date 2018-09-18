@@ -203,21 +203,22 @@
       </div>
       <div id="mainCalendar" class="calendarMenu"></div>
       <div id="mainCustomerTools" class="customerMenu col-12 text-center">
-        <h4 class="text-left my-3">고객관리</h4>
+        <h4 class="text-left mt-4 mb-3 ml-3">고객관리</h4>
+        <p class="col-12 col-sm-10 text-right text-muted mx-auto mb-0 px-0">총 <b id="customerCount">0</b>명의 고객이 등록되어 있습니다.</p>
         <div id="customerAddForm" class="row col-12 col-sm-10 mx-auto border py-2 px-3 mt-2">
           <div class="text-left col-12 my-2">
             <b>신규 고객등록</b>
           </div>
-          <div class="form-group col-12 mb-2 d-inline-flex">
+          <div class="form-group col-12 mb-0 d-sm-inline-flex d-inline-block">
             <label for="customerAddName" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">이름</label>
-            <div class="col-9 col-sm-5 input-group input-group-sm">
+            <div class="col-12 col-sm-5 input-group input-group-sm px-0 mb-2 px-sm-2">
               <div class="d-inline-block input-group-prepend d-sm-none">
                 <i id="customerAddNameIcon" class="input-group-text fas fa-user" title="고객 이름"></i>
               </div>
               <input type="text" class="form-control han" id="customerAddName" name="name" placeholder="고객 이름" aria-describedby="customerAddNameIcon">
             </div>
             <label for="customerAddContact" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm compactLabel">연락처</label>
-            <div class="col-9 col-sm-5 input-group input-group-sm pr-0">
+            <div class="col-12 col-sm-5 input-group input-group-sm px-0 mb-2 pl-sm-2">
               <div class="d-inline-block input-group-prepend d-sm-none">
                 <i id="customerAddContactIcon" class="input-group-text fas fa-phone fa-rotate-90" title="고객 연락처"></i>
               </div>
@@ -226,13 +227,13 @@
           </div>
           <div class="form-group col-12 mb-2 d-inline-flex">
             <label for="customerAddEtc" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">메모</label>
-            <div class="col-sm-10 input-group input-group-sm">
+            <div class="col input-group input-group-sm pl-0 pr-2 pl-sm-2">
               <div class="d-inline-block input-group-prepend d-sm-none">
                 <i id="customerAddEtcIcon" class="input-group-text far fa-bookmark" title="고객 메모"></i>
               </div>
               <input type="text" class="form-control han" id="customerAddEtc" name="etc" aria-describedby="customerAddEtcIcon" placeholder="고객 메모">
             </div>
-            <button type="button" class="col-1 btn btn-sm btn-primary btn-flat">등록</button>
+            <button type="button" class="btn btn-sm btn-primary btn-flat">등록</button>
           </div>
         </div>
         <div class="row col-12 col-sm-10 mx-auto mt-3 mb-2 px-0">
@@ -242,7 +243,7 @@
               <button type="button" class="btn btn-flat customerSortType" data-action="sort-date" aria-label="예약일순">예약일순</button>
               <button type="button" class="btn btn-flat customerSortType" data-action="sort-manager" aria-label="담당자순">담당자순</button>
             </div>
-            <button type="button" id="customerSort" class="btn btn-light btn-flat border d-inline-flex d-sm-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="고객 정렬하기"><span>이름순</span>&nbsp;<i class="fas fa-sort"></i></button>
+            <button type="button" id="customerSort" class="btn btn-sm btn-light btn-flat border d-inline-block d-sm-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="고객 정렬하기"><span>이름순</span>&nbsp;<i class="fas fa-sort"></i></button>
             <div class="dropdown-menu text-center" aria-labelledby="customerSort">
               <a class="dropdown-item px-0 customerSortType active" href="#" data-action="sort-name" aria-label="이름순">이름순</a>
               <a class="dropdown-item px-0 customerSortType" href="#" data-action="sort-date" aria-label="예약일순">예약일순</a>
@@ -251,7 +252,7 @@
           </div>
           <div id="customerSearch" class="input-group input-group-sm col-4 pr-0">
             <input type="text" class="form-control form-control-sm rounded-0" id="customserSearchTarget" placeholder="고객 이름, 연락처, 담당자이름" aria-describedby="customerSearchBtn">
-            <div id="customerSearchBtn" class="input-group-append rounded-0 btn btn-sm btn-flat btn-secondary">
+            <div id="customerSearchBtn" class="input-group-append rounded-0 btn btn-sm btn-flat btn-secondary d-inline-block">
               <i class="fas fa-search d-inline-flex d-sm-none"></i>
               <span class="d-none d-sm-inline-flex">검색</span>
             </div>
