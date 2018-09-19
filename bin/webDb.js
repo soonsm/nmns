@@ -785,7 +785,7 @@ exports.getCustomerList = async function(email, name, contact, managerName, opti
      */
 };
 
-exports.addCustomer = async function(email, id, name, contact, manager, etc){
+exports.addCustomer = async function(email, id, name, contact, etc){
     let user = await exports.getWebUser(email);
     let memberList = user.memberList;
 
@@ -803,7 +803,6 @@ exports.addCustomer = async function(email, id, name, contact, manager, etc){
         let member = memberList[index];
         member.name = name || member.name;
         member.contact = contact || member.contact;
-        member.manager = manager || member.manager;
         member.etc = etc || member.etc;
 
         return await update({
@@ -830,7 +829,6 @@ exports.addCustomer = async function(email, id, name, contact, manager, etc){
                     id: id,
                     name: name,
                     contact: contact,
-                    manager: manager,
                     etc: etc
                 }]
             },

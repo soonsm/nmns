@@ -174,7 +174,7 @@ exports.getCustomerList = async function(data){
             }
 
             let reservationList = await db.getReservationList(email);
-            let managerList = await db.getStaffList(email);
+            let staffList = await db.getStaffList(email);
             member.history = [];
             await reservationList.forEach(async function(reservation){
                 if(reservation.memberId === member.id){
@@ -184,8 +184,8 @@ exports.getCustomerList = async function(data){
                         managerColor: undefined
                     };
 
-                    for(let j=0; j<managerList.length;j++){
-                        let staff = managerList[j];
+                    for(let j=0; j<staffList.length;j++){
+                        let staff = staffList[j];
                         if(staff.id === reservation.manager){
                             manager.managerName = staff.name;
                             manager.managerColor = staff.color;
@@ -279,7 +279,7 @@ exports.addCustomer = async function(data){
     }else if(contact && !util.phoneNumberValidation(contact)){
         status = false;
         message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
-    }else if(!(await db.addCustomer(email, id, name, contact, data.manager, data.etc))){
+    }else if(!(await db.addCustomer(email, id, name, contact, data.etc))){
         status = false;
         message = '시스템 에러로 추가하지 못했습니다.';
     }else{
