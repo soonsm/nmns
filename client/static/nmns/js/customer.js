@@ -1,15 +1,64 @@
-function loadCustomerData(data){
-  console.log(data);
+function drawCustomerHistoryList(customer){
+  var list = $("#customerHistory");
+  list.children(".card").remove();
+  if(!list.hasClass("ps")){
+    list.data("scroll", new PerfectScrollbar(list[0]));
+  }
+  if(customer.history.length === 0){
+    list.append("<span class='text-center'>아직 "+ (customer.name && customer.name !== ""? customer.name : "이 ") + "고객에 등록된 예약내역이 없습니다.</span>");
+  } else {
+    var html = "";
+    customer.history.forEach(function(history, index){
+      html += '<div class="card col-12 col-lg-10" data-index="'+index+'"><div class="card-body"><h6>'+(!history.contents || history.contents === ''? '(예약내용 없음)':history.contents) + ' ';
+      switch(history.status){
+        case "CANCELED":
+          html += "<small class='badge badge-light'>취소</small>";
+          break;
+        case "NOSHOW":
+          html += "<small class='badge badge-danger'>노쇼</small>";
+          break;
+        case "CUSTOMERCANCELED":
+          html += "<small class='badge badge-light'>고객취소</small>";
+          break;
+        case "RESERVED":
+          html += "<small class='badge badge-success'>정상</small>";
+          break;
+      }
+      html += '</h6>' + (moment(history.date, 'YYYYMMDDHHmm').isValid() ? '<p class="card-subtitle text-muted">'+moment(history.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</p>' : '')
+            +'<div class="col-12 px-0"><small class="text-muted">담당자 </small>'+(history.managerName && history.managerName !== ''?'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+history.managerColor+'"></span><span> '+history.managerName+'</span>':'(담당자 없음)')+'</div>'
+            +'</div><div class="cardLeftBorder" style="background-color:'+(history.managerColor || '#b2dfdb')+'"></div></div></div>';
+      if(index > 0 && index % 50 == 0){
+        list.append(html);
+        html = "";
+      }
+    });
+    list.append(html);
+  }
+  list.data("scroll").update();
 }
 function initCustomerModal(self){
   var customer = NMNS.customerList[Number(self.parent().data("index"))];
-  loadCustomerData(customer);
+  $("#customerName").val(customer.name);
+  $("#customerContact").val(customer.contact);
+  $("#customerEtc").val(customer.etc);
+  var text = "";
+  if(customer.totalNoShow === 0){
+    text = "이 고객은 노쇼하신 적이 없으시네요! :)";
+  } else if(customer.myNoShow === 0){
+    text = "이 고객은 다른 매장에서 " + customer.totalNoShow + "번 노쇼하셨어요.";
+  } else if(customer.myNoShow === customer.totalNoShow) {
+    text = "이 고객은 우리 매장에서만 " + customer.totalNoShow + "번 노쇼하셨어요.";
+  } else {
+    text = "이 고객은 우리 매장에서 " + customer.myNoShow + "번, 전체 매장에서 " + customer.totalNoShow + "번 노쇼하셨어요.";
+  }
+  $("#customerNoShow").text(text);
+  drawCustomerHistoryList(customer);
 }
 function drawCustomerList(){
   var list = $("#mainCustomerList");
   list.children(".card").remove();
   if(!list.hasClass("ps")){
-    list.data("scroll", new PerfectScrollbar(list[0]));
+    list.data("scroll", new PerfectScrollbar(list[0], {suppressScrollX:true}));
   }
   var html = "";
   if(NMNS.customerList && NMNS.customerList.length > 0){
