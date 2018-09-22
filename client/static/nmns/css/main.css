@@ -186,6 +186,21 @@ button.moveDate:focus{
   line-height:.8rem;
   margin-left:.25rem;
 }
+#lnbManagerList .lnbManagerItem{
+  height:1.5rem;
+  line-height:1.5rem;
+}
+#lnbManagerList .lnbManagerItem:last-child{
+  margin-bottom:.5rem;;
+}
+#lnbManagerList .lnbManagerItem label{
+  margin-bottom:0;
+}
+#lnbManagerList .addManagerItem input[type="text"]{
+  padding-left:0;
+  padding-right:0;
+  height:1.4rem;
+}
 #lnbManagerList .addManagerItem .addManagerColor{
   cursor:default;
 }
@@ -444,6 +459,9 @@ button.moveDate:focus{
   border-width:.06rem;
   line-height:1.4rem;
 }
+#noShowModal #noShowSearchContact{
+  border-right:.05rem solid #ced4da;
+}
 #noShowModal #noShowSearchSummary{
   height:45px;
   display:none;
@@ -664,10 +682,10 @@ button.moveDate:focus{
   right:1rem;
 }
 #taskModal #taskManager{
-  border: .05rem solid #ced4da;
+  border-bottom: .05rem solid #ced4da;
 }
 #taskModal #taskManager:focus{
-  border: .05rem solid #ced4da;
+  border-bottom: .05rem solid #ced4da;
   box-shadow:none;
 }
 #taskModal #taskManager:after{
@@ -768,7 +786,7 @@ input.han, textarea.han{
 .dropdown-menu{
   font-size:.9rem;
 }
-input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.border), .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
+input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.border), select.form-control, .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
   border-top:0;
   border-left:0;
   border-right:0;
