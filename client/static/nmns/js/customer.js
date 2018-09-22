@@ -54,7 +54,6 @@
     }
     $("#customerNoShow").text(text);
     drawCustomerHistoryList(customer);
-    $("#customerName").focus();
     $("#customerModal").data("customer", customer);
   }
   function drawCustomerList(){
@@ -130,6 +129,8 @@
       var customer = $(this).data("customer");
       NMNS.calendar.openCreationPopup({title:customer.name, raw:{contact:customer.contact, etc:customer.etc}, calendarId:(customer.history && customer.history.length>0? customer.history[0].managerId : undefined)});
     }
+  }).on("shown.bs.modal", function(){
+    $("#customerName").focus();
   });
   $("#customerContact, #customerAddContact").off("blur").on("blur", function(){
     filterNonNumericCharacter($(this));
@@ -226,5 +227,17 @@
     NMNS.customerList.sort(getSortFunc(action));
     drawCustomerList();
     switchSortTypeButton(action);
+  });
+  function searchCustomerList(target){
+    NMNS.socket.emit("get customer list", {type:"all", "target":target});
+  }
+  $("#customerSearchBtn").on("touch click", function(e){
+    e.preventDefault();
+    searchCustomerList($("#customerSearchTarget").val());
+  });
+  $("#customerSearchTarget").on("keyup", function(e){
+    if(e.which === 13){
+      searchCustomerList($(this).val());
+    }
   });
 })();
