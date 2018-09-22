@@ -91,8 +91,7 @@ $(".addHistory").on("touch click", function(e){
 NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e){
   NMNS.customerList = e.data;
   drawCustomerList();
-  
-  console.log(e);
+  switchSortTypeButton("sort-name");
 }));
 $("#customerModal").on("hidden.bs.modal", function(){
   if($(this).data("trigger")){
@@ -121,4 +120,63 @@ $("#submitCustomer").on("touch click", function(e){
   } else {
     alert("알 수 없는 오류입니다. 새로고침 후 다시 시도해주세요.");
   }
+});
+function getSortFunc(action){
+  switch (action) {
+    case 'sort-date':
+      return function(a, b){
+        if(!a.history || a.history.length === 0){
+          if(b.history && b.history.length > 0){
+            return -1;
+          }else{
+            return 0;
+          }
+        } else if(!b.history || b.history.length === 0){
+          return 1;
+        }
+        return (a.history[0].date < b.history[0].date ?1:(a.history[0].date > b.history[0].date?-1:getSortFunc("sort-name")(a, b)));
+      };
+    case 'sort-manager':
+      return function(a, b){
+        if(!a.history || a.history.length === 0){
+          if(b.history && b.history.length > 0){
+            return 1;
+          }else{
+            return 0;
+          }
+        } else if(!b.history || b.history.length === 0){
+          return -1;
+        }
+        return (a.history[0].managerName < b.history[0].managerName ?-1:(a.history[0].managerName > b.history[0].managerName?1:getSortFunc("sort-name")(a, b)));
+      };      
+    default:
+    case 'sort-name':
+      return function(a, b){
+        if(!a.name){
+          if(b.name){
+            return 1;
+          }else{
+            return 0;
+          }
+        } else if(!b.name){
+          return -1;
+        }
+        return (a.name < b.name?-1:(a.name > b.name?1:0));
+      };
+  }
+}
+function switchSortTypeButton(action){
+  $(".customerSortType").removeClass("active");
+  $(".customerSortType[data-action='"+action+"']").addClass("active");
+  $("#customerSort span").text($("#customerSort").next().children("[data-action='"+action+"']").attr("aria-label"));
+}
+$(".customerSortType").off("touch click").on("touch click", function(e){
+  if($(this).hasClass("active")) return;
+  var action = e.target.getAttribute('data-action');
+  if(!action){
+    action = e.target.parentElement.getAttribute('data-action');
+  }
+  NMNS.customerList.sort(getSortFunc(action));
+  drawCustomerList();
+  switchSortTypeButton(action);
 });
