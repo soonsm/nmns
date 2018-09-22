@@ -5,7 +5,7 @@
     if(!list.hasClass("ps")){
       list.data("scroll", new PerfectScrollbar(list[0]));
     }
-    if(customer.history.length === 0){
+    if(!customer.history || customer.history.length === 0){
       list.append("<span class='text-center'>아직 "+ (customer.name && customer.name !== ""? customer.name : "이 ") + "고객에 등록된 예약내역이 없습니다.</span>");
     } else {
       var html = "";
@@ -94,7 +94,15 @@
     drawCustomerList();
     switchSortTypeButton("sort-name");
   }));
-  NMNS.socket.on("add customer", socketResponse("고객 추가", undefined, function(e){
+  NMNS.socket.on("add customer", socketResponse("고객 추가", function(e){
+    var index = NMNS.customerList.findIndex(function(item){
+      return item.id === e.data.id;
+    });
+    if(index > -1){
+      NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
+      NMNS.customerList[index].myNoShow = 0;
+    }
+  }, function(e){
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
@@ -144,9 +152,9 @@
     }
     var customer = {
       id:generateRandom(),
-      name:$("#customerName").val(),
-      contact:$("#customerContact").val(),
-      etc:$("#customerEtc").val()
+      name:$("#customerAddName").val(),
+      contact:$("#customerAddContact").val(),
+      etc:$("#customerAddEtc").val()
     };
     NMNS.socket.emit("add customer", customer);
     NMNS.customerList.splice(0, 0, customer);
