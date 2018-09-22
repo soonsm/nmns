@@ -102,6 +102,9 @@
       NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
       NMNS.customerList[index].myNoShow = 0;
     }
+    $("#customerAddName").val(''),
+    $("#customerAddContact").val(''),
+    $("#customerAddEtc").val('')
   }, function(e){
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
