@@ -940,6 +940,10 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   position:relative;
   z-index:1;
 }
+#mainCustomerList .card .customerModalLink{
+  left:0;
+  top:0;
+}
 @media(max-width:575px){
   #customerAddForm label[for="customerAddEtc"] + div{
     width:calc(91.666667% - 44.32px);
