@@ -228,4 +228,16 @@
     drawCustomerList();
     switchSortTypeButton(action);
   });
+  function searchCustomerList(target){
+    NMNS.socket.emit("get customer list", {type:"all", "target":target});
+  }
+  $("#customerSearchBtn").on("touch click", function(e){
+    e.preventDefault();
+    searchCustomerList($("#customerSearchTarget").val());
+  });
+  $("#customerSearchTarget").on("keyup", function(e){
+    if(e.which === 13){
+      searchCustomerList($(this).val());
+    }
+  });
 })();
