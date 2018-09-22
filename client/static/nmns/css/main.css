@@ -786,7 +786,7 @@ input.han, textarea.han{
 .dropdown-menu{
   font-size:.9rem;
 }
-input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.border), select.form-control, .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
+input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.border), input.flatpickr-mobile, select.form-control, .input-group-prepend .input-group-text:not(.fa-rotate-90), button.form-control{
   border-top:0;
   border-left:0;
   border-right:0;
@@ -930,7 +930,12 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   right:20px;
   top:20px;
 }
-#mainCustomerList .card .card-title a{
+@media(max-width:575px){
+  #mainCustomerList .card .card-title{
+    margin-bottom:0;
+  }
+}
+#mainCustomerList .card a.customerContactLink{
   position:relative;
   z-index:1;
 }
