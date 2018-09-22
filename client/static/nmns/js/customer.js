@@ -53,6 +53,8 @@ function initCustomerModal(self){
   }
   $("#customerNoShow").text(text);
   drawCustomerHistoryList(customer);
+  $("#customerName").focus();
+  $("#customerModal").data("customer", customer);
 }
 function drawCustomerList(){
   var list = $("#mainCustomerList");
@@ -82,9 +84,41 @@ function drawCustomerList(){
     $("#customerCount").text(NMNS.customerList.length);
   }
 }
+$(".addHistory").on("touch click", function(e){
+  $($("#sidebarContainer .calendarMenuLink")[0]).trigger("click");
+  $("#customerModal").data("trigger", true).modal("hide");
+});
 NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e){
   NMNS.customerList = e.data;
   drawCustomerList();
   
   console.log(e);
 }));
+$("#customerModal").on("hidden.bs.modal", function(){
+  if($(this).data("trigger")){
+    $(this).removeData("trigger");
+    var customer = $(this).data("customer");
+    NMNS.calendar.openCreationPopup({title:customer.name, raw:{contact:customer.contact, etc:customer.etc}, calendarId:(customer.history && customer.history.length>0? customer.history[0].managerId : undefined)});
+  }
+});
+$("#customerContact").on("blur", function(){
+  filterNonNumericCharacter($(this));
+});
+$("#submitCustomer").on("touch click", function(e){
+  e.preventDefault();
+  var customer = $("#customerModal").data("customer");
+  if(customer){
+    if($("#customerName").val() === '' && $("#customerContact").val() === ''){
+      alert("고객 이름과 전화번호 중 하나는 반드시 입력해주세요.");
+      return;
+    }
+    NMNS.socket.emit("update customer", {
+      id:customer.id,
+      name:$("#customerName").val(),
+      contact:$("#customerContact").val(),
+      etc:$("#customerEtc").val()
+    });
+  } else {
+    alert("알 수 없는 오류입니다. 새로고침 후 다시 시도해주세요.");
+  }
+});
