@@ -197,32 +197,6 @@
     }
   });
 
-//common websocket response wrapper
-  var socketResponse = function(requestName, successCallback, failCallback, silent){
-    return function(res){
-      if(res && res.type === "response"){
-        if(res.status){//success
-          if(successCallback){
-            successCallback(res);
-          }
-        }else{//fail
-          if(!silent){
-            alert(requestName + "에 실패했습니다." + (res.message?"(" + res.message + ")":""));
-          }
-          if(failCallback){
-            failCallback(res);
-          }
-        }
-      }else if(res && (res.type === "push" || res.type === "alert")){
-        if(successCallback){
-          successCallback(res);
-        }
-      }else{
-        console.error(res);
-      }
-    };
-  };
-
   NMNS.socket = io();
   NMNS.socket.emit("get info");
   NMNS.socket.emit("get manager");
@@ -785,12 +759,12 @@
     $("#infoShopName").val(NMNS.info.shopName);
     $("#infoBizType").val(NMNS.info.bizType);
     var list = $("#infoManagerList");
-    if(NMNS.infoModalScroll){
+    if(list.hasClass("ps")){
       list.children(":not(.ps__rail-x):not(.ps__rail-y)").remove();
       $(generateManagerList(NMNS.calendar.getCalendars())).prependTo(list);
     }else{
       list.html(generateManagerList(NMNS.calendar.getCalendars()));
-      NMNS.infoModalScroll = new PerfectScrollbar(list[0]);
+      list.data("scroll", new PerfectScrollbar(list[0]));
     }
     
     $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function(){
@@ -802,7 +776,7 @@
       item.hide();
       $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
       item.attr("data-delete", "true");
-      NMNS.infoModalScroll.update();
+      $("#infoManagerList").data("scroll").update();
     });
     $(".infoManagerItem input.form-control").off("keyup").on("keyup", function(e){
       if(e.which === 27){
@@ -813,7 +787,7 @@
         item.hide();
         $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
         item.attr("data-delete", "true");
-        NMNS.infoModalScroll.update();
+        $("#infoManagerList").data("scroll").update();
       }
     });
     $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function(){
@@ -847,8 +821,8 @@
         appendTo:document.getElementById("infoModal"),
         applyBtn:true
       }).setDate(moment((NMNS.info.bizEndTime? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());
-      if(!NMNS.infoModalScroll){
-        NMNS.infoModalScroll = new PerfectScrollbar("#infoManagerList");
+      if(!$("#infoManagerList").hasClass("ps")){
+        $("#infoManagerList").data("scroll", new PerfectScrollbar("#infoManagerList"));
       } 
 
       $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
@@ -900,11 +874,11 @@
         closeOnSelect:true
       };
       
-      if(!NMNS.noShowModalSearchScroll){
-        NMNS.noShowModalSearchScroll = new PerfectScrollbar("#noShowSearchList", {suppressScrollX:true});
+      if(!$("#noShowSearchList").hasClass("ps")){
+        $("#noShowSearchList").data("scroll", new PerfectScrollbar("#noShowSearchList", {suppressScrollX:true}));
       }
-      if(!NMNS.noShowModalScheduleScroll){
-        NMNS.noShowModalScheduleScroll = new PerfectScrollbar("#noShowScheduleList", {suppressScrollX:true});
+      if(!$("#noShowScheduleList").hasClass("ps")){
+        $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", {suppressScrollX:true}));
       }
       
       $(".noShowAddCase").off("touch click").on("touch click", function(){
@@ -1547,8 +1521,8 @@
       e.stopPropagation();
       noShowScheduleNormal($(this));
     });
-    if(NMNS.noShowModalScheduleScroll){
-      NMNS.noShowModalScheduleScroll.update();
+    if($("#noShowScheduleList").hasClass("ps")){
+      $("#noShowScheduleList").data("scroll").update();
     }
   }));
 
@@ -1678,13 +1652,13 @@
       $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.").show();
       html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>이분은 노쇼를 한 적이 없으시네요! 안심하세요 :)</span></div>";
     }
-    $("#noShowSearchList").html(html);
-    $("#noShowSearchList").addClass("summary");
-    $("#noShowSearchList .noShowSearchDelete").off("touch click").on("touch click", function(){
+    var list = $("#noShowSearchList");
+    list.addClass("summary").html(html);
+    list.find(".noShowSearchDelete").off("touch click").on("touch click", function(){
       deleteNoShow($(this));
     });
-    if(NMNS.noShowModalSearchScroll){
-      NMNS.noShowModalSearchScroll.update();
+    if(list.hasClass("ps")){
+      list.data("scroll").update();
     }
   }));
 
@@ -1844,7 +1818,7 @@
       }
     }
   }).on("shown.bs.modal", function(){
-    NMNS.infoModalScroll.update();
+    $("#infoManagerList").data("scroll").update();
     $("#infoManagerList")[0].scrollTop = 0;
   });
   $("#alrimModal").on("hide.bs.modal", function(){
@@ -1983,7 +1957,7 @@
           }
           cancelAddManager(this);
           list.find("div:last-child input[type='text']").focus();
-          NMNS.infoModalScroll.update();
+          list.data("scroll").update();
         }
       });
       row.find(".addManagerColor").off("touch click").on("touch click", function(){
@@ -1996,7 +1970,7 @@
         }
         cancelAddManager(this);
         list.find("div:last-child input[type='text']").focus();
-        NMNS.infoModalScroll.update();
+        list.data("scroll").update();
       });
     }
     list.find("div:last-child input[type='text']").focus();
@@ -2146,12 +2120,25 @@
     });
   }));
 //notification handling end
-//customer management start
+//customer management menu switch start
 $(".customerMenuLink").off("touch click").on("touch click", function(e){
   e.preventDefault();
-  $(".calendarMenu").addClass("d-none");
-  NMNS.socket.emit("get customer list", {"type":"all"});
-  $(".customerMenu").css("display", "block");
+  if(!document.getElementById("customerScript")){
+    var script = document.createElement("script");
+    script.src="/nmns/js/customer.min.js";
+    script.id="customerScript";
+    document.body.appendChild(script);
+    
+    script.onload = function(){
+      NMNS.socket.emit("get customer list", {"type":"all"});
+      $(".calendarMenu").addClass("d-none");
+      $(".customerMenu").css("display", "block");
+    };
+  }else{
+    NMNS.socket.emit("get customer list", {"type":"all"});
+    $(".calendarMenu").addClass("d-none");
+    $(".customerMenu").css("display", "block");
+  }
 });
 $(".calendarMenuLink").off("touch click").on("touch click", function(e){
   e.preventDefault();
@@ -2159,11 +2146,7 @@ $(".calendarMenuLink").off("touch click").on("touch click", function(e){
   $(".calendarMenu").removeClass("d-none");
   NMNS.calendar.render();
 });
-NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e){
-  NMNS.customerList = e.data;
-  console.log(e);
-}));
-//customer management end
+//customer management menu switch end
 //snackbar handling start
   function showSnackBar(innerHtml){
     var x = document.getElementById("snackbar");

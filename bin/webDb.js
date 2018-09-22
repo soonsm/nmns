@@ -392,6 +392,7 @@ exports.newReservation = function (reservation) {
     return {
         id: reservation.id,
         type: reservation.type || 'R',
+        memberId: reservation.memberId || null,
         name: reservation.name || null,
         start: reservation.start,
         end: reservation.end,
@@ -785,7 +786,7 @@ exports.getCustomerList = async function(email, name, contact, managerName, opti
 };
 
 exports.addCustomer = async function(email, id, name, contact, manager, etc){
-    let user = exports.getWebUser(email);
+    let user = await exports.getWebUser(email);
     let memberList = user.memberList;
 
     let index = undefined;
@@ -808,10 +809,12 @@ exports.addCustomer = async function(email, id, name, contact, manager, etc){
         return await update({
             TableName: process.nmns.TABLE.WebSecheduler,
             Key: {
-                'email': email,
+                'email': email
             },
             UpdateExpression: "set memberList = :memberList",
-            ExpressionAttributeValues: memberList,
+            ExpressionAttributeValues: {
+                ":memberList": memberList
+            },
             ReturnValues: "NONE"
         });
     }else{
@@ -819,7 +822,7 @@ exports.addCustomer = async function(email, id, name, contact, manager, etc){
         return await update({
             TableName: process.nmns.TABLE.WebSecheduler,
             Key: {
-                'email': email,
+                'email': email
             },
             UpdateExpression: "set memberList = list_append(memberList, :memberList)",
             ExpressionAttributeValues: {

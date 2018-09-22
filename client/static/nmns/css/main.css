@@ -31,7 +31,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter + div[data-p
   right:0.5rem;
   height:50px;
 }
-#mainCalendarTools, #mainCustomerTools{
+#mainCalendarTools{
   min-height:50px;
   line-height:50px;
 }
@@ -858,6 +858,8 @@ input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.bord
 }
 #mainCustomerTools #customerSearchType + .dropdown-menu{
   font-size:1rem;
+}
+#mainCustomerTools #customerSearchType + .dropdown-menu, #mainCustomerTools #customerSort + .dropdown-menu{
   min-width:5rem;
 }
 #mainCustomerTools .dropdown-item{
@@ -866,14 +868,105 @@ input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.bord
 }
 #mainCustomerTools .dropdown-item{
   height:30px;
-  line-height:15px;
+  line-height:20px;
 }
 #mainCustomerTools #customerSort:after{
   display:none;
 }
-#mainCustomerTools #customerSearchType, #mainCustomerTools #customerSort{
-  cursor:pointer;
+#mainCustomerTools #customerSearch{
+  width:auto;
+}
+button.customerSortType{
+  border:0;
+  background-color:#fff;
+}
+button.customerSortType:active, button.customerSortType:hover, button.customerSortType:focus, button.customerSortType.active{
+  background-color: #b2dfdb !important;
 }
 #mainCustomer{
-  height:1080px;
+  min-height:800px;
+  max-height:1080px;
+}
+#mainCustomerList .card, #customerModal #customerHistory .card{
+  border-left:0;
+  margin-bottom:.8rem;
+  border-radius:0;
+  padding-left:.5rem;
+  margin-left:auto;
+  margin-right:auto;
+  font-size:.9rem;
+  flex-direction:row;
+  -ms-flex-direction: row;
+}
+#mainCustomerList .card .cardLeftBorder, #customerModal #customerHistory .card .cardLeftBorder{
+  position:absolute;
+  left:0;
+  top:-1px;
+  height:calc(100% + 2px);
+  width:.5rem;
+}
+#mainCustomerList .card .customerSubInfo{
+  position:absolute;
+  right:20px;
+  top:20px;
+}
+#mainCustomerList .card .card-title a{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:575px){
+  #customerAddForm label[for="customerAddEtc"] + div{
+    width:calc(91.666667% - 44.32px);
+  }
+}
+@media(min-width:576px){
+  #customerAddForm label[for="customerAddEtc"] + div{
+    width:calc(81.333333% - 44.32px);
+  }
+}
+#customerAddForm label[for="customerAddContact"]{
+  overflow:hidden;
+  white-space: nowrap;
+  letter-spacing: -2px;
+}
+#customerAddForm .input-group-text, #customerAddForm input{
+  border-radius: 0;
+}
+#customerAddForm .input-group-text{
+  width:2rem;
+  background-color:#fff;
+}
+/* customer modal */
+#customerModal #customerName{
+  font-size:2rem;
+  font-family:Montserrat,'Nanum Gothic';
+  font-weight:bold;
+}
+#customerModal #customerContact{
+  font-size:1.5rem;
+  font-family:Montserrat,'Nanum Gothic';
+}
+#customerModal #customerEtc{
+  font-size:.9rem;
+}
+#customerModal #customerNoShow{
+  overflow:hidden;
+  top:50%;
+  position:absolute;
+  transform:translateY(-50%);
+  font-size:.9rem;
+}
+@media(min-width:992px){
+  #customerModal label[for="customerNoShow"]{
+    line-height:2.3rem;
+  }
+  #customerModal label[for="customerEtc"] + div, #customerModal #customerEtc{
+    height:calc(100% - 31px);
+  }
+}
+#customerModal #customerHistory{
+  max-height:300px;
+}
+#customerModal #customerHistory .card{
+  margin-bottom:1rem;
 }
