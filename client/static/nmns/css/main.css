@@ -829,6 +829,7 @@ input[type="text"]:not(.border):not(:disabled), input[type="password"]:not(.bord
   height:100px;
   width:100%;
   font-size:.9rem;
+  border:.05rem solid #ced4da;
 }
 #snackbar {
   visibility: hidden;
