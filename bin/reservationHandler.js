@@ -133,9 +133,9 @@ exports.updateReservation = async function (newReservation) {
                     break;
                 }
             }
-            if (newMember) {
+            if (newMember && (newReservation.contact || newReservation.name)) {
                 let memberId = newCustomerId(email);
-                memberList.push({id: memberId, contact: newReservation.contact, name: newReservation.name});
+                memberList.push({id: memberId, contact: newReservation.contact, name: newReservation.name, etc: newReservation.etc});
                 await db.updateWebUser(email, {memberList: memberList});
                 newReservation.memberId = memberId;
             }
@@ -225,9 +225,9 @@ exports.addReservation = async function (data) {
                     break;
                 }
             }
-            if (newMember && data.contact && data.name) {
+            if (newMember && (data.contact || data.name)) {
                 let memberId = newCustomerId(email);
-                memberList.push({id: memberId, contact: data.contact, name: data.name});
+                memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc});
                 await db.updateWebUser(email, {memberList: memberList});
                 data.memberId = memberId;
             }
