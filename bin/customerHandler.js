@@ -135,17 +135,17 @@ exports.getCustomerList = async function(data){
     }else{
         let user = await db.getWebUser(email);
         let memberList = user.memberList;
-        if(target && target.trim().length > 0){
+        if(target && target.trim().length > 0) {
             let filteredList = [];
-            for(let i=0; i< memberList.length; i++){
+            for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
-                if((type === 'name' || type === 'all') && member.name && member.name.contains(target)){
+                if ((type === 'name' || type === 'all') && member.name && member.name.contains(target)) {
                     filteredList.push(member);
                 }
-                if((type === 'contact' || type === 'all') && member.contact && member.contact.contains(target)){
+                if ((type === 'contact' || type === 'all') && member.contact && member.contact.contains(target)) {
                     filteredList.push(member);
                 }
-                if((type === 'manager' || type === 'all') && member.manager && member.manager === target){
+                if ((type === 'manager' || type === 'all') && member.manager && member.manager === target) {
                     filteredList.push(member);
                 }
             }
@@ -179,16 +179,12 @@ exports.getCustomerList = async function(data){
             await reservationList.forEach(async function(reservation){
                 if(reservation.memberId === member.id){
 
-                    let manager = {
-                        managerName: undefined,
-                        managerColor: undefined
-                    };
+                    let manager = {};
 
                     for(let j=0; j<staffList.length;j++){
                         let staff = staffList[j];
                         if(staff.id === reservation.manager){
-                            manager.managerName = staff.name;
-                            manager.managerColor = staff.color;
+                            manager = staff;
                             break;
                         }
                     }
@@ -197,12 +193,22 @@ exports.getCustomerList = async function(data){
                         date: reservation.start,
                         contents: reservation.contents,
                         status: reservation.status,
-                        managerName: manager.managerName,
-                        managerColor: manager.managerColor
+                        managerName: manager.name,
+                        managerColor: manager.color,
+                        managerId: manager.id
                     });
                 }
             });
+
+            await member.history.sort(function(r1,r2){
+                return r2.date - r1.date;
+            });
         }
+        await memberList.sort(function(m1,m2){
+            let name1 = m1.name || '';
+            let name2 = m2.name;
+            return name1.localeCompare(name2);
+        })
         resultData = memberList;
     }
 
@@ -263,7 +269,7 @@ function getDummy(){
     };
 }
 
-exports.addCustomer = async function(data){
+let saveCustomer = async function(data){
     let email = this.email;
     let status = true,
         message = '',
@@ -286,11 +292,13 @@ exports.addCustomer = async function(data){
         resultData.id = id;
     }
 
-
     return {
         status: status,
         data: resultData,
         message: message
     }
+}
 
-};
+exports.addCustomer = saveCustomer;
+
+exports.updateCustomer = saveCustomer;
