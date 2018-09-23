@@ -139,10 +139,10 @@ exports.getCustomerList = async function(data){
             let filteredList = [];
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
-                if ((type === 'name' || type === 'all') && member.name && member.name.contains(target)) {
+                if ((type === 'name' || type === 'all') && member.name && member.name.includes(target)) {
                     filteredList.push(member);
                 }
-                if ((type === 'contact' || type === 'all') && member.contact && member.contact.contains(target)) {
+                if ((type === 'contact' || type === 'all') && member.contact && member.contact.includes(target)) {
                     filteredList.push(member);
                 }
                 if ((type === 'manager' || type === 'all') && member.manager && member.manager === target) {
@@ -205,7 +205,7 @@ exports.getCustomerList = async function(data){
             });
         }
         await memberList.sort(function(m1,m2){
-            let name1 = m1.name || '';
+            let name1 = m1.name || 'Z';
             let name2 = m2.name;
             return name1.localeCompare(name2);
         })
@@ -277,6 +277,7 @@ let saveCustomer = async function(data){
     let id = data.id;
     let name = data.name;
     let contact = data.contact;
+    let managerId = data.managerId === '' ? undefined : data.managerId;
 
 
     if(!id && !name && !contact){
@@ -285,11 +286,18 @@ let saveCustomer = async function(data){
     }else if(contact && !util.phoneNumberValidation(contact)){
         status = false;
         message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
-    }else if(!(await db.addCustomer(email, id, name, contact, data.etc))){
+    }else if(!(await db.addCustomer(email, id, name, contact, managerId, data.etc))){
         status = false;
         message = '시스템 에러로 추가하지 못했습니다.';
     }else{
         resultData.id = id;
+        resultData.totalNoShow = 0;
+        if(contact){
+            let totalNoShow = await db.getNoShow(contact);
+            if(totalNoShow){
+                resultData.totalNoShow = totalNoShow.noShowCount;
+            }
+        }
     }
 
     return {

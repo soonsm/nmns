@@ -747,45 +747,7 @@ exports.deleteNoShow = async function (email, id) {
     }
 }
 
-exports.getCustomerList = async function(email, name, contact, managerName, option){
-
-    if(!name && !contact && !manager){
-        return null
-    }
-
-    /**
-     * 이름이랑 연락처, 메모를 memberList에서 가져와
-     * 1. contact
-     * 2. name
-     */
-
-    let user = exports.getWebUser(email);
-    let memeberList = user.memberList;
-
-    let filteredMemeberList = [];
-
-    for(let i = 0; i < memeberList.length; i++){
-        let memeber = memeberList[i];
-
-        if(member.contact === contact){
-
-        }
-    }
-
-    /**
-     * NoShow 조회
-     * 1. contact
-     * 2. name
-     */
-
-    /**
-     * 내 예약에서 해당 고객에 해당 하는 예약 가져오자
-     * 1. contact
-     * 2. name
-     */
-};
-
-exports.addCustomer = async function(email, id, name, contact, etc){
+exports.addCustomer = async function(email, id, name, contact, managerId, etc){
     let user = await exports.getWebUser(email);
     let memberList = user.memberList;
 
@@ -804,6 +766,7 @@ exports.addCustomer = async function(email, id, name, contact, etc){
         member.name = name || member.name;
         member.contact = contact || member.contact;
         member.etc = etc || member.etc;
+        member.managerId = managerId || member.managerId;
 
         return await update({
             TableName: process.nmns.TABLE.WebSecheduler,
@@ -829,7 +792,8 @@ exports.addCustomer = async function(email, id, name, contact, etc){
                     id: id,
                     name: name,
                     contact: contact,
-                    etc: etc
+                    etc: etc,
+                    managerId: managerId
                 }]
             },
             ReturnValues: "NONE"
