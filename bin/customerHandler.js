@@ -207,7 +207,16 @@ exports.getCustomerList = async function(data){
         await memberList.sort(function(m1,m2){
             let name1 = m1.name || 'Z';
             let name2 = m2.name;
-            return name1.localeCompare(name2);
+            let nameCompare = name1.localeCompare(name2);
+            if(nameCompare === 0){
+                if(m1.history.length > 0 && m2.history.length > 0){
+                    return m2.history[0].date - m1.history[0].date;
+                }else{
+                    return nameCompare;
+                }
+            }else{
+                return nameCompare;
+            }
         })
         resultData = memberList;
     }
