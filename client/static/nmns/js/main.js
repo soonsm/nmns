@@ -2123,6 +2123,7 @@
 //customer management menu switch start
 $(".customerMenuLink").off("touch click").on("touch click", function(e){
   e.preventDefault();
+  var action = $($(".customerSortType.active")[0]).data("action");
   if(!document.getElementById("customerScript")){
     var script = document.createElement("script");
     script.src="/nmns/js/customer.min.js";
@@ -2130,12 +2131,12 @@ $(".customerMenuLink").off("touch click").on("touch click", function(e){
     document.body.appendChild(script);
     
     script.onload = function(){
-      NMNS.socket.emit("get customer list", {"type":"all"});
+      NMNS.socket.emit("get customer list", {"type":"all", "sort":action});
       $(".calendarMenu").addClass("d-none");
       $(".customerMenu").css("display", "block");
     };
   }else{
-    NMNS.socket.emit("get customer list", {"type":"all"});
+    NMNS.socket.emit("get customer list", {"type":"all", "sort":action});
     $(".calendarMenu").addClass("d-none");
     $(".customerMenu").css("display", "block");
   }
