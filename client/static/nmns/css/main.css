@@ -942,17 +942,17 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   left:0;
   top:0;
 }
-@media(max-width:575px){
-  #customerAddForm label[for="customerAddEtc"] + div{
-    width:calc(91.666667% - 44.32px);
-  }
-}
+/*@media(max-width:575px){*/
+/*  #customerAddForm label[for="customerAddEtc"] + div{*/
+/*    width:calc(91.666667% - 44.32px);*/
+/*  }*/
+/*}*/
 @media(min-width:576px){
   #customerAddForm label[for="customerAddEtc"] + div{
     width:calc(81.333333% - 44.32px);
   }
 }
-#customerAddForm label[for="customerAddContact"]{
+#customerAddForm label[for="customerAddContact"], #customerAddForm label[for="customerAddManager"]{
   overflow:hidden;
   white-space: nowrap;
   letter-spacing: -2px;
@@ -963,6 +963,15 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
 #customerAddForm .input-group-text{
   width:calc(2rem - 2px);
   background-color:#fff;
+}
+#customerAddForm #customerAddManager{
+  overflow:hidden;
+  border-bottom:.05rem solid #ced4da;
+}
+#customerAddForm #customerAddManager:after{
+  position:absolute;
+  top:50%;
+  right:0;
 }
 /* customer modal */
 #customerModal #customerName{
@@ -993,7 +1002,7 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   }
 }
 #customerModal #customerHistory{
-  max-height:400px;
+  max-height:calc(100vh - 460px);
 }
 #customerModal #customerHistory .card{
   margin-bottom:1rem;

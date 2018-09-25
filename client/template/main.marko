@@ -225,15 +225,24 @@
               <input type="text" class="form-control" id="customerAddContact" name="contact" aria-describedby="customerAddContactIcon" placeholder="고객 연락처">
             </div>
           </div>
-          <div class="form-group col-12 mb-2 d-inline-flex">
+          <div class="form-group col-12 mb-2 d-inline-block d-sm-inline-flex">
+            <label for="customerAddManager" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm compactLabel">담당자</label>
+            <div class="col-12 col-sm-3 input-group input-group-sm px-0 mb-2 mb-sm-0 pl-sm-2">
+              <div class="d-inline-block input-group-prepend d-sm-none">
+                <i id="customerAddManagerIcon" class="input-group-text fas fa-user-tie" title="담당자"></i>
+              </div>
+              <button id="customerAddManager" type="button" aria-describedby="customerAddManagerIcon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
+              <div class="dropdown-menu rounded-0" aria-labelledby="customerAddManager" role="menu">
+              </div>
+            </div>
             <label for="customerAddEtc" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">메모</label>
-            <div class="col input-group input-group-sm pl-0 pr-2 pl-sm-2">
+            <div class="col-12 col-sm-7 input-group input-group-sm pl-0 pr-0 pl-sm-2">
               <div class="d-inline-block input-group-prepend d-sm-none">
                 <i id="customerAddEtcIcon" class="input-group-text far fa-bookmark" title="고객 메모"></i>
               </div>
               <input type="text" class="form-control han" id="customerAddEtc" name="etc" aria-describedby="customerAddEtcIcon" placeholder="고객 메모">
+              <button type="button" id="submitCustomerAdd" class="btn btn-sm btn-primary btn-flat ml-2">등록</button>
             </div>
-            <button type="button" id="submitCustomerAdd" class="btn btn-sm btn-primary btn-flat">등록</button>
           </div>
         </div>
         <div class="row col-12 col-sm-10 mx-auto mt-3 mb-2 px-0">

@@ -2139,6 +2139,11 @@ $(".customerMenuLink").off("touch click").on("touch click", function(e){
     $(".calendarMenu").addClass("d-none");
     $(".customerMenu").css("display", "block");
   }
+  $("#customerAddManager").next().html("<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='' data-bgcolor='#b2dfdb'><span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color:#b2dfdb'></span><span class='tui-full-calendar-content'>(담당자 없음)</span></button>"
+  ).append(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function(){
+    $("#customerAddManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
+  });
+  $("#customerAddManager").html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + NMNS.calendar.getCalendars()[0].bgColor + "'></span><span class='tui-full-calendar-content'>" + NMNS.calendar.getCalendars()[0].name + "</span>").data("calendar-id", NMNS.calendar.getCalendars()[0].id).data("bgcolor", NMNS.calendar.getCalendars()[0].bgColor);
 });
 $(".calendarMenuLink").off("touch click").on("touch click", function(e){
   e.preventDefault();

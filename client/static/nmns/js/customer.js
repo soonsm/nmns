@@ -64,12 +64,14 @@
     }
     var html = "";
     if(NMNS.customerList && NMNS.customerList.length > 0){
+      var managers = NMNS.calendar.getCalendars();
       NMNS.customerList.forEach(function(customer, index){
+        var manager = managers.find(function(item){return item.id === customer.managerId;});
         html += '<div class="card row col-12 col-sm-10" data-index="'+index+'"><div class="card-body"><h5 class="card-title">'+(!customer.name || customer.name === ''? '(이름없음)':customer.name)
               +(!customer.contact || customer.contact === ''? '' : '&nbsp;<a href="tel:'+customer.contact+'" class="d-none d-sm-inline-block customerContactLink"><small class="card-subtitle text-muted">'+dashContact(customer.contact)+'</small></a>')
               +'</h5>'+(!customer.contact || customer.contact === ''? '' : '&nbsp;<a href="tel:'+customer.contact+'" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted">'+dashContact(customer.contact)+'</span></a>')
-              +'<div class="col-12 row px-0"><div class="col-4 border-right"><small class="text-muted">담당자</small><br/>'+(customer.history && customer.history.length>0?'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+customer.history[0].managerColor+'"></span><span> '+customer.history[0].managerName+'</span>':'')+'</div><div class="col-8"><small class="text-muted">메모</small><br/><span>'+(customer.etc || '')+'</span></div></div>'
-              +'</div><div class="cardLeftBorder" style="background-color:'+(customer.history && customer.history.length>0?customer.history[0].managerColor : '#b2dfdb')+'"></div><small class="customerSubInfo text-muted">'+(customer.history && customer.history.length > 0?'총 '+customer.history.length+'회 방문':'')+ (customer.history && customer.history.length>0?' | ' + '마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD"):'')
+              +'<div class="col-12 row px-0"><div class="col-4 border-right"><small class="text-muted">담당자</small><br/>'+(manager?'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+manager.borderColor+'"></span><span> '+manager.name+'</span>':'')+'</div><div class="col-8"><small class="text-muted">메모</small><br/><span>'+(customer.etc || '')+'</span></div></div>'
+              +'</div><div class="cardLeftBorder" style="background-color:'+(manager?manager.borderColor : '#b2dfdb')+'"></div><small class="customerSubInfo text-muted">'+(customer.history && customer.history.length > 0?'총 '+customer.history.length+'회 방문':'')+ (customer.history && customer.history.length>0?' | ' + '마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD"):'')
               +'</small><a class="w-100 h-100 position-absolute customerModalLink" href="#" data-toggle="modal" data-target="#customerModal"></a></div></div>';
         if(index > 0 && index % 50 == 0){
           list.append(html);
@@ -157,7 +159,8 @@
       id:generateRandom(),
       name:$("#customerAddName").val(),
       contact:$("#customerAddContact").val(),
-      etc:$("#customerAddEtc").val()
+      etc:$("#customerAddEtc").val(),
+      managerId:$("#customerAddManager").data("calendarId")
     };
     NMNS.socket.emit("add customer", customer);
     NMNS.customerList.splice(0, 0, customer);
