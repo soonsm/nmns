@@ -143,7 +143,7 @@
     if($(this).data("trigger")){
       $(this).removeData("trigger");
       var customer = $(this).data("customer");
-      NMNS.calendar.openCreationPopup({title:customer.name, raw:{contact:customer.contact, etc:customer.etc}, calendarId:(customer.history && customer.history.length>0? customer.history[0].managerId : undefined)});
+      NMNS.calendar.openCreationPopup({title:customer.name, raw:{contact:customer.contact, etc:customer.etc}, calendarId:(customer.managerId? customer.managerId : undefined)});
     }
   }).on("shown.bs.modal", function(){
     $("#customerName").focus();
