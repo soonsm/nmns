@@ -958,7 +958,7 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   letter-spacing: -2px;
 }
 #customerAddForm label[for="customerAddManager"]{
-  line-height:2rem;
+  line-height:1.5rem;
 }
 #customerAddForm .input-group-text, #customerAddForm input{
   border-radius: 0;
