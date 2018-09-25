@@ -957,6 +957,9 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   white-space: nowrap;
   letter-spacing: -2px;
 }
+#customerAddForm label[for="customerAddManager"]{
+  line-height:2rem;
+}
 #customerAddForm .input-group-text, #customerAddForm input{
   border-radius: 0;
 }
@@ -974,6 +977,9 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   right:0;
 }
 /* customer modal */
+#customerModal .modal-dialog{
+  height:auto;
+}
 #customerModal #customerName{
   font-size:2rem;
   font-family:Montserrat,'Nanum Gothic';
@@ -1001,9 +1007,27 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
     height:calc(100% - 31px);
   }
 }
-#customerModal #customerHistory{
-  max-height:calc(100vh - 460px);
+#customerModal #customerHistory, #customerModal #customerAlrim{
+  max-height: 300px;
 }
 #customerModal #customerHistory .card{
   margin-bottom:1rem;
+}
+#customerModal #customerTabs{
+  border-bottom:0;
+}
+#customerModal #customerTabs li a{
+  border-radius:0;
+  border:.05rem solid #ced4da;
+  color:#212121;
+}
+#customerModal #customerTabs li a:hover{
+  background-color:#b2dfdb;
+}
+#customerModal #customerTabs li:last-child a{
+  border-left:0; 
+}
+#customerModal #customerTabs li a.active{
+  background-color:#009688;
+  color:#fff;
 }

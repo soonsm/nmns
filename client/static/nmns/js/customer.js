@@ -37,8 +37,37 @@
     }
     list.data("scroll").update();
   }
+  function drawCustomerAlrimList(alrims){
+    var html = "";
+    $("#customerAlrim .card").remove();
+    if(!$("#customerAlrim").hasClass("ps")){
+      $("#customerAlrim").data("scroll", new PerfectScrollbar("#customerAlrim", {suppressScrollX:true}));
+    }
+    if(!alrims || alrims.length === 0){
+      html = "이 고객에게 전송된 알림톡 내역이 없습니다! 예약을 추가하여 알림톡을 보내보세요.";
+      $("#customerAlrim").html(html);
+    }else{
+      var drew = false;
+      alrims.forEach(function(alrim, index){
+        html += '<div class="card">'
+              + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분") + '</button>'
+              + '<div id="customerAlrimCardBody'+index+'" class="collapse" aria-labelledby="customerAlrimCardHeader'+index+'" parent="#customerAlrimList">'
+              + '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div>'
+              + '</div>';
+        if(index > 0 && index % 50 === 0){
+          $("#customerAlrim").append(html).data("scroll").update();
+          html = "";
+        }
+      });
+      $("#customerAlrim").append(html);
+    }
+    $("#customerAlrim").data("scroll").update();
+  }
   function initCustomerModal(self){
     var customer = NMNS.customerList[Number(self.parent().data("index"))];
+    if(customer.contact && customer.contact !== ""){
+      NMNS.socket.emit("get alrim history", {"contact":customer.contact});
+    }
     $("#customerName").val(customer.name);
     $("#customerContact").val(customer.contact);
     $("#customerEtc").val(customer.etc);
@@ -139,6 +168,9 @@
       $("#customerEtc").val(NMNS.customerList[index].etc);
     }
   }));
+  NMNS.socket.on("get alrim history", socketResponse("알림톡 내역 조회", function(e){
+    drawCustomerAlrimList(e.data);
+  }, undefined, true));
   $("#customerModal").on("hidden.bs.modal", function(){
     if($(this).data("trigger")){
       $(this).removeData("trigger");
