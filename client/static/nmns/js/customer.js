@@ -54,6 +54,8 @@
     }
     $("#customerNoShow").text(text);
     drawCustomerHistoryList(customer);
+    var manager = NMNS.calendar.getCalendars().find(function(item){return item.id === customer.managerId;});
+    $("#customerManager").html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + (manager?manager.borderColor:"#b2dfdb") + "'></span><span class='tui-full-calendar-content'>" + (manager?manager.name:"(담당자 없음)") + "</span>").data("calendar-id", (manager?manager.id:"")).data("bgcolor", (manager?manager.borderColor:"#b2dfdb"));
     $("#customerModal").data("customer", customer);
   }
   function drawCustomerList(){
@@ -160,7 +162,7 @@
       name:$("#customerAddName").val(),
       contact:$("#customerAddContact").val(),
       etc:$("#customerAddEtc").val(),
-      managerId:$("#customerAddManager").data("calendarId")
+      managerId:$("#customerAddManager").data("calendar-id")
     };
     NMNS.socket.emit("add customer", customer);
     NMNS.customerList.splice(0, 0, customer);
@@ -178,7 +180,8 @@
         id:customer.id,
         name:$("#customerName").val(),
         contact:$("#customerContact").val(),
-        etc:$("#customerEtc").val()
+        etc:$("#customerEtc").val(),
+        managerId:$("#customerManager").data("calendar-id")
       });
     } else {
       alert("알 수 없는 오류입니다. 새로고침 후 다시 시도해주세요.");

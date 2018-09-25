@@ -964,11 +964,11 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   width:calc(2rem - 2px);
   background-color:#fff;
 }
-#customerAddForm #customerAddManager{
+#customerAddForm #customerAddManager, #customerModal #customerManager{
   overflow:hidden;
   border-bottom:.05rem solid #ced4da;
 }
-#customerAddForm #customerAddManager:after{
+#customerAddForm #customerAddManager:after, #customerModal #customerManager:after{
   position:absolute;
   top:50%;
   right:0;
