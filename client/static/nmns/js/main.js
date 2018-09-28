@@ -923,6 +923,15 @@
     if(!NMNS.initedInfoModal){//first init
       NMNS.initedInfoModal = true;
       
+      var html = "";
+      NMNS.colorTemplate.forEach(function(item, index){
+        if(index < 21){
+          html += '<i class="fas fa-circle infoModalColor" data-color="'+item+'" style="color:'+item+'" aria-label="'+item+'"></i>';
+        }else{
+          return;
+        }
+      });
+      $("#infoModalColors").html(html);
       flatpickr("#infoBizBeginTime", {
         dateFormat: "H:i",
         time_24hr: true,
