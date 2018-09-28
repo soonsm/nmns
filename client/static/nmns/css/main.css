@@ -1031,3 +1031,6 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   background-color:#009688;
   color:#fff;
 }
+#customerModal label[for="customerManager"]{
+  line-height:2;
+}

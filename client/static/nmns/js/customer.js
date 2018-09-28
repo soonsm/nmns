@@ -103,7 +103,7 @@
               +'<div class="col-12 row px-0"><div class="col-4 border-right"><small class="text-muted">담당자</small><br/><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+(manager?manager.borderColor:'#b2dfdb')+'"></span><span> '+(manager?manager.name:'(담당자 없음)')+'</span></div><div class="col-8"><small class="text-muted">메모</small><br/><span>'+(customer.etc || '')+'</span></div></div>'
               +'</div><div class="cardLeftBorder" style="background-color:'+(manager?manager.borderColor : '#b2dfdb')+'"></div><small class="customerSubInfo text-muted">'+(customer.history && customer.history.length > 0?'총 '+customer.history.length+'회 방문':'')+ (customer.history && customer.history.length>0?' | ' + '마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD"):'')
               +'</small><a class="w-100 h-100 position-absolute customerModalLink" href="#" data-toggle="modal" data-target="#customerModal"></a></div></div>';
-        if(index > 0 && index % 50 == 0){
+        if(index> 0 && index % 50 == 0){
           list.append(html);
           html = "";
         }
@@ -130,7 +130,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index > -1){
+    if(index && index > -1){
       NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
       NMNS.customerList[index].myNoShow = 0;
     }
@@ -141,7 +141,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index > -1){
+    if(index && index > -1){
       NMNS.customerList.splice(index, 1);
       drawCustomerList();
     }
@@ -150,7 +150,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index > -1){
+    if(index && index > -1){
       NMNS.customerList[index].name = $("#customerName").val();
       NMNS.customerList[index].contact = $("#customerContact").val();
       NMNS.customerList[index].etc = $("#customerEtc").val();
@@ -161,7 +161,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index > -1){
+    if(index && index > -1){
       $("#customerName").val(NMNS.customerList[index].name);
       $("#customerContact").val(NMNS.customerList[index].contact);
       $("#customerEtc").val(NMNS.customerList[index].etc);
