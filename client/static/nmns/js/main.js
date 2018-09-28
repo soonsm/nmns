@@ -531,14 +531,15 @@
   }
 
   function drawAlrimList(alrims){
-    alrims.push({name:"가나다",date:"201809012312", contact:"01023451234", contents:"ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"});
-    alrims.push({name:"가나다2",date:"201809012314", contact:"01023451231", contents:"zㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"});
+    var list = $("#alrimHistoryList");
+    if(!list.hasClass("ps")){
+      list.data("scroll", new PerfectScrollbar("#alrimHistoryList"));
+    }
     if(alrims && alrims.length > 0){
       var html = "";
-      var list = $("#alrimHistoryList");
       alrims.forEach(function(item, index){
-        html += '<div class="row alrimRow col"><div class="col-4 pr-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a></div>'
-              + '<div class="row collapse text-muted" id="alrimDetail'+index+'"><small>'+item.contents+'</small></div>';
+        html += '<div class="row alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><div class="col-4 pr-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a></div>'
+              + '<div class="row alrimDetailRow collapse" id="alrimDetail'+index+'"><small>'+item.contents+'</small></div>';
         if(index > 0 && index % 50 === 0){
           list.append(html);
           html = "";
@@ -546,8 +547,9 @@
       });
       list.append(html);
     } else {
-      $("#alrimHistoryList").append("<div class='row col-12 px-0 mt-2'><span class='col-12 text-center'>검색 조건에 맞는 결과가 없습니다.</span></div>");
+      list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색 조건에 맞는 결과가 없습니다.</span></div>");
     }
+    list.data("scroll").update();
   }
 
   function refreshAlrimModal(){
@@ -677,12 +679,18 @@
           parameters.contact = $("#alrimHistoryContact").val();
         }
         $("#alrimHistoryList .row").remove();//깜빡임 효과
-        drawAlrimList([]);
         NMNS.socket.emit("get alrim history", parameters);
       });
       $("#alrimHistoryContact").off("keyup").on("keyup", function(e){
         if(e.which === 13){
           filterNonNumericCharacter($(this));
+          $("#alrimHistorySearch").trigger("click");
+        }
+      }).on("blur", function(){
+        filterNonNumericCharacter($(this));
+      });
+      $("#alrimHistoryName").off("keyup").on("keyup", function(e){
+        if(e.which === 13){
           $("#alrimHistorySearch").trigger("click");
         }
       });

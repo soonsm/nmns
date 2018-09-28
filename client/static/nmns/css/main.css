@@ -1060,11 +1060,21 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   margin-left:auto !important;
   margin-right:auto !important;
   width:100%;
-  padding-left:0;
-  padding-right:0;
+  cursor: pointer;
+  padding: .125rem 0;
+  font-size:.9rem;
+}
+#alrimModal #alrimHistoryList .alrimRow:hover{
+  background-color:#b2dfdb;
 }
 #alrimModal #alrimHistoryList .alrimRow .col-4{
   display:table-cell;
+  font-size:.9rem;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  overflow-x: hidden;
 }
 #alrimModal #alrimHistoryList .row .alrimDetailLink{
   position:absolute;
@@ -1076,4 +1086,17 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
 #alrimModal #alrimHistoryList{
   height:334px;
   display:table;
+}
+#alrimModal #alrimHistoryList .row.alrimDetailRow{
+  color:#6c757d;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:.75rem;
+  padding-right:.75rem;
+  flex:0 0 100%;
+  -ms-flex:0 0 100%;
+  max-width:100%;
+}
+#alrimModal .input-group-text{
+  background-color:#fff;
 }
