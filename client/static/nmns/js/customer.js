@@ -1,3 +1,4 @@
+/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
 (function(){
   function drawCustomerHistoryList(customer){
     var list = $("#customerHistory");
@@ -26,10 +27,10 @@
             break;
         }
         html += '</h6>' + (moment(history.date, 'YYYYMMDDHHmm').isValid() ? '<p class="card-subtitle text-muted">'+moment(history.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</p>' : '')
-              +'<div class="col-12 px-0"><small class="text-muted">담당자 </small>'+(history.managerName && history.managerName !== ''?'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+history.managerColor+'"></span><span> '+history.managerName+'</span>':'(담당자 없음)')+'</div>'
-              +'</div><div class="cardLeftBorder" style="background-color:'+(history.managerColor || '#b2dfdb')+'"></div></div></div>';
+              +'<div class="col-12 px-0"><small class="text-muted">담당자 </small>'+(history.managerName && history.managerName !== ''?'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+history.managerColor+'"></span><span> '+history.managerName+'</span>':'(담당자 없음)')
+              +'</div></div><div class="cardLeftBorder" style="background-color:'+(history.managerColor || '#b2dfdb')+'"></div></div></div>';
         if(index > 0 && index % 50 == 0){
-          list.append(html);
+          list.append(html).data("scroll").update();
           html = "";
         }
       });
@@ -38,30 +39,28 @@
     list.data("scroll").update();
   }
   function drawCustomerAlrimList(alrims){
-    var html = "";
+    var list = $("#customerAlrim");
     $("#customerAlrim .card").remove();
-    if(!$("#customerAlrim").hasClass("ps")){
-      $("#customerAlrim").data("scroll", new PerfectScrollbar("#customerAlrim", {suppressScrollX:true}));
+    if(!list.hasClass("ps")){
+      list.data("scroll", new PerfectScrollbar("#customerAlrim", {suppressScrollX:true}));
     }
     if(!alrims || alrims.length === 0){
-      html = "이 고객에게 전송된 알림톡 내역이 없습니다! 예약을 추가하여 알림톡을 보내보세요.";
-      $("#customerAlrim").html(html);
+      list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다! 예약을 추가하여 알림톡을 보내보세요.</span>");
     }else{
-      var drew = false;
+      var html = "";
       alrims.forEach(function(alrim, index){
         html += '<div class="card">'
-              + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분") + '</button>'
-              + '<div id="customerAlrimCardBody'+index+'" class="collapse" aria-labelledby="customerAlrimCardHeader'+index+'" parent="#customerAlrimList">'
-              + '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div>'
-              + '</div>';
+              + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분")
+              + '</button><div id="customerAlrimCardBody'+index+'" class="collapse" aria-labelledby="customerAlrimCardHeader'+index+'" parent="#customerAlrimList">'
+              + '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div></div>';
         if(index > 0 && index % 50 === 0){
-          $("#customerAlrim").append(html).data("scroll").update();
+          list.append(html).data("scroll").update();
           html = "";
         }
       });
-      $("#customerAlrim").append(html);
+      list.append(html);
     }
-    $("#customerAlrim").data("scroll").update();
+    list.data("scroll").update();
   }
   function initCustomerModal(self){
     var customer = NMNS.customerList[Number(self.parent().data("index"))];
@@ -135,9 +134,9 @@
       NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
       NMNS.customerList[index].myNoShow = 0;
     }
-    $("#customerAddName").val(''),
-    $("#customerAddContact").val(''),
-    $("#customerAddEtc").val('')
+    $("#customerAddName").val('');
+    $("#customerAddContact").val('');
+    $("#customerAddEtc").val('');
   }, function(e){
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
