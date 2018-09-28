@@ -1,4 +1,4 @@
-/*global jQuery, location, moment, tui, NMNS, io*/
+/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList */
 (function($) {
   if(/*@cc_on!@*/false || !!document.documentMode){
     var word; 
@@ -530,6 +530,25 @@
     }
   }
 
+  function drawAlrimList(alrims){
+    alrims.push({name:"가나다",date:"201809012312", contact:"01023451234", contents:"ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"});
+    if(alrims && alrims.length > 0){
+      var html = "";
+      var list = $("#alrimHistoryList");
+      alrims.forEach(function(item, index){
+        html += '<div class="row alrimRow"><div class="col-4 pr-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a></div>'
+              + '<div class="row" id="alrimDetail'+index+'">'+item.contents+'</div>';
+        if(index > 0 && index % 50 === 0){
+          list.append(html);
+          html = "";
+        }
+      });
+      list.append(html);
+    } else {
+      $("#alrimHistoryList").append("<div class='row col-12 px-0 mt-2'><span class='col-12 text-center'>검색 조건에 맞는 결과가 없습니다.</span></div>");
+    }
+  }
+
   function refreshAlrimModal(){
     if(NMNS.info.alrimTalkInfo.useYn === "Y"){
       $("#alrimUseYn").prop("checked", true);
@@ -543,6 +562,9 @@
     $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
     $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
     $("#noticeByteCount").text($("#alrimNotice").val().length);
+    if($("#alrimModalTitle").text() !== "알림톡 정보"){
+      $("#alrimSwitchBtn").trigger("click");
+    }
   }
 
   function submitAlrimModal(){
@@ -628,6 +650,99 @@
       $("#alrimCallbackPhone").off("blur").on("blur", function(){
         filterNonNumericCharacter($(this));
       });
+      
+      $("#alrimHistorySearch").off("touch click").on("touch click", function(){
+        var parameters = {};
+        if($("#alrimHistoryStartDate").val() !== ""){
+          var start = moment($("#alrimHistoryStartDate").val(), "YYYY-MM-DD");
+          if(!start.isValid()){
+            alert("검색 시작일자가 올바르지 않습니다. 다시 입력해주세요!");
+            return;
+          }
+          parameters.start = start.format("YYYYMMDD");
+        }
+        if($("#alrimHistoryEndDate").val() !== ""){
+          var end = moment($("#alrimHistoryEndDate").val(), "YYYY-MM-DD");
+          if(!end.isValid()){
+            alert("검색 끝일자가 올바르지 않습니다. 다시 입력해주세요!");
+            return;
+          }
+          parameters.end = end.format("YYYYMMDD");
+        }
+        if($("#alrimHistoryName").val() !== ""){
+          parameters.name = $("#alrimHistoryName").val();
+        }
+        if($("#alrimHistoryContact").val() !== ""){
+          parameters.contact = $("#alrimHistoryContact").val();
+        }
+        $("#alrimHistoryList .row").remove();//깜빡임 효과
+        drawAlrimList([]);
+        NMNS.socket.emit("get alrim history", parameters);
+      });
+      $("#alrimHistoryContact").off("keyup").on("keyup", function(e){
+        if(e.which === 13){
+          filterNonNumericCharacter($(this));
+          $("#alrimHistorySearch").trigger("click");
+        }
+      });
+      
+      var datetimepickerOption = {
+        format: "Y-m-d",
+        defaultDate: new Date(),
+        appendTo:document.getElementById("alrimModal"),
+        locale:"ko",
+        closeOnSelect:true
+      };
+      flatpickr("#alrimHistoryStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
+      flatpickr("#alrimHistoryEndDate", datetimepickerOption).setDate(moment().toDate());
+      $("#alrimHistoryName").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "name",
+        zIndex: 1060,
+        maxHeight: 150,
+        triggerSelectOnValidInput: false,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.contact;
+            item.value = item.name;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#alrimHistoryContact").val(suggestion.data);
+        }
+      }, NMNS.socket);
+      $("#alrimHistoryContact").autocomplete({
+        serviceUrl: "get customer info",
+        paramName: "contact",
+        zIndex: 1060,
+        maxHeight: 150,
+        triggerSelectOnValidInput: false,
+        transformResult: function(response, originalQuery){
+          response.forEach(function(item){
+            item.data = item.name;
+            item.value = item.contact;
+            delete item.contact;
+            delete item.name;
+          });
+          return {suggestions: response};
+        },
+        onSearchComplete : function(){},
+        formatResult: function(suggestion, currentValue){
+          return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+        },
+        onSearchError: function(){},
+        onSelect: function(suggestion){
+          $("#alrimHistoryName").val(suggestion.data);
+        }
+      }, NMNS.socket);
     }
     refreshAlrimModal();
   }
@@ -909,7 +1024,7 @@
         if($("#noShowScheduleStartDate").val() !== ""){
           var start = moment($("#noShowScheduleStartDate").val(), "YYYY-MM-DD");
           if(!start.isValid()){
-            alert("검색 시작일자가 올바르지 않아요. 다시 입력해주세요!");
+            alert("검색 시작일자가 올바르지 않습니다. 다시 입력해주세요!");
             return;
           }
           parameters.start = start.format("YYYYMMDD");
@@ -917,7 +1032,7 @@
         if($("#noShowScheduleEndDate").val() !== ""){
           var end = moment($("#noShowScheduleEndDate").val(), "YYYY-MM-DD");
           if(!end.isValid()){
-            alert("검색 끝일자가 올바르지 않아요. 다시 입력해주세요!");
+            alert("검색 끝일자가 올바르지 않습니다. 다시 입력해주세요!");
             return;
           }
           parameters.end = end.format("YYYYMMDD");
@@ -928,7 +1043,7 @@
         if($("#noShowScheduleContact").val() !== ""){
           parameters.contact = $("#noShowScheduleContact").val();
         }
-        $("#noShowScheduleList").html("");//깜빡임 효과
+        $("#noShowScheduleList .row").remove();//깜빡임 효과
         NMNS.socket.emit("get summary", parameters);
       });
       $("#noShowSearchAdd").off("touch click").on("touch click", function(){
@@ -1640,7 +1755,7 @@
   NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e){
     var html = "";
     if(e.data.summary.noShowCount>0){
-      $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6)) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6)) + "일이었어요.").show();
+      $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 "+(e.data.detail.length>0?(e.data.detail.length == e.data.summary.noShowCount?"우리매장에서만 ":"다른 매장 포함 "):"다른 매장에서만 ")+(e.data.summary.noShowCount>1?"총 ":"") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year()+"") === e.data.summary.lastNoShowDate.substring(0,4)? "올해 " : (((moment().year()-1)+"") === e.data.summary.lastNoShowDate.substring(0,4)? "작년 " : e.data.summary.lastNoShowDate.substring(0,4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4,6), 10) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6), 10) + "일이었어요.").show();
       if(e.data.detail.length>0){
         e.data.detail.forEach(function(item){
           html += "<div class='row col-12 px-0 mt-1' data-id='"+item.id+"' data-contact='"+(e.data.summary.contact||"")+"' data-date='"+(item.date||"")+"' data-noshowcase='"+(item.noShowCase||"")+"'><span class='col-4'>"+(e.data.summary.contact?dashContact(e.data.summary.contact):"")+"</span><span class='col-4'>"+(item.date?(item.date.substring(0,4)+"-"+item.date.substring(4,6)+"-"+item.date.substring(6)):"")+"</span><span class='col-3'>"+(item.noShowCase?("<span class='badge badge-danger'>" + item.noShowCase + "</span>") : "")+"</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>";
@@ -1765,6 +1880,14 @@
       showSnackBar(e.data.body);
     }
   }, undefined, true));
+
+  NMNS.socket.on("get alrim history", socketResponse("알림톡 내역 조회", function(e){
+    if($("#customerModal").is(":visible")){//고객 상세정보 조회 모달 내 조회인 경우
+      drawCustomerAlrimList(e.data);
+    } else if($("#alrimModal").is(":visible")){//알림톡 내역 조회 모달 내 조회인 경우
+      drawAlrimList(e.data);
+    }
+  }, undefined, true));
 //websocket response end
 //Modal events start  
   $("#infoModal").on("hide.bs.modal", function(){
@@ -1825,24 +1948,26 @@
     if(document.activeElement.tagName === "INPUT"){
       return false;
     }
-    var changed = false;
-    if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
-      changed = true;
-    }
-    if(!changed && $("#alrimShopName").val() !== (NMNS.info.shopName || "")){
-      changed = true;
-    }
-    if(!changed && $("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")){
-      changed = true;
-    }
-    if(!changed && $("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")){
-      changed = true;
-    }
-    if(!changed && $("#alrimNotice").val() !== (NMNS.info.alrimTalkInfo.notice || "")){
-      changed = true;
-    }
-    if(changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")){
-      return false;
+    if($("#alrimShopName").is(":visible")){
+      var changed = false;
+      if(($("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "Y") || (!$("#alrimUseYn").prop("checked") && NMNS.info.alrimTalkInfo.useYn !== "N")){
+        changed = true;
+      }
+      if(!changed && $("#alrimShopName").val() !== (NMNS.info.shopName || "")){
+        changed = true;
+      }
+      if(!changed && $("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")){
+        changed = true;
+      }
+      if(!changed && $("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")){
+        changed = true;
+      }
+      if(!changed && $("#alrimNotice").val() !== (NMNS.info.alrimTalkInfo.notice || "")){
+        changed = true;
+      }
+      if(changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")){
+        return false;
+      }
     }
   });
   $("#noShowModal").on("touch click", function(e){
@@ -1888,7 +2013,15 @@
   });
   $("#alrimSwitchBtn").on("touch click", function(e){
     e.preventDefault();
-    $("#alrimModal .alrimData").toggleClass("d-none");
+    if($("#alrimForm").is(":visible")){
+      $("#alrimModalTitle").text("알림톡 사용내역");
+      $(this).text("알림톡 정보");
+    }else{
+      $("#alrimModalTitle").text("알림톡 정보");
+      $(this).text("알림톡 사용내역");
+    }
+    $("#alrimModal .alrimData").toggle();
+    $(this).blur();
   });
   //Modal events end
   //mobile horizontal scroll handling
@@ -1904,18 +2037,18 @@
     touchsurface.addEventListener('touchstart', function(e){
       var touchobj = e.changedTouches[0];
       swipedir = 'none';
-      dist = 0;
+      //dist = 0;
       startX = touchobj.pageX;
       startTime = new Date().getTime(); // record time when finger first makes contact with surface
     }, false);
 
     touchsurface.addEventListener('touchend', function(e){
-      var touchobj = e.changedTouches[0]
-      distX = touchobj.pageX - startX // get horizontal dist traveled by finger while in contact with surface
-      elapsedTime = new Date().getTime() - startTime // get time elapsed
+      var touchobj = e.changedTouches[0];
+      distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
+      elapsedTime = new Date().getTime() - startTime; // get time elapsed
       if (elapsedTime <= allowedTime){ // first condition for awipe met
           if (Math.abs(distX) >= threshold){ // 2nd condition for horizontal swipe met
-              swipedir = (distX < 0)? 'left' : 'right' // if dist traveled is negative, it indicates left swipe
+              swipedir = (distX < 0)? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
               handleswipe(swipedir);
           }
       }

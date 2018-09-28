@@ -388,22 +388,22 @@
         <div class="modal-content rounded-0">
           <div class="modal-header">
             <h5 id="alrimModalTitle">알림톡 정보</h5>
+            <button id="alrimSwitchBtn" class="btn btn-sm btn-flat btn-secondary">알림톡 사용내역</button>
             <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <form id="alrimForm">
+            <form id="alrimForm" class="alrimData">
               <div class="form-group">
                 <div class="row mb-2">
                   <div class="col-12">
                     <input type="checkbox" id="alrimUseYn">
                     <label for="alrimUseYn"></label>
                     <label for="alrimUseYn">알림톡 사용여부</label>
-                    <button id="alrimSwitchBtn" class="btn btn-sm btn-flat btn-secondary float-right">알림톡 사용내역</button>
                   </div>
                 </div>
-                <div class="alrimData">
+                <div>
                   <div id="alrimScreen"></div>
                   <div class="row mb-2">
                     <label for="alrimShopName" class="col-12 col-sm-4 col-form-label col-form-label-sm">매장이름</label>
@@ -440,16 +440,55 @@
                     <br/>예) "- 예약취소는 <b>3시간</b> 전까지 가능합니다."라는 문구로 표기됩니다.</small>
                   </div>
                 </div>
-                <div class="alrimData d-none">
-                  알림톡 사용내역
-                </div>
               </div>
             </form>
+            <div class="alrimHistory alrimData">
+              <div class="row col-12 px-0 mx-auto">
+                <label for="alrimHistoryStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>
+                <div class="row col-12 col-sm-10 px-0 mb-2 mx-auto">
+                  <div class="px-0 d-inline-block alrimHistoryDate">
+                    <div id="alrimHistoryStartDatePicker" class="input-group input-group-sm">
+                      <div class="input-group-prepend">
+                        <i id="alrimHistoryStartDateIcon" class="input-group-text far fa-calendar-alt rounded-0"></i>
+                      </div>
+                      <input id="alrimHistoryStartDate" class="form-control rounded-0" aria-describedby="alrimHistoryStartDateIcon"/>
+                    </div>
+                  </div>
+                  <span class="px-2 pt-1">—</span>
+                  <div class="px-0 d-inline-block alrimHistoryDate">
+                    <div id="alrimHistoryEndDatePicker" class="input-group input-group-sm">
+                      <div class="input-group-prepend">
+                        <i id="alrimHistoryEndDateIcon" class="input-group-text far fa-calendar-alt rounded-0"></i>
+                      </div>
+                      <input id="alrimHistoryEndDate" class="form-control rounded-0" aria-describedby="alrimHistoryEndDateIcon"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row col-12 px-0 mb-3 mx-auto">
+                <input type="text" class="form-control form-control-sm rounded-0" id="alrimHistoryName" placeholder="고객 이름" autocomplete="false">
+                <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="alrimHistoryContact" placeholder="고객 연락처" autocomplete="false">
+                <div id="alrimHistorySearch" class="btn btn-flat btn-sm btn-primary ml-3">
+                  <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
+                </div>
+              </div>
+              <div class="row col-12 px-0 mx-auto">
+                <div class="col-12 border-left border-right border-top row text-left px-0 mx-auto">
+                  <span class="col-4 pr-0 d-inline-flex">날짜</span>
+                  <span class="col-4 d-inline-flex">이름</span>
+                  <span class="col-4 px-0 d-inline-flex">연락처</span>
+                </div>
+              </div>
+              <div id="alrimHistoryList" class="row col-12 border px-0 mx-auto"><div class="row col-12 px-0 mt-2"><span class="col-12 text-center">검색버튼을 눌러 전송된 알림톡 내역을 조회하실 수 있습니다.</span></div></div>
+            </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer alrimData">
             <button type="button" id="alrimModalRefresh" class="btn btn-light btn-flat border" aria-label="초기화">초기화</button>
             <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
             <button type="button" id="alrimModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
+          </div>
+          <div class="modal-footer alrimHistory alrimData">
+            <button type="button" class="btn btn-light btn-flat border float-right" data-dismiss="modal" aria-label="닫기">닫기</button>
           </div>
         </div>
       </div>
@@ -473,7 +512,7 @@
               <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
                 <div class="row my-auto col-12 px-0">
                   <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0 my-auto">
-                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowAddContact" placeholder="고객 전화번호" aria-describedby="noShowAddContactIcon" autocomplete="false">
+                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowAddContact" placeholder="고객 연락처" aria-describedby="noShowAddContactIcon" autocomplete="false">
                     <div id="noShowAddBtn" class="input-group-append">
                       <span id="noShowAddContactIcon" class="input-group-text rounded-0">저장</span>
                     </div>
@@ -492,7 +531,7 @@
               <div id="noShowSearch" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div class="row mb-2 col-12 px-0">
                   <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0">
-                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 전화번호" autocomplete="false">
+                    <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 연락처" autocomplete="false">
                     <div id="noShowSearchBtn" class="input-group-append">
                       <i class="input-group-text fas fa-search d-sm-none rounded-0"></i>
                       <span class="input-group-text d-none d-sm-block rounded-0">검색</span>
@@ -557,7 +596,7 @@
                   <div class="col-12 border-left border-right border-top row text-left px-0">
                     <span class="col-3 col-lg-2 pr-0 d-inline-flex">날짜</span>
                     <span class="col-4 col-lg-3 d-inline-flex">고객이름</span>
-                    <span class="col-3 col-lg-2 px-0 d-inline-flex">전화번호</span>
+                    <span class="col-3 col-lg-2 px-0 d-inline-flex">연락처</span>
                     <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
                     <span class="col-2 px-0 d-inline-flex">상태</span>
                   </div>

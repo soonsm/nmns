@@ -1,4 +1,28 @@
 /*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
+function drawCustomerAlrimList(alrims){
+  var list = $("#customerAlrim");
+  $("#customerAlrim .card").remove();
+  if(!list.hasClass("ps")){
+    list.data("scroll", new PerfectScrollbar("#customerAlrim", {suppressScrollX:true}));
+  }
+  if(!alrims || alrims.length === 0){
+    list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다! 예약을 추가하여 알림톡을 보내보세요.</span>");
+  }else{
+    var html = "";
+    alrims.forEach(function(alrim, index){
+      html += '<div class="card">'
+            + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분")
+            + '</button><div id="customerAlrimCardBody'+index+'" class="collapse" aria-labelledby="customerAlrimCardHeader'+index+'" parent="#customerAlrimList">'
+            + '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div></div>';
+      if(index > 0 && index % 50 === 0){
+        list.append(html).data("scroll").update();
+        html = "";
+      }
+    });
+    list.append(html);
+  }
+  list.data("scroll").update();
+}
 (function(){
   function drawCustomerHistoryList(customer){
     var list = $("#customerHistory");
@@ -30,30 +54,6 @@
               +'<div class="col-12 px-0"><small class="text-muted">담당자 </small>'+(history.managerName && history.managerName !== ''?'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+history.managerColor+'"></span><span> '+history.managerName+'</span>':'(담당자 없음)')
               +'</div></div><div class="cardLeftBorder" style="background-color:'+(history.managerColor || '#b2dfdb')+'"></div></div></div>';
         if(index > 0 && index % 50 == 0){
-          list.append(html).data("scroll").update();
-          html = "";
-        }
-      });
-      list.append(html);
-    }
-    list.data("scroll").update();
-  }
-  function drawCustomerAlrimList(alrims){
-    var list = $("#customerAlrim");
-    $("#customerAlrim .card").remove();
-    if(!list.hasClass("ps")){
-      list.data("scroll", new PerfectScrollbar("#customerAlrim", {suppressScrollX:true}));
-    }
-    if(!alrims || alrims.length === 0){
-      list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다! 예약을 추가하여 알림톡을 보내보세요.</span>");
-    }else{
-      var html = "";
-      alrims.forEach(function(alrim, index){
-        html += '<div class="card">'
-              + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분")
-              + '</button><div id="customerAlrimCardBody'+index+'" class="collapse" aria-labelledby="customerAlrimCardHeader'+index+'" parent="#customerAlrimList">'
-              + '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div></div>';
-        if(index > 0 && index % 50 === 0){
           list.append(html).data("scroll").update();
           html = "";
         }
@@ -167,9 +167,6 @@
       $("#customerEtc").val(NMNS.customerList[index].etc);
     }
   }));
-  NMNS.socket.on("get alrim history", socketResponse("알림톡 내역 조회", function(e){
-    drawCustomerAlrimList(e.data);
-  }, undefined, true));
   $("#customerModal").on("hidden.bs.modal", function(){
     if($(this).data("trigger")){
       $(this).removeData("trigger");

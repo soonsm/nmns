@@ -1034,3 +1034,42 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
 #customerModal label[for="customerManager"]{
   line-height:2;
 }
+/* alrim modal */
+#alrimModal #alrimSwitchBtn{
+  line-height:1rem;
+  margin-left:1rem;
+}
+#alrimModal .alrimHistory{
+  display:none;
+}
+#alrimModal .alrimHistoryDate{
+  width:calc(50% - 16px);
+}
+#alrimModal #alrimHistoryName{
+  width:calc(50% - 37px);
+}
+@media(min-width:576px){
+  #alrimModal #alrimHistoryName{
+    width:calc(50% - 51px);
+  }
+}
+#alrimModal #alrimHistoryContact{
+  width:calc(50% - 27px);
+}
+#alrimModal #alrimHistoryList .row{
+  margin-left:auto !important;
+  margin-right:auto !important;
+  width:100%;
+  padding-left:0;
+  padding-right:0;
+}
+#alrimModal #alrimHistoryList .row .alrimDetailLink{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+}
+#alrimModal #alrimHistoryList{
+  height:334px;
+}
