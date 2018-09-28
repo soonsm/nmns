@@ -904,7 +904,7 @@ button.customerSortType{
 button.customerSortType:active, button.customerSortType:hover, button.customerSortType:focus, button.customerSortType.active{
   background-color: #b2dfdb !important;
 }
-#mainCustomer{
+#mainCustomerList{
   min-height:800px;
   max-height:1080px;
 }
@@ -1008,7 +1008,7 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   }
 }
 #customerModal #customerHistory, #customerModal #customerAlrim{
-  max-height: 300px;
+  height: 300px;
 }
 #customerModal #customerHistory .card{
   margin-bottom:1rem;

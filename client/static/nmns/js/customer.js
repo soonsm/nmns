@@ -1,12 +1,12 @@
 /*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
 function drawCustomerAlrimList(alrims){
   var list = $("#customerAlrim");
-  $("#customerAlrim .card").remove();
+  list.children(".card, span").remove();
   if(!list.hasClass("ps")){
     list.data("scroll", new PerfectScrollbar("#customerAlrim", {suppressScrollX:true}));
   }
   if(!alrims || alrims.length === 0){
-    list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다! 예약을 추가하여 알림톡을 보내보세요.</span>");
+    list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다!<br/>새로운 예약을 등록하여 알림톡을 보내보세요.</span>");
   }else{
     var html = "";
     alrims.forEach(function(alrim, index){
@@ -26,7 +26,7 @@ function drawCustomerAlrimList(alrims){
 (function(){
   function drawCustomerHistoryList(customer){
     var list = $("#customerHistory");
-    list.children(".card").remove();
+    list.children(".card, span").remove();
     if(!list.hasClass("ps")){
       list.data("scroll", new PerfectScrollbar(list[0]));
     }
@@ -97,7 +97,7 @@ function drawCustomerAlrimList(alrims){
       var managers = NMNS.calendar.getCalendars();
       NMNS.customerList.forEach(function(customer, index){
         var manager = managers.find(function(item){return item.id === customer.managerId;});
-        html += '<div class="card row col-12 col-sm-10" data-index="'+index+'"><div class="card-body"><h5 class="card-title">'+(!customer.name || customer.name === ''? '(이름없음)':customer.name)
+        html += '<div class="card row" data-index="'+index+'"><div class="card-body"><h5 class="card-title">'+(!customer.name || customer.name === ''? '(이름없음)':customer.name)
               +(!customer.contact || customer.contact === ''? '' : '&nbsp;<small class="card-subtitle text-muted d-none d-sm-inline-block">'+dashContact(customer.contact)+'</small>')
               +'</h5>'+(!customer.contact || customer.contact === ''? '' : '&nbsp;<a href="tel:'+customer.contact+'" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted"><i class="fas fa-phone fa-rotate-90"></i> '+dashContact(customer.contact)+'</span></a>')
               +'<div class="col-12 row px-0"><div class="col-4 border-right"><small class="text-muted">담당자</small><br/><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:'+(manager?manager.borderColor:'#b2dfdb')+'"></span><span> '+(manager?manager.name:'(담당자 없음)')+'</span></div><div class="col-8"><small class="text-muted">메모</small><br/><span>'+(customer.etc || '')+'</span></div></div>'
@@ -123,6 +123,12 @@ function drawCustomerAlrimList(alrims){
   });
   NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e){
     NMNS.customerList = e.data;
+    if(e.data && e.data.length > 0){
+      var managers = NMNS.calendar.getCalendars();
+      e.data.forEach(function(item){
+        item.manager = managers[managers.findIndex(function(manager){return manager.id === item.id;})];
+      });
+    }
     drawCustomerList();
     switchSortTypeButton("sort-name");
   }));
@@ -221,19 +227,6 @@ function drawCustomerAlrimList(alrims){
         return function(a, b){
           if(!a.history || a.history.length === 0){
             if(b.history && b.history.length > 0){
-              return -1;
-            }else{
-              return 0;
-            }
-          } else if(!b.history || b.history.length === 0){
-            return 1;
-          }
-          return (a.history[0].date < b.history[0].date ?1:(a.history[0].date > b.history[0].date?-1:getSortFunc("sort-name")(a, b)));
-        };
-      case 'sort-manager':
-        return function(a, b){
-          if(!a.history || a.history.length === 0){
-            if(b.history && b.history.length > 0){
               return 1;
             }else{
               return 0;
@@ -241,7 +234,20 @@ function drawCustomerAlrimList(alrims){
           } else if(!b.history || b.history.length === 0){
             return -1;
           }
-          return (a.history[0].managerName < b.history[0].managerName ?-1:(a.history[0].managerName > b.history[0].managerName?1:getSortFunc("sort-name")(a, b)));
+          return (a.history[0].date < b.history[0].date ?1:(a.history[0].date > b.history[0].date?-1:getSortFunc("sort-name")(a, b)));
+        };
+      case 'sort-manager':
+        return function(a, b){
+          if(!a.manager){
+            if(b.manager){
+              return 1;
+            }else{
+              return 0;
+            }
+          } else if(!b.manager){
+            return -1;
+          }
+          return (a.manager.name < b.manager.name ?-1:(a.manager.name > b.manager.name?1:getSortFunc("sort-name")(a, b)));
         };      
       case 'sort-name':
       default:
