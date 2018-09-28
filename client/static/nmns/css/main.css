@@ -1084,7 +1084,7 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   height:1.5rem;
 }
 #alrimModal #alrimHistoryList{
-  height:334px;
+  height:309px;
   display:table;
 }
 #alrimModal #alrimHistoryList .row.alrimDetailRow{
