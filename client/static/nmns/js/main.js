@@ -532,12 +532,13 @@
 
   function drawAlrimList(alrims){
     alrims.push({name:"가나다",date:"201809012312", contact:"01023451234", contents:"ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"});
+    alrims.push({name:"가나다2",date:"201809012314", contact:"01023451231", contents:"zㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"});
     if(alrims && alrims.length > 0){
       var html = "";
       var list = $("#alrimHistoryList");
       alrims.forEach(function(item, index){
-        html += '<div class="row alrimRow"><div class="col-4 pr-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a></div>'
-              + '<div class="row" id="alrimDetail'+index+'">'+item.contents+'</div>';
+        html += '<div class="row alrimRow col"><div class="col-4 pr-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a></div>'
+              + '<div class="row collapse text-muted" id="alrimDetail'+index+'"><small>'+item.contents+'</small></div>';
         if(index > 0 && index % 50 === 0){
           list.append(html);
           html = "";
