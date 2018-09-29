@@ -136,6 +136,9 @@ exports.getCustomerList = async function(data){
     }else{
         let user = await db.getWebUser(email);
         let memberList = user.memberList;
+        let reservationList = await db.getReservationList(email);
+        let staffList = await db.getStaffList(email);
+
         if(target && target.trim().length > 0) {
             let filteredList = [];
             for (let i = 0; i < memberList.length; i++) {
@@ -146,15 +149,16 @@ exports.getCustomerList = async function(data){
                 if ((type === 'contact' || type === 'all') && member.contact && member.contact.includes(target)) {
                     filteredList.push(member);
                 }
-                if ((type === 'manager' || type === 'all') && member.manager && member.manager.includes(target)) {
-                    filteredList.push(member);
+                if ((type === 'manager' || type === 'all') && member.managerId) {
+                    let staff = staffList.find(staff => staff.id === member.managerId);
+                    if(staff && staff.name.includes(target)){
+                        filteredList.push(member);
+                    }
                 }
             }
             memberList = filteredList;
         }
 
-        let reservationList = await db.getReservationList(email);
-        let staffList = await db.getStaffList(email);
         for(let i=0;i<memberList.length; i++){
             let member = memberList[i];
             member.myNoShow = 0;
