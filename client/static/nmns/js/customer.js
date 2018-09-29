@@ -238,7 +238,7 @@
             if(b.history && b.history.length > 0){
               return 1;
             }else{
-              return 0;
+              return getSortFunc("sort-name")(a, b);
             }
           } else if(!b.history || b.history.length === 0){
             return -1;
@@ -251,7 +251,7 @@
             if(b.manager){
               return 1;
             }else{
-              return 0;
+              return getSortFunc("sort-name")(a,b);
             }
           } else if(!b.manager){
             return -1;
