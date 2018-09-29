@@ -292,4 +292,23 @@ function drawCustomerAlrimList(alrims){
       searchCustomerList($(this).val());
     }
   });
+  $(".addCustomerLink").on("touch click", function(e){
+    e.preventDefault();
+    if(!$("#mainCustomer").is(":visible")){
+      $($("#sidebarContainer .customerMenuLink")[0]).trigger("click");
+    }
+    var name = $("#customerAddName"); // Save reference for better performance
+    name.focus();
+    var icon = $("#customerAddNameIcon");
+    var count = 6;
+    var interval = setInterval(function(){
+      if(count>0){
+        name.toggleClass("blink");
+        icon.toggleClass("blink");
+        count --;
+      }else{
+        clearInterval(interval);
+      }
+    },150);
+  });
 })();
