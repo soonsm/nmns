@@ -189,6 +189,11 @@ exports.updateReservation = async function (newReservation) {
                     message = '예약수정완료';
                 }
 
+                //Local Test version에서는 취소하면 취소 알림톡 나간것처럼 하자.
+                if(process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT && newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED){
+                    await alrimTalk.sendReservationCancelNotify(user, reservation);
+                }
+
                 break;
             }
         }
