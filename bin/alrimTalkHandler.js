@@ -115,7 +115,7 @@ exports.getAlrimTalkHistory = async function (data) {
                 contents: item.msg
             }
         }
-    });
+    }) || [];
 
     let cancelTalkList = await user.cancelAlrimTalkList.filter(function (item) {
         let include = true;
@@ -160,7 +160,7 @@ exports.getAlrimTalkHistory = async function (data) {
                 contents: item.msg
             }
         }
-    });
+    }) || [];
 
     let list = await alrimTalkList.concat(cancelTalkList).filter(function(item){
         if(item){

@@ -759,13 +759,13 @@ exports.addCustomer = async function(email, id, name, contact, managerId, etc){
         }
     }
 
-    if(index){
+    if(index !== undefined){
         //member update
         let member = memberList[index];
-        member.name = name || member.name;
-        member.contact = contact || member.contact;
-        member.etc = etc || member.etc;
-        member.managerId = managerId || member.managerId;
+        member.name = name;
+        member.contact = contact;
+        member.etc = etc;
+        member.managerId = managerId;
 
         return await update({
             TableName: process.nmns.TABLE.WebSecheduler,

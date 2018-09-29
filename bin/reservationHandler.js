@@ -116,30 +116,7 @@ exports.updateReservation = async function (newReservation) {
     let message = validationResult.message || '수정완료';
 
     if (status) {
-        /*
-        고객 없으면 추가
-        고객 조회 한 뒤, 이름과 연락처가 일치하는 고객이 있으면 무시,
-        이름과 연락처가 일치하는 고객이 없으면 추가
-         */
         let user = await db.getWebUser(email);
-        if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
-            let memberList = user.memberList;
-            let newMember = true;
-            for (let i = 0; i < memberList.length; i++) {
-                let member = memberList[i];
-                if (newReservation.contact === member.contact && newReservation.name === member.name) {
-                    newMember = false;
-                    newReservation.memberId = member.memberId;
-                    break;
-                }
-            }
-            if (newMember && (newReservation.contact || newReservation.name)) {
-                let memberId = newCustomerId(email);
-                memberList.push({id: memberId, contact: newReservation.contact, name: newReservation.name, etc: newReservation.etc});
-                await db.updateWebUser(email, {memberList: memberList});
-                newReservation.memberId = memberId;
-            }
-        }
 
         status = false;
         message = '없는 예약입니다.';
@@ -147,6 +124,32 @@ exports.updateReservation = async function (newReservation) {
         for (let i = 0; i < reservationList.length; i++) {
             let reservation = reservationList[i];
             if (reservation.id === newReservation.id) {
+
+                /*
+                고객 없으면 추가
+                고객 조회 한 뒤, 이름과 연락처가 일치하는 고객이 있으면 무시,
+                이름과 연락처가 일치하는 고객이 없으면 추가
+                 */
+                if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
+                    let memberList = user.memberList;
+                    let newMember = true;
+                    for (let i = 0; i < memberList.length; i++) {
+                        let member = memberList[i];
+                        if (newReservation.contact === member.contact && newReservation.name === member.name) {
+                            newMember = false;
+                            newReservation.memberId = member.memberId;
+                            break;
+                        }
+                    }
+                    if (newMember && (newReservation.contact || newReservation.name)) {
+                        let memberId = newCustomerId(email);
+                        let newMember = {id: memberId, contact: newReservation.contact, name: newReservation.name, etc: newReservation.etc};
+                        newMember.managerId = newReservation.manager || reservation.manager;
+                        memberList.push(newMember);
+                        await db.updateWebUser(email, {memberList: memberList});
+                        newReservation.memberId = memberId;
+                    }
+                }
 
                 if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && newReservation.status) {
                     if (newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED || newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED)
@@ -232,7 +235,7 @@ exports.addReservation = async function (data) {
             }
             if (newMember && (data.contact || data.name)) {
                 let memberId = newCustomerId(email);
-                memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc});
+                memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
                 await db.updateWebUser(email, {memberList: memberList});
                 data.memberId = memberId;
             }
