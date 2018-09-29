@@ -29,7 +29,7 @@ const GetManagerList = 'get manager',
 const GetShop = 'get info',
     UpdateShop = 'update info',
     UpdatePwd = 'update password';
-const GetAlrimTalkInfo = 'get alrim', UpdateAlirmTalk = 'update alrim', GetAlrimTalkHistory = 'get alrim history';
+const GetAlrimTalkInfo = 'get alrim', UpdateAlirmTalk = 'update alrim', GetAlrimTalkHistory = 'get alrim history', GetCustomerAlrimTalkHistory = 'get customer alrim';
 const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer';
 const SendNoti = 'message', GetNoti = 'get noti';
@@ -183,6 +183,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetAlrimTalkInfo, alrimTalkHandler.getAlirmTalkInfo);
         addEvent(UpdateAlirmTalk, alrimTalkHandler.updateAlrimTalkInfo);
         addEvent(GetAlrimTalkHistory, alrimTalkHandler.getAlrimTalkHistory);
+        addEvent(GetCustomerAlrimTalkHistory, alrimTalkHandler.getAlrimTalkHistory);
 
         /**
          * Shop & Account
