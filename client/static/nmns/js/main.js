@@ -1900,11 +1900,7 @@
   }, undefined, true));
 
   NMNS.socket.on("get alrim history", socketResponse("알림톡 내역 조회", function(e){
-    if($("#customerModal").is(":visible")){//고객 상세정보 조회 모달 내 조회인 경우
-      drawCustomerAlrimList(e.data);
-    } else if($("#alrimModal").is(":visible")){//알림톡 내역 조회 모달 내 조회인 경우
-      drawAlrimList(e.data);
-    }
+    drawAlrimList(e.data);
   }, undefined, true));
 //websocket response end
 //Modal events start  
