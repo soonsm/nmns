@@ -12,7 +12,7 @@
       var html = "";
       alrims.forEach(function(alrim, index){
         html += '<div class="card">'
-              + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분")
+              + '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader'+index+'" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody'+index+'" aria-expanded="false" aria-controls="customerAlrimCardBody'+index+'" title="눌러서 전송된 알림톡 내용 보기">'+moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분")
               + '</button><div id="customerAlrimCardBody'+index+'" class="collapse" aria-labelledby="customerAlrimCardHeader'+index+'" parent="#customerAlrimList">'
               + '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div></div>';
         if(index > 0 && index % 50 === 0){
@@ -67,7 +67,7 @@
     if(customer.contact && customer.contact !== ""){
       NMNS.socket.emit("get customer alrim", {"contact":customer.contact});
     } else {
-      drawCustomerAlrimList([]);
+      drawCustomerAlrimList([{date:"201809011234", "contents":"aaaaaa"}]);
     }
     $("#customerName").val(customer.name);
     $("#customerContact").val(customer.contact);

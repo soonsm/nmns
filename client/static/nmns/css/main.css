@@ -1041,6 +1041,29 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
 #customerModal label[for="customerManager"]{
   line-height:2;
 }
+#customerModal #customerAlrim .card{
+  border-radius:0;
+}
+#customerModal #customerAlrim .card button.card-header:before{
+  font-family:"Font Awesome 5 Free";
+  font-weight:900;
+  content:'\f054';
+  margin:0 .25rem;
+  display:inline-block;
+  transition: 0.3s all ease;
+  -webkit-transition: 0.3s all ease;
+  -moz-transition: 0.3s all ease;
+  -ms-transition: 0.3s all ease;
+  -o-transition: 0.3s all ease;
+}
+#customerModal #customerAlrim .card button.card-header[aria-expanded=true]:before{
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  filter:none;
+  -webkit-filter:none;
+  -ms-filter:"progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
+}
 /* alrim modal */
 #alrimModal #alrimSwitchBtn{
   line-height:1rem;
