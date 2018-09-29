@@ -2169,6 +2169,7 @@
     }
   });
   $(".mfb-component__button--child").off("touch click").on("touch click", function(e){
+    e.preventDefault();
     document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
   });
   //notification handling start
