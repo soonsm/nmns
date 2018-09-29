@@ -12,25 +12,29 @@ const
 const logger = global.nmns.LOGGER;
 
 async function sendAlrimTalk(param){
-    return new Promise(resolve => {
-        request({
-            "uri": `http://api.apistore.co.kr/kko/1/msg/${apiStoreId}`,
-            "headers": {'x-waple-authorization': apiStoreKey},
-            "method": "POST",
-            'form' : param
-        }, (err, res, body) => {
-            if (!err) {
-                logger.log('sendAlrimTalk sending result: ', body);
-                if(JSON.parse(body).result_code === '200'){
-                    resolve(true);
+    if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
+        return new Promise(resolve => {
+            request({
+                "uri": `http://api.apistore.co.kr/kko/1/msg/${apiStoreId}`,
+                "headers": {'x-waple-authorization': apiStoreKey},
+                "method": "POST",
+                'form' : param
+            }, (err, res, body) => {
+                if (!err) {
+                    logger.log('sendAlrimTalk sending result: ', body);
+                    if(JSON.parse(body).result_code === '200'){
+                        resolve(true);
+                    }
+                    resolve(false);
+                } else {
+                    logger.error("Unable to send sendAlrimTalk:", err);
+                    resolve(false);
                 }
-                resolve(false);
-            } else {
-                logger.error("Unable to send sendAlrimTalk:", err);
-                resolve(false);
-            }
+            });
         });
-    });
+    } else if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
+        return true;
+    }
 }
 exports.sendReservationConfirm = async function (user, reservation) {
 
@@ -56,6 +60,7 @@ exports.sendReservationConfirm = async function (user, reservation) {
         let result = await sendAlrimTalk(param);
         param.sendResult = result;
         param.reservation = reservation;
+        param.sendDate = moment().format('YYYYMMDDhhmmss');
         await db.addReservationConfirmAlrimTalkHist(user.email, param);
         return result;
     }
@@ -79,6 +84,7 @@ exports.sendReservationCancelNotify =async function (user, reservation){
     let result = await sendAlrimTalk(param);
     param.sendResult = result;
     param.reservation = reservation;
+    param.sendDate = moment().format('YYYYMMDDhhmmss');
     await db.addReservationCancelAlrimTalkHist(user.email, param);
     return result;
 };

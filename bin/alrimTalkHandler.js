@@ -63,3 +63,118 @@ exports.updateAlrimTalkInfo = async function (data) {
     };
 };
 
+exports.getAlrimTalkHistory = async function (data) {
+    let email = this.email;
+    let status = true,
+        message = null;
+    let user = await db.getWebUser(email);
+
+    if(data.start){
+        data.start = data.start + '0000';
+    }
+    if(data.end){
+        data.end = data.end + '9999';
+    }
+
+    let alrimTalkList = await user.reservationConfirmAlrimTalkList.filter(function (item) {
+        let include = true;
+
+        if (item.reservation) {
+            if (data.contact && data.contact !== item.reservation.contact) {
+                include = false;
+            }
+            if (item.sendDate) {
+                if (data.start && data.start > item.sendDate) {
+                    include = false;
+                }
+                if (data.end && data.end < item.sendDate) {
+                    include = false;
+                }
+            }else{
+                if (data.start && data.start > item.reservation.end) {
+                    include = false;
+                }
+                if (data.end && data.end < item.reservation.start) {
+                    include = false;
+                }
+            }
+            if (data.name && data !== item.reservation.name) {
+                include = false;
+            }
+        }else{
+            include= false;
+        }
+
+        return include;
+    }).map(function (item) {
+        if(item.reservation){
+            return {
+                date: item.reservation.start || item.sendDate,
+                name: item.reservation.name,
+                contact: item.reservation.contact,
+                contents: item.msg
+            }
+        }
+    });
+
+    let cancelTalkList = await user.cancelAlrimTalkList.filter(function (item) {
+        let include = true;
+
+        if(item.reservation){
+            if (data.contact && data.contact !== item.reservation.contact) {
+                include = false;
+            }
+            if (item.sendDate) {
+                if (data.start && data.start > item.sendDate) {
+                    include = false;
+                }
+                if (data.end && data.end < item.sendDate) {
+                    include = false;
+                }
+            }else{
+                if (data.start && data.start > item.reservation.cancelDate) {
+                    include = false;
+                }
+                if (data.end && data.end < item.reservation.cancelDate) {
+                    include = false;
+                }
+            }
+            if (data.name && data.name !== item.reservation.name) {
+                include = false;
+            }
+        }else{
+            include = false;
+        }
+
+        return include;
+    }).map(function (item) {
+        if(item.reservation){
+            let date = item.sendDate;
+            if (!date) {
+                date = item.reservation.cancelDate + '1330';
+            }
+            return {
+                date: date,
+                name: user.shopName,
+                contact: item.reservation.contact,
+                contents: item.msg
+            }
+        }
+    });
+
+    let list = await alrimTalkList.concat(cancelTalkList).filter(function(item){
+        if(item){
+            return true;
+        }
+    });
+
+    await list.sort(function (r1, r2) {
+        return r2.date - r1.date;
+    });
+
+    return {
+        status: status,
+        data: list,
+        message: message
+    };
+}

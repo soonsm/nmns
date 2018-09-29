@@ -185,7 +185,6 @@ exports.signUp = async function (newUser) {
 exports.getWebUser = async function (email) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
-        ProjectionExpression: "pushList, email, authStatus, emailAuthToken, password, numOfWrongPassword, bizBeginTime, bizEndTime, accountStatus, signUpDate, shopName, bizType, alrimTalkInfo, memberList",
         KeyConditionExpression: "#key = :val",
         ExpressionAttributeNames: {
             "#key": "email"
