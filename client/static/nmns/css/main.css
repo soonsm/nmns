@@ -1492,7 +1492,7 @@ button.customerSortType.active {
 }
 
 #alrimModal #alrimHistoryList .alrimRow .col-4 {
-    display: table-cell;
+    display: inline-flex;
     font-size: .9rem;
     white-space: nowrap;
     text-overflow: ellipsis;
