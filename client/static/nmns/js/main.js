@@ -538,7 +538,7 @@
     if(alrims && alrims.length > 0){
       var html = "";
       alrims.forEach(function(item, index){
-        html += '<div class="row alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><div class="col-4 pr-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a></div>'
+        html += '<div class="row alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail'+index+'" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail'+index+'"></a><div class="col-4 px-0">'+moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm')+'</div><div class="col-4">'+item.name+'</div><div class="col-4 px-0">'+dashContact(item.contact)+'</div></div>'
               + '<div class="row alrimDetailRow collapse" id="alrimDetail'+index+'"><small>'+item.contents+'</small></div>';
         if(index > 0 && index % 50 === 0){
           list.append(html);

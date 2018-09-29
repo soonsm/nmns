@@ -1081,7 +1081,7 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   text-overflow:ellipsis;
   -ms-text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 #alrimModal #alrimHistoryList .row .alrimDetailLink{
   position:absolute;
@@ -1089,6 +1089,27 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   top:0;
   width:100%;
   height:1.5rem;
+  z-index:1;
+}
+#alrimModal #alrimHistoryList .row .alrimDetailLink + div:before{
+  font-family:"Font Awesome 5 Free";
+  font-weight:900;
+  content:'\f054';
+  margin:0 .25rem;
+  display:inline-block;
+  transition: 0.3s all ease;
+  -webkit-transition: 0.3s all ease;
+  -moz-transition: 0.3s all ease;
+  -ms-transition: 0.3s all ease;
+  -o-transition: 0.3s all ease;
+}
+#alrimModal #alrimHistoryList .row .alrimDetailLink[aria-expanded=true] + div:before{
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  filter:none;
+  -webkit-filter:none;
+  -ms-filter:"progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
 }
 #alrimModal #alrimHistoryList{
   height:309px;
