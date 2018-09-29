@@ -326,6 +326,9 @@ button.moveDate:focus{
 .compactLabel{
   letter-spacing: -1px;
 }
+#creationPopup .creationPopupEtcNotice{
+  display:none;
+}
 #alrimContactInfo{
   line-height:.9rem;
 }
@@ -933,6 +936,7 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
 }
 #mainCustomerList .card .card-title{
   margin-bottom:0;
+  width:calc(100% - 190px);
 }
 #mainCustomerList .card a.customerContactLink{
   position:relative;
