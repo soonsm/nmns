@@ -976,6 +976,9 @@ button.customerSortType:active, button.customerSortType:hover, button.customerSo
   top:50%;
   right:0;
 }
+.blink{
+  background-color: #b2dfdb !important;
+}
 /* customer modal */
 #customerModal .modal-dialog{
   height:auto;
