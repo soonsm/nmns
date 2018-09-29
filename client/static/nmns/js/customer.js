@@ -67,7 +67,7 @@
     if(customer.contact && customer.contact !== ""){
       NMNS.socket.emit("get customer alrim", {"contact":customer.contact});
     } else {
-      drawCustomerAlrimList([{date:"201809011234", "contents":"aaaaaa"}]);
+      drawCustomerAlrimList([]);
     }
     $("#customerName").val(customer.name);
     $("#customerContact").val(customer.contact);
