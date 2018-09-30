@@ -1349,6 +1349,7 @@ button.customerSortType.active {
     font-size: 2rem;
     font-family: Montserrat, 'Nanum Gothic';
     font-weight: bold;
+    height:3rem;
 }
 
 #customerModal #customerContact {
