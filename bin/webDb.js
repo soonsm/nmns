@@ -478,11 +478,16 @@ exports.getReservationSummaryList = async function (email, data) {
     if (items.length === 0) {
         return [];
     } else {
+        let user = await exports.getWebUser(email);
+        let memberList = user.memberList;
         let list = items[0].reservationList;
         let filteredList = [];
         for (var i = 0; i < list.length; i++) {
             let reservation = list[i];
             if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
+                let member = memberList.find(member => member.id === reservation.memberId);
+                reservation.contact = member.contact;
+                reservation.name = member.name;
                 filteredList.push(reservation);
                 if(data.start && reservation.start < data.start){
                     filteredList.length -= 1;
@@ -540,6 +545,8 @@ exports.getReservationList = async function (email, start, end) {
         }).map(function(reservation){
            let member = memberList.find(member => reservation.memberId === member.id) || {};
            reservation.etc = member.etc;
+           reservation.name = member.name;
+           reservation.contact = member.contact;
            return reservation;
         }).sort((r1,r2) => r1.start - r2.start);
 

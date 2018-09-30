@@ -213,38 +213,7 @@ exports.getCustomerList = async function(data){
             });
         }
 
-        let sortDate = function(m1,m2){
-            let v2 = m2.history[0] || {date:'000000000000'};
-            let v1 = m1.history[0] || {date:'000000000000'};
-
-            return v2.date - v1.date;
-        };
-        let sortManager = function(m1, m2){
-            let manager1 = staffList.find(staff => staff.id === m1.managerId) || {name:'Z'};
-            let manager2 = staffList.find(staff => staff.id === m2.managerId) || {name:'Z'};
-
-            return manager1.name.localeCompare(manager2.name);
-        };
-        let sortName = function(m1, m2){
-            let name1 = m1.name || 'Z';
-            let name2 = m2.name || 'Z';
-            return name1.localeCompare(name2);
-        };
-
-        if(sort === 'sort-date'){
-            await memberList.sort(sortManager);
-            await memberList.sort(sortName);
-            await memberList.sort(sortDate);
-        }else if(sort === 'sort-manager'){
-            await memberList.sort(sortDate);
-            await memberList.sort(sortName);
-            await memberList.sort(sortManager);
-        }else{
-            await memberList.sort(sortManager);
-            await memberList.sort(sortDate);
-            await memberList.sort(sortName);
-
-        }
+        memberList.sort(getSortFunc(sort));
         resultData = memberList;
     }
 
@@ -254,6 +223,51 @@ exports.getCustomerList = async function(data){
         message: message
     }
 };
+
+function getSortFunc(action){
+    switch (action) {
+        case 'sort-date':
+            return function(a, b){
+                if(!a.history || a.history.length === 0){
+                    if(b.history && b.history.length > 0){
+                        return 1;
+                    }else{
+                        return getSortFunc("sort-name")(a, b);
+                    }
+                } else if(!b.history || b.history.length === 0){
+                    return -1;
+                }
+                return (a.history[0].date < b.history[0].date ?1:(a.history[0].date > b.history[0].date?-1:getSortFunc("sort-name")(a, b)));
+            };
+        case 'sort-manager':
+            return function(a, b){
+                if(!a.manager){
+                    if(b.manager){
+                        return 1;
+                    }else{
+                        return getSortFunc("sort-name")(a,b);
+                    }
+                } else if(!b.manager){
+                    return -1;
+                }
+                return (a.manager.name < b.manager.name ?-1:(a.manager.name > b.manager.name?1:getSortFunc("sort-name")(a, b)));
+            };
+        case 'sort-name':
+        default:
+            return function(a, b){
+                if(!a.name){
+                    if(b.name){
+                        return 1;
+                    }else{
+                        return 0;
+                    }
+                } else if(!b.name){
+                    return -1;
+                }
+                return (a.name < b.name?-1:(a.name > b.name?1:0));
+            };
+    }
+}
 
 function getDummy(){
     return {
