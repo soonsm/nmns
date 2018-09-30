@@ -188,7 +188,15 @@
         if ($(this).data("trigger")) {
             $(this).removeData("trigger");
             var customer = $(this).data("customer");
-            NMNS.calendar.openCreationPopup({ title: customer.name, raw: { contact: customer.contact, etc: customer.etc }, calendarId: (customer.managerId ? customer.managerId : undefined) });
+            var now = moment(new Date());
+            if (now.hour() >= Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() + 1 == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
+                now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
+            } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
+                now = moment(NMNS.info.bizBeginTime, "HHmm");
+            } else {
+                now.minute(Math.ceil(now.minute() / 10) * 10);
+            }
+            NMNS.calendar.openCreationPopup({ title: customer.name, start: now.toDate(), end: now.add(30, "m").toDate(), raw: { contact: customer.contact, etc: customer.etc }, calendarId: (customer.managerId ? customer.managerId : undefined) });
         }
     }).on("shown.bs.modal", function() {
         $("#customerName").focus();
