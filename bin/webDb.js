@@ -517,30 +517,30 @@ exports.getReservationList = async function (email, start, end) {
     if (items.length === 0) {
         return [];
     } else {
+        let user = await exports.getWebUser(email);
+        let memberList = user.memberList;
         let list = items[0].reservationList;
-        let filteredList = [];
-        if (start && end) {
-            for (var i = 0; i < list.length; i++) {
-                let reservation = list[i];
-
+        await list.filter(function(reservation){
+            if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
+                return true;
+            }
+            if (start && end) {
                 if(reservation.end <= end && reservation.end >= start){
-                    filteredList.push(reservation);
+                    return true;
                 }else if(reservation.start >= start && reservation.start <= end ){
-                    filteredList.push(reservation);
+                    return true;
                 }else if(reservation.start <= start && reservation.end >= end){
-                    filteredList.push(reservation);
+                    return true;
+                }else{
+                    return false;
                 }
             }
-            list = filteredList;
-        }
-        filteredList = [];
-        for(let i=0; i<list.length; i++){
-            let reservation = list[i];
-            if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
-                filteredList.push(reservation);
-            }
-        }
-        return filteredList;
+        }).map(function(reservation){
+           let member = memberList.find(member => reservation.memberId === member.id) || {};
+           reservation.etc = member.etc;
+        }).sort((r1,r2) => r1.start - r2.start);
+
+        return list;
     }
 };
 

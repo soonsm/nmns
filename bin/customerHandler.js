@@ -305,7 +305,7 @@ function getDummy(){
 
 let saveCustomer = async function(data){
     let email = this.email;
-    let status = true,
+    let status = false,
         message = '',
         resultData = {};
     let id = data.id;
@@ -313,17 +313,19 @@ let saveCustomer = async function(data){
     let contact = data.contact;
     let managerId = data.managerId === '' ? undefined : data.managerId;
 
+    let user = await db.getWebUser(email);
+    let memberList = user.memberList;
 
     if(!id && !name && !contact){
-        status = false;
         message = '이름과 연락처 중 하나는 필수입니다.';
     }else if(contact && !util.phoneNumberValidation(contact)){
-        status = false;
         message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
+    }else if(memberList.find(member => member.name === name && member.contact === contact) !== undefined){
+        message = '이미 존재하는 고객입니다.';
     }else if(!(await db.addCustomer(email, id, name, contact, managerId, data.etc))){
-        status = false;
         message = '시스템 에러로 추가하지 못했습니다.';
     }else{
+        status = true;
         resultData.id = id;
         resultData.totalNoShow = 0;
         if(contact){
