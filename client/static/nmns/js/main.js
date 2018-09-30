@@ -2311,7 +2311,7 @@
         e.preventDefault();
         $(".customerMenu").css("display", "none");
         $(".calendarMenu").removeClass("d-none");
-        NMNS.calendar.render();
+        setSchedules();
     });
     //customer management menu switch end
     //snackbar handling start
