@@ -520,9 +520,9 @@ exports.getReservationList = async function (email, start, end) {
         let user = await exports.getWebUser(email);
         let memberList = user.memberList;
         let list = items[0].reservationList;
-        await list.filter(function(reservation){
-            if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
-                return true;
+        list = list.filter(function(reservation){
+            if(reservation.status === process.nmns.RESERVATION_STATUS.DELETED){
+                return false;
             }
             if (start && end) {
                 if(reservation.end <= end && reservation.end >= start){
@@ -534,10 +534,13 @@ exports.getReservationList = async function (email, start, end) {
                 }else{
                     return false;
                 }
+            }else{
+                return true;
             }
         }).map(function(reservation){
            let member = memberList.find(member => reservation.memberId === member.id) || {};
            reservation.etc = member.etc;
+           return reservation;
         }).sort((r1,r2) => r1.start - r2.start);
 
         return list;

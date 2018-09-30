@@ -132,16 +132,10 @@ exports.updateReservation = async function (newReservation) {
                  */
                 if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
                     let memberList = user.memberList;
-                    let newMember = true;
-                    for (let i = 0; i < memberList.length; i++) {
-                        let member = memberList[i];
-                        if (newReservation.contact === member.contact && newReservation.name === member.name) {
-                            newMember = false;
-                            newReservation.memberId = member.memberId;
-                            break;
-                        }
-                    }
-                    if (newMember && (newReservation.contact || newReservation.name)) {
+                    let member = memberList.find(member => member.name === newReservation.name && member.contact === newReservation.contact);
+                    if(member){
+                        newReservation.memberId = member.id;
+                    }else if (newReservation.contact || newReservation.name){
                         let memberId = newCustomerId(email);
                         let newMember = {id: memberId, contact: newReservation.contact, name: newReservation.name, etc: newReservation.etc};
                         newMember.managerId = newReservation.manager || reservation.manager;
@@ -224,16 +218,10 @@ exports.addReservation = async function (data) {
         let user = await db.getWebUser(email);
         if(data.contact){
             let memberList = user.memberList;
-            let newMember = true;
-            for (let i = 0; i < memberList.length; i++) {
-                let member = memberList[i];
-                if(data.contact === member.contact && data.name === member.name){
-                    data.memberId = member.id;
-                    newMember = false;
-                    break;
-                }
-            }
-            if (newMember && (data.contact || data.name)) {
+            let member = memberList.find(member => member.name === data.name && member.contact === data.contact);
+            if(member){
+                data.memberId = member.id;
+            }else if (data.contact || data.name) {
                 let memberId = newCustomerId(email);
                 memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
                 await db.updateWebUser(email, {memberList: memberList});

@@ -98,17 +98,19 @@ exports.getCustomerInfo = async function (data) {
                         }
                         else {
                             //초성검색
-                            let names = await hangul.disassemble(member.name, true).map(function (nameList) {
-                                return nameList[0];
-                            }).join('');
+                            let names = await hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
                             if (names.includes(hangul.disassemble(name).join(''))) {
                                 returnMemberList.push(member);
                             }
                         }
                     }
                 }
-
             }
+            returnMemberList.sort(function(m1, m2){
+                let name1 = m1.name || 'Z';
+                let name2 = m2.name || 'Z';
+                return name1.localeCompare(name2);
+            });
             resultData.result = returnMemberList;
         }
     }
@@ -227,7 +229,7 @@ exports.getCustomerList = async function(data){
             let name1 = m1.name || 'Z';
             let name2 = m2.name || 'Z';
             return name1.localeCompare(name2);
-        }
+        };
 
         if(sort === 'sort-date'){
             await memberList.sort(sortManager);
@@ -307,7 +309,7 @@ let saveCustomer = async function(data){
     let email = this.email;
     let status = false,
         message = '',
-        resultData = {};
+        resultData = {id: data.id};
     let id = data.id;
     let name = data.name;
     let contact = data.contact;
