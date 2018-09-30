@@ -2290,12 +2290,12 @@
             document.body.appendChild(script);
 
             script.onload = function() {
-                NMNS.socket.emit("get customer list", { "type": "all", "sort": action });
+                NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
                 $(".calendarMenu").addClass("d-none");
                 $(".customerMenu").css("display", "block");
             };
         } else {
-            NMNS.socket.emit("get customer list", { "type": "all", "sort": action });
+            NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
             $(".calendarMenu").addClass("d-none");
             $(".customerMenu").css("display", "block");
         }
@@ -2311,7 +2311,7 @@
         e.preventDefault();
         $(".customerMenu").css("display", "none");
         $(".calendarMenu").removeClass("d-none");
-        NMNS.calendar.render();
+        setSchedules();
     });
     //customer management menu switch end
     //snackbar handling start
