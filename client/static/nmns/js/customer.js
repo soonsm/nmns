@@ -135,7 +135,6 @@
             });
         }
         drawCustomerList();
-        switchSortTypeButton("sort-name");
     }));
     NMNS.socket.on("add customer", socketResponse("고객 추가", function(e) {
         var index = NMNS.customerList.findIndex(function(item) {
