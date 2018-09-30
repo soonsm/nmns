@@ -31,7 +31,7 @@
       list.data("scroll", new PerfectScrollbar(list[0]));
     }
     if(!customer.history || customer.history.length === 0){
-      list.append("<span class='text-center'>아직 "+ (customer.name && customer.name !== ""? customer.name : "이 ") + "고객에 등록된 예약내역이 없습니다.</span>");
+      list.append("<span class='text-center'>아직 이 고객에 등록된 예약내역이 없습니다.</span>");
     } else {
       var html = "";
       customer.history.forEach(function(history, index){
@@ -138,7 +138,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index && index > -1){
+    if(Number.isInteger(index) && index > -1){
       NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
       NMNS.customerList[index].myNoShow = 0;
     }
@@ -149,7 +149,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index && index > -1){
+    if(Number.isInteger(index) && index > -1){
       NMNS.customerList.splice(index, 1);
       drawCustomerList();
     }
@@ -158,7 +158,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index && index > -1){
+    if(Number.isInteger(index) && index > -1){
       var customer = NMNS.customerList[index];
       customer.name = $("#customerName").val();
       customer.contact = $("#customerContact").val();
@@ -173,7 +173,7 @@
     var index = NMNS.customerList.findIndex(function(item){
       return item.id === e.data.id;
     });
-    if(index && index > -1){
+    if(Number.isInteger(index) && index > -1){
       $("#customerName").val(NMNS.customerList[index].name);
       $("#customerContact").val(NMNS.customerList[index].contact);
       $("#customerEtc").val(NMNS.customerList[index].etc);
