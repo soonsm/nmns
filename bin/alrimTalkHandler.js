@@ -109,7 +109,7 @@ exports.getAlrimTalkHistory = async function (data) {
     }).map(function (item) {
         if(item.reservation){
             return {
-                date: item.reservation.start || item.sendDate,
+                date: item.sendDate || item.reservation.start ,
                 name: item.reservation.name,
                 contact: item.reservation.contact,
                 contents: item.msg

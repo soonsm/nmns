@@ -322,7 +322,7 @@ let saveCustomer = async function(data){
         message = '이름과 연락처 중 하나는 필수입니다.';
     }else if(contact && !util.phoneNumberValidation(contact)){
         message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
-    }else if(memberList.find(member => member.name === name && member.contact === contact) !== undefined){
+    }else if(memberList.find(member => member.name === name && member.contact === contact && member.id !== id) !== undefined){
         message = '이미 존재하는 고객입니다.';
     }else if(!(await db.addCustomer(email, id, name, contact, managerId, data.etc))){
         message = '시스템 에러로 추가하지 못했습니다.';
