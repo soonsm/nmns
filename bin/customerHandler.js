@@ -145,6 +145,9 @@ exports.getCustomerList = async function(data){
             let filteredList = [];
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
+                if(!member.id){
+                    continue;
+                }
                 if ((type === 'name' || type === 'all') && member.name && member.name.includes(target)) {
                     filteredList.push(member);
                 }
