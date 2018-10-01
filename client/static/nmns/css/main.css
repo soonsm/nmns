@@ -1294,6 +1294,11 @@ button.customerSortType.active {
     top: 0;
 }
 
+#mainCustomerList .card .deleteCustomerLink {
+    position: relative;
+    z-index: 2;
+}
+
 @media(min-width:576px) {
     #customerAddForm label[for="customerAddEtc"]+div {
         width: calc(81.333333% - 44.32px);
@@ -1349,7 +1354,7 @@ button.customerSortType.active {
     font-size: 2rem;
     font-family: Montserrat, 'Nanum Gothic';
     font-weight: bold;
-    height:3rem;
+    height: 3rem;
 }
 
 #customerModal #customerContact {

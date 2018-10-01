@@ -66,8 +66,8 @@
 
     function initCustomerModal(self) {
         var customer = NMNS.customerList[Number(self.parent().data("index"))];
-        if (customer.contact && customer.contact !== "") {
-            NMNS.socket.emit("get customer alrim", { "contact": customer.contact });
+        if (customer.id) {
+            NMNS.socket.emit("get customer alrim", { "id": customer.id });
         } else {
             drawCustomerAlrimList([]);
         }
@@ -106,7 +106,7 @@
                     (!customer.contact || customer.contact === '' ? '' : '&nbsp;<small class="card-subtitle text-muted d-none d-sm-inline-block">' + dashContact(customer.contact) + '</small>') +
                     '</h5>' + (!customer.contact || customer.contact === '' ? '' : '<a href="tel:' + customer.contact + '" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted"><i class="fas fa-phone fa-rotate-90"></i> ' + dashContact(customer.contact) + '</span></a>') +
                     '<div class="col-12 row px-0"><div class="col-4 border-right"><small class="text-muted">담당자</small><br/><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><span> ' + (manager ? manager.name : '(담당자 없음)') + '</span></div><div class="col-8"><small class="text-muted">메모</small><br/><span>' + (customer.etc || '') + '</span></div></div>' +
-                    '</div><div class="cardLeftBorder" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></div><small class="customerSubInfo text-muted">' + (customer.history && customer.history.length > 0 ? '총 ' + customer.history.length + '회 방문' : '') + (customer.history && customer.history.length > 0 ? ' | ' + '마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") : '') +
+                    '</div><div class="cardLeftBorder" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></div><small class="customerSubInfo text-muted">' + (customer.history && customer.history.length > 0 ? '총 ' + customer.history.length + '회 방문 | 마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + ' | ' : '') + '<a class="deleteCustomerLink text-muted" href="#"><i class="fas fa-times"></i> 삭제</a>' +
                     '</small><a class="w-100 h-100 position-absolute customerModalLink" href="#" data-toggle="modal" data-target="#customerModal"></a></div></div>';
                 if (index > 0 && index % 50 == 0) {
                     list.append(html);
@@ -118,6 +118,21 @@
             list.find(".customerModalLink").off("touch click").on("touch click", function(e) {
                 e.preventDefault();
                 initCustomerModal($(this));
+            });
+            list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
+                e.preventDefault();
+                if (confirm("정말 이 고객을 삭제하시겠어요?")) {
+                    var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
+                    if (Number.isInteger(index)) {
+                        var customer = NMNS.customerList[index];
+                        if (customer) {
+                            NMNS.history.push($.extend({ "index": index }, customer));
+                            NMNS.socket.emit("delete customer", { "id": customer.id });
+                            NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
+                            drawCustomerList();
+                        }
+                    }
+                }
             });
             $("#customerCount").text(NMNS.customerList.length);
         }
@@ -183,6 +198,14 @@
     }));
     NMNS.socket.on("get customer alrim", socketResponse("알림톡 내역 조회", function(e) {
         drawCustomerAlrimList(e.data);
+    }));
+    NMNS.socket.on("delete customer", socketResponse("고객 삭제", function(e) {
+        NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
+    }, function(e) {
+        var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
+        NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
+        NMNS.customerList.splice(origin.index, 0, origin);
+        drawCustomerList();
     }));
     $("#customerModal").on("hidden.bs.modal", function() {
         if ($(this).data("trigger")) {
