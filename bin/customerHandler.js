@@ -9,57 +9,42 @@ exports.getCustomerDetail = async function(data){
     let email = this.email;
     let status = true, message, resultData = {};
     let contact = data.contact;
+    let name = data.name || '';
 
-    if(contact){
-
+    if(!contact){
+        status = false;
+        message = '고객조회를 위한 전화번호가 필요합니다.';
+    }else{
         if(!util.phoneNumberValidation(contact)){
             status = false;
             message = `전화번호 형식이 올바르지 않습니다.(${contact})`;
-        }
-
-        if(status){
-
-            let noShow = await db.getNoShow(contact);
-            if(noShow){
-                resultData.totalNoShow = noShow.noShowCount;
-            }else{
-                resultData.totalNoShow = 0;
+        }else{
+            let user = await db.getWebUser(email);
+            let member = user.memberList.find(member => member.name === name && member.contact === contact);
+            if(!member){
+                member = user.memberList.find(member => member.contact === contact);
             }
-
-            let myNoShowList = await db.getMyNoShow(email);
-            resultData.myNoShow = 0;
-            let key = sha256(contact);
-            for(let i=0; i < myNoShowList.length; i ++){
-                if(key === myNoShowList[i].noShowKey){
-                    resultData.myNoShow += 1;
+            if(member){
+                member.manager = member.managerId;
+                let noShow = await db.getNoShow(contact) || {noShowCount: 0};
+                member.totalNoShow = noShow.noShowCount;
+                let key = sha256(contact);
+                member.myNoShow = user.noShowList.filter(noShow => noShow.noShowKey === key).length;
+                let reservationList = user.reservationList.filter(reservation => reservation.memberId === member.id);
+                reservationList.sort((a, b) =>  b.start - a.start );
+                if(reservationList.length > 0){
+                    member.isAllDay = reservationList[0].isAllDay;
+                    member.contents = reservationList[0].contents;
                 }
-            }
-
-            let reservationList = await db.getReservationList(email);
-            await reservationList.sort((a, b) => {
-                return a.start - b.start;
-            });
-            for(let i=reservationList.length-1; i >=0; i--){
-                let reservation = reservationList[i];
-                if(reservation.contact && reservation.contact === contact){
-                    resultData.contact = reservation.contact;
-                    resultData.isAllDay = reservation.isAllDay;
-                    resultData.manager = reservation.manager;
-                    resultData.contents = reservation.contents;
-                    resultData.name = reservation.name;
-                    resultData.etc = reservation.etc;
-
-                    break;
-                }
+                resultData = member;
             }
         }
-
-        return {
-            status: status,
-            message: message,
-            data: resultData
-        };
     }
+    return {
+        status: status,
+        message: message,
+        data: resultData
+    };
 };
 
 exports.getCustomerInfo = async function (data) {
