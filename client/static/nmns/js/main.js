@@ -1874,9 +1874,32 @@
             if (e.data.isAllDay !== undefined) {
                 $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
             }
-            if (e.data.name) {
+            if (e.data.name && $("#creationPopupName").val() === "") {
                 $("#creationPopupName").val(e.data.name);
             }
+            $('#creationPopupEtc').prop('readonly', true);
+            $('.creationPopupEtcNotice').show();
+        } else if (e.data.name === $("#creationPopupName").val() && $("#creationPopup").data("name") !== e.data.name) {
+            if (e.data.etc) {
+                $("#creationPopupEtc").val(e.data.etc);
+            }
+            if (e.data.manager) {
+                var manager = findManager(e.data.manager);
+                if (manager) {
+                    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendarid", manager.id);
+                }
+            }
+            if (e.data.contents) {
+                $("#creationPopupContents").val(e.data.contents);
+            }
+            if (e.data.isAllDay !== undefined) {
+                $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
+            }
+            if (e.data.contact && $("#creationPopupContact").val() === "") {
+                $("#creationPopupContact").val(e.data.contact);
+            }
+            $('#creationPopupEtc').prop('readonly', true);
+            $('.creationPopupEtcNotice').show();
         }
         if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0) {
             $("#creationPopupContact").tooltip({
