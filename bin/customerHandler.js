@@ -9,20 +9,22 @@ exports.getCustomerDetail = async function(data){
     let email = this.email;
     let status = true, message, resultData = {};
     let contact = data.contact;
-    let name = data.name || '';
+    let name = data.name;
 
-    if(!contact){
+    if(!contact && !name){
         status = false;
-        message = '고객조회를 위한 전화번호가 필요합니다.';
+        message = '고객조회를 위한 전화번호 또는 이름이 필요합니다.';
     }else{
-        if(!util.phoneNumberValidation(contact)){
+        if(contact && !util.phoneNumberValidation(contact)){
             status = false;
             message = `전화번호 형식이 올바르지 않습니다.(${contact})`;
         }else{
             let user = await db.getWebUser(email);
             let member = user.memberList.find(member => member.name === name && member.contact === contact);
-            if(!member){
+            if(!member && contact){
                 member = user.memberList.find(member => member.contact === contact);
+            }else if(!member && name){
+                member = user.memberList.find(member => member.name === name);
             }
             if(member){
                 member.manager = member.managerId;
