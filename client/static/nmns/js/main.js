@@ -631,11 +631,10 @@
             NMNS.socket.emit("update alrim", parameters);
         }
         if (Object.keys(parameters).length || diff) {
-            alert("정상적으로 요청하였습니다.");
+            $("#alrimModal").modal("hide");
         } else {
             alert("변경된 내역이 없습니다.");
         }
-        $("#alrimModal").modal("hide");
     }
 
     function initAlrimModal() {
@@ -864,11 +863,10 @@
         }
         //update manager end
         if (diff || Object.keys(parameters).length) {
-            alert("변경된 정보를 전송하였습니다.");
+            $("#infoModal").modal("hide");
         } else {
             alert("변경된 내역이 없습니다.");
         }
-        $("#infoModal").modal("hide");
     }
 
     function showColorPickerPopup(self) {
@@ -1750,6 +1748,7 @@
     }));
 
     NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function() {
+        alert("정상적으로 매장 정보를 변경하였습니다.");
         NMNS.history.remove("info", findById);
     }, function(e) {
         var history = NMNS.history.find(function(item) { return item.id === "info" });
@@ -1766,6 +1765,7 @@
     }));
 
     NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function() {
+        alert("정상적으로 알림톡 정보를 변경하였습니다.");
         NMNS.history.remove("alrimInfo", findById);
     }, function() {
         var history = NMNS.history.find(function(item) { return item.id === "alrimInfo" });
