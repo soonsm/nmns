@@ -98,11 +98,14 @@ exports.getAlrimTalkHistory = async function (data) {
                     include = false;
                 }
             }
-            if (data.name && data !== item.reservation.name) {
+            if (data.name && data.name !== item.reservation.name) {
+                include = false;
+            }
+            if(data.id && data.id !== item.reservation.memberId){
                 include = false;
             }
         }else{
-            include= false;
+            include = false;
         }
 
         return include;
@@ -140,6 +143,9 @@ exports.getAlrimTalkHistory = async function (data) {
                 }
             }
             if (data.name && data.name !== item.reservation.name) {
+                include = false;
+            }
+            if(data.id && data.id !== item.reservation.memberId){
                 include = false;
             }
         }else{

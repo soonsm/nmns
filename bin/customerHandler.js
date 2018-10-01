@@ -365,3 +365,29 @@ let saveCustomer = async function(data){
 exports.addCustomer = saveCustomer;
 
 exports.updateCustomer = saveCustomer;
+
+exports.deleteCustomer = async function(data){
+    let status = false,
+        message = '',
+        resultData = {id: data.id};
+
+    if(!data.id){
+        message = '고객 삭제를 위해서는 아이디가 필수입니다.';
+    }else{
+        let user = await db.getWebUser(this.email);
+        let memberList = user.memberList.filter(member => member.id !== data.id);
+
+        if(await db.updateWebUser(this.email, {memberList: memberList})){
+            status = true;
+        }else{
+            message = '시스템 에러로 고객을 삭제하지 못했습니다.';
+        }
+    }
+
+    return{
+        status: status,
+        data: resultData,
+        message: message
+    };
+
+}
