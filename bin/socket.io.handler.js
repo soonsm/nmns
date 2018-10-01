@@ -31,7 +31,7 @@ const GetShop = 'get info',
     UpdatePwd = 'update password';
 const GetAlrimTalkInfo = 'get alrim', UpdateAlirmTalk = 'update alrim', GetAlrimTalkHistory = 'get alrim history', GetCustomerAlrimTalkHistory = 'get customer alrim';
 const SendVerification = 'send verification';
-const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer';
+const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer', DelCustomer = 'delete customer';
 const SendNoti = 'message', GetNoti = 'get noti';
 const GetTips = 'get tips';
 const AadFeedback = "submit feedback";
@@ -50,12 +50,13 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
     }));
 
     io.on('connection', async function (socket) {
-        const user = socket.request.user;
-        const email = user.email;
 
         // var email = 'soonsm@gmail.com';
         // var user = await db.getWebUser(email);
         // user.authStatus = 'EMAIL_VERIFICATED';
+
+        const user = socket.request.user;
+        const email = user.email;
 
         if (!email || !socket.request.user.logged_in) {
             logger.log(`User ${email} is not logged in`);
@@ -176,6 +177,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetCustomerList, customerHandler.getCustomerList);
         addEvent(AddCustomer, customerHandler.addCustomer);
         addEvent(UpdateCustomer, customerHandler.updateCustomer);
+        addEvent(DelCustomer, customerHandler.deleteCustomer);
 
         /**
          * AlrimTalk
