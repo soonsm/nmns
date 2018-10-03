@@ -964,7 +964,8 @@ button.moveDate:focus {
     border-width: .06rem;
     background-color: white;
 }
-@media(min-width:576px){
+
+@media(min-width:576px) {
     #taskModal #taskStartDatePicker,
     #taskModal #taskEndDatePicker {
         width: calc(50% - 13px);
@@ -990,6 +991,13 @@ footer {
 
 
 /* commons */
+
+.new {
+    font-size: .65rem;
+    padding: 0;
+    color: #dc3545;
+    vertical-align: text-top;
+}
 
 .tooltip-inner {
     max-width: 265px;
@@ -1090,13 +1098,15 @@ button.form-control {
     background-color: #fff;
 }
 
-.ellipsis{
+.ellipsis {
     white-space: nowrap;
     text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     overflow: hidden;
 }
+
+
 /* tipsModal */
 
 #tipsModal .modal-header #tipsTitle {
@@ -1262,13 +1272,28 @@ button.customerSortType.active {
     max-height: 1080px;
 }
 
-#mainCustomerList .ps__rail-y, #customerModal #customerHistory .ps__rail-y, #customerModal #customerAlrim .ps__rail-y{
-    display:none;
-    z-index:3;
+#mainCustomerList .ps__rail-y,
+#customerModal #customerHistory .ps__rail-y,
+#customerModal #customerAlrim .ps__rail-y {
+    display: none;
+    z-index: 3;
 }
 
-#mainCustomerList:hover .ps__rail-y, #customerModal #customerHistory:hover .ps__rail-y, #customerModal #customerAlrim:hover .ps__rail-y{
-    display:block;
+#mainCustomerList .ps__rail-x,
+#customerModal #customerHistory .ps__rail-x,
+#customerModal #customerAlrim .ps__rail-x {
+    display: none;
+}
+
+#mainCustomerList:hover .ps__rail-y,
+#customerModal #customerHistory:hover .ps__rail-y,
+#customerModal #customerAlrim:hover .ps__rail-y {
+    display: block;
+}
+
+#mainCustomerList .card:hover {
+    background-color: #b2dfdb;
+    border-color: #b2dfdb;
 }
 
 #mainCustomerList .card,
@@ -1301,10 +1326,11 @@ button.customerSortType.active {
 
 #mainCustomerList .card .card-title {
     margin-bottom: 0;
-    min-width:170px;
+    min-width: 170px;
     width: calc(100% - 40px);
 }
-@media(min-width:576px){
+
+@media(min-width:576px) {
     #mainCustomerList .card .card-title:not(.longTitle) {
         width: calc(100% - 230px);
     }
@@ -1382,6 +1408,7 @@ button.customerSortType.active {
     font-weight: bold;
     height: 3rem;
 }
+
 #customerModal #customerContact {
     font-size: 1.5rem;
     font-family: Montserrat, 'Nanum Gothic';
@@ -1417,13 +1444,15 @@ button.customerSortType.active {
 #customerModal #customerHistory .card {
     margin-bottom: .6rem;
 }
-#customerModal #customerHistory .card .tui-full-calendar-calendar-dot{
-    vertical-align:sub;
-    margin-left:.25rem;
+
+#customerModal #customerHistory .card .tui-full-calendar-calendar-dot {
+    vertical-align: sub;
+    margin-left: .25rem;
 }
-@media(min-width:992px){
-    #customerModal #customerHistory .card .tui-full-calendar-calendar-dot{
-        margin-left:1px;
+
+@media(min-width:992px) {
+    #customerModal #customerHistory .card .tui-full-calendar-calendar-dot {
+        margin-left: 1px;
     }
 }
 

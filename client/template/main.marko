@@ -73,7 +73,7 @@
           <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal" aria-label="알림톡 정보"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
         </li>
         <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left customerMenuLink" href ="#" aria-label="고객관리"><i class="fas fa-user-cog fa-fw align-middle"></i> 고객관리</a>
+          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left customerMenuLink" href ="#" aria-label="고객관리"><i class="fas fa-user-cog fa-fw align-middle"></i> 고객관리<small class="badge new">new</small></a>
         </li>
         <li class="nav-item mx-0 d-lg-none customerMenu" data-toggle="collapse" data-target="#navbarResponsive">
           <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left calendarMenuLink" href ="#" aria-label="예약시간표"><i class="far fa-calendar-alt fa-fw align-middle"></i> 예약시간표</a>
@@ -139,6 +139,7 @@
             <div class="d-flex w-100 align-items-center">
               <span class="fas fa-user-cog fa-fw mr-2"></span>
               <span class="menu-collapsed">고객관리</span>
+              <small class="badge new card-subtitle">new</small>
             </div>
           </a>
         </li>
@@ -744,10 +745,10 @@
               </div>
               <div class="form-group border-top">
                 <ul id="customerTabs" class="nav nav-tabs mt-3" role="tablist">
-                  <li class="nav-item active">
+                  <li class="nav-item active" style="display:flex;">
                     <a class="nav-link active" id="customerHistoryTab" data-toggle="tab" href="#customerHistory" role="tab" aria-controls="customerHistory" aria-selected="true">예약내역</a>
                   </li>
-                  <li class="nav-item">
+                  <li class="nav-item" style="display:flex;">
                     <a class="nav-link" id="customerAlrimTab" data-toggle="tab" href="#customerAlrim" role="tab" aria-controls="customerAlrim" aria-selected="false">알림톡 내역</a>
                   </li>
                 </ul>
@@ -774,6 +775,7 @@
       <a class="mfb-component__button--main">
         <i class="mfb-component__main-icon--resting fas fa-times"></i>
         <i class="mfb-component__main-icon--active fas fa-times"></i>
+        <small class="badge float-right mr-1 new calendarMenu">⬤</small>
       </a>
       <ul class="mfb-component__list calendarMenu">
         <li>
@@ -794,6 +796,7 @@
         <li>
           <a href="#" data-mfb-label="고객관리" class="mfb-component__button--child" aria-label="고객관리">
             <i class="mfb-component__child-icon fas fa-user-cog customerMenuLink"></i>
+            <small class="badge float-right new">⬤</small>
           </a>
         </li>
         <li>

@@ -2305,6 +2305,9 @@
     //customer management menu switch start
     $(".customerMenuLink").off("touch click").on("touch click", function(e) {
         e.preventDefault();
+        if (getCookie("new") !== "true") { //고객관리 new 처리
+            document.cookie = "new=true";
+        }
         var action = $($(".customerSortType.active")[0]).data("action");
         if (!document.getElementById("customerScript")) {
             var script = document.createElement("script");
@@ -2353,4 +2356,7 @@
         NMNS.snackbar = setTimeout(function() { x.className = x.className.replace("show", ""); }, 5000);
     }
     //snackbar handling end
+    if (getCookie("new") === "true") { //고객관리 new 처리
+        $(".new").remove();
+    }
 })(jQuery);
