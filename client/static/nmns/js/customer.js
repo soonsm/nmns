@@ -7,11 +7,11 @@
             list.data("scroll", new PerfectScrollbar("#customerAlrim", { suppressScrollX: true }));
         }
         if (!alrims || alrims.length === 0) {
-            list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다!<br/>새로운 예약을 등록하여 알림톡을 보내보세요.</span>");
+            list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다!<br/>"+(NMNS.info.alrimTalkInfo.useYn !== 'Y'?'알림톡을 사용하도록 설정하고 ':'')+"새로운 예약을 등록하여 알림톡을 보내보세요.</span>");
         } else {
             var html = "";
             alrims.forEach(function(alrim, index) {
-                html += '<div class="card">' +
+                html += '<div class="card shadow-sm">' +
                     '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader' + index + '" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody' + index + '" aria-expanded="false" aria-controls="customerAlrimCardBody' + index + '" title="눌러서 전송된 알림톡 내용 보기">' + moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분") +
                     '</button><div id="customerAlrimCardBody' + index + '" class="collapse" aria-labelledby="customerAlrimCardHeader' + index + '" parent="#customerAlrimList">' +
                     '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div></div>';
@@ -32,11 +32,11 @@
             list.data("scroll", new PerfectScrollbar(list[0]));
         }
         if (!customer.history || customer.history.length === 0) {
-            list.append("<span class='text-center'>아직 " + (customer.name && customer.name !== "" ? customer.name : "이 ") + "고객에 등록된 예약내역이 없습니다.</span>");
+            list.append("<span class='text-center'>아직 이 고객에 등록된 예약내역이 없습니다.</span>");
         } else {
             var html = "";
             customer.history.forEach(function(history, index) {
-                html += '<div class="card col-12 col-lg-10" data-index="' + index + '"><div class="card-body"><h6>' + (!history.contents || history.contents === '' ? '(예약내용 없음)' : history.contents) + ' ';
+                html += '<div class="card col-12 col-lg-10 shadow-sm" data-index="' + index + '"><div class="card-body"><h6 class="mb-1">' + (!history.contents || history.contents === '' ? '(예약내용 없음)' : history.contents) + ' ';
                 switch (history.status) {
                     case "CANCELED":
                         html += "<small class='badge badge-light'>취소</small>";
@@ -51,8 +51,8 @@
                         html += "<small class='badge badge-success'>정상</small>";
                         break;
                 }
-                html += '</h6>' + (moment(history.date, 'YYYYMMDDHHmm').isValid() ? '<p class="card-subtitle text-muted">' + moment(history.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm') + '</p>' : '') +
-                    '<div class="col-12 px-0"><small class="text-muted">담당자 </small>' + (history.managerName && history.managerName !== '' ? '<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + history.managerColor + '"></span><span> ' + history.managerName + '</span>' : '(담당자 없음)') +
+                html += (moment(history.date, 'YYYYMMDDHHmm').isValid() ? '<small class="text-muted d-none d-lg-inline-block float-right">' + moment(history.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm') + '</small>' : '') + '</h6>' + 
+                    '<div class="col-12 px-0">' + (moment(history.date, 'YYYYMMDDHHmm').isValid() ? '<span class="card-subtitle d-lg-none text-muted">' + moment(history.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm') + '</span>' : '') + (history.managerName && history.managerName !== '' ? '<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + history.managerColor + '"></span><span> ' + history.managerName + '</span>' : '(담당자 없음)') +
                     '</div></div><div class="cardLeftBorder" style="background-color:' + (history.managerColor || '#b2dfdb') + '"></div></div></div>';
                 if (index > 0 && index % 50 == 0) {
                     list.append(html).data("scroll").update();
@@ -102,7 +102,7 @@
             var managers = NMNS.calendar.getCalendars();
             NMNS.customerList.forEach(function(customer, index) {
                 var manager = managers.find(function(item) { return item.id === customer.managerId; });
-                html += '<div class="card row" data-index="' + index + '"><div class="card-body"><h5 class="card-title mb-sm-1'+ (customer.history&&customer.history.length>0?'':' longTitle')+'">' + (!customer.name || customer.name === '' ? '(이름없음)' : customer.name) +
+                html += '<div class="card row shadow-sm" data-index="' + index + '"><div class="card-body"><h5 class="card-title mb-sm-1'+ (customer.history&&customer.history.length>0?'':' longTitle')+'">' + (!customer.name || customer.name === '' ? '(이름없음)' : customer.name) +
                     (!customer.contact || customer.contact === '' ? '' : '&nbsp;<small class="card-subtitle text-muted d-none d-sm-inline-block">' + dashContact(customer.contact) + '</small>') + //'&nbsp;<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><small>' + (manager ? manager.name : '(담당자 없음)') + '</small>' + 
                     '</h5>' + (!customer.contact || customer.contact === '' ? '' : '<a href="tel:' + customer.contact + '" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted"><i class="fas fa-phone fa-rotate-90"></i> ' + dashContact(customer.contact) + '</span></a>') +
                     (customer.history && customer.history.length > 0 ? '<div><small class="d-sm-none">총 ' + customer.history.length + '회 방문 | 마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + '</small></div>' : '') +
