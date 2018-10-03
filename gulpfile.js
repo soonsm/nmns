@@ -84,33 +84,34 @@ gulp.task('css', gulp.series('css:compile', 'css:minify'));
 //Minify JavaScript
 gulp.task('js:library', function() {
   return gulp.src([
-      './client/static/lib/**/*.js',
-      '!./client/static/lib/socket.io/socket.io.slim.js',
-      '!./client/static/lib/tui-calendar/tui-calendar.js',
-      '!./client/static/lib/**/*.min.js',
-      '!./client/static/lib/**/*.touch.js'
-    ])
-    .pipe(uglify())
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('./client/static/lib'));
+    './client/static/lib/**/*.js',
+    '!./client/static/lib/socket.io/socket.io.slim.js',
+    '!./client/static/lib/tui-calendar/tui-calendar.js',
+    '!./client/static/lib/**/*.min.js',
+    '!./client/static/lib/**/*.touch.js'
+  ])
+  .pipe(uglify())
+  .pipe(rename({
+    suffix: '.min'
+  }))
+  .pipe(gulp.dest('./client/static/lib'));
 });
 
 //Minify custom JavaScript
 gulp.task('js:custom', function() {
   return gulp.src([
-      './client/static/nmns/js/*.js',
-      '!./client/static/nmns/js/*.min.js'
-    ])
-    .pipe(uglify())
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('./client/static/nmns/js'));
+    './client/static/nmns/js/*.js',
+    '!./client/static/nmns/js/*.min.js'
+  ])
+  .pipe(uglify())
+  .pipe(rename({
+    suffix: '.min'
+  }))
+  .pipe(gulp.dest('./client/static/nmns/js'));
 });
 gulp.task("js", gulp.parallel("js:custom", "js:library"));
 //Default task
+gulp.task('dev', gulp.parallel('css:minify', 'js:custom'));
 gulp.task('default', gulp.parallel('js', 'css'));
 
 gulp.task('watch', function() {
@@ -120,4 +121,4 @@ gulp.task('watch', function() {
 });
 
 // Dev task
-gulp.task('dev', gulp.series(gulp.parallel('css', 'js'), gulp.parallel('watch')));
+//gulp.task('dev', gulp.series(gulp.parallel('css', 'js'), gulp.parallel('watch')));
