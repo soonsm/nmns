@@ -209,6 +209,7 @@ exports.addReservation = async function (data) {
     let validationResult = reservationValidationForAdd(email, data);
     let status = validationResult.status;
     let message = validationResult.message || '저장완료';
+    let pushMessage = undefined;
 
     if (status) {
         /*
@@ -236,7 +237,11 @@ exports.addReservation = async function (data) {
         }
 
         if (status && data.contact && user.alrimTalkInfo.useYn === 'Y') {
-            alertSendAlrimTalk(this.socket, await alrimTalk.sendReservationConfirm(user, reservation));
+            pushMessage = await alrimTalk.sendReservationConfirm(user, reservation);
+        }
+
+        if(pushMessage){
+            alertSendAlrimTalk(this.socket, pushMessage);
         }
     }
 
