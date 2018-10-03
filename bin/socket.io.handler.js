@@ -41,27 +41,27 @@ const EVENT_LIST_NO_NEED_VERIFICATION = [GetTips, GetCustomerInfo, GetCustomerDe
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
 
-    // io.use(passportSocketIo.authorize({
-    //     key: 'connect.sid',
-    //     secret: 'rilahhuma',
-    //     store: sessionStore,
-    //     passport: passport,
-    //     cookieParser: cookieParser
-    // }));
+    io.use(passportSocketIo.authorize({
+        key: 'connect.sid',
+        secret: 'rilahhuma',
+        store: sessionStore,
+        passport: passport,
+        cookieParser: cookieParser
+    }));
 
     io.on('connection', async function (socket) {
 
-        var email = 'soonsm@gmail.com';
-        var user = await db.getWebUser(email);
-        user.authStatus = 'EMAIL_VERIFICATED';
+        // var email = 'soonsm@gmail.com';
+        // var user = await db.getWebUser(email);
+        // user.authStatus = 'EMAIL_VERIFICATED';
 
-        // const user = socket.request.user;
-        // const email = user.email;
-        //
-        // if (!email || !socket.request.user.logged_in) {
-        //     logger.log(`User ${email} is not logged in`);
-        //     return;
-        // }
+        const user = socket.request.user;
+        const email = user.email;
+
+        if (!email || !socket.request.user.logged_in) {
+            logger.log(`User ${email} is not logged in`);
+            return;
+        }
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
