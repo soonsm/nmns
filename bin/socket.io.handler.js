@@ -31,7 +31,7 @@ const GetShop = 'get info',
     UpdatePwd = 'update password';
 const GetAlrimTalkInfo = 'get alrim', UpdateAlirmTalk = 'update alrim', GetAlrimTalkHistory = 'get alrim history', GetCustomerAlrimTalkHistory = 'get customer alrim';
 const SendVerification = 'send verification';
-const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer', DelCustomer = 'delete customer';
+const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer', DelCustomer = 'delete customer', MergeCustomer = 'merge customer';
 const SendNoti = 'message', GetNoti = 'get noti';
 const GetTips = 'get tips';
 const AadFeedback = "submit feedback";
@@ -41,27 +41,27 @@ const EVENT_LIST_NO_NEED_VERIFICATION = [GetTips, GetCustomerInfo, GetCustomerDe
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
 
-    io.use(passportSocketIo.authorize({
-        key: 'connect.sid',
-        secret: 'rilahhuma',
-        store: sessionStore,
-        passport: passport,
-        cookieParser: cookieParser
-    }));
+    // io.use(passportSocketIo.authorize({
+    //     key: 'connect.sid',
+    //     secret: 'rilahhuma',
+    //     store: sessionStore,
+    //     passport: passport,
+    //     cookieParser: cookieParser
+    // }));
 
     io.on('connection', async function (socket) {
 
-        // var email = 'soonsm@gmail.com';
-        // var user = await db.getWebUser(email);
-        // user.authStatus = 'EMAIL_VERIFICATED';
+        var email = 'soonsm@gmail.com';
+        var user = await db.getWebUser(email);
+        user.authStatus = 'EMAIL_VERIFICATED';
 
-        const user = socket.request.user;
-        const email = user.email;
-
-        if (!email || !socket.request.user.logged_in) {
-            logger.log(`User ${email} is not logged in`);
-            return;
-        }
+        // const user = socket.request.user;
+        // const email = user.email;
+        //
+        // if (!email || !socket.request.user.logged_in) {
+        //     logger.log(`User ${email} is not logged in`);
+        //     return;
+        // }
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
@@ -178,6 +178,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(AddCustomer, customerHandler.addCustomer);
         addEvent(UpdateCustomer, customerHandler.updateCustomer);
         addEvent(DelCustomer, customerHandler.deleteCustomer);
+        addEvent(MergeCustomer, customerHandler.mergeCustomer);
 
         /**
          * AlrimTalk
