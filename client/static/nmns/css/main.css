@@ -964,10 +964,11 @@ button.moveDate:focus {
     border-width: .06rem;
     background-color: white;
 }
-
-#taskModal #taskStartDatePicker,
-#taskModal #taskEndDatePicker {
-    width: calc(50% - 13px);
+@media(min-width:576px){
+    #taskModal #taskStartDatePicker,
+    #taskModal #taskEndDatePicker {
+        width: calc(50% - 13px);
+    }
 }
 
 #taskModal #taskModalButtons {
@@ -1045,6 +1046,10 @@ input[name='etc'] {
 }
 
 .flatpickr-mobile {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
     overflow: hidden;
 }
 
@@ -1085,7 +1090,13 @@ button.form-control {
     background-color: #fff;
 }
 
-
+.ellipsis{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    overflow: hidden;
+}
 /* tipsModal */
 
 #tipsModal .modal-header #tipsTitle {
@@ -1281,7 +1292,13 @@ button.customerSortType.active {
 
 #mainCustomerList .card .card-title {
     margin-bottom: 0;
-    width: calc(100% - 190px);
+    min-width:170px;
+    width: calc(100% - 40px);
+}
+@media(min-width:576px){
+    #mainCustomerList .card .card-title:not(.longTitle) {
+        width: calc(100% - 230px);
+    }
 }
 
 #mainCustomerList .card a.customerContactLink {
@@ -1500,11 +1517,6 @@ button.customerSortType.active {
 #alrimModal #alrimHistoryList .alrimRow .col-4 {
     display: inline-flex;
     font-size: .9rem;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    overflow: hidden;
 }
 
 #alrimModal #alrimHistoryList .row .alrimDetailLink {
