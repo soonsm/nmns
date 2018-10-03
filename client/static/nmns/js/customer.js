@@ -188,6 +188,20 @@
             drawCustomerList();
         }
     }, function(e) {
+        if (e.data.reason === "DUPLICATED") {
+            if (confirm("이미 같은 이름과 연락처를 가진 고객이 존재합니다.\n그 고객쪽으로 모든 정보 및 예약, 알림톡 내역을 합칠까요?")) {
+                NMNS.socket.emit("merge customer", {
+                    id: e.data.id,
+                    name: $("#customerName").val(),
+                    contact: $("#customerContact").val(),
+                    etc: $("#customerEtc").val(),
+                    managerId: $("#customerManager").data("calendar-id")
+                });
+                return;
+            }
+        } else {
+            alert("고객정보 수정에 실패하였습니다." + (e.message ? "(" + e.message + ")" : ""));
+        }
         var index = NMNS.customerList.findIndex(function(item) {
             return item.id === e.data.id;
         });
@@ -196,7 +210,7 @@
             $("#customerContact").val(NMNS.customerList[index].contact);
             $("#customerEtc").val(NMNS.customerList[index].etc);
         }
-    }));
+    }, true));
     NMNS.socket.on("get customer alrim", socketResponse("알림톡 내역 조회", function(e) {
         drawCustomerAlrimList(e.data);
     }));
@@ -207,6 +221,14 @@
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
         NMNS.customerList.splice(origin.index, 0, origin);
         drawCustomerList();
+    }));
+    NMNS.socket.on("merge customer", socketResponse("고객정보 합치기", function() {
+        NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
+        alert("두 고객의 정보와 예약, 알림톡 내역을 합쳤습니다.");
+        $("#customerModal").modal("hide");
+    }, function() {
+        NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
+        $("#customerModal").modal("hide");
     }));
     $("#customerModal").on("hidden.bs.modal", function() {
         if ($(this).data("trigger")) {
