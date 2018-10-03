@@ -38,6 +38,8 @@ exports.getCustomerDetail = async function(data){
                     member.isAllDay = reservationList[0].isAllDay;
                     member.contents = reservationList[0].contents;
                 }
+                member.contents = member.contents || '';
+                member.etc = member.etc || '';
                 resultData = member;
             }
         }
@@ -328,6 +330,7 @@ let saveCustomer = async function(data){
         message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
     }else if(memberList.find(member => member.name === name && member.contact === contact && member.id !== id) !== undefined){
         message = '이미 존재하는 고객입니다.';
+        resultData.reason = 'DUPLILCATED';
     }else if(!(await db.addCustomer(email, id, name, contact, managerId, data.etc))){
         message = '시스템 에러로 추가하지 못했습니다.';
     }else{
@@ -376,5 +379,61 @@ exports.deleteCustomer = async function(data){
         data: resultData,
         message: message
     };
+}
 
+exports.mergeCustomer = async function(data){
+    let email = this.email;
+    let status = false,
+        message = '',
+        resultData = {id: data.id};
+
+    let name = data.name;
+    let contact = data.contact;
+    let etc = data.etc;
+    let managerId = data.managerId;
+
+    let user = await db.getWebUser(email);
+    let memberList = user.memberList;
+    let targetMember = memberList.find(member => member.name === name && member.contact === contact && member.id !== data.id);
+    if(!targetMember){
+        message = '합치려고 하는 고객 정보가 없습니다.';
+    }else{
+        //소스 멤버의 예약리스트, 예약확인 알림톡 리스트, 예약취소 알림톡 리스트의 고객 아이디를 타겟 멤버의 아이디로 수정
+        await user.reservationList.forEach(function(reservation){
+            if(reservation.memberId === data.id){
+                reservation.memberId = targetMember.id;
+            }
+        });
+        await user.reservationConfirmAlrimTalkList.forEach(function(alrim){
+            if(alrim.reservation.memberId === data.id){
+                alrim.reservation.memberId = targetMember.id;
+            }
+        });
+        await user.cancelAlrimTalkList.forEach(function(alrim){
+            if(alrim.reservation.memberId === data.id){
+                alrim.reservation.memberId = targetMember.id;
+            }
+        });
+
+        //타겟 멤버의 etc, managerId 업데이트
+        targetMember.etc = etc;
+        targetMember.managerId = managerId;
+
+        //소스 멤버 삭제
+        let deleteIndex = memberList.findIndex(member => member.id === data.id);
+        user.memberList.splice(deleteIndex,1);
+
+        if(await db.setWebUser(user)){
+            status = true;
+            resultData.targetId = targetMember.id;
+        }else{
+            message = '시스템 에러로 인해 실패하였습니다.';
+        }
+    }
+
+    return{
+        status: status,
+        data: resultData,
+        message: message
+    };
 }

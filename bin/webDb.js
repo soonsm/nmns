@@ -197,6 +197,13 @@ exports.getWebUser = async function (email) {
     return items[0];
 };
 
+exports.setWebUser = async function(user){
+    return await put({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Item: user
+    });
+}
+
 exports.updateWebUser = async function (email, properties) {
     let params = {
         TableName: process.nmns.TABLE.WebSecheduler,
