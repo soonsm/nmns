@@ -12,6 +12,10 @@ let alertSendAlrimTalk = function(socket, success){
     if(success === false){
         message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
     }
+    sendPush(socket, message);
+}
+
+let sendPush = function(socket, message){
     socket.emit('message', {
         type: 'alert',
         data: {
@@ -227,6 +231,8 @@ exports.addReservation = async function (data) {
                 memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
                 await db.updateWebUser(email, {memberList: memberList});
                 data.memberId = memberId;
+
+                pushMessage = '고객이 추가되었습니다.';
             }
         }
 
@@ -237,11 +243,14 @@ exports.addReservation = async function (data) {
         }
 
         if (status && data.contact && user.alrimTalkInfo.useYn === 'Y') {
-            pushMessage = await alrimTalk.sendReservationConfirm(user, reservation);
+            if(pushMessage){
+                pushMessage += '\n';
+            }
+            pushMessage += await alrimTalk.sendReservationConfirm(user, reservation);
         }
 
         if(pushMessage){
-            alertSendAlrimTalk(this.socket, pushMessage);
+            sendPush(this.socket, pushMessage);
         }
     }
 

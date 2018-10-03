@@ -330,7 +330,7 @@ let saveCustomer = async function(data){
         message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
     }else if(memberList.find(member => member.name === name && member.contact === contact && member.id !== id) !== undefined){
         message = '이미 존재하는 고객입니다.';
-        resultData.reason = 'DUPLILCATED';
+        resultData.reason = 'DUPLICATED';
     }else if(!(await db.addCustomer(email, id, name, contact, managerId, data.etc))){
         message = '시스템 에러로 추가하지 못했습니다.';
     }else{
