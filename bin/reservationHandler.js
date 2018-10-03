@@ -112,90 +112,87 @@ exports.getReservationList = async function(data) {
 };
 
 exports.updateReservation = async function (newReservation) {
-
-    logger.log('UpdateReservation:', newReservation);
     let email = this.email;
     let validationResult = reservationValidationForUdate(email, newReservation);
     let status = validationResult.status;
     let message = validationResult.message || '수정완료';
+    let pushMessage = '';
 
     if (status) {
         let user = await db.getWebUser(email);
 
         status = false;
         message = '없는 예약입니다.';
-        let reservationList = await db.getReservationList(email);
-        for (let i = 0; i < reservationList.length; i++) {
-            let reservation = reservationList[i];
-            if (reservation.id === newReservation.id) {
+        let reservationList = user.reservationList;
+        let reservation = reservationList.find(reservation => reservation.id === newReservation.id);
+        if(reservation){
+            if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
+                let memberList = user.memberList;
+                let member = memberList.find(member => member.name === newReservation.name && member.contact === newReservation.contact);
+                if(member){
+                    newReservation.memberId = member.id;
+                }else if (newReservation.contact || newReservation.name){
+                    let memberId = newCustomerId(email);
+                    let newMember = {id: memberId, contact: newReservation.contact, name: newReservation.name, etc: newReservation.etc};
+                    newMember.managerId = newReservation.manager || reservation.manager;
+                    memberList.push(newMember);
+                    await db.updateWebUser(email, {memberList: memberList});
+                    newReservation.memberId = memberId;
 
-                /*
-                고객 없으면 추가
-                고객 조회 한 뒤, 이름과 연락처가 일치하는 고객이 있으면 무시,
-                이름과 연락처가 일치하는 고객이 없으면 추가
-                 */
-                if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
-                    let memberList = user.memberList;
-                    let member = memberList.find(member => member.name === newReservation.name && member.contact === newReservation.contact);
-                    if(member){
-                        newReservation.memberId = member.id;
-                    }else if (newReservation.contact || newReservation.name){
-                        let memberId = newCustomerId(email);
-                        let newMember = {id: memberId, contact: newReservation.contact, name: newReservation.name, etc: newReservation.etc};
-                        newMember.managerId = newReservation.manager || reservation.manager;
-                        memberList.push(newMember);
-                        await db.updateWebUser(email, {memberList: memberList});
-                        newReservation.memberId = memberId;
+                    pushMessage = '새로운 고객이 추가되었습니다.';
+                }
+            }
+
+            if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && newReservation.status) {
+                if (newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED || newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED)
+                //노쇼에서 정상 또는 취소로 바꿀 때 노쇼 삭제
+                    if (!await db.deleteNoShow(email, reservation.id)) {
+                        logger.log("예약변경을 통한 노쇼 삭제가 실패했습니다.");
                     }
+            }
+
+            //번호가 바뀌었을 때는 알림톡 재전송(새 예약정보의 status가 바뀌지 않고, 기존 예약 상태가 예약 상태일 때만)
+            let needAlirmTalk = false;
+            if(newReservation.contact && newReservation.contact !== '' && newReservation.contact !== reservation.contact && (!newReservation.status || newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED) && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
+                needAlirmTalk = true;
+            }
+
+            //프로퍼티 복사
+            for (let x in reservation) {
+                if (newReservation.hasOwnProperty(x)) {
+                    reservation[x] = newReservation[x];// === '' ? null : newReservation[x];
+                }
+            }
+
+            //예약정보 저장
+            if (!await db.updateReservation(email, reservationList)) {
+                status = false;
+                message = '시스템 오류입니다.(DB Update Error)';
+            }else{
+                //노쇼 처리인 경우 노쇼
+                if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
+                    await db.addToNoShowList(email, reservation.contact, reservation.noShowCase, reservation.start.substring(0, 8), reservation.id);
                 }
 
-                if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && newReservation.status) {
-                    if (newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED || newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED)
-                    //노쇼에서 정상 또는 취소로 바꿀 때 노쇼 삭제
-                        if (!await db.deleteNoShow(email, reservation.id)) {
-                            logger.log("예약변경을 통한 노쇼 삭제가 실패했습니다.");
-                        }
-                }
-
-                //번호가 바뀌었을 때는 알림톡 재전송(새 예약정보의 status가 바뀌지 않고, 기존 예약 상태가 예약 상태일 때만)
-                let needAlirmTalk = false;
-                if(newReservation.contact && newReservation.contact !== '' && newReservation.contact !== reservation.contact && (!newReservation.status || newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED) && reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
-                    needAlirmTalk = true;
-                }
-
-                //프로퍼티 복사
-                for (let x in reservation) {
-                    if (newReservation.hasOwnProperty(x)) {
-                        reservation[x] = newReservation[x];// === '' ? null : newReservation[x];
+                //알림톡 전송
+                if(needAlirmTalk && user.alrimTalkInfo.useYn === 'Y'){
+                    if(pushMessage) {
+                        pushMessage += '<br/>';
                     }
+                    pushMessage += await alrimTalk.sendReservationConfirm(user, reservation) ? '고객님께 예약알림을 전송하였습니다.' : '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
                 }
 
-                //예약정보 저장
-                reservationList[i] = reservation;
-                if (!await db.updateReservation(email, reservationList)) {
-                    status = false;
-                    message = '시스템 오류입니다.(DB Update Error)';
-                }else{
-                    //노쇼 처리인 경우 노쇼
-                    if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
-                        await db.addToNoShowList(email, reservation.contact, reservation.noShowCase, reservation.start.substring(0, 8), reservation.id);
-                    }
-
-                    //알림톡 전송
-                    if(needAlirmTalk && user.alrimTalkInfo.useYn === 'Y'){
-                        alertSendAlrimTalk(this.socket, await alrimTalk.sendReservationConfirm(user, reservation));
-                    }
-
-                    status = true;
-                    message = '예약수정완료';
+                if(pushMessage){
+                    sendPush(this.socket, pushMessage);
                 }
 
-                //Local Test version에서는 취소하면 취소 알림톡 나간것처럼 하자.
-                if(process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT && newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED){
-                    await alrimTalk.sendReservationCancelNotify(user, reservation);
-                }
+                status = true;
+                message = '예약수정완료';
+            }
 
-                break;
+            //Local Test version에서는 취소하면 취소 알림톡 나간것처럼 하자.
+            if(process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT && newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED){
+                await alrimTalk.sendReservationCancelNotify(user, reservation);
             }
         }
     }
@@ -213,7 +210,7 @@ exports.addReservation = async function (data) {
     let validationResult = reservationValidationForAdd(email, data);
     let status = validationResult.status;
     let message = validationResult.message || '저장완료';
-    let pushMessage = undefined;
+    let pushMessage = '';
 
     if (status) {
         /*
@@ -221,19 +218,17 @@ exports.addReservation = async function (data) {
         이름과 연락처가 일치하는 고객이 없으면 추가
          */
         let user = await db.getWebUser(email);
-        if(data.contact){
-            let memberList = user.memberList;
-            let member = memberList.find(member => member.name === data.name && member.contact === data.contact);
-            if(member){
-                data.memberId = member.id;
-            }else if (data.contact || data.name) {
-                let memberId = newCustomerId(email);
-                memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
-                await db.updateWebUser(email, {memberList: memberList});
-                data.memberId = memberId;
+        let memberList = user.memberList;
+        let member = memberList.find(member => member.name === data.name && member.contact === data.contact);
+        if(member){
+            data.memberId = member.id;
+        }else if (data.contact || data.name) {
+            let memberId = newCustomerId(email);
+            memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
+            await db.updateWebUser(email, {memberList: memberList});
+            data.memberId = memberId;
 
-                pushMessage = '고객이 추가되었습니다.';
-            }
+            pushMessage = '새로운 고객이 추가되었습니다.';
         }
 
         let reservation = db.newReservation(data);
@@ -243,10 +238,10 @@ exports.addReservation = async function (data) {
         }
 
         if (status && data.contact && user.alrimTalkInfo.useYn === 'Y') {
-            if(pushMessage){
-                pushMessage += '\n';
+            if(pushMessage) {
+                pushMessage += '<br/>';
             }
-            pushMessage += await alrimTalk.sendReservationConfirm(user, reservation);
+            pushMessage += await alrimTalk.sendReservationConfirm(user, reservation) ? '고객님께 예약알림을 전송하였습니다.' : '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
         }
 
         if(pushMessage){
@@ -344,6 +339,8 @@ const reservationValidationForAdd = function (email, data) {
             message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
         }else if(data.type === 'T' && !data.name){
             message = '일정추가시에는 이름이 필수입니다.';
+        }else if(!data.name && !data.contact){
+            message = '고객이름과 고객연락처 둘 중 하나는 필수입니다.';
         }else{
             status = true;
         }
