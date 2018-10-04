@@ -633,7 +633,7 @@
         if (Object.keys(parameters).length || diff) {
             $("#alrimModal").modal("hide");
         } else {
-            alert("변경된 내역이 없습니다.");
+            showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
     }
 
@@ -865,7 +865,7 @@
         if (diff || Object.keys(parameters).length) {
             $("#infoModal").modal("hide");
         } else {
-            alert("변경된 내역이 없습니다.");
+            showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
     }
 
@@ -881,7 +881,7 @@
         $("#infoPassword").val("");
         $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
             NMNS.socket.emit("send verification", {});
-            alert("인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!");
+            showSnackBar("<span>인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!</span>");
         }) : generateAuthStatusBadge(NMNS.info.authStatus));
         $("#infoShopName").val(NMNS.info.shopName);
         $("#infoBizType").val(NMNS.info.bizType);
@@ -1748,7 +1748,7 @@
     }));
 
     NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function() {
-        alert("정상적으로 매장 정보를 변경하였습니다.");
+        showSnackBar("<span>정상적으로 매장 정보를 변경하였습니다.</span>");
         NMNS.history.remove("info", findById);
     }, function(e) {
         var history = NMNS.history.find(function(item) { return item.id === "info" });
@@ -1765,7 +1765,7 @@
     }));
 
     NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function() {
-        alert("정상적으로 알림톡 정보를 변경하였습니다.");
+        showSnackBar("<span>정상적으로 알림톡 정보를 변경하였습니다.</span>");
         NMNS.history.remove("alrimInfo", findById);
     }, function() {
         var history = NMNS.history.find(function(item) { return item.id === "alrimInfo" });
@@ -1814,7 +1814,7 @@
             row.data("datetimepicker").destroy();
             row.remove();
         }
-        alert("추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)");
+        showSnackBar("<span>추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)</span>");
     }, function(e) {
         $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] .noShowSearchAddSubmit").off("touch click").on("touch click", function() {
             submitAddNoShow($(this));

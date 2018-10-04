@@ -184,7 +184,7 @@
             customer.managerId = $("#customerManager").data("calendar-id");
             var managers = NMNS.calendar.getCalendars();
             customer.manager = managers[managers.findIndex(function(manager) { return manager.id === customer.managerId; })];
-            alert("고객의 정보를 수정하였습니다.");
+            showSnackBar("<span>고객의 정보를 수정하였습니다.</span>");
             drawCustomerList();
         }
     }, function(e) {
@@ -224,7 +224,7 @@
     }));
     NMNS.socket.on("merge customer", socketResponse("고객정보 합치기", function() {
         NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
-        alert("두 고객의 정보와 예약, 알림톡 내역을 합쳤습니다.");
+        showSnackBar("<span>두 고객의 정보와 예약, 알림톡 내역을 합쳤습니다.</span>");
         $("#customerModal").modal("hide");
     }, function() {
         NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
