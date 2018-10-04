@@ -200,3 +200,121 @@ var socketResponse = function(requestName, successCallback, failCallback, silent
     }
   };
 };
+
+var snackbar = [];
+//snackbar handling start
+function showSnackBar(innerHtml) {
+  document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
+  var x = document.getElementById("snackbar");
+  if (!x) {
+    x = document.createElement("div");
+    x.setAttribute("id", "snackbar");
+    x.classList.add("shadow");
+    document.getElementById("mainContents").appendChild(x);
+  } else if(x.classList.contains("show")){
+      snackbar.push(innerHtml);
+  }
+  x.innerHTML = innerHtml;
+  x.classList.add("show");
+  setTimeout(function() { 
+    x.classList.remove("show");
+    if(snackbar.length >0){
+      showSnackBar(snackbar.splice(0, 1)[0]);
+    }
+  }, 5000);
+}
+//snackbar handling end
+
+var notificationSetting;
+function showNotification(notification) {
+  if (!notificationSetting) { //not inited
+    if ("Notification" in window) {
+      if (Notification.permission === "granted") {
+        notificationSetting = "GRANTED";
+      } else if (Notification.permission === "default") {
+        notificationSetting = "REQUESTING";
+        Notification.requestPermission().then(function(permission) {
+          if (permission === "granted") { //granted
+            notificationSetting = "GRANTED";
+          } else { //denied
+            notificationSetting = "DENIED";
+            $.notifyDefaults({
+              newest_on_top: true,
+              type: "minimalist",
+              allow_dismiss: true,
+              delay: 0,
+              url: "#",
+              element: "#notifications",
+              icon_type: "class",
+              onClosed: function() {
+                var height = 10;
+                $("#notifications .alert").each(function(index, item) {
+                  height += item.getBoundingClientRect().height + 10;
+                });
+                $("#notifications").height(height + "px");
+                if ($("#notifications").html() === "") {
+                  $("#notifications").hide();
+                }
+              },
+              template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+            });
+          }
+        });
+      }
+    }
+    if (notificationSetting !== "GRANTED") {
+      $.notifyDefaults({
+        newest_on_top: true,
+        type: "minimalist",
+        allow_dismiss: true,
+        delay: 0,
+        url: "#",
+        element: "#notifications",
+        icon_type: "class",
+        onClosed: function() {
+          var height = 10;
+          $("#notifications .alert").each(function(index, item) {
+            height += item.getBoundingClientRect().height + 10;
+          });
+          $("#notifications").height(height + "px");
+        },
+        template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span><a href="{3}" target="{4}" data-notify="url"></a></div>'
+      });
+    }
+  }
+  
+  if (notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager) {
+    NMNS.calendar.updateSchedule(notification.data.id, notification.data.manager, { raw: { status: "CUSTOMERCANCELED" } });
+  }
+  
+  if (notificationSetting === "GRANTED") { //native notification
+    try {
+      new Notification(notification.title, {
+        requireInteraction: true,
+        lang: "ko-KR",
+        body: notification.body,
+        icon: "/nmns/img/favicon-32x32.png"
+      }).onclick = function(e) {
+        e.preventDefault();
+        if (notification.data && notification.data.url) {
+            window.open(notification.data.url, "_blank");
+        }
+      };
+      return;
+    } catch (exception) {
+      console.error(exception);
+    }
+  }
+  //bootstrap notification
+  $.notify({
+    icon: "fas fa-bell",
+    title: notification.title,
+    message: notification.body,
+    url: (notification.data && notification.data.url ? notification.data.url : "#")
+  }, {});
+  var height = 10;
+  $("#notifications .alert").each(function(index, item) {
+    height += item.getBoundingClientRect().height + 10;
+  });
+  $("#notifications").height(height + "px");
+}

@@ -1,4 +1,4 @@
-/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList */
+/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification */
 (function($) {
     if ( /*@cc_on!@*/ false || !!document.documentMode) {
         var word;
@@ -523,7 +523,7 @@
     function changeMainShopName(shopName) {
         if ($("#mainShopName").length) {
             if (shopName !== "") {
-                $("#mainShopName").text(shopName);
+                $("#mainShopName").text(shopName);git
             } else {
                 $("#navbarResponsive").prev().children("span").html(NMNS.email);
             }
@@ -2203,98 +2203,6 @@
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
     });
     //notification handling start
-    function showNotification(notification) {
-        if (!NMNS.notification) { //not inited
-            if ("Notification" in window) {
-                if (Notification.permission === "granted") {
-                    NMNS.notification = "GRANTED";
-                } else if (Notification.permission === "default") {
-                    NMNS.notification = "REQUESTING";
-                    Notification.requestPermission().then(function(permission) {
-                        if (permission === "granted") { //granted
-                            NMNS.notification = "GRANTED";
-                        } else { //denied
-                            NMNS.notification = "DENIED";
-                            $.notifyDefaults({
-                                newest_on_top: true,
-                                type: "minimalist",
-                                allow_dismiss: true,
-                                delay: 0,
-                                url: "#",
-                                element: "#notifications",
-                                icon_type: "class",
-                                onClosed: function() {
-                                    var height = 10;
-                                    $("#notifications .alert").each(function(index, item) {
-                                        height += item.getBoundingClientRect().height + 10;
-                                    });
-                                    $("#notifications").height(height + "px");
-                                    if ($("#notifications").html() === "") {
-                                        $("#notifications").hide();
-                                    }
-                                },
-                                template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
-                            });
-                        }
-                    });
-                }
-            }
-            if (NMNS.notification !== "GRANTED") {
-                $.notifyDefaults({
-                    newest_on_top: true,
-                    type: "minimalist",
-                    allow_dismiss: true,
-                    delay: 0,
-                    url: "#",
-                    element: "#notifications",
-                    icon_type: "class",
-                    onClosed: function() {
-                        var height = 10;
-                        $("#notifications .alert").each(function(index, item) {
-                            height += item.getBoundingClientRect().height + 10;
-                        });
-                        $("#notifications").height(height + "px");
-                    },
-                    template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span><a href="{3}" target="{4}" data-notify="url"></a></div>'
-                });
-            }
-        }
-
-        if (notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager) {
-            NMNS.calendar.updateSchedule(notification.data.id, notification.data.manager, { raw: { status: "CUSTOMERCANCELED" } });
-        }
-
-        if (NMNS.notification === "GRANTED") { //native notification
-            try {
-                new Notification(notification.title, {
-                    requireInteraction: true,
-                    lang: "ko-KR",
-                    body: notification.body,
-                    icon: "/nmns/img/favicon-32x32.png"
-                }).onclick = function(e) {
-                    e.preventDefault();
-                    if (notification.data && notification.data.url) {
-                        window.open(notification.data.url, "_blank");
-                    }
-                };
-                return;
-            } catch (exception) {
-                console.error(exception);
-            }
-        }
-        //bootstrap notification
-        $.notify({
-            icon: "fas fa-bell",
-            title: notification.title,
-            message: notification.body,
-            url: (notification.data && notification.data.url ? notification.data.url : "#")
-        }, {});
-        var height = 10;
-        $("#notifications .alert").each(function(index, item) {
-            height += item.getBoundingClientRect().height + 10;
-        });
-        $("#notifications").height(height + "px");
-    }
     NMNS.socket.emit("get noti");
     NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e) {
         e.data.data.forEach(function(item) {
@@ -2305,9 +2213,6 @@
     //customer management menu switch start
     $(".customerMenuLink").off("touch click").on("touch click", function(e) {
         e.preventDefault();
-        if (getCookie("new") !== "true") { //고객관리 new 처리
-            document.cookie = "new=true";
-        }
         var action = $($(".customerSortType.active")[0]).data("action");
         if (!document.getElementById("customerScript")) {
             var script = document.createElement("script");
@@ -2340,23 +2245,4 @@
         setSchedules();
     });
     //customer management menu switch end
-    //snackbar handling start
-    function showSnackBar(innerHtml) {
-        var x = document.getElementById("snackbar");
-        if (!x) {
-            x = document.createElement("div");
-            x.setAttribute("id", "snackbar");
-            document.getElementById("mainContents").appendChild(x);
-        }
-        if (NMNS.snackbar) {
-            clearTimeout(NMNS.snackbar);
-        }
-        x.innerHTML = innerHtml;
-        x.className = "show";
-        NMNS.snackbar = setTimeout(function() { x.className = x.className.replace("show", ""); }, 5000);
-    }
-    //snackbar handling end
-    if (getCookie("new") === "true") { //고객관리 new 처리
-        $(".new").remove();
-    }
 })(jQuery);
