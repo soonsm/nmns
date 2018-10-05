@@ -1373,6 +1373,13 @@
                 }
                 $("#taskModal").modal("hide");
             });
+            $("#taskModal .information").tooltip({
+                title: "일정에는 매장 운영에 필요한 사항 등을 자유롭게 등록할 수 있습니다.<br/>예)임대료 납기일 표기 등",
+                placement: "top",
+                trigger: "focus hover",
+                delay: { "hide": 1000 },
+                html: true
+            });
         }
         var selected;
         if (task.start && task.end) {
@@ -1903,7 +1910,7 @@
         }
         if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0) {
             $("#creationPopupContact").tooltip({
-                title: "이 번호에 등록된 노쇼는 총 " + e.data.totalNoShow + "건입니다.<br/>" + (e.data.myNoShow && e.data.myNoShow > 0 ? "우리 매장에서는 " + e.data.myNoShow + "번 등록되었습니다." : ""),
+                title: "이 번호에는 총 " + e.data.totalNoShow + "건의 노쇼가 등록되어 있습니다." + (e.data.myNoShow && e.data.myNoShow > 0 ? "<br/>우리 매장에서는 " + e.data.myNoShow + "건 등록되었습니다." : ""),
                 placement: ($(window).width() > 576 ? "right" : "top"),
                 trigger: "click hover focus",
                 delay: { "hide": 1000 },

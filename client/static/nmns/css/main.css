@@ -915,6 +915,16 @@ button.moveDate:focus {
     background-color: white;
 }
 
+#taskModal .information{
+    position:absolute;
+    right:2.5rem;
+    float:right;
+    margin-top:.125rem;
+}
+#taskModal .information i{
+    width:1rem;
+}
+
 #taskModal .close {
     position: absolute;
     right: 1rem;
@@ -999,8 +1009,15 @@ footer {
     vertical-align: text-top;
 }
 
+.tooltip .arrow{
+    display:none;
+}
 .tooltip-inner {
-    max-width: 265px;
+    max-width: 300px;
+    white-space: pre-wrap;
+    background-color:#232F34;
+    font-size:.8rem;
+    text-align:left;
 }
 
 *:focus,
