@@ -1176,6 +1176,7 @@ button.form-control {
     z-index: 1;
     bottom: 90px;
     font-size: .9rem;
+    left:0;
 }
 #snackbar.show {
     visibility: visible;
@@ -1669,7 +1670,7 @@ button.customerSortType.active {
 
 #alrimModal #alrimHistoryList {
     height: 309px;
-    display: table;
+    display: block;
 }
 
 #alrimModal #alrimHistoryList .row.alrimDetailRow {
