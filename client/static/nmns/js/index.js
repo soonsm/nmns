@@ -235,9 +235,33 @@
     }
   });
   
+  $(".contract").off("touch click").on("touch click", function(e){
+    e.preventDefault();
+    $("#contractModal").addClass("opened");
+    //contractDom.data("scroll", new PerfectScrollbar(contractDom[0]));
+  });
+  $("label[for='agreeContract'],label[for='agreeContract2']").off("touch click").on("touch click", function(e){
+    if(e.target.tagName.toLowerCase()!=='a'){
+      if(!$("#contractModal").hasClass("opened")){
+        alert("이용약관을 확인 후 동의해주세요.");
+        return false;
+      }else if(!$("#contractModal").hasClass("agreed")){
+        alert("이용약관에 대한 동의는 필수입니다.");
+        return false;
+      }
+    }
+  });
+  $("#agreeContractBtn").off("touch click").on("touch click", function(){
+    if($(this).hasClass("disabled")){
+      return;
+    }else{
+      $("#contractModal").addClass("agreed");
+      $("label.agreeBox").trigger("click");
+    }
+  });
   $(".signupBtn").off("click touch").on("click touch", function(e){
     e.preventDefault();
-    if(($("#agreeContract").next().is(":visible") && !$("#agreeContract").prop("checked")) || ($("#agreeContract2").next().is(":visible") && !$("#agreeContract2").prop("checked"))){
+    if(!($("#contractModal").hasClass("opened") && $("#contractModal").hasClass("agreed"))){
       alert("이용약관에 동의해주세요!");
       return false;
     }
@@ -307,17 +331,6 @@
     }
   });
   
-  $(".contract").off("touch click").on("touch click", function(e){
-    e.preventDefault();
-    var contractDom = $(this).parent().parent().next();
-    if(contractDom.html() === ""){
-      contractDom.html($("<small></small>").html($("#contractText").html()));
-    }
-    if(!contractDom.data("scroll")){//init
-      contractDom.data("scroll", new PerfectScrollbar(contractDom[0]));
-    }
-    contractDom.toggle();
-  });
   $("#copyEmail").on("touch click", function(e){
     e.preventDefault();
 		var range = document.createRange();
