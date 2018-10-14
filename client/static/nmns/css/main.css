@@ -1173,7 +1173,7 @@ button.form-control {
     color: #fff;
     padding: 16px 24px;
     position: fixed;
-    z-index: 1;
+    z-index: 1060;
     bottom: 90px;
     font-size: .9rem;
     left:0;
