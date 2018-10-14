@@ -493,8 +493,10 @@ exports.getReservationSummaryList = async function (email, data) {
             let reservation = list[i];
             if(reservation.status !== process.nmns.RESERVATION_STATUS.DELETED){
                 let member = memberList.find(member => member.id === reservation.memberId);
-                reservation.contact = member.contact;
-                reservation.name = member.name;
+                if(member){
+                    reservation.contact = member.contact;
+                    reservation.name = member.name;
+                }
                 filteredList.push(reservation);
                 if(data.start && reservation.start < data.start){
                     filteredList.length -= 1;

@@ -170,7 +170,7 @@ exports.updateReservation = async function (newReservation) {
                 message = '시스템 오류입니다.(DB Update Error)';
             }else{
                 //노쇼 처리인 경우 노쇼
-                if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
+                if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && reservation.contact) {
                     await db.addToNoShowList(email, reservation.contact, reservation.noShowCase, reservation.start.substring(0, 8), reservation.id);
                 }
 

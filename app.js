@@ -42,6 +42,7 @@ const
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
     indexRouter = require('./bin/indexRouter'),
     noShowRouter = require('./bin/noShowRouter'),
+    // kakaoReservationRouter = require('./bin/kakaoReservationRouter'),
     db = require('./bin/webDb'),
     util = require('./bin/util')
 ;
@@ -124,6 +125,8 @@ app.use(passport.session());
 //Web request router
 app.use('/', indexRouter(passport));
 app.use('/noShow', noShowRouter);
+
+// app.use('/kakaoReservation', kakaoReservationRouter);
 
 app.get('/keyboard', (req, res)=>{
     res.status(200).json(message.homeKeyboard);
