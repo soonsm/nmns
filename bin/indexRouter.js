@@ -13,31 +13,33 @@ const logger = global.nmns.LOGGER;
 
 const mainView = require('../client/template/main');
 const indexView = require('../client/template/index');
+const signupView = require('../client/template/signup');
 const cancelView = require('../client/template/reservationCancel');
 
-let render = function (res, view, data){
-    if(!data){
+let render = function(res, view, data) {
+    if (!data) {
         data = {};
     }
     data.cdn = global.nmns.cdn;
     res.marko(view, data);
 }
 
-module.exports = function (passport) {
+module.exports = function(passport) {
 
-    router.get("/", function (req, res) {//main calendar page
+    router.get("/", function(req, res) { //main calendar page
         if (req.user) {
             let tips = require('./tips').getTips();
             let index = 7;
             let num = Math.random();
-            if(req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7){
-                tips.splice(7,1);
+            if (req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7) {
+                tips.splice(7, 1);
                 index = Math.floor(Math.random() * (tips.length));
             }
             let tip = tips[index];
             req.session.tipToRemove = index;
             render(res, mainView, {
-                user: req.user, tips: tip
+                user: req.user,
+                tips: tip
             });
 
         } else {
@@ -46,27 +48,37 @@ module.exports = function (passport) {
         }
     });
 
-    router.get('/index', function (req, res) {
+    router.get('/index', function(req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
         } else {
             render(res, indexView, {
-                type: "signin",
                 email: req.cookies.email,
                 message: req.session.errorMessage
             });
         }
     });
 
-    router.post("/signup", async function (req, res) {
+    router.get('/signup', function(req, res) {
+        if (req.user) {
+            //로그인 되있으면 main으로 이동
+            res.redirect("/");
+        } else {
+            render(res, signupView, {
+                email: req.cookies.email,
+                message: req.session.errorMessage
+            });
+        }
+    });
+
+    router.post("/signup", async function(req, res) {
         let data = req.body;
         let email = data.email;
         let password = data.password;
         let passwordRepeat = data.passwordRepeat;
 
         let error = {
-            type: 'signup',
             email: email,
             message: null
         };
@@ -100,13 +112,13 @@ module.exports = function (passport) {
 
         const emailAuthToken = require('js-sha256')(email);
 
-        user = await db.signUp({email: email, password: password, emailAuthToken: emailAuthToken});
+        user = await db.signUp({ email: email, password: password, emailAuthToken: emailAuthToken });
 
         emailSender.sendEmailVerification(email, emailAuthToken);
 
         if (user) {
             //로그인처리
-            req.logIn(user, function () {
+            req.logIn(user, function() {
                 res.redirect("/");
             });
         } else {
@@ -126,12 +138,12 @@ module.exports = function (passport) {
      * 로그인 요청 json format이 잘못되었을 때: {message: 'Missing credentials'}
      * 그 외 에러: 나도 몰라, 근데 {message: 블라블라} 이런 형태로 리턴이 올 것임
      */
-    router.post("/signin", function (req, res) {
+    router.post("/signin", function(req, res) {
         logger.log(req.body);
         let email = req.body.email;
         res.cookie('email', email);
         passport.authenticate('local', (err, user, info) => {
-            req.logIn(user, function (err) {
+            req.logIn(user, function(err) {
                 if (err) {
                     req.session.errorMessage = info.message;
                     res.redirect("/index");
@@ -149,7 +161,7 @@ module.exports = function (passport) {
             let email = req.user.email;
             res.cookie('email', email);
             req.logout();
-            req.session.destroy(function (err) {
+            req.session.destroy(function(err) {
                 if (err) {
                     logger.log('fail to destroy session: ', err);
                 }
@@ -161,14 +173,14 @@ module.exports = function (passport) {
     })
 
     //http://localhost:8088/emailVerification/email=soonsm@gmail.com&token=297356b5ba41255cfe85cc692ecabbf3a0caf5423e62b9c0974e8ef73676b32a
-    router.get("/emailVerification/email=:email&token=:token", async function (req, res) {
+    router.get("/emailVerification/email=:email&token=:token", async function(req, res) {
         const email = req.params.email;
         const token = req.params.token;
 
         let user = await db.getWebUser(email);
         if (user && user.emailAuthToken === token && user.authStatus !== process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-            await db.updateWebUser(email, {authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED});
-            req.logIn(user, function () {
+            await db.updateWebUser(email, { authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED });
+            req.logIn(user, function() {
                 res.redirect("/");
             });
             return;
@@ -177,7 +189,7 @@ module.exports = function (passport) {
         res.redirect("/");
     });
 
-    router.post('/resetPassword', async function (req, res) {
+    router.post('/resetPassword', async function(req, res) {
         const email = req.body.email;
 
         let user = await db.getWebUser(email);
@@ -188,7 +200,7 @@ module.exports = function (passport) {
                 numbers: true
             });
 
-            if (await db.updateWebUser(email, {password: util.sha512(password)})) {
+            if (await db.updateWebUser(email, { password: util.sha512(password) })) {
 
                 await emailSender.sendTempPasswordEmail(email, password);
 
@@ -200,7 +212,7 @@ module.exports = function (passport) {
         res.redirect("/");
     });
 
-    router.get('/web_cancel/key=:reservationKey&&email=:email', async (req, res) => {
+    router.get('/web_cancel/key=:reservationKey&&email=:email', async(req, res) => {
         let id = req.params.reservationKey;
         let email = req.params.email;
 
@@ -250,7 +262,7 @@ module.exports = function (passport) {
 
                         let pushList = user.pushList || [];
                         pushList.push(push);
-                        await db.updateWebUser(email, {pushList: pushList});
+                        await db.updateWebUser(email, { pushList: pushList });
 
                         if (!await db.updateReservation(email, reservationList)) {
                             contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
@@ -266,7 +278,7 @@ module.exports = function (passport) {
             }
         }
 
-        return render(res, cancelView, {title: returnMsg, contents: contents});
+        return render(res, cancelView, { title: returnMsg, contents: contents });
     });
 
     return router;
