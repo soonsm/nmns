@@ -1687,3 +1687,11 @@ button.customerSortType.active {
 #alrimModal .input-group-text {
     background-color: #fff;
 }
+
+/* tutorial */
+.popover.tutorial{
+    max-width: 350px;
+}
+.popover.tutorial .clearfix button{
+    margin-left:.5rem;
+}

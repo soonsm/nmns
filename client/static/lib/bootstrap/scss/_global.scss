@@ -50,7 +50,9 @@ section {
 .text-secondary {
   color: $secondary !important;
 }
-
+.btn-link{
+  color:$primary;
+}
 .btn-primary {
   background-color: $primary;
   border-color: $primary;

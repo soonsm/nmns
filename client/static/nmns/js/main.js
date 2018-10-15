@@ -230,6 +230,20 @@
         if (NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5)) {
             $("#tipsModal").modal("show");
         }
+        //tutorial start
+        if(!NMNS.info.isFirstVisit){
+            if (!document.getElementById("tutorialScript")) {
+                var script = document.createElement("script");
+                script.src = "/nmns/js/tutorial.min.js";
+                script.id = "tutorialScript";
+                document.body.appendChild(script);
+        
+                script.onload = function() {
+                    $("#tutorialModal").modal();
+                };
+            }
+        }
+        //tutorial end
     }));
 
     NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {
@@ -637,7 +651,7 @@
         }
     }
 
-    function initAlrimModal() {
+    NMNS.initAlrimModal = function() {
         if (!NMNS.initedAlrimModal) {
             NMNS.initedAlrimModal = true;
             $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e) {
@@ -922,7 +936,7 @@
         });
     }
 
-    function initInfoModal() {
+    NMNS.initInfoModal = function () {
         if (!NMNS.initedInfoModal) { //first init
             NMNS.initedInfoModal = true;
 
@@ -1437,8 +1451,8 @@
         $(".addReservLink").on("touch click", createNewSchedule);
         $(".addTaskLink").on("touch click", initTaskModal);
 
-        $("#infoLink").on("touch click", initInfoModal);
-        $("#alrimLink").on("touch click", initAlrimModal);
+        $("#infoLink").on("touch click", NMNS.initInfoModal);
+        $("#alrimLink").on("touch click", NMNS.initAlrimModal);
         $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
         var resizeThrottled = tui.util.throttle(function() {
             NMNS.calendar.render();
@@ -1993,6 +2007,9 @@
     }).on("shown.bs.modal", function() {
         $("#infoManagerList").data("scroll").update();
         $("#infoManagerList")[0].scrollTop = 0;
+        if($("body .popover").length){
+            $("body .popover").popover("update");
+        }
     });
     $("#alrimModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
@@ -2018,6 +2035,10 @@
             if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
                 return false;
             }
+        }
+    }).on("shown.bs.modal", function(){
+        if($("body .popover").length){
+            $("body .popover").popover("update");
         }
     });
     $("#noShowModal").on("touch click", function(e) {

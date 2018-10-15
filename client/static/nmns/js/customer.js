@@ -136,6 +136,8 @@
                 }
             });
             $("#customerCount").text(NMNS.customerList.length);
+        }else{
+            html += "<p>아직 등록된 고객이 없습니다. 위쪽 입력창에서 고객을 등록하여 고객의 방문이력을 기록, 관리해보세요!</p>";
         }
     }
     $(".addHistory").on("touch click", function(e) {

@@ -60,7 +60,7 @@
   <!-- Navigation -->
   <nav class="navbar bg-primary navbar-shrink" id="mainNav">
     <a class="navbar-brand js-scroll-trigger" href="/" aria-label="No More No Show">No More No Show</a>
-    <button class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
+    <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-secondary btn-flat text-white round-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
       <i class="fa fa-bars d-block d-sm-none" aria-label="메뉴"></i>
       <span class="d-none d-sm-block"><if(input.user.shopName)><span id="mainShopName">${input.user.shopName}</span><small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
     </button>
@@ -650,6 +650,28 @@
               <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
               <button type="button" id="taskModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tutorialModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-0">
+          <div class="modal-header">
+            <span>
+              <h5 class="modal-title">처음 방문하셨군요!</h5>
+            </span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0">&nbsp;알고나면 더 편리하게 사용할 수 있는 No More No Show!<br/>쉬운 No More No Show 사용법을 알려드릴게요.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
+            <button type="button" id="start" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="시작">시작</button>
           </div>
         </div>
       </div>
