@@ -295,8 +295,15 @@ button.moveDate:focus {
     cursor: default;
 }
 
+#lnbLastMenu{
+    position:absolute;
+    bottom:0;
+    width:100%;
+}
 #lnbLastMenu a {
     cursor: default;
+    border-bottom:0;
+    border-top:0;
 }
 
 #lnbLastMenu a div {
