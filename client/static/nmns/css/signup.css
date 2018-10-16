@@ -4,6 +4,8 @@
 }
 #contractText{
   max-height:500px;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 @media only screen and (min-width: 841px){
   .mdl-stepper--horizontal:before{
@@ -91,4 +93,15 @@ html, body{
 @media (min-width:895px){html{font-size:16px;}}
 #mainNav .navbar-brand{
   font-weight:700;
+}
+#signupComplete{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:100%;
+  text-align:center;
+  transform:translate(-50%, -50%);
+}
+.mdl-step__content{
+  -webkit-overflow-scrolling: touch;
 }
