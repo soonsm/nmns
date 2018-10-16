@@ -83,7 +83,32 @@
   //   document.querySelector('ul.mdl-stepper').MaterialStepper.back(); 
   // });
   window.addEventListener('resize', resizeWindow);
-  document.addEventListener("DOMContentLoaded", resizeWindow);
+  document.addEventListener("DOMContentLoaded", function(){
+    resizeWindow();
+    flatpickr("#signupBizBeginTime", {
+      dateFormat: "H:i",
+      time_24hr: true,
+      defaultHour: 9,
+      defaultMinute: 0,
+      minuteIncrement: 10,
+      noCalendar: true,
+      enableTime: true,
+      //appendTo: document.getElementById("infoModal"),
+      applyBtn: true
+    }).setDate(moment("0900", "HHmm").toDate());
+    flatpickr("#signupBizEndTime", {
+      dateFormat: "H:i",
+      time_24hr: true,
+      defaultHour: 23,
+      defaultMinute: 0,
+      minuteIncrement: 10,
+      noCalendar: true,
+      enableTime: true,
+      //appendTo: document.getElementById("infoModal"),
+      applyBtn: true
+    }).setDate(moment("2300", "HHmm").toDate());
+    
+  });
   
   $("#agreeContractBtn").on("touch click", function(e){
     if($(this).hasClass("disabled")){
@@ -95,11 +120,87 @@
   });
   
   $("#signupBtn").on("touch click", function(e){
-    if($("#signupForm").length>2){
-      return false;
+    if(!validateEmail($("#signupEmail").val())){
+      alert("입력된 이메일이 올바르지 않습니다. 다시 한 번 확인해주세요!");
+      $("#signupEmail").focus();
+      return;
+    }
+    if(!/\W+/.test($("#signupPassword").val()) || !/[0-9]+/.test($("#signupPassword").val())){
+      alert("비밀번호는 하나 이상의 숫자와 특수문자를 포함해야합니다.");
+      $("#signupPassword").focus();
+      return;
+    }
+    if($("#signupPassword").val() !== $("#signupRePassword").val()){
+      alert("비밀번호 확인 값이 일치하지 않습니다.");
+      $("#signupRePassword").focus();
+      return;
+    }
+    if ($("#signupUseYn").prop("checked")) {
+      if ($("#signupNotice").val().length > 700) {
+        alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요 :)");
+        $("#signupNotice").focus();
+        return;
+      }
+      if ($("#signupCallbackPhone").val() === "") {
+        alert("알림톡을 사용하시려면 반드시 휴대폰번호를 입력해주세요!");
+        $("#signupCallbackPhone").focus();
+        return;
+      } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#signupCallbackPhone").val()))) {
+        alert("입력하신 휴대폰번호가 정확하지 않습니다.\n휴대폰번호를 정확히 입력해주세요!");
+        $("#signupCallbackPhone").focus();
+        return;
+      }
+      if ($("#signupShopName").val() === "") {
+        alert("알림톡을 사용하시려면 고객에게 보여줄 매장 이름을 입력해주세요!");
+        $("#signupShopName").focus();
+        return;
+      }
+    }
+    var beginTime = moment($("#signupBizBeginTime").val(), "HH:mm");
+    var endTime = moment($("#signupBizEndTime").val(), "HH:mm");
+    if(!beginTime.isValid()){
+      alert("매장 운영 시작시간이 올바르지 않습니다.");
+      $("#signupBizBeginTime").focus();
+      return;
+    }
+    if(!EndTime.isValid()){
+      alert("매장 운영 종료시간이 올바르지 않습니다.");
+      $("#signupBizEndTime").focus();
+      return;
     }
     stepperElement.MaterialStepper.showTransitionEffect();
-    setTimeout(function(){stepperElement.MaterialStepper.hideTransitionEffect.call(stepperElement.MaterialStepper)}, 3000);
+    fetch('/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: $("#signupEmail").val(),
+        password: $("#signupPassword").val(),
+        shopName: $("#signupShopName").val(),
+        bizBeginTime: beginTime.format("HHmm"),
+        bizEndTime: endTime.format("HHmm"),
+        useYn: $("#signupUseYn").prop("checked") ? "Y" : "N",
+        callbackPhone: $("#signupCallbackPhone").val(),
+        notice: $("#signupNotice").val(),
+        cancelDue: $("#signupCancelDue").val()
+      })
+    })
+    .then(function(res){return res.json();})
+    .then(function(json){console.log(json)})
+    .catch(function(ex){
+      stepperElement.MaterialStepper.hideTransitionEffect();
+    });
+    //setTimeout(function(){stepperElement.MaterialStepper.hideTransitionEffect.call(stepperElement.MaterialStepper)}, 3000);
+  });
+  
+  $("label[for=signupUseYn]").on("touch click", function(){
+    $(".alrimRequirement").toggle();
+  });
+  
+  $("#signupNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e) {
+      $("#noticeByteCount").text($(this).val().length);
+      $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
   });
   
   $("#copyEmail").on("touch click", function(e) {
