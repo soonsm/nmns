@@ -112,8 +112,8 @@
   
   $("#agreeContractBtn").on("touch click", function(e){
     if($(this).hasClass("disabled")){
-      stepperElement.MaterialStepper.error("이용약관을 확인 후 동의해주세요.");
-      alert("이용약관을 확인 후 동의해주세요.");
+      stepperElement.MaterialStepper.error("이용약관을 끝까지 확인 후 동의해주세요.");
+      alert("이용약관을 끝까지 확인 후 동의해주세요.");
       return false;
     }
     stepperElement.MaterialStepper.next();
@@ -163,7 +163,7 @@
       $("#signupBizBeginTime").focus();
       return;
     }
-    if(!EndTime.isValid()){
+    if(!endTime.isValid()){
       alert("매장 운영 종료시간이 올바르지 않습니다.");
       $("#signupBizEndTime").focus();
       return;
@@ -183,11 +183,15 @@
         useYn: $("#signupUseYn").prop("checked") ? "Y" : "N",
         callbackPhone: $("#signupCallbackPhone").val(),
         notice: $("#signupNotice").val(),
-        cancelDue: $("#signupCancelDue").val()
+        cancelDue: $("#signupCancelDue").val(),
+        kakaotalk: $(this).data("kakaotalk") || undefined
       })
     })
     .then(function(res){return res.json();})
-    .then(function(json){console.log(json)})
+    .then(function(json){
+      console.log(json);
+      stepperElement.MaterialStepper.next();
+    })
     .catch(function(ex){
       stepperElement.MaterialStepper.hideTransitionEffect();
     });
