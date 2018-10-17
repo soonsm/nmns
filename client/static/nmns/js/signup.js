@@ -193,9 +193,10 @@
       stepperElement.MaterialStepper.next();
     })
     .catch(function(ex){
+      var message = ex.json().message;
+      stepperElement.MaterialStepper.error(message);
       stepperElement.MaterialStepper.hideTransitionEffect();
     });
-    //setTimeout(function(){stepperElement.MaterialStepper.hideTransitionEffect.call(stepperElement.MaterialStepper)}, 3000);
   });
   
   $("label[for=signupUseYn]").on("touch click", function(){
