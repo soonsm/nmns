@@ -60,7 +60,7 @@ module.exports = function(passport) {
         }
     });
 
-    router.get('/signup/kakaoId=:kakaoId', function(req, res) {
+    router.get('/signup', function(req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
@@ -68,7 +68,7 @@ module.exports = function(passport) {
             render(res, signupView, {
                 email: req.cookies.email,
                 message: req.session.errorMessage,
-                kakaotalk: req.params.kakaoId
+                kakaotalk: req.query.kakaotalk
             });
         }
     });

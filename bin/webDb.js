@@ -169,7 +169,7 @@ exports.newWebUser = function (user) {
         pushList: [],
         isFirstVisit: true,
         feedback: [],
-        kakaoId: user.kakaoId || null
+        kakaotalk: user.kakaotalk || null
     };
 };
 
