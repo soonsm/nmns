@@ -60,14 +60,15 @@ module.exports = function(passport) {
         }
     });
 
-    router.get('/signup', function(req, res) {
+    router.get('/signup/kakaoId=:kakaoId', function(req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
         } else {
             render(res, signupView, {
                 email: req.cookies.email,
-                message: req.session.errorMessage
+                message: req.session.errorMessage,
+                kakaotalk: req.params.kakaoId
             });
         }
     });
@@ -76,55 +77,53 @@ module.exports = function(passport) {
         let data = req.body;
         let email = data.email;
         let password = data.password;
-        let passwordRepeat = data.passwordRepeat;
 
-        let error = {
-            email: email,
-            message: null
-        };
+        let sendResponse = function(res, validation, errorMessage){
+            res.status(200).json({
+                status: validation ? '200' : '400',
+                message: errorMessage
+            });
+        }
 
         //email validation
         if (!emailValidator.validate(email)) {
-            //email validation fail
-            error.message = '올바른 이메일 형식이 아닙니다.';
-            return render(res, indexView, error);
-        }
-
-        //password validation
-        if (password !== passwordRepeat) {
-            error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
-            return render(res, indexView, error);
+            return sendResponse(res, false, '올바른 이메일 형식이 아닙니다.');
         }
 
         //password strength check
         let strenthCheck = util.passwordStrengthCheck(password);
         if (strenthCheck.result === false) {
-            error.message = strenthCheck.message;
-            return render(res, indexView, error);
+            return sendResponse(res, false, strenthCheck.message);
         }
 
         //기존 사용자 체크
-        let user = await db.getWebUser(email);
-        if (user) {
-            error.message = '이미 존재하는 사용자입니다.';
-            return render(res, indexView, error);
+        if (await db.getWebUser(email)) {
+            return sendResponse(res, false, '이미 존재하는 사용자입니다.');
         }
 
-        const emailAuthToken = require('js-sha256')(email);
-
-        user = await db.signUp({ email: email, password: password, emailAuthToken: emailAuthToken });
-
-        emailSender.sendEmailVerification(email, emailAuthToken);
-
-        if (user) {
-            //로그인처리
-            req.logIn(user, function() {
-                res.redirect("/");
-            });
-        } else {
-            error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
-            return render(res, indexView, error);
+        data.emailAuthToken = require('js-sha256')(email);
+        let newUser = db.newWebUser(data);
+        if(data.useYn === 'Y'){
+            if (!data.callbackPhone || !util.phoneNumberValidation(data.callbackPhone)) {
+                return sendResponse(res, false, `휴대전화 번호 양식에 맞지 않습니다.${data.callbackPhone}`);
+            }
+            newUser.alrimTalkInfo = {
+                useYn: 'Y',
+                callbackPhone: data.callbackPhone,
+                cancelDue: data.cancelDue || '',
+                notice: data.notice || ''
+            }
         }
+        if(await db.setWebUser(newUser)){
+            if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
+                //로그인처리
+                req.logIn(newUser, function() {
+                    return sendResponse(res, true, '회원가입성공');
+                });
+            }
+        }
+        return sendResponse(res, false, '시스템 오류가 발생했습니다.\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.');
+
     });
 
     /**

@@ -168,7 +168,8 @@ exports.newWebUser = function (user) {
         cancelAlrimTalkList: [],
         pushList: [],
         isFirstVisit: true,
-        feedback: []
+        feedback: [],
+        kakaoId: user.kakaoId || null
     };
 };
 
