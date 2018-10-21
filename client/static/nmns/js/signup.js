@@ -192,7 +192,7 @@
             .then(function(json) {
                 console.log(json);
                 stepperElement.MaterialStepper.hideTransitionEffect();
-                if (json.status === 200) {
+                if (json.status === "200") {
                     stepperElement.MaterialStepper.next();
                 } else {
                     stepperElement.MaterialStepper.error(json.message);
