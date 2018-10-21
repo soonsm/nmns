@@ -125,9 +125,27 @@ async function sendTestAlrimTalk() {
     });
 }
 
+let getResFunc = function(res){
+    return function(returnMessage){
+        res.status(200).json(returnMessage);
+    };
+}
+
 exports.messageHandler = async function(userKey, content, res){
 
     let returnMessage = null;
+    let sendRes = getResFunc(res);
+
+    let user = await db.getUser(userKey);
+    if(!user.email){
+        //회원가입 하라는 안내 문구
+        return sendRes(res, message.messageButtonWithHomeKeyboard('회원가입 후 사용하실 수 있습니다.', '회원가입하기', `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`));
+    }
+    let webUser = await db.getWebUser(user.email);
+    if(webUser.authStatus !== process.nmns.EMAIL_VERIFICATED){
+        //이메일 인증 하라는 안내 문구
+        return sendRes(res, message.messageWithHomeKeyboard('가입하신 이메일로 인증메일을 보냈습니다.\n이메일 인증 후 사용하세요.'));
+    }
 
     if(content === message.noshowRegister){
         await db.setUserStatus(userKey, userStatus.beforeRegister, 'registerTryCount');
@@ -155,7 +173,6 @@ exports.messageHandler = async function(userKey, content, res){
             }
         }
     }else if(content === message.yesAlrmTalkInfo || content === message.noAlrmTalkInfo){
-        let user = await db.getUser(userKey);
         if(user.userStatus === userStatus.beforeConfirmAlrimTalkInfo){
             if(content === message.noAlrmTalkInfo){
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkInfo);
@@ -183,7 +200,6 @@ exports.messageHandler = async function(userKey, content, res){
             returnMessage = message.messageWithHomeKeyboard('잘못된 접근입니다.');
         }
     }else{
-        let user = await db.getUser(userKey);
         if(user){
             switch(user.userStatus){
                 case userStatus.beforeRegister:

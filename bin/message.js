@@ -24,6 +24,19 @@ exports.messageWithConfirmAlrimTalkInfoKeyboard = function (text) {
     }
 }
 
+exports.messageButtonWithHomeKeyboard = function (text, buttonLabel, buttonUrl) {
+    return {
+        'message': {
+            'text': text
+        },
+        'message_button': {
+            'label': buttonLabel,
+            'url': buttonUrl
+        },
+        'keyboard': exports.homeKeyboard
+    };
+};
+
 exports.messageWithHomeKeyboard = function (text) {
     return {
         'message': {

@@ -144,6 +144,15 @@ exports.getUser = async function(userKey){
   });
 };
 
+exports.getWebUser = async function(email){
+    return await get({
+        TableName: process.nmns.TABLE.WebSecheduler,
+        Key: {
+            'email': email
+        }
+    });
+};
+
 exports.getAlrimTalkUserList = async function(){
     return await getList({
         TableName: 'AlrimTalkUser'
