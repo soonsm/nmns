@@ -26,21 +26,29 @@ let render = function(res, view, data) {
 
 module.exports = function(passport) {
 
-    router.get("/", function(req, res) { //main calendar page
+    router.get("/", async function(req, res) { //main calendar page
         if (req.user) {
-            let tips = require('./tips').getTips();
-            let index = 7;
-            let num = Math.random();
-            if (req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7) {
-                tips.splice(7, 1);
-                index = Math.floor(Math.random() * (tips.length));
+            let user = await db.getWebUser(req.user.email);
+            if(user.authStatus === process.nmns.EMAIL_VERIFICATED){
+                let tips = require('./tips').getTips();
+                let index = 7;
+                let num = Math.random();
+                if (req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7) {
+                    tips.splice(7, 1);
+                    index = Math.floor(Math.random() * (tips.length));
+                }
+                let tip = tips[index];
+                req.session.tipToRemove = index;
+                render(res, mainView, {
+                    user: req.user,
+                    tips: tip
+                });
+            }else{
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
             }
-            let tip = tips[index];
-            req.session.tipToRemove = index;
-            render(res, mainView, {
-                user: req.user,
-                tips: tip
-            });
 
         } else {
             //로그인 되지 않은 상태이므로 index page로 이동
@@ -48,10 +56,18 @@ module.exports = function(passport) {
         }
     });
 
-    router.get('/index', function(req, res) {
+    router.get('/index', async function(req, res) {
         if (req.user) {
-            //로그인 되있으면 main으로 이동
-            res.redirect("/");
+            let user = await db.getWebUser(req.user.email);
+            if(user.authStatus === process.nmns.EMAIL_VERIFICATED){
+                //로그인 되있으면 main으로 이동
+                res.redirect("/");
+            }else{
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
+            }
         } else {
             render(res, indexView, {
                 email: req.cookies.email,
