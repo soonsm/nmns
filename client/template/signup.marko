@@ -53,8 +53,8 @@
     <a class="navbar-brand" href="/index">No More No Show</a>
   </nav>
 
-  <ul class="mdl-stepper mdl-stepper--linear mdl-stepper--horizontal mx-auto" id="signupStepper">
-    <li class="mdl-step mdl-step--editable is-active signupContractStep">
+  <ul class="mdl-stepper mdl-stepper--linear mdl-stepper--horizontal mx-auto" id="signupStepper" data-init="true">
+    <li class=["mdl-step", (!input.authRequired && "mdl-step--editable"), "signupContractStep", (input.authRequired && "mdl-step--completed"), (!input.authRequired && "is-active")]>
       <span class="mdl-step__label">
         <span class="mdl-step__title">
           <span class="mdl-step__title-text">이용약관 동의</span>
@@ -69,7 +69,7 @@
         <button id="agreeContractBtn" class="btn btn-primary btn-flat disabled mdl-button mdl-js-button text-white ml-auto" data-stepper-next>동의 및 다음</button>
       </div>
     </li>
-    <li class="mdl-step mdl-step--editable signupFormStep" data-step-transition-message="등록 중입니다...">
+    <li class=["mdl-step", (!input.authRequired && "mdl-step--editable"), "signupFormStep", (input.authRequired && "mdl-step--completed")] data-step-transition-message="등록 중입니다...">
       <span class="mdl-step__label">
         <span class="mdl-step__title">
           <span class="mdl-step__title-text">정보 입력</span>
@@ -175,7 +175,7 @@
         <button class="mdl-button mdl-js-button" data-stepper-back>이전</button>
       </div>
     </li>
-    <li class="mdl-step mdl-step--editable">
+    <li class=["mdl-step", "mdl-step--editable", (input.authRequired && "is-active")]>
       <span class="mdl-step__label">
         <span class="mdl-step__title">
           <span class="mdl-step__title-text">이메일 인증</span>
@@ -186,7 +186,7 @@
       </div>
       <div class="mdl-step__actions">
         <button class="btn btn-primary btn-flat mdl-button mdl-js-button" data-stepper-next><a href="/" class="text-white"><span class="d-none d-sm-inline-block">No More No Show </span>시작하기</a></button>
-        <button class="mdl-button mdl-js-button" data-stepper-back>이전</button>
+        <button if(!input.authRequired) class="mdl-button mdl-js-button" data-stepper-back>이전</button>
       </div>
     </li>
   </ul>

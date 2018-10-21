@@ -68,7 +68,8 @@ module.exports = function(passport) {
             render(res, signupView, {
                 email: req.cookies.email,
                 message: req.session.errorMessage,
-                kakaotalk: req.query.kakaotalk
+                kakaotalk: req.query.kakaotalk,
+                authRequired: false
             });
         }
     });
@@ -78,7 +79,7 @@ module.exports = function(passport) {
         let email = data.email;
         let password = data.password;
 
-        let sendResponse = function(res, validation, errorMessage){
+        let sendResponse = function(res, validation, errorMessage) {
             res.status(200).json({
                 status: validation ? '200' : '400',
                 message: errorMessage
@@ -103,7 +104,7 @@ module.exports = function(passport) {
 
         data.emailAuthToken = require('js-sha256')(email);
         let newUser = db.newWebUser(data);
-        if(data.useYn === 'Y'){
+        if (data.useYn === 'Y') {
             if (!data.callbackPhone || !util.phoneNumberValidation(data.callbackPhone)) {
                 return sendResponse(res, false, `휴대전화 번호 양식에 맞지 않습니다.${data.callbackPhone}`);
             }
@@ -114,7 +115,7 @@ module.exports = function(passport) {
                 notice: data.notice || ''
             }
         }
-        if(await db.setWebUser(newUser)){
+        if (await db.setWebUser(newUser)) {
             if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
                 //로그인처리
                 req.logIn(newUser, function() {
