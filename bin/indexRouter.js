@@ -133,6 +133,13 @@ module.exports = function(passport) {
         }
         if (await db.setWebUser(newUser)) {
             if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
+
+                if(data.kakaotalk){
+                    let kakaoUser = await db.getUser(data.kakaotalk);
+                    kakaoUser.email = email;
+                    db.saveUser(kakaoUser);
+                }
+
                 //로그인처리
                 req.logIn(newUser, function() {
                     return sendResponse(res, true, '회원가입성공');
