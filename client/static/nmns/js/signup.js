@@ -22,7 +22,6 @@
             // When user clicks on [data-stepper-next] button of step.          
             /*if(steps[i].classList.contains("signupFormStep")){
               steps[i].addEventListener('onstepnext', function(e, step) {
-                console.log("aaaa", e);
                 setTimeout(function(){
                   stepperElement.MaterialStepper.next();
                 }, 3000);
@@ -190,7 +189,6 @@
             })
             .then(function(res) { return res.json(); })
             .then(function(json) {
-                console.log(json);
                 stepperElement.MaterialStepper.hideTransitionEffect();
                 if (json.status === "200") {
                     stepperElement.MaterialStepper.next();
