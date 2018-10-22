@@ -147,11 +147,8 @@ module.exports = function(passport) {
                     kakaoUser.email = email;
                     db.saveUser(kakaoUser);
                 }
-
-                //로그인처리
-                req.logIn(newUser, function() {
-                    return sendResponse(res, true, '회원가입성공');
-                });
+                res.cookie('email', email);
+                return sendResponse(res, true, '회원가입성공');
             }
         }
         return sendResponse(res, false, '시스템 오류가 발생했습니다.\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.');
