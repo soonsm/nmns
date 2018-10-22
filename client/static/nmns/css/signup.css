@@ -104,3 +104,6 @@ html, body{
 .mdl-step__content{
   -webkit-overflow-scrolling: touch;
 }
+#signupForm .infoBizTime{
+  width:calc(50% - 16px);
+}
