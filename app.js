@@ -90,6 +90,9 @@ passport.use(new LocalStrategy({
         passwordField: 'password'
     },
     async function(username, password, done) {
+        if(!username){
+            return done(null, false, { message: '이메일을 입력하세요.' });
+        }
         let user = await db.getWebUser(username);
         if(user){
             if(util.sha512(password) === user.password){
