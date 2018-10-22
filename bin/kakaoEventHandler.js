@@ -139,8 +139,8 @@ exports.messageHandler = async function(userKey, content, res){
     let user = await db.getUser(userKey);
     if(!user.email){
         //회원가입 하라는 안내 문구
-        return sendRes(message.messageWithButton('회원가입 후 사용하실 수 있습니다.', '회원가입하기', `http://localhost:8088/signup?kakaotalk=${userKey}`));
-        // return sendRes(message.messageWithButton('회원가입 후 사용하실 수 있습니다.', '회원가입하기', `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`));
+        // return sendRes(message.messageWithButton('회원가입 후 사용하실 수 있습니다.', '회원가입하기', `http://localhost:8088/signup?kakaotalk=${userKey}`));
+        return sendRes(message.messageWithButton('회원가입 후 사용하실 수 있습니다.', '회원가입하기', `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`));
     }
     let webUser = await db.getWebUser(user.email);
     if(!webUser || webUser.authStatus !== process.nmns.AUTH_STATUS.EMAIL_VERIFICATED){
