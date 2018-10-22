@@ -29,7 +29,7 @@ module.exports = function(passport) {
     router.get("/", async function(req, res) { //main calendar page
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
-            if(user.authStatus === process.nmns.EMAIL_VERIFICATED){
+            if(user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED){
                 let tips = require('./tips').getTips();
                 let index = 7;
                 let num = Math.random();
@@ -76,11 +76,16 @@ module.exports = function(passport) {
         }
     });
 
-    router.get('/signup', function(req, res) {
+    router.get('/signup', async function(req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
         } else {
+
+            if(req.query.kakaotalk && await db.getUser(req.query.kakaotalk)){
+                res.redirect("/");
+            }
+
             render(res, signupView, {
                 email: req.cookies.email,
                 message: req.session.errorMessage,
