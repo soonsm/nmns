@@ -82,8 +82,11 @@ module.exports = function(passport) {
             res.redirect("/");
         } else {
 
-            if(req.query.kakaotalk && await db.getUser(req.query.kakaotalk)){
-                res.redirect("/");
+            if(req.query.kakaotalk ){
+                let kakaoUser = await db.getUser(req.query.kakaotalk);
+                if(kakaoUser && kakaoUser.email){
+                    res.redirect("/");
+                }
             }
 
             render(res, signupView, {
