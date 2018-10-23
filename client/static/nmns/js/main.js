@@ -2095,6 +2095,11 @@
         $("#alrimModal .alrimData").toggle();
         $(this).blur();
     });
+    $("#navbarResponsive").on("show.bs.collapse", function(){
+        $("#mainNav").addClass("shadow"); 
+    }).on("hidden.bs.collapse", function(){
+        $("#mainNav").removeClass("shadow");
+    });
     //Modal events end
     //mobile horizontal scroll handling
     // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml

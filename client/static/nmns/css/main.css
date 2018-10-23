@@ -1,11 +1,15 @@
 /*main contents*/
 
+#mainNav{
+    min-height:4.05rem;
+}
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
     border-width: .05rem;
     border-radius: 0;
 }
 
 #mainRow {
+    margin-top:4.05rem;
     max-width: 1920px;
 }
 
@@ -89,6 +93,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 @media (min-width: 992px) {
     #mainRow #mainContents {
         border-left: 15px solid #f8f9fa;
+        margin-left:230px;
     }
 }
 
@@ -255,6 +260,9 @@ button.moveDate:focus {
 
 #sidebarContainer {
     max-width: 230px;
+    position:fixed;
+    top:4.05rem;
+    left:0;
 }
 
 #sidebarContainer ul li {
@@ -278,7 +286,6 @@ button.moveDate:focus {
 
 #lnbManagerList .lnbManagerItem:last-child {
     margin-bottom: .5rem;
-    ;
 }
 
 #lnbManagerList .lnbManagerItem label {
@@ -295,15 +302,14 @@ button.moveDate:focus {
     cursor: default;
 }
 
-#lnbLastMenu{
+/*#lnbLastMenu{
     position:absolute;
     bottom:0;
     width:100%;
-}
+}*/
 #lnbLastMenu a {
     cursor: default;
     border-bottom:0;
-    border-top:0;
 }
 
 #lnbLastMenu a div {
