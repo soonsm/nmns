@@ -32,6 +32,10 @@ function sendMail(mailOptions){
 
 exports.sendEmailVerification = async function(email, token){
 
+    if(process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
+        return true;
+    }
+
     const authLinkParams=`emailVerification/email=${email}&token=${token}`;
 
     return await sendMail({

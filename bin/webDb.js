@@ -168,7 +168,8 @@ exports.newWebUser = function (user) {
         cancelAlrimTalkList: [],
         pushList: [],
         isFirstVisit: true,
-        feedback: []
+        feedback: [],
+        kakaotalk: user.kakaotalk || null
     };
 };
 

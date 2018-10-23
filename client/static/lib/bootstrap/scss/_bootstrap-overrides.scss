@@ -116,3 +116,8 @@ a.text-primary {
     height: calc(100% - (1.75rem * 2));
   }
 }
+
+.btn-primary.disabled, .btn-primary:disabled{
+  background-color:$primary;
+  border-color:$primary;
+}

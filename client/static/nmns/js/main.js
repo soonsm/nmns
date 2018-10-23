@@ -227,17 +227,17 @@
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
             });
         }
-        if (NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5)) {
+        if (!NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5)) {
             $("#tipsModal").modal("show");
         }
         //tutorial start
-        if(!NMNS.info.isFirstVisit){
+        if (NMNS.info.isFirstVisit) {
             if (!document.getElementById("tutorialScript")) {
                 var script = document.createElement("script");
                 script.src = "/nmns/js/tutorial.min.js";
                 script.id = "tutorialScript";
                 document.body.appendChild(script);
-        
+
                 script.onload = function() {
                     $("#tutorialModal").modal();
                 };
@@ -537,7 +537,8 @@
     function changeMainShopName(shopName) {
         if ($("#mainShopName").length) {
             if (shopName !== "") {
-                $("#mainShopName").text(shopName);git
+                $("#mainShopName").text(shopName);
+                git
             } else {
                 $("#navbarResponsive").prev().children("span").html(NMNS.email);
             }
@@ -936,7 +937,7 @@
         });
     }
 
-    NMNS.initInfoModal = function () {
+    NMNS.initInfoModal = function() {
         if (!NMNS.initedInfoModal) { //first init
             NMNS.initedInfoModal = true;
 
@@ -2007,7 +2008,7 @@
     }).on("shown.bs.modal", function() {
         $("#infoManagerList").data("scroll").update();
         $("#infoManagerList")[0].scrollTop = 0;
-        if($("body .popover").length){
+        if ($("body .popover").length) {
             $("body .popover").popover("update");
         }
     });
@@ -2036,8 +2037,8 @@
                 return false;
             }
         }
-    }).on("shown.bs.modal", function(){
-        if($("body .popover").length){
+    }).on("shown.bs.modal", function() {
+        if ($("body .popover").length) {
             $("body .popover").popover("update");
         }
     });

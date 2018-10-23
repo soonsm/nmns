@@ -26,21 +26,29 @@ let render = function(res, view, data) {
 
 module.exports = function(passport) {
 
-    router.get("/", function(req, res) { //main calendar page
+    router.get("/", async function(req, res) { //main calendar page
         if (req.user) {
-            let tips = require('./tips').getTips();
-            let index = 7;
-            let num = Math.random();
-            if (req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7) {
-                tips.splice(7, 1);
-                index = Math.floor(Math.random() * (tips.length));
+            let user = await db.getWebUser(req.user.email);
+            if(user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED){
+                let tips = require('./tips').getTips();
+                let index = 7;
+                let num = Math.random();
+                if (req.user.authStatus !== process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION || num > 0.7) {
+                    tips.splice(7, 1);
+                    index = Math.floor(Math.random() * (tips.length));
+                }
+                let tip = tips[index];
+                req.session.tipToRemove = index;
+                render(res, mainView, {
+                    user: req.user,
+                    tips: tip
+                });
+            }else{
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
             }
-            let tip = tips[index];
-            req.session.tipToRemove = index;
-            render(res, mainView, {
-                user: req.user,
-                tips: tip
-            });
 
         } else {
             //로그인 되지 않은 상태이므로 index page로 이동
@@ -48,10 +56,18 @@ module.exports = function(passport) {
         }
     });
 
-    router.get('/index', function(req, res) {
+    router.get('/index', async function(req, res) {
         if (req.user) {
-            //로그인 되있으면 main으로 이동
-            res.redirect("/");
+            let user = await db.getWebUser(req.user.email);
+            if(user.authStatus === process.nmns.EMAIL_VERIFICATED){
+                //로그인 되있으면 main으로 이동
+                res.redirect("/");
+            }else{
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
+            }
         } else {
             render(res, indexView, {
                 email: req.cookies.email,
@@ -60,14 +76,21 @@ module.exports = function(passport) {
         }
     });
 
-    router.get('/signup', function(req, res) {
+    router.get('/signup', async function(req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
         } else {
+
+            if(req.query.kakaotalk && await db.getUser(req.query.kakaotalk)){
+                res.redirect("/");
+            }
+
             render(res, signupView, {
                 email: req.cookies.email,
-                message: req.session.errorMessage
+                message: req.session.errorMessage,
+                kakaotalk: req.query.kakaotalk,
+                authRequired: false
             });
         }
     });
@@ -76,55 +99,60 @@ module.exports = function(passport) {
         let data = req.body;
         let email = data.email;
         let password = data.password;
-        let passwordRepeat = data.passwordRepeat;
 
-        let error = {
-            email: email,
-            message: null
-        };
+        let sendResponse = function(res, validation, errorMessage) {
+            res.status(200).json({
+                status: validation ? '200' : '400',
+                message: errorMessage
+            });
+        }
 
         //email validation
         if (!emailValidator.validate(email)) {
-            //email validation fail
-            error.message = '올바른 이메일 형식이 아닙니다.';
-            return render(res, indexView, error);
-        }
-
-        //password validation
-        if (password !== passwordRepeat) {
-            error.message = '비밀번호와 비밀번호 확인 값이 같지 않습니다.';
-            return render(res, indexView, error);
+            return sendResponse(res, false, '올바른 이메일 형식이 아닙니다.');
         }
 
         //password strength check
         let strenthCheck = util.passwordStrengthCheck(password);
         if (strenthCheck.result === false) {
-            error.message = strenthCheck.message;
-            return render(res, indexView, error);
+            return sendResponse(res, false, strenthCheck.message);
         }
 
         //기존 사용자 체크
-        let user = await db.getWebUser(email);
-        if (user) {
-            error.message = '이미 존재하는 사용자입니다.';
-            return render(res, indexView, error);
+        if (await db.getWebUser(email)) {
+            return sendResponse(res, false, '이미 존재하는 사용자입니다.');
         }
 
-        const emailAuthToken = require('js-sha256')(email);
-
-        user = await db.signUp({ email: email, password: password, emailAuthToken: emailAuthToken });
-
-        emailSender.sendEmailVerification(email, emailAuthToken);
-
-        if (user) {
-            //로그인처리
-            req.logIn(user, function() {
-                res.redirect("/");
-            });
-        } else {
-            error.message = '시스템 오류가 발생했습니다.\n nomorenoshow@gmail.com으로 연락주시면 바로 조치하겠습니다.';
-            return render(res, indexView, error);
+        data.emailAuthToken = require('js-sha256')(email);
+        let newUser = db.newWebUser(data);
+        if (data.useYn === 'Y') {
+            if (!data.callbackPhone || !util.phoneNumberValidation(data.callbackPhone)) {
+                return sendResponse(res, false, `휴대전화 번호 양식에 맞지 않습니다.${data.callbackPhone}`);
+            }
+            newUser.alrimTalkInfo = {
+                useYn: 'Y',
+                callbackPhone: data.callbackPhone,
+                cancelDue: data.cancelDue || '',
+                notice: data.notice || ''
+            }
         }
+        if (await db.setWebUser(newUser)) {
+            if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
+
+                if(data.kakaotalk){
+                    let kakaoUser = await db.getUser(data.kakaotalk);
+                    kakaoUser.email = email;
+                    db.saveUser(kakaoUser);
+                }
+
+                //로그인처리
+                req.logIn(newUser, function() {
+                    return sendResponse(res, true, '회원가입성공');
+                });
+            }
+        }
+        return sendResponse(res, false, '시스템 오류가 발생했습니다.\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.');
+
     });
 
     /**
