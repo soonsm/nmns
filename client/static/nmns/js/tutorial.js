@@ -93,7 +93,7 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#infoModal #infoBizEndTimePicker',
+      target: isSmallWindow?"#infoModal label[for='infoBizBeginTime']":'#infoModal #infoBizEndTimePicker',
       title: '매장 운영시간',
       content: '설정된 매장 운영시간에 따라 예약 시간표에 입력할 수 있는 시간이 맞춰집니다.',
       placement: 'top',
@@ -105,7 +105,7 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#infoModal #infoManagerList',
+      target: isSmallWindow?"#infoModal label[for='infoManagerList']":'#infoModal #infoManagerList',
       title: '담당자 관리',
       content: '매장의 담당자를 여러명 등록하고싶으세요? 이곳에서 담당자를 추가할 수 있습니다.<br/>담당자 색깔을 바꿔 시간표를 다채롭게 꾸며보세요!',
       placement: 'top',
@@ -120,7 +120,7 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#alrimModal #alrimNotice',
+      target: isSmallWindow?"#alrimModal label[for='alrimNotice']":'#alrimModal #alrimNotice',
       title: '알림톡 설정',
       content: '시간표에 예약을 등록할 때 고객에게 예약 안내를 보내고 싶으시다구요?<br/>여기에서 알림톡을 보내도록 설정해보세요. 고객에게 보낼 문구도 변경하실 수 있습니다.',
       placement: 'top',
