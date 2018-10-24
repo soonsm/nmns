@@ -90,7 +90,7 @@ function del(param) {
     }));
 }
 
-function newUser(userKey){
+let newUser = function newUser(userKey){
     return {
         userKey: userKey,
         isFriend: 0,
@@ -112,6 +112,8 @@ function newUser(userKey){
         noShowList: []
     };
 }
+
+exports.newUser = newUser;
 
 function newAlrimTalk(reservationKey, userKey, phone, date, time){
     return {

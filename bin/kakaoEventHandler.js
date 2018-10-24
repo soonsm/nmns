@@ -137,6 +137,10 @@ exports.messageHandler = async function(userKey, content, res){
     let sendRes = getResFunc(res);
 
     let user = await db.getUser(userKey);
+    if(!user){
+        user = db.newUser(userKey);
+        await db.saveUser(user);
+    }
     if(!user.email){
         //회원가입 하라는 안내 문구
         let url = `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`;
