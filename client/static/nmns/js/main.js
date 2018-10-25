@@ -655,9 +655,11 @@
     NMNS.initAlrimModal = function() {
         if (!NMNS.initedAlrimModal) {
             NMNS.initedAlrimModal = true;
-            $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e) {
+            $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
                 $("#noticeByteCount").text($(this).val().length);
                 $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
+            }).on("blur", function(){
+                $(this).val(removeNonCharacter($(this).val()));
             });
             $("#alrimUseYn").off("change").on("change", function() {
                 if ($(this).prop("checked")) {
