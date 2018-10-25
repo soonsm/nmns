@@ -216,21 +216,13 @@
         NMNS.email = e.data.email || NMNS.email;
         NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
         $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-        if (NMNS.info.isFirstVisit && NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION") {
-            showNotification({
-                title: "No More No Show에 오신 것을 환영합니다!",
-                body: "계정 인증을 위하여 이메일 주소로 메일을 보냈으니 확인해주세요 :)"
-            });
-        } else if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
+        if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
             showNotification({
                 title: "이메일을 인증해주세요!",
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
             });
         }
-        if (!NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5)) {
-            $("#tipsModal").modal("show");
-        }
-        //tutorial start
+        //tutorial & tip start
         if (NMNS.info.isFirstVisit) {
             if (!document.getElementById("tutorialScript")) {
                 var script = document.createElement("script");
@@ -242,8 +234,10 @@
                     $("#tutorialModal").modal();
                 };
             }
+        } else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
+            $("#tipsModal").modal("show");
         }
-        //tutorial end
+        //tutorial & tip end
     }));
 
     NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {

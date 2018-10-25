@@ -2,14 +2,7 @@
 var GuidedTour = function (steps, options) {
   $(document)
     .on('click', '[data-toggle=popover]', function () {
-      var $context = $($(this).data('target')).popover('show');
-      var scrollTop = 0;
-      if($context.$tip){
-        scrollTop = $context.data('bs.popover').$tip.offset().top - $(window).height() / 2;
-      }else if($("body .tutorial").length){
-        scrollTop = $("body .tutorial").offset().top - $(window).height() / 2;
-      }
-      $('html, body').clearQueue().animate({scrollTop: Math.max(scrollTop, 0)}, 'fast');
+      $($(this).data('target')).popover('show');
       return false;
     })
     .on('click', '[data-dismiss="popover"]', function () {
@@ -55,6 +48,16 @@ var GuidedTour = function (steps, options) {
           };
           step.title += '<div class="close" data-dismiss="popover">×</div>';
           toursteps.push($target.popover($.extend(opts, step)));
+          $target.on("shown.bs.popover", function(){
+            var scrollTop = 0;
+            var $context = $($(this).data('target'));
+            if($context.$tip){
+              scrollTop = $context.data('bs.popover').$tip.offset().top - $(window).height() / 2;
+            }else if($("body .tutorial").length){
+              scrollTop = $("body .tutorial").offset().top - $(window).height() / 2;
+            }
+            $('html, body').clearQueue().animate({scrollTop: Math.max(scrollTop, 0)}, 'fast');
+          });
         }
       });
       
@@ -78,7 +81,7 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#infoModal .modal-content',
+      target: isSmallWindow?'#infoModal #infoModalTitle':'#infoModal .modal-content',
       title: '매장 정보 등록',
       content: '메뉴 버튼에서 내 매장 정보 버튼을 누르면, 매장의 이름과 운영시간, 그리고 담당자를 관리할 수 있습니다.',
       placement: 'top',
@@ -90,7 +93,7 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#infoModal #infoBizEndTime',
+      target: isSmallWindow?"#infoModal label[for='infoBizBeginTime']":'#infoModal #infoBizEndTimePicker',
       title: '매장 운영시간',
       content: '설정된 매장 운영시간에 따라 예약 시간표에 입력할 수 있는 시간이 맞춰집니다.',
       placement: 'top',
@@ -102,10 +105,10 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#infoModal #infoManagerList',
+      target: isSmallWindow?"#infoModal label[for='infoManagerList']":'#infoModal #infoManagerList',
       title: '담당자 관리',
       content: '매장의 담당자를 여러명 등록하고싶으세요? 이곳에서 담당자를 추가할 수 있습니다.<br/>담당자 색깔을 바꿔 시간표를 다채롭게 꾸며보세요!',
-      placement: 'right',
+      placement: 'top',
       beforeShow: function(){
         if($("#alrimModal").is(":visible")){
           $("#alrimModal").modal("hide");
@@ -117,7 +120,7 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#alrimModal .modal-content',
+      target: isSmallWindow?"#alrimModal label[for='alrimNotice']":'#alrimModal #alrimNotice',
       title: '알림톡 설정',
       content: '시간표에 예약을 등록할 때 고객에게 예약 안내를 보내고 싶으시다구요?<br/>여기에서 알림톡을 보내도록 설정해보세요. 고객에게 보낼 문구도 변경하실 수 있습니다.',
       placement: 'top',
@@ -171,6 +174,7 @@ $('#tutorialModal #start').click(function () {
         }
         if(isSmallWindow && !$("#navbarResponsive").hasClass("show")){
           $("#navbarResponsive").collapse("show");
+          
         }
       }
     },
@@ -203,10 +207,10 @@ $('#tutorialModal #start').click(function () {
       }
     },
     {
-      target: '#mainCalendar .tui-full-calendar-vlayout-area',
+      target: isSmallWindow?"#mainCalendar div[data-panel-index='4']":'#mainCalendar .tui-full-calendar-vlayout-area',
       title: '시간표에 예약 추가하기',
       content: '이 시간표에 예약을 추가하고 싶은 곳을 누르면 해당 시간에 맞게 예약을 추가하실 수 있습니다.<br/>추가된 예약을 다른곳으로 끌어 옮기면 예약시간을 변경하실 수 있어요!',
-      placement: 'left',
+      placement: isSmallWindow?'top':'left',
       beforeShow: function(){
         if($("#navbarResponsive").hasClass("show")){
           $("#navbarResponsive").collapse("hide");
