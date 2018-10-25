@@ -126,7 +126,7 @@ exports.updateReservation = async function (newReservation) {
         let reservationList = user.reservationList;
         let reservation = reservationList.find(reservation => reservation.id === newReservation.id);
         if(reservation){
-            if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact) {
+            if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact && ((reservation.type === 'R' && newReservation.type !== 'T') || newReservation.type === 'R')) {
                 let memberList = user.memberList;
                 let member = memberList.find(member => member.name === newReservation.name && member.contact === newReservation.contact);
                 if(member){
@@ -219,16 +219,18 @@ exports.addReservation = async function (data) {
          */
         let user = await db.getWebUser(email);
         let memberList = user.memberList;
-        let member = memberList.find(member => member.name === data.name && member.contact === data.contact);
-        if(member){
-            data.memberId = member.id;
-        }else if (data.contact || data.name) {
-            let memberId = newCustomerId(email);
-            memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
-            await db.updateWebUser(email, {memberList: memberList});
-            data.memberId = memberId;
+        if(data.type === 'R'){
+            let member = memberList.find(member => member.name === data.name && member.contact === data.contact);
+            if(member){
+                data.memberId = member.id;
+            }else if (data.contact || data.name) {
+                let memberId = newCustomerId(email);
+                memberList.push({id: memberId, contact: data.contact, name: data.name, etc: data.etc, managerId: data.manager});
+                await db.updateWebUser(email, {memberList: memberList});
+                data.memberId = memberId;
 
-            pushMessage = '새로운 고객이 추가되었습니다.';
+                pushMessage = '새로운 고객이 추가되었습니다.';
+            }
         }
 
         let reservation = db.newReservation(data);
