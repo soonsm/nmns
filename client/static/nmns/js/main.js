@@ -2091,6 +2091,20 @@
         $("#alrimModal .alrimData").toggle();
         $(this).blur();
     });
+    $("#showTutorial").on("touch click", function(){
+       if (!document.getElementById("tutorialScript")) {
+            var script = document.createElement("script");
+            script.src = "/nmns/js/tutorial.min.js";
+            script.id = "tutorialScript";
+            document.body.appendChild(script);
+    
+            script.onload = function() {
+                $("#tutorialModal").modal();
+            };
+        }else{
+            $("#tutorialModal").modal();
+        }
+    });
     //Modal events end
     //mobile horizontal scroll handling
     // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
