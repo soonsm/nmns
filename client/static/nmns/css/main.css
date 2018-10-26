@@ -1379,7 +1379,6 @@ button.customerSortType.active {
 
 #mainCustomerList {
     min-height: 800px;
-    max-height: 1080px;
 }
 
 #mainCustomerList .ps__rail-y,

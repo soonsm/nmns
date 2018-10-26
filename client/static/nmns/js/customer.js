@@ -94,9 +94,6 @@
     function drawCustomerList() {
         var list = $("#mainCustomerList");
         list.children(".card").remove();
-        if (!list.hasClass("ps")) {
-            list.data("scroll", new PerfectScrollbar(list[0], { suppressScrollX: true }));
-        }
         var html = "";
         if (NMNS.customerList && NMNS.customerList.length > 0) {
             var managers = NMNS.calendar.getCalendars();
@@ -115,7 +112,6 @@
                 }
             });
             list.append(html);
-            list.data("scroll").update();
             list.find(".customerModalLink").off("touch click").on("touch click", function(e) {
                 e.preventDefault();
                 initCustomerModal($(this));
