@@ -49,6 +49,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarTools {
     min-height: 50px;
     line-height: 50px;
+    position:fixed;
+    top:4.05rem;
+    z-index:2;
+    width:100%;
 }
 
 #mainCalendarTools .dropdown-menu {
@@ -90,13 +94,29 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     padding-left: 0;
 }
 
+#mainCalendar .tui-full-calendar-dayname-layout, #mainCalendar .tui-full-calendar-month div[data-panel-index='0']{
+    position:fixed;
+    width:100%;
+    top:7.3rem;
+    z-index:1;
+    background-color:white;
+}
 @media (min-width: 992px) {
     #mainRow #mainContents {
         border-left: 15px solid #f8f9fa;
         margin-left:230px;
     }
+    #mainCalendar .tui-full-calendar-dayname-layout, #mainCalendar .tui-full-calendar-month div[data-panel-index='0'],
+    #mainCalendarTools{
+        width:calc(100% - 245px);/*230px + 15px(scroll width)*/
+    }
 }
-
+.tui-full-calendar-week-container .tui-full-calendar-vlayout-area{
+    margin-top:5.8rem;
+}
+#mainCalendar .tui-full-calendar-month div[data-panel-index='1']{
+    margin-top:5.2rem;
+}
 .tui-full-calendar-timegrid-right+div+.ps__rail-y {
     opacity: 0;
 }
