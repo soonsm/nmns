@@ -179,7 +179,7 @@
               <small class="far fa-lightbulb fa-fw mr-1"></small>
               <small class="menu-collapsed">사용 팁 보기</small>
             </div>
-            <div class="d-flex w-100 align-items-center mt-1" data-toggle="modal" data-target="#tutorialModal" aria-label="튜토리얼 보기">
+            <div class="d-flex w-100 align-items-center mt-1" id="showTutorial" aria-label="튜토리얼 보기">
               <small class="fas fa-chalkboard-teacher fa-fw mr-1"></small>
               <small class="menu-collapsed">튜토리얼 보기</small>
             </div>
@@ -237,7 +237,7 @@
                 <i id="customerAddManagerIcon" class="input-group-text fas fa-user-tie" title="담당자"></i>
               </div>
               <button id="customerAddManager" type="button" aria-describedby="customerAddManagerIcon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
-              <div class="dropdown-menu rounded-0" aria-labelledby="customerAddManager" role="menu">
+              <div class="dropdown-menu rounded-0 w-100" aria-labelledby="customerAddManager" role="menu">
               </div>
             </div>
             <label for="customerAddEtc" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">메모</label>
@@ -671,7 +671,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <p class="mb-0">&nbsp;알고나면 더 편리하게 사용할 수 있는 No More No Show!<br/>쉬운 No More No Show 사용법을 알려드릴게요.</p>
+            <p class="mb-0">알고나면 더 편리하게 사용할 수 있는 No More No Show!<br/>쉬운 No More No Show 사용법을 알려드릴게요.</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
@@ -907,6 +907,7 @@
   <script src="${input.cdn}/lib/tui-calendar/tui-calendar.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
 
   <!-- Custom scripts for this template -->
   <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>

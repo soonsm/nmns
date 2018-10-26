@@ -216,21 +216,13 @@
         NMNS.email = e.data.email || NMNS.email;
         NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
         $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-        if (NMNS.info.isFirstVisit && NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION") {
-            showNotification({
-                title: "No More No Show에 오신 것을 환영합니다!",
-                body: "계정 인증을 위하여 이메일 주소로 메일을 보냈으니 확인해주세요 :)"
-            });
-        } else if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
+        if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
             showNotification({
                 title: "이메일을 인증해주세요!",
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
             });
         }
-        if (!NMNS.info.isFirstVisit || ((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5)) {
-            $("#tipsModal").modal("show");
-        }
-        //tutorial start
+        //tutorial & tip start
         if (NMNS.info.isFirstVisit) {
             if (!document.getElementById("tutorialScript")) {
                 var script = document.createElement("script");
@@ -242,8 +234,10 @@
                     $("#tutorialModal").modal();
                 };
             }
+        } else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
+            $("#tipsModal").modal("show");
         }
-        //tutorial end
+        //tutorial & tip end
     }));
 
     NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {
@@ -655,9 +649,11 @@
     NMNS.initAlrimModal = function() {
         if (!NMNS.initedAlrimModal) {
             NMNS.initedAlrimModal = true;
-            $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e) {
+            $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
                 $("#noticeByteCount").text($(this).val().length);
                 $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
+            }).on("blur", function(){
+                $(this).val(removeNonCharacter($(this).val()));
             });
             $("#alrimUseYn").off("change").on("change", function() {
                 if ($(this).prop("checked")) {
@@ -1880,51 +1876,34 @@
     }, true));
 
     NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e) {
-        if (e.data.contact === $("#creationPopupContact").val() && $("#creationPopup").data("contact") !== e.data.contact) {
+        var popup = $("#creationPopup");
+        if ((e.data.contact === popup.find("#creationPopupContact").val() && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#creationPopupName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
             if (e.data.etc) {
-                $("#creationPopupEtc").val(e.data.etc);
+                popup.find("#creationPopupEtc").val(e.data.etc);
             }
-            if (e.data.manager) {
+            if (e.data.manager) {//변경된 경우에만 덮어쓰기
                 var manager = findManager(e.data.manager);
                 if (manager) {
-                    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendarid", manager.id);
+                    popup.find("#creationPopupManager").html(popup.find("#creationPopupManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendarid", manager.id);
                 }
             }
             if (e.data.contents) {
-                $("#creationPopupContents").val(e.data.contents);
+                popup.find("#creationPopupContents").val(e.data.contents);
             }
             if (e.data.isAllDay !== undefined) {
-                $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
+                popup.find("#creationPopupAllDay").attr("checked", e.data.isAllDay);
             }
-            if (e.data.name && $("#creationPopupName").val() === "") {
-                $("#creationPopupName").val(e.data.name);
+            if (e.data.name && popup.find("#creationPopupName").val() === "") {//빈칸일 경우에만 덮어쓰기
+                popup.find("#creationPopupName").val(e.data.name);
             }
-            $('#creationPopupEtc').prop('readonly', true);
-            $('.creationPopupEtcNotice').show();
-        } else if (e.data.name === $("#creationPopupName").val() && $("#creationPopup").data("name") !== e.data.name) {
-            if (e.data.etc) {
-                $("#creationPopupEtc").val(e.data.etc);
+            if (e.data.contact && popup.find("#creationPopupContact").val() === "") {//빈칸일 경우에만 덮어쓰기
+                popup.find("#creationPopupContact").val(e.data.contact);
             }
-            if (e.data.manager) {
-                var manager = findManager(e.data.manager);
-                if (manager) {
-                    $("#creationPopupManager").html($("#creationPopupManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendarid", manager.id);
-                }
-            }
-            if (e.data.contents) {
-                $("#creationPopupContents").val(e.data.contents);
-            }
-            if (e.data.isAllDay !== undefined) {
-                $("#creationPopupAllDay").attr("checked", e.data.isAllDay);
-            }
-            if (e.data.contact && $("#creationPopupContact").val() === "") {
-                $("#creationPopupContact").val(e.data.contact);
-            }
-            $('#creationPopupEtc').prop('readonly', true);
-            $('.creationPopupEtcNotice').show();
+            popup.find('#creationPopupEtc').prop('readonly', true);
+            popup.find('.creationPopupEtcNotice').show();
         }
-        if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0) {
-            $("#creationPopupContact").tooltip({
+        if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0 && popup.find("#creationPopupContact").is(":visible")) {
+            popup.find("#creationPopupContact").tooltip({
                 title: "이 번호에는 총 " + e.data.totalNoShow + "건의 노쇼가 등록되어 있습니다." + (e.data.myNoShow && e.data.myNoShow > 0 ? "<br/>우리 매장에서는 " + e.data.myNoShow + "건 등록되었습니다." : ""),
                 placement: ($(window).width() > 576 ? "right" : "top"),
                 trigger: "click hover focus",
@@ -1932,9 +1911,9 @@
                 html: true
             }).tooltip("show");
             setTimeout(function() {
-                $("#creationPopupContact").tooltip("hide");
+                popup.find("#creationPopupContact").tooltip("hide");
             }, 3000);
-            $("#creationPopupContact").one("keyup change", function() {
+            popup.find("#creationPopupContact").one("keyup change", function() {
                 $(this).tooltip('dispose');
             });
         }
@@ -2099,6 +2078,20 @@
         $("#mainNav").addClass("shadow"); 
     }).on("hidden.bs.collapse", function(){
         $("#mainNav").removeClass("shadow");
+    });
+    $("#showTutorial").on("touch click", function(){
+       if (!document.getElementById("tutorialScript")) {
+            var script = document.createElement("script");
+            script.src = "/nmns/js/tutorial.min.js";
+            script.id = "tutorialScript";
+            document.body.appendChild(script);
+    
+            script.onload = function() {
+                $("#tutorialModal").modal();
+            };
+        }else{
+            $("#tutorialModal").modal();
+        }
     });
     //Modal events end
     //mobile horizontal scroll handling

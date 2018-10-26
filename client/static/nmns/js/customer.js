@@ -136,7 +136,7 @@
                 }
             });
             $("#customerCount").text(NMNS.customerList.length);
-        }else{
+        } else {
             html += "<p>아직 등록된 고객이 없습니다. 위쪽 입력창에서 고객을 등록하여 고객의 방문이력을 기록, 관리해보세요!</p>";
         }
     }
@@ -158,7 +158,7 @@
         var index = NMNS.customerList.findIndex(function(item) {
             return item.id === e.data.id;
         });
-        if (index && index > -1) {
+        if (Number.isInteger(index) && index > -1) {
             NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
             NMNS.customerList[index].myNoShow = 0;
         }
@@ -169,7 +169,7 @@
         var index = NMNS.customerList.findIndex(function(item) {
             return item.id === e.data.id;
         });
-        if (index && index > -1) {
+        if (Number.isInteger(index) && index > -1) {
             NMNS.customerList.splice(index, 1);
             drawCustomerList();
         }
@@ -178,7 +178,7 @@
         var index = NMNS.customerList.findIndex(function(item) {
             return item.id === e.data.id;
         });
-        if (index && index > -1) {
+        if (Number.isInteger(index) && index > -1) {
             var customer = NMNS.customerList[index];
             customer.name = $("#customerName").val();
             customer.contact = $("#customerContact").val();
@@ -207,7 +207,7 @@
         var index = NMNS.customerList.findIndex(function(item) {
             return item.id === e.data.id;
         });
-        if (index && index > -1) {
+        if (Number.isInteger(index) && index > -1) {
             $("#customerName").val(NMNS.customerList[index].name);
             $("#customerContact").val(NMNS.customerList[index].contact);
             $("#customerEtc").val(NMNS.customerList[index].etc);

@@ -208,9 +208,11 @@
         $(".alrimRequirement").toggle();
     });
 
-    $("#signupNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function(e) {
+    $("#signupNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
         $("#noticeByteCount").text($(this).val().length);
         $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
+    }).on("blur", function(){
+        $(this).val(removeNonCharacter($(this).val()));
     });
 
     $("#copyEmail").on("touch click", function(e) {
