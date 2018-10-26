@@ -1451,10 +1451,7 @@
         $("#infoLink").on("touch click", NMNS.initInfoModal);
         $("#alrimLink").on("touch click", NMNS.initAlrimModal);
         $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
-        var resizeThrottled = tui.util.throttle(function() {
-            NMNS.calendar.render();
-        }, 50);
-        window.addEventListener('resize', resizeThrottled);
+        window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
         flatpickr.localize("ko");
     }
 
