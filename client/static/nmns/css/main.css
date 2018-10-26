@@ -1,15 +1,21 @@
 /*main contents*/
 
-#mainNav{
-    min-height:4.05rem;
+html {
+    min-height: 100%;
+    position: relative;
 }
+
+#mainNav {
+    min-height: 4.05rem;
+}
+
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
     border-width: .05rem;
     border-radius: 0;
 }
 
 #mainRow {
-    margin-top:4.05rem;
+    margin-top: 4.05rem;
     max-width: 1920px;
 }
 
@@ -49,10 +55,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarTools {
     min-height: 50px;
     line-height: 50px;
-    position:fixed;
-    top:4.05rem;
-    z-index:2;
-    width:100%;
+    position: fixed;
+    top: 4.05rem;
+    z-index: 2;
+    width: 100%;
 }
 
 #mainCalendarTools .dropdown-menu {
@@ -90,33 +96,38 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     }
 }
 
-#mainContents {
-    padding-left: 0;
+#mainCalendar .tui-full-calendar-dayname-layout,
+#mainCalendar .tui-full-calendar-month div[data-panel-index='0'] {
+    position: fixed;
+    width: 100%;
+    top: 7.3rem;
+    z-index: 1;
+    background-color: white;
 }
 
-#mainCalendar .tui-full-calendar-dayname-layout, #mainCalendar .tui-full-calendar-month div[data-panel-index='0']{
-    position:fixed;
-    width:100%;
-    top:7.3rem;
-    z-index:1;
-    background-color:white;
+#mainRow #mainContents {
+    margin-bottom: 5.8rem;
 }
+
 @media (min-width: 992px) {
     #mainRow #mainContents {
-        border-left: 15px solid #f8f9fa;
-        margin-left:230px;
+        margin-left: 230px;
     }
-    #mainCalendar .tui-full-calendar-dayname-layout, #mainCalendar .tui-full-calendar-month div[data-panel-index='0'],
-    #mainCalendarTools{
-        width:calc(100% - 245px);/*230px + 15px(scroll width)*/
+    #mainCalendar .tui-full-calendar-dayname-layout,
+    #mainCalendar .tui-full-calendar-month div[data-panel-index='0'],
+    #mainCalendarTools {
+        width: calc(100% - 230px);
     }
 }
-.tui-full-calendar-week-container .tui-full-calendar-vlayout-area{
-    margin-top:5.8rem;
+
+.tui-full-calendar-week-container .tui-full-calendar-vlayout-area {
+    margin-top: 5.8rem;
 }
-#mainCalendar .tui-full-calendar-month div[data-panel-index='1']{
-    margin-top:5.2rem;
+
+#mainCalendar .tui-full-calendar-month div[data-panel-index='1'] {
+    margin-top: 5.2rem;
 }
+
 .tui-full-calendar-timegrid-right+div+.ps__rail-y {
     opacity: 0;
 }
@@ -280,9 +291,11 @@ button.moveDate:focus {
 
 #sidebarContainer {
     max-width: 230px;
-    position:fixed;
-    top:4.05rem;
-    left:0;
+    position: fixed;
+    top: 4.05rem;
+    left: 0;
+    height: calc(100% - 4.05rem);
+    border-right: 15px solid #f8f9fa;
 }
 
 #sidebarContainer ul li {
@@ -322,14 +335,16 @@ button.moveDate:focus {
     cursor: default;
 }
 
+
 /*#lnbLastMenu{
     position:absolute;
     bottom:0;
     width:100%;
 }*/
+
 #lnbLastMenu a {
     cursor: default;
-    border-bottom:0;
+    border-bottom: 0;
 }
 
 #lnbLastMenu a div {
@@ -421,7 +436,7 @@ button.moveDate:focus {
     padding: .25rem 0;
     border-radius: 0;
     width: calc(100% - 58px);
-    left:2.8rem;
+    left: 2.8rem;
 }
 
 #creationPopup .dropdown-menu .dropdown-item {
@@ -436,7 +451,7 @@ button.moveDate:focus {
     #creationPopup #creationPopupManager+div.dropdown-menu,
     #taskForm #taskManager+.dropdown-menu {
         width: calc(100% - 30px);
-        left:1rem;
+        left: 1rem;
     }
 }
 
@@ -950,14 +965,15 @@ button.moveDate:focus {
     background-color: white;
 }
 
-#taskModal .information{
-    position:absolute;
-    right:2.5rem;
-    float:right;
-    margin-top:.125rem;
+#taskModal .information {
+    position: absolute;
+    right: 2.5rem;
+    float: right;
+    margin-top: .125rem;
 }
-#taskModal .information i{
-    width:1rem;
+
+#taskModal .information i {
+    width: 1rem;
 }
 
 #taskModal .close {
@@ -1032,6 +1048,7 @@ footer {
     left: 0;
     right: 0;
     bottom: 0;
+    position: absolute;
 }
 
 
@@ -1044,18 +1061,20 @@ footer {
     vertical-align: text-top;
 }
 
-.modal-content{
-    border:0;
+.modal-content {
+    border: 0;
 }
-.tooltip .arrow{
-    display:none;
+
+.tooltip .arrow {
+    display: none;
 }
+
 .tooltip-inner {
     max-width: 300px;
     white-space: pre-wrap;
-    background-color:#232F34;
-    font-size:.8rem;
-    text-align:left;
+    background-color: #232F34;
+    font-size: .8rem;
+    text-align: left;
 }
 
 *:focus,
@@ -1204,9 +1223,9 @@ button.form-control {
 
 #snackbar {
     visibility: hidden;
-    width:calc(100% - 2rem);
+    width: calc(100% - 2rem);
     margin-left: 1rem;
-    margin-right:1rem;
+    margin-right: 1rem;
     background-color: #323232;
     color: #fff;
     padding: 16px 24px;
@@ -1214,20 +1233,22 @@ button.form-control {
     z-index: 1060;
     bottom: 90px;
     font-size: .9rem;
-    left:0;
+    left: 0;
 }
+
 #snackbar.show {
     visibility: visible;
     -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
     animation: fadein 0.5s, fadeout 0.5s 4.5s;
 }
-@media(min-width:576px){
-    #snackbar{
-        bottom:30px;
-        width:auto;
+
+@media(min-width:576px) {
+    #snackbar {
+        bottom: 30px;
+        width: auto;
         border-radius: 2px;
-        padding-right:50px;
-        min-width:350px;
+        padding-right: 50px;
+        min-width: 350px;
     }
     #snackbar.show {
         -webkit-animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
@@ -1457,12 +1478,12 @@ button.customerSortType.active {
     z-index: 2;
 }
 
-#mainCustomerLoading{
-    display:none;
-    height:3rem;
+#mainCustomerLoading {
+    display: none;
+    height: 3rem;
     line-height: 2.5rem;
-    text-align:center;
-    width:100%;
+    text-align: center;
+    width: 100%;
 }
 
 @media(min-width:576px) {
@@ -1730,10 +1751,13 @@ button.customerSortType.active {
     background-color: #fff;
 }
 
+
 /* tutorial */
-.popover.tutorial{
+
+.popover.tutorial {
     max-width: 350px;
 }
-.popover.tutorial .clearfix button{
-    margin-left:.5rem;
+
+.popover.tutorial .clearfix button {
+    margin-left: .5rem;
 }
