@@ -1024,6 +1024,9 @@ footer {
     vertical-align: text-top;
 }
 
+.modal-content{
+    border:0;
+}
 .tooltip .arrow{
     display:none;
 }
