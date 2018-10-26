@@ -397,18 +397,6 @@
         }, 150);
     });
     
-    // var scrollScriptChecker = setInterval(function(){
-    //     if($("#mainCustomerList").jscroll){//load succeded
-    //         clearInterval(scrollScriptChecker);
-    //         $("#mainCustomerList").jscroll({
-    //             loadingHtml: '<div><i class="fas fa-circle-notch"></i><small>로딩 중...</small></div>',
-    //             autoTriggerUntil: true,
-    //             padding: 50,
-    //             debug: true,
-    //             nextSelector: 
-    //         });
-    //     }
-    // }, 100);
     function getDistFromBottom () {
       var scrollPosition = window.pageYOffset;
       var windowSize     = window.innerHeight;
@@ -420,7 +408,6 @@
     $(document).on("scroll", debounce(function(){
         var distance = getDistFromBottom();
         if($("#mainCustomerList").is(":visible") && !isLoading && NMNS.customerList && currentCustomerCount < NMNS.customerList.length && distance < Math.max(100, window.innerHeight * 0.2)){
-            console.log("triggered : ", distance); 
             isLoading = true;
             $("#mainCustomerLoading").fadeIn();
             drawCustomerList();
