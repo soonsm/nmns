@@ -91,50 +91,67 @@
         $("#customerModal").data("customer", customer);
     }
 
-    function drawCustomerList() {
+    var currentCustomerCount = 0;
+    function drawCustomerList(refresh) {
         var list = $("#mainCustomerList");
-        list.children(".card").remove();
         var html = "";
-        if (NMNS.customerList && NMNS.customerList.length > 0) {
-            var managers = NMNS.calendar.getCalendars();
-            NMNS.customerList.forEach(function(customer, index) {
-                var manager = managers.find(function(item) { return item.id === customer.managerId; });
-                html += '<div class="card row shadow-sm" data-index="' + index + '"><div class="card-body"><h5 class="card-title mb-sm-1' + (customer.history && customer.history.length > 0 ? '' : ' longTitle') + '">' + (!customer.name || customer.name === '' ? '(이름없음)' : customer.name) +
-                    (!customer.contact || customer.contact === '' ? '' : '&nbsp;<small class="card-subtitle text-muted d-none d-sm-inline-block">' + dashContact(customer.contact) + '</small>') + //'&nbsp;<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><small>' + (manager ? manager.name : '(담당자 없음)') + '</small>' + 
-                    '</h5>' + (!customer.contact || customer.contact === '' ? '' : '<a href="tel:' + customer.contact + '" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted"><i class="fas fa-phone fa-rotate-90"></i> ' + dashContact(customer.contact) + '</span></a>') +
-                    (customer.history && customer.history.length > 0 ? '<div><small class="d-sm-none">총 ' + customer.history.length + '회 방문 | 마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + '</small></div>' : '') +
-                    '<div class="col-12 row px-0 mx-0"><div class="col-4 pl-0 border-right"><small class="text-muted">담당자</small><br/><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><span> ' + (manager ? manager.name : '(담당자 없음)') + '</span></div><div class="col-8 pr-0"><small class="text-muted">메모</small><br/><span>' + (customer.etc || '') + '</span></div></div>' +
-                    '</div><div class="cardLeftBorder" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></div><small class="customerSubInfo text-muted">' + (customer.history && customer.history.length > 0 ? '<span class="d-none d-sm-inline-block">총 ' + customer.history.length + '회 방문 | 마지막 방문 ' + moment(customer.history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + ' |&nbsp;</span>' : '') + '<a class="deleteCustomerLink text-muted" href="#" title="삭제"><i class="fas fa-times"></i> 삭제</a>' +
-                    '</small><a class="w-100 h-100 position-absolute customerModalLink" href="#" data-toggle="modal" data-target="#customerModal" title="상세보기"></a></div></div>';
-                if (index > 0 && index % 50 == 0) {
-                    list.append(html);
-                    html = "";
+        var managers = NMNS.calendar.getCalendars();
+        var manager;
+        var goalIndex;
+        if(NMNS.customerList && refresh){//from 0 to current customer count
+            list.children(".card").remove();
+            list.children("p").remove();
+            if (NMNS.customerList && NMNS.customerList.length > 0) {
+                goalIndex = Math.min(currentCustomerCount === 0? currentCustomerCount + 20 : currentCustomerCount, NMNS.customerList.length);
+                for(var index=0; index<goalIndex; index++){
+                    manager = managers.find(function(item) { return item.id === NMNS.customerList[index].managerId; });
+                    html += '<div class="card row shadow-sm" data-index="' + index + '"><div class="card-body"><h5 class="card-title mb-sm-1' + (NMNS.customerList[index].history && NMNS.customerList[index].history.length > 0 ? '' : ' longTitle') + '">' + (!NMNS.customerList[index].name || NMNS.customerList[index].name === '' ? '(이름없음)' : NMNS.customerList[index].name) +
+                        (!NMNS.customerList[index].contact || NMNS.customerList[index].contact === '' ? '' : '&nbsp;<small class="card-subtitle text-muted d-none d-sm-inline-block">' + dashContact(NMNS.customerList[index].contact) + '</small>') + //'&nbsp;<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><small>' + (manager ? manager.name : '(담당자 없음)') + '</small>' + 
+                        '</h5>' + (!NMNS.customerList[index].contact || NMNS.customerList[index].contact === '' ? '' : '<a href="tel:' + NMNS.customerList[index].contact + '" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted"><i class="fas fa-phone fa-rotate-90"></i> ' + dashContact(NMNS.customerList[index].contact) + '</span></a>') +
+                        (NMNS.customerList[index].history && NMNS.customerList[index].history.length > 0 ? '<div><small class="d-sm-none">총 ' + NMNS.customerList[index].history.length + '회 방문 | 마지막 방문 ' + moment(NMNS.customerList[index].history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + '</small></div>' : '') +
+                        '<div class="col-12 row px-0 mx-0"><div class="col-4 pl-0 border-right"><small class="text-muted">담당자</small><br/><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><span> ' + (manager ? manager.name : '(담당자 없음)') + '</span></div><div class="col-8 pr-0"><small class="text-muted">메모</small><br/><span>' + (NMNS.customerList[index].etc || '') + '</span></div></div>' +
+                        '</div><div class="cardLeftBorder" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></div><small class="customerSubInfo text-muted">' + (NMNS.customerList[index].history && NMNS.customerList[index].history.length > 0 ? '<span class="d-none d-sm-inline-block">총 ' + NMNS.customerList[index].history.length + '회 방문 | 마지막 방문 ' + moment(NMNS.customerList[index].history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + ' |&nbsp;</span>' : '') + '<a class="deleteCustomerLink text-muted" href="#" title="삭제"><i class="fas fa-times"></i> 삭제</a>' +
+                        '</small><a class="w-100 h-100 position-absolute customerModalLink" href="#" data-toggle="modal" data-target="#customerModal" title="상세보기"></a></div></div>';
                 }
-            });
-            list.append(html);
-            list.find(".customerModalLink").off("touch click").on("touch click", function(e) {
-                e.preventDefault();
-                initCustomerModal($(this));
-            });
-            list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
-                e.preventDefault();
-                if (confirm("정말 이 고객을 삭제하시겠어요?")) {
-                    var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
-                    if (Number.isInteger(index)) {
-                        var customer = NMNS.customerList[index];
-                        if (customer) {
-                            NMNS.history.push($.extend({ "index": index }, customer));
-                            NMNS.socket.emit("delete customer", { "id": customer.id });
-                            NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
-                            drawCustomerList();
-                        }
+            } else {
+                html += "<p>아직 등록된 고객이 없습니다. 위쪽 입력창에서 고객을 등록하여 고객의 방문이력을 기록, 관리해보세요!</p>";
+            }
+        }else if(NMNS.customerList){//additional loading
+            goalIndex = Math.min(currentCustomerCount + 20, NMNS.customerList.length);//최대 20개씩 신규로 로딩
+            for(var index=currentCustomerCount; index<goalIndex; index++){
+                manager = managers.find(function(item) { return item.id === NMNS.customerList[index].managerId; });
+                html += '<div class="card row shadow-sm" data-index="' + index + '"><div class="card-body"><h5 class="card-title mb-sm-1' + (NMNS.customerList[index].history && NMNS.customerList[index].history.length > 0 ? '' : ' longTitle') + '">' + (!NMNS.customerList[index].name || NMNS.customerList[index].name === '' ? '(이름없음)' : NMNS.customerList[index].name) +
+                    (!NMNS.customerList[index].contact || NMNS.customerList[index].contact === '' ? '' : '&nbsp;<small class="card-subtitle text-muted d-none d-sm-inline-block">' + dashContact(NMNS.customerList[index].contact) + '</small>') + //'&nbsp;<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><small>' + (manager ? manager.name : '(담당자 없음)') + '</small>' + 
+                    '</h5>' + (!NMNS.customerList[index].contact || NMNS.customerList[index].contact === '' ? '' : '<a href="tel:' + NMNS.customerList[index].contact + '" class="d-inline-block d-sm-none customerContactLink"><span class="card-subtitle text-muted"><i class="fas fa-phone fa-rotate-90"></i> ' + dashContact(NMNS.customerList[index].contact) + '</span></a>') +
+                    (NMNS.customerList[index].history && NMNS.customerList[index].history.length > 0 ? '<div><small class="d-sm-none">총 ' + NMNS.customerList[index].history.length + '회 방문 | 마지막 방문 ' + moment(NMNS.customerList[index].history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + '</small></div>' : '') +
+                    '<div class="col-12 row px-0 mx-0"><div class="col-4 pl-0 border-right"><small class="text-muted">담당자</small><br/><span class="tui-full-calendar-icon tui-full-calendar-calendar-dot" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></span><span> ' + (manager ? manager.name : '(담당자 없음)') + '</span></div><div class="col-8 pr-0"><small class="text-muted">메모</small><br/><span>' + (NMNS.customerList[index].etc || '') + '</span></div></div>' +
+                    '</div><div class="cardLeftBorder" style="background-color:' + (manager ? manager.borderColor : '#b2dfdb') + '"></div><small class="customerSubInfo text-muted">' + (NMNS.customerList[index].history && NMNS.customerList[index].history.length > 0 ? '<span class="d-none d-sm-inline-block">총 ' + NMNS.customerList[index].history.length + '회 방문 | 마지막 방문 ' + moment(NMNS.customerList[index].history[0].date, "YYYYMMDDHHmm").format("YYYY-MM-DD") + ' |&nbsp;</span>' : '') + '<a class="deleteCustomerLink text-muted" href="#" title="삭제"><i class="fas fa-times"></i> 삭제</a>' +
+                    '</small><a class="w-100 h-100 position-absolute customerModalLink" href="#" data-toggle="modal" data-target="#customerModal" title="상세보기"></a></div></div>';
+            }
+        }
+        currentCustomerCount = goalIndex;
+        $("#customerCount").text(NMNS.customerList.length);
+        list.append(html);
+        
+        list.find(".customerModalLink").off("touch click").on("touch click", function(e) {
+            e.preventDefault();
+            initCustomerModal($(this));
+        });
+        list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
+            e.preventDefault();
+            if (confirm("정말 이 고객을 삭제하시겠어요?")) {
+                var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
+                if (Number.isInteger(index)) {
+                    var customer = NMNS.customerList[index];
+                    if (customer) {
+                        NMNS.history.push($.extend({ "index": index }, customer));
+                        NMNS.socket.emit("delete customer", { "id": customer.id });
+                        NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
+                        drawCustomerList(true);
                     }
                 }
-            });
-            $("#customerCount").text(NMNS.customerList.length);
-        } else {
-            html += "<p>아직 등록된 고객이 없습니다. 위쪽 입력창에서 고객을 등록하여 고객의 방문이력을 기록, 관리해보세요!</p>";
-        }
+            }
+        });
     }
     $(".addHistory").on("touch click", function(e) {
         $($("#sidebarContainer .calendarMenuLink")[0]).trigger("click");
@@ -148,7 +165,8 @@
                 item.manager = managers[managers.findIndex(function(manager) { return manager.id === item.managerId; })];
             });
         }
-        drawCustomerList();
+        currentCustomerCount = 0;
+        drawCustomerList(true);
     }));
     NMNS.socket.on("add customer", socketResponse("고객 추가", function(e) {
         var index = NMNS.customerList.findIndex(function(item) {
@@ -167,7 +185,7 @@
         });
         if (Number.isInteger(index) && index > -1) {
             NMNS.customerList.splice(index, 1);
-            drawCustomerList();
+            drawCustomerList(true);
         }
     }));
     NMNS.socket.on("update customer", socketResponse("고객정보 수정", function(e) {
@@ -183,7 +201,7 @@
             var managers = NMNS.calendar.getCalendars();
             customer.manager = managers[managers.findIndex(function(manager) { return manager.id === customer.managerId; })];
             showSnackBar("<span>고객의 정보를 수정하였습니다.</span>");
-            drawCustomerList();
+            drawCustomerList(true);
         }
     }, function(e) {
         if (e.data.reason === "DUPLICATED") {
@@ -218,7 +236,7 @@
         var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
         NMNS.customerList.splice(origin.index, 0, origin);
-        drawCustomerList();
+        drawCustomerList(true);
     }));
     NMNS.socket.on("merge customer", socketResponse("고객정보 합치기", function() {
         NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
@@ -263,7 +281,7 @@
         };
         NMNS.socket.emit("add customer", customer);
         NMNS.customerList.splice(0, 0, customer);
-        drawCustomerList();
+        drawCustomerList(true);
     });
     $("#submitCustomer").on("touch click", function(e) {
         e.preventDefault();
@@ -342,7 +360,8 @@
             action = e.target.parentElement.getAttribute('data-action');
         }
         NMNS.customerList.sort(getSortFunc(action));
-        drawCustomerList();
+        currentCustomerCount = 0;
+        drawCustomerList(true);
         switchSortTypeButton(action);
     });
 
@@ -377,4 +396,37 @@
             }
         }, 150);
     });
+    
+    // var scrollScriptChecker = setInterval(function(){
+    //     if($("#mainCustomerList").jscroll){//load succeded
+    //         clearInterval(scrollScriptChecker);
+    //         $("#mainCustomerList").jscroll({
+    //             loadingHtml: '<div><i class="fas fa-circle-notch"></i><small>로딩 중...</small></div>',
+    //             autoTriggerUntil: true,
+    //             padding: 50,
+    //             debug: true,
+    //             nextSelector: 
+    //         });
+    //     }
+    // }, 100);
+    function getDistFromBottom () {
+      var scrollPosition = window.pageYOffset;
+      var windowSize     = window.innerHeight;
+      var bodyHeight     = document.body.offsetHeight;
+    
+      return Math.max(bodyHeight - (scrollPosition + windowSize), 0);
+    }
+    var isLoading = false;
+    $(document).on("scroll", debounce(function(){
+        var distance = getDistFromBottom();
+        if($("#mainCustomerList").is(":visible") && !isLoading && NMNS.customerList && currentCustomerCount < NMNS.customerList.length && distance < Math.max(100, window.innerHeight * 0.2)){
+            console.log("triggered : ", distance); 
+            isLoading = true;
+            $("#mainCustomerLoading").fadeIn();
+            drawCustomerList();
+            $("#mainCustomerLoading").fadeOut();
+            isLoading = false;
+        }
+    }, 100));
+    
 })();
