@@ -1381,20 +1381,17 @@ button.customerSortType.active {
     min-height: 800px;
 }
 
-#mainCustomerList .ps__rail-y,
 #customerModal #customerHistory .ps__rail-y,
 #customerModal #customerAlrim .ps__rail-y {
     display: none;
     z-index: 3;
 }
 
-#mainCustomerList .ps__rail-x,
 #customerModal #customerHistory .ps__rail-x,
 #customerModal #customerAlrim .ps__rail-x {
     display: none;
 }
 
-#mainCustomerList:hover .ps__rail-y,
 #customerModal #customerHistory:hover .ps__rail-y,
 #customerModal #customerAlrim:hover .ps__rail-y {
     display: block;
@@ -1458,6 +1455,14 @@ button.customerSortType.active {
 #mainCustomerList .card .deleteCustomerLink {
     position: relative;
     z-index: 2;
+}
+
+#mainCustomerLoading{
+    display:none;
+    height:3rem;
+    line-height: 2.5rem;
+    text-align:center;
+    width:100%;
 }
 
 @media(min-width:576px) {
