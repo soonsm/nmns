@@ -41,6 +41,7 @@ module.exports = function(passport) {
                 req.session.tipToRemove = index;
                 render(res, mainView, {
                     user: req.user,
+                    kakaotalk: req.query.kakaotalk, //TODO : 카카오톡과 최초로 연동하였다면 왼쪽 데이터 삭제 후 true 넣어주시면 됩니다.
                     tips: tip
                 });
             } else {
