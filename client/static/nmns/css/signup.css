@@ -4,6 +4,10 @@
     min-height: calc(100vh - 96px - 5.3rem);
 }
 
+#signupStepper .message {
+    line-height: 1rem;
+}
+
 #contractText {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;

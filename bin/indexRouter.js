@@ -29,7 +29,7 @@ module.exports = function(passport) {
     router.get("/", async function(req, res) { //main calendar page
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
-            if(user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED){
+            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
                 let tips = require('./tips').getTips();
                 let index = 7;
                 let num = Math.random();
@@ -43,7 +43,7 @@ module.exports = function(passport) {
                     user: req.user,
                     tips: tip
                 });
-            }else{
+            } else {
                 render(res, signupView, {
                     email: user.email,
                     authRequired: true
@@ -59,10 +59,10 @@ module.exports = function(passport) {
     router.get('/index', async function(req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
-            if(user.authStatus === process.nmns.EMAIL_VERIFICATED){
+            if (user.authStatus === process.nmns.EMAIL_VERIFICATED) {
                 //로그인 되있으면 main으로 이동
                 res.redirect("/");
-            }else{
+            } else {
                 render(res, signupView, {
                     email: user.email,
                     authRequired: true
@@ -71,7 +71,8 @@ module.exports = function(passport) {
         } else {
             render(res, indexView, {
                 email: req.cookies.email,
-                message: req.session.errorMessage
+                message: req.session.errorMessage,
+                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
             });
         }
     });
@@ -82,9 +83,9 @@ module.exports = function(passport) {
             res.redirect("/");
         } else {
 
-            if(req.query.kakaotalk ){
+            if (req.query.kakaotalk) {
                 let kakaoUser = await db.getUser(req.query.kakaotalk);
-                if(kakaoUser && kakaoUser.email){
+                if (kakaoUser && kakaoUser.email) {
                     res.redirect("/");
                 }
             }
@@ -92,7 +93,7 @@ module.exports = function(passport) {
             render(res, signupView, {
                 email: req.cookies.email,
                 message: req.session.errorMessage,
-                kakaotalk: req.query.kakaotalk,
+                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined,
                 authRequired: false
             });
         }
@@ -142,7 +143,7 @@ module.exports = function(passport) {
         if (await db.setWebUser(newUser)) {
             if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
 
-                if(data.kakaotalk){
+                if (data.kakaotalk) {
                     let kakaoUser = await db.getUser(data.kakaotalk);
                     kakaoUser.email = email;
                     db.saveUser(kakaoUser);
