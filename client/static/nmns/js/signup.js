@@ -211,7 +211,7 @@
     $("#signupNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
         $("#noticeByteCount").text($(this).val().length);
         $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
-    }).on("blur", function(){
+    }).on("blur", function() {
         $(this).val(removeNonCharacter($(this).val()));
     });
 
@@ -241,6 +241,30 @@
         } else if (sel.removeAllRanges) { // Firefox
             sel.removeAllRanges();
         }
+        return false;
+    });
+
+    $("#resendEmail").on("touch click", function(e) {
+        e.preventDefault();
+        fetch('/sendVerification', {
+                method: 'POST',
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(json) {
+                if (json.status === "200") {
+                    showSnackBar("<span>인증을 위한 이메일을 전송하였습니다.<br/>이메일을 확인해주세요.</span>");
+                } else {
+                    alert(json.message || "이메일을 전송하지 못했습니다.[" + JSON.stringify(json) + "]");
+                }
+            })
+            .catch(function(ex) {
+                try {
+                    var message = ex.json().message;
+                    alert(message);
+                } catch (e) {
+                    alert("이메일을 전송하지 못했습니다. 잠시 후 다시 시도해주세요.");
+                }
+            });
         return false;
     });
 })(jQuery);

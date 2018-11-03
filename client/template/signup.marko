@@ -187,6 +187,7 @@
         <p id="signupComplete" class="col">입력하신 이메일로 인증을 위한 메일을 보내드렸으니 확인해주세요.<br/>이메일이 인증되면 노쇼 공유, 예약관리, 예약알림, 고객관리와 카카오톡을 이용한 노쇼등록 및 조회 등<br/>No More No Show의 모든 서비스를 이용하실 수 있습니다.</p>
       </div>
       <div class="mdl-step__actions">
+        <small class="message col-6 px-0 pt-2" if(input.authRequired)>이메일을 받지 못하셨나요? <a href="#" id="resendEmail">다시 보내기</a></small>
         <button class="btn btn-primary btn-flat mdl-button mdl-js-button" data-stepper-next><a href="/" class="text-white"><span class="d-none d-sm-inline-block">No More No Show </span>시작하기</a></button>
         <button if(!input.authRequired) class="mdl-button mdl-js-button" data-stepper-back>이전</button>
       </div>
