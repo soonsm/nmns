@@ -146,8 +146,10 @@ module.exports = function(passport) {
 
                 if (data.kakaotalk) {
                     let kakaoUser = await db.getUser(data.kakaotalk);
-                    kakaoUser.email = email;
-                    db.saveUser(kakaoUser);
+                    if(kakaoUser){
+                        kakaoUser.email = email;
+                        db.saveUser(kakaoUser);
+                    }
                 }
                 res.cookie('email', email);
                 return sendResponse(res, true, '회원가입성공');
