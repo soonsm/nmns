@@ -100,17 +100,17 @@ module.exports = function(passport) {
         }
     });
 
+    let sendResponse = function(res, status, errorMessage) {
+        res.status(200).json({
+            status: status ? '200' : '400',
+            message: errorMessage
+        });
+    }
+
     router.post("/signup", async function(req, res) {
         let data = req.body;
         let email = data.email;
         let password = data.password;
-
-        let sendResponse = function(res, validation, errorMessage) {
-            res.status(200).json({
-                status: validation ? '200' : '400',
-                message: errorMessage
-            });
-        }
 
         //email validation
         if (!emailValidator.validate(email)) {
@@ -201,6 +201,22 @@ module.exports = function(passport) {
             res.redirect("/");
         }
     })
+
+    router.post("/sendVerification", async function(req, res){
+        let status = false;
+        let errorMessage = '이메일 전송이 실패했습니다.';
+        if(req.user){
+
+            let email = req.user.email;
+            const emailAuthToken = require('js-sha256')(email);
+            const result = await emailSender.sendEmailVerification(email, emailAuthToken);
+            if(result){
+                status = true;
+                errorMessage = '';
+            }
+        }
+        sendResponse(res, status, errorMessage);
+    });
 
     //http://localhost:8088/emailVerification/email=soonsm@gmail.com&token=297356b5ba41255cfe85cc692ecabbf3a0caf5423e62b9c0974e8ef73676b32a
     router.get("/emailVerification/email=:email&token=:token", async function(req, res) {

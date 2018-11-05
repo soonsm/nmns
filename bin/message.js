@@ -10,6 +10,11 @@ exports.homeKeyboard = {
     'buttons': [exports.confirmReservation, exports.noshowRegister, exports.noshowRetrieve]
 };
 
+exports.homeKeyboardBeforeLogin = {
+    'type': 'buttons',
+    'buttons': ['회원가입하기', '로그인하기', exports.confirmReservation, exports.noshowRegister, exports.noshowRetrieve]
+};
+
 exports.confirmAlrimTalkInfoKeyboard = {
     'type': 'buttons',
     'buttons': [exports.yesAlrmTalkInfo, exports.noAlrmTalkInfo]

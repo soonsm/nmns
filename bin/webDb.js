@@ -517,7 +517,6 @@ exports.getReservationSummaryList = async function (email, data) {
         return filteredList;
     }
 }
-
 exports.getReservationList = async function (email, start, end) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
