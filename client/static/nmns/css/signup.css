@@ -191,3 +191,126 @@ footer {
         top: 660px;
     }
 }
+
+#snackbar {
+    visibility: hidden;
+    width: calc(100% - 2rem);
+    margin-left: 1rem;
+    margin-right: 1rem;
+    background-color: #323232;
+    color: #fff;
+    padding: 16px 24px;
+    position: fixed;
+    z-index: 1060;
+    bottom: 90px;
+    font-size: .9rem;
+    left: 0;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
+    animation: fadein 0.5s, fadeout 0.5s 4.5s;
+}
+
+@media(min-width:576px) {
+    #snackbar {
+        bottom: 30px;
+        width: auto;
+        border-radius: 2px;
+        padding-right: 50px;
+        min-width: 350px;
+    }
+    #snackbar.show {
+        -webkit-animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
+        animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
+    }
+}
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 60px;
+        opacity: 0;
+    }
+    to {
+        bottom: 90px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 60px;
+        opacity: 0;
+    }
+    to {
+        bottom: 90px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 90px;
+        opacity: 1;
+    }
+    to {
+        bottom: 60px;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 90px;
+        opacity: 1;
+    }
+    to {
+        bottom: 60px;
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes fadeinHigh {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeinHigh {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeoutHigh {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeoutHigh {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
