@@ -175,11 +175,20 @@ module.exports = function(passport) {
         let email = req.body.email;
         res.cookie('email', email);
         passport.authenticate('local', (err, user, info) => {
-            req.logIn(user, function(err) {
+            req.logIn(user, async function(err) {
                 if (err) {
                     req.session.errorMessage = info.message;
                     res.redirect("/index");
                     return;
+                }
+
+                let kakaotalk = req.body.kakaotalk;
+                if(kakaotalk){
+                    let kakaoUser = await db.getUser(kakaotalk);
+                    if(kakaoUser){
+                        kakaoUser.email = email;
+                        db.saveUser(kakaoUser);
+                    }
                 }
                 //로그인 성공
                 res.redirect("/");

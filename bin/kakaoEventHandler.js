@@ -147,7 +147,8 @@ exports.messageHandler = async function(userKey, content, res){
         if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
             url = `http://localhost:8088/signup?kakaotalk=${userKey}`;
         }
-        return sendRes(message.messageWithButton('No More No Show 회원으로 등록되어 있지 않습니다. \n회원가입 후 이용해주세요.', '회원가입하기', url));
+        return sendRes(message.messageWithButton('No More No Show 회원으로 등록되어 있지 않습니다.\n회원가입 후 이용해주세요.\n이미 가입하신 분은 로그인해주세요.', '회원가입/로그인', url));
+        // return sendRes(message.messageWithHomeKeyboard(`No More No Show 회원으로 등록되어 있지 않습니다. \n회원가입 후 이용해주세요.\n${url}\n이미 가입하신 분은 로그인해주세요.`));
     }
     let webUser = await db.getWebUser(user.email);
     if(!webUser || webUser.authStatus !== process.nmns.AUTH_STATUS.EMAIL_VERIFICATED){
@@ -168,11 +169,6 @@ exports.messageHandler = async function(userKey, content, res){
         let user = await db.getUser(userKey);
         if(user){
             if(user.hasRightToSendConfirm){
-                //TODO: TEST
-                // await sendSenderRegister();
-                // await sendTestAlrimTalk();
-                // returnMessage = message.messageWithHomeKeyboard('전송되었습니다.');
-
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkInfo, 'sendConfirmTryCount');
                 returnMessage = message.typeAlrimTalkInfo();
             }else{
