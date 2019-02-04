@@ -107,9 +107,9 @@ exports.getReservationList = async function(data) {
             data: null
         };
     }
-
-
 };
+
+
 
 exports.updateReservation = async function (newReservation) {
     let email = this.email;
@@ -258,6 +258,35 @@ exports.addReservation = async function (data) {
     };
 };
 
+exports.reSendReservationConfirm = async function(data){
+    let email = this.email;
+    let status = false;
+    let message = '알림톡 전송 실패';
+
+    if (data.id) {
+        let user = await db.getWebUser(email);
+        let reservationList = user.reservationList;
+        let reservation = reservationList.find(reservation => reservation.id === data.id);
+        if (reservation) {
+            if(!await alrimTalk.sendReservationConfirm(user, reservation)){
+                message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
+            }else{
+                status = true;
+                message = '알림톡 전송 성공';
+            }
+        }else{
+            message = '없는 예약입니다.';
+        }
+    }else{
+        message = '예약 아이디가 없습니다.';
+    }
+
+    return {
+        status: status,
+        data: {id: data.id},
+        message: message
+    };
+}
 
 const reservationValidationForUdate = function (email, data) {
     let status = false,

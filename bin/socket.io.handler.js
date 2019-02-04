@@ -18,6 +18,7 @@ const alrimTalkHandler = require('./alrimTalkHandler');
 const GetReservationList = 'get reserv',
     GetReservationSummaryList = 'get summary',
     AddReservation = 'add reserv',
+    ResendAlrimtalk = 'resend alrimtalk',
     UpdateReservation = 'update reserv';
 const GetNoShow = 'get noshow',
     AddNoShow = 'add noshow',
@@ -41,6 +42,7 @@ const EVENT_LIST_NO_NEED_VERIFICATION = [GetTips, GetCustomerInfo, GetCustomerDe
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
 
+    //Socket-Io-Tester 사용 할 때 주석처리 해야 함
     io.use(passportSocketIo.authorize({
         key: 'connect.sid',
         secret: 'rilahhuma',
@@ -55,20 +57,22 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         // var user = await db.getWebUser(email);
         // user.authStatus = 'EMAIL_VERIFICATED';
 
+        //Socket-Io-Tester 사용 할 때 주석처리 해야 함 Begin
         const user = socket.request.user;
         const email = user.email;
-
         if (!email || !socket.request.user.logged_in) {
             logger.log(`User ${email} is not logged in`);
             return;
         }
+        //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
+
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
                 type: 'push',
                 data: [data]
             });
-        }
+        };
 
         process.nmns.ONLINE[email] = socket;
 
@@ -202,6 +206,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetReservationList, reservationHandler.getReservationList);
         addEvent(UpdateReservation, reservationHandler.updateReservation);
         addEvent(AddReservation, reservationHandler.addReservation);
+        addEvent(ResendAlrimtalk, reservationHandler.reSendReservationConfirm);
 
         /**
          * Manager
