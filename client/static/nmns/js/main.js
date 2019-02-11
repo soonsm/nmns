@@ -1929,6 +1929,13 @@
     NMNS.socket.on("get alrim history", socketResponse("알림톡 내역 조회", function(e) {
         drawAlrimList(e.data);
     }, undefined, true));
+
+    NMNS.socket.on('resend alrimtalk', socketResponse('알림톡 다시 보내기', function(e){
+        showSnackBar("<span>고객에게 알림톡을 다시 보냈습니다!</span>");
+    }, function(e){
+        $('#detailPopupResendAlrim').addClass('d-none')
+        showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
+    }))
     //websocket response end
     //Modal events start  
     $("#infoModal").on("hide.bs.modal", function() {
