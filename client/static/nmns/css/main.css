@@ -1761,3 +1761,8 @@ button.customerSortType.active {
 .popover.tutorial .clearfix button {
     margin-left: .5rem;
 }
+
+/* announcement */
+.announcementCount{
+    vertical-align: super;
+}

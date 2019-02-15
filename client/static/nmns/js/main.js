@@ -238,6 +238,11 @@
             $("#tipsModal").modal("show");
         }
         //tutorial & tip end
+        //announcement start
+        if(NMNS.info.newAnnouncement){
+            $('.announcementCount').html(NMNS.info.newAnnouncement)
+        }
+        //announcement end
     }));
 
     NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {
