@@ -1637,6 +1637,14 @@
             return;
         }
     });
+    
+    function drawAnnouncementList(data){
+      var list = "";
+      data.forEach(function(item){
+        list += '<div class="announcement col-12 card px-0 border-0 rounded-0 shadow-sm mb-3"><div class="card-header"><h6 class="d-inline-block mb-0">'+item.title + (item.isRead?'':'<span class="badge badge-danger badge-pill ml-1">new</span>') +'</h6><small class="float-right">'+(item.registeredDate? moment(item.registeredDate, 'YYYYMMDD').format('Y년 M월 D일') : '')+'</small></div><div class="card-body"><p class="card-text">'+item.contents+'</p></div></div>'
+      })
+      return list;
+    }
     //business specific functions about general features end
     //after calendar initialization start
     setDropdownCalendarType();
@@ -1941,6 +1949,29 @@
         $('#detailPopupResendAlrim').addClass('d-none')
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
     }))
+    NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
+      $('#announcementBody').append(drawAnnouncementList(e.data));
+      var count = ($('.announcementCount').text() * 1);
+      if(count && count > 0){
+        var unread = 0;
+        e.data.forEach(function(item){
+          if(!item.isRead) unread++;
+        })
+        if(count > unread){
+          $('.announcementCount').text(count - unread);
+        }else if(count === unread){
+          $('.announcementCount').text('');
+        }
+      }
+      $('#announcementBody').parent().removeClass('wait');
+      if(e.data.length === 5){
+        NMNS.expectMoreAnnouncement = true;
+      }else{
+        NMNS.expectMoreAnnouncement = false;
+      }
+    }, function(e){
+      $('#announcementBody').parent().removeClass('wait');
+    }))
     //websocket response end
     //Modal events start  
     $("#infoModal").on("hide.bs.modal", function() {
@@ -2102,6 +2133,30 @@
             $("#tutorialModal").modal();
         }
     });
+    $('#announcementModal').on('show.bs.modal', function(){
+      if($('#annoumcementBody').children().length === 0){
+        NMNS.announcementPage = 1
+        $('#announcementBody').parent().addClass('wait');
+        NMNS.socket.emit('get announcement', {page:1})
+        //for test
+        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
+        var count = ($('.announcementCount').text() * 1);
+        if(count && count > 0){
+          var unread = 0;
+          [{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}].forEach(function(item){
+            if(!item.isRead) unread++;
+          })
+          if(count > unread){
+            $('.announcementCount').text(count - unread);
+          }else if(count === unread){
+            $('.announcementCount').text('');
+          }
+        }
+        $('#announcementBody').parent().removeClass('wait');
+        NMNS.expectMoreAnnouncement = true;*/
+        //for test
+      }
+    })
     //Modal events end
     //mobile horizontal scroll handling
     // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
@@ -2238,6 +2293,14 @@
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
     });
+    
+    $('#announcementBody').on('scroll', debounce(function(){
+        var distance = Math.max(0, $(this)[0].scrollHeight - $(this).scrollTop() - $(this).innerHeight());
+        if(!$("#waitAnnouncement").is(":visible") && NMNS.expectMoreAnnouncement && distance < Math.max(100, $(this).innerHeight() * 0.2)){
+            $('#waitAnnouncement').parent().addClass('wait')
+            NMNS.socket.emit('get announcement', {page:++NMNS.announcementPage})
+        }
+    }, 100));
     //notification handling start
     NMNS.socket.emit("get noti");
     NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e) {

@@ -1181,17 +1181,17 @@ button.form-control {
 }
 
 
-/* tipsModal */
+/* tipsModal, announcementModal */
 
-#tipsModal .modal-header #tipsTitle {
+#tipsModal .modal-header #tipsTitle, #announcementModal .modal-header #announcementTitle {
     display: initial;
 }
 
-#tipsModal .modal-header small {
+#tipsModal .modal-header small{
     vertical-align: super;
 }
 
-#tipsModal .modal-body #waitTips {
+#tipsModal .modal-body .waiting, #announcementModal .modal-body .waiting {
     display: none;
     top: calc(50% - .5rem);
     left: calc(50% - .5rem);
@@ -1199,19 +1199,27 @@ button.form-control {
     font-size: 1.3rem;
 }
 
-#tipsModal .modal-body.wait #waitTips {
+#tipsModal .modal-body.wait .waiting, #announcementModal .modal-body.wait .waiting {
     display: block;
 }
 
-#tipsModal .modal-body #tipsBody {
+#tipsModal .modal-body #tipsBody, #announcementModal .modal-body #announcementBody {
     opacity: 1;
 }
 
-#tipsModal .modal-body.wait #tipsBody {
+#tipsModal .modal-body.wait #tipsBody, #announcementModal .modal-body.wait #announcementBody {
     opacity: .5;
 }
 
+#announcementModal .modal-body #announcementBody{
+    overflow-y:scroll;
+    max-height:500px;
+}
 
+#announcementModal .modal-body{
+    padding-top:0;
+    padding-bottom:0;
+}
 /* feedbackModal */
 
 #feedbackModal #feedbackBody {
