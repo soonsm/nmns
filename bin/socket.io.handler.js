@@ -214,7 +214,9 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         notice.isRead = true;
                     }else{
                         notice.isRead = false;
-                        lastNoticeId = notice.id;
+                        if(user.lastNoticeId < notice.id){
+                            user.lastNoticeId = notice.id;
+                        }
                     }
                 }
                 await db.updateWebUser(email, {lastNoticeId: lastNoticeId});
