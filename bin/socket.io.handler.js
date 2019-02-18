@@ -192,7 +192,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             });
 
             //사용자가 확인한 마지막 공지사항의 아이디
-            let lastNoticeId = user.lastNoticeId || '0';
+            let redNoticeList = user.redNoticeList || [];
             /**
              * 마지막 공지사항 아이디보다 크면
              * -> 안읽음 & 마지막 공지사항 아이디 업데이트
@@ -208,18 +208,17 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
              */
             if(noticeList.length >= (page-1)*5+1){
                 let lastIndex = (page-1)*5+5 < noticeList.length ? (page-1)*5+5 : noticeList.length;
-                for(let i=(page-1)*5;i<lastIndex;i++){
+                noticeList = noticeList.slice((page-1)*5, lastIndex);
+                for(let i=0;i<noticeList.length;i++){
                     let notice = noticeList[i];
-                    if(lastNoticeId >= notice.id){
+                    if(redNoticeList.includes(notice.id)){
                         notice.isRead = true;
                     }else{
                         notice.isRead = false;
-                        if(user.lastNoticeId < notice.id){
-                            user.lastNoticeId = notice.id;
-                        }
+                        redNoticeList.push(notice.id);
                     }
                 }
-                await db.updateWebUser(email, {lastNoticeId: lastNoticeId});
+                await db.updateWebUser(email, {redNoticeList: redNoticeList});
             }else{
                 noticeList = [];
             }
