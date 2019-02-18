@@ -1951,7 +1951,7 @@
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
       $('#announcementBody').append(drawAnnouncementList(e.data));
-      var count = ($('.announcementCount').text() * 1);console.log('current count : ' + count);
+      var count = ($('.announcementCount:first').text() * 1);
       if(count && count > 0){
         var unread = 0;
         e.data.forEach(function(item){
@@ -1963,7 +1963,6 @@
           $('.announcementCount').text('');
         }
       }
-      console.log('after count : ', $('.announcementCount').text())
       $('#announcementBody').parent().removeClass('wait');
       if(e.data.length === 5){
         NMNS.expectMoreAnnouncement = true;
