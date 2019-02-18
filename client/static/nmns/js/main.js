@@ -1951,7 +1951,7 @@
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
       $('#announcementBody').append(drawAnnouncementList(e.data));
-      var count = ($('.announcementCount').text() * 1);
+      var count = ($('.announcementCount:first').text() * 1);
       if(count && count > 0){
         var unread = 0;
         e.data.forEach(function(item){
@@ -2134,27 +2134,10 @@
         }
     });
     $('#announcementModal').on('show.bs.modal', function(){
-      if($('#annoumcementBody').children().length === 0){
+      if($('#announcementBody').children('.announcement').length === 0){
         NMNS.announcementPage = 1
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
-        //for test
-        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
-        var count = ($('.announcementCount').text() * 1);
-        if(count && count > 0){
-          var unread = 0;
-          [{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}].forEach(function(item){
-            if(!item.isRead) unread++;
-          })
-          if(count > unread){
-            $('.announcementCount').text(count - unread);
-          }else if(count === unread){
-            $('.announcementCount').text('');
-          }
-        }
-        $('#announcementBody').parent().removeClass('wait');
-        NMNS.expectMoreAnnouncement = true;*/
-        //for test
       }
     })
     //Modal events end
