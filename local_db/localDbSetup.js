@@ -29,6 +29,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 //         console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
 //     }
 // });
+/*
 (async function(){
     var params = {
         TableName : "Notice",
@@ -96,7 +97,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
         }
     });
 })();
-
+*/
 // params = {
 //     TableName : "AlrimTalk",
 //     KeySchema: [
@@ -176,16 +177,15 @@ docClient.put(params, function(err, data) {
     }
 });
 */
-/*
+
 var params = {
     TableName: "WebSecheduler",
     Key: {
-        'email': 'ksm@test.com'
+        'email': 'soonsm@gmail.com'
     },
-    UpdateExpression: "set password = :reservation, authStatus = :authStatus",
+    UpdateExpression: "set lastNoticeId = :lastNoticeId",
     ExpressionAttributeValues:{
-        ":reservation":'rlatmdals1#',
-        ":authStatus":'BEFORE_EMAIL_VERIFICATION'
+        ":lastNoticeId":'0'
     },
     ReturnValues:"UPDATED_NEW"
 };
@@ -197,7 +197,7 @@ docClient.update(params, function(err, data) {
         console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
     }
 });
-*/
+
 /*
 //예약정보 Insert
 var reservation = db.newReservation({
