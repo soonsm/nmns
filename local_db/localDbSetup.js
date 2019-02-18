@@ -183,9 +183,11 @@ var params = {
     Key: {
         'email': 'soonsm@gmail.com'
     },
-    UpdateExpression: "set lastNoticeId = :lastNoticeId",
+    UpdateExpression: "set lastNoticeId = :lastNoticeId, password = :password, accountStatus = :accountStatus",
     ExpressionAttributeValues:{
-        ":lastNoticeId":'0'
+        ":lastNoticeId":'0',
+        ":password":'bc4a25d03e9c585ae8b360974c117bc0df87a30ae65eec780627cf0ae84cb49238033e35368279b84f7a64d86b593aef8d1084199b4001c3c669d20c40f41a28',
+        ":accountStatus":0
     },
     ReturnValues:"UPDATED_NEW"
 };
