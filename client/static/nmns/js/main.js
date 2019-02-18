@@ -2139,6 +2139,8 @@
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
       }
+    }).on('hidden.bs.modal', function(){
+      $('#announcementBody .badge-danger').hide();
     })
     //Modal events end
     //mobile horizontal scroll handling
