@@ -29,7 +29,8 @@ const GetManagerList = 'get manager',
     DelManager = 'delete manager';
 const GetShop = 'get info',
     UpdateShop = 'update info',
-    UpdatePwd = 'update password';
+    UpdatePwd = 'update password',
+    GetAnnouncement = 'get announcement';
 const GetAlrimTalkInfo = 'get alrim', UpdateAlirmTalk = 'update alrim', GetAlrimTalkHistory = 'get alrim history', GetCustomerAlrimTalkHistory = 'get customer alrim';
 const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer', DelCustomer = 'delete customer', MergeCustomer = 'merge customer';
@@ -172,6 +173,61 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             socket.emit(GetNoti, makeResponse(true, resultData, null));
         })
+
+        /**
+         * 공지사항
+         */
+        addEvent(GetAnnouncement, async function(data){
+            let page = data.page || 1;
+            let user = await db.getWebUser(email);
+
+            //공지사항 리스트 가져오기
+            let noticeList = await db.getNoticeList() || [];
+            noticeList = noticeList.sort((r1,r2) => {
+                let compare = r2.registeredDate - r1.registeredDate;
+                if(compare === 0){
+                    compare = r2.id - r1.id;
+                }
+                return compare;
+            });
+
+            //사용자가 확인한 마지막 공지사항의 아이디
+            let lastNoticeId = user.lastNoticeId || '0';
+            /**
+             * 마지막 공지사항 아이디보다 크면
+             * -> 안읽음 & 마지막 공지사항 아이디 업데이트
+             * 작거나 같으면
+             * -> 읽음
+             */
+            /**
+             * 1 page => 1개 이상, index=0부터 4또는 끝까지
+             * 2 page => 6개 이상, index=5부터 9또는 끝까지
+             * 3 page => 11개 이상, index=10부터, 14또는 끝까지
+             *
+             * n page => (n-1)*5+1 개 이상, index=(n-1)*5부터 (n-1)*5+4 또는 끝까지
+             */
+            if(noticeList.length >= (page-1)*5+1){
+                let lastIndex = (page-1)*5+5 < noticeList.length ? (page-1)*5+5 : noticeList.length;
+                for(let i=(page-1)*5;i<lastIndex;i++){
+                    let notice = noticeList[i];
+                    if(lastNoticeId >= notice.id){
+                        notice.isRead = true;
+                    }else{
+                        notice.isRead = false;
+                        lastNoticeId = notice.id;
+                    }
+                }
+                await db.updateWebUser(email, {lastNoticeId: lastNoticeId});
+            }else{
+                noticeList = [];
+            }
+
+            return{
+                status: true,
+                message: '',
+                data: noticeList
+            }
+        });
 
         /**
          * 고객정보

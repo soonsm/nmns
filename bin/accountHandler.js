@@ -47,6 +47,16 @@ exports.getShop = async function () {
         if(resultData.isFirstVisit){
             await db.updateWebUser(this.email, {isFirstVisit: false});
         }
+        let noticeList = await db.getNoticeList() || [];
+        let user = await db.getWebUser(this.email);
+        let lastNoticeId = user.lastNoticeId || '0';
+        let newNoticeCnt = 0;
+        for(let i=0;i<noticeList.length; i++){
+            if(noticeList[i].id > lastNoticeId){
+                newNoticeCnt++;
+            }
+        }
+        resultData.newAnnouncement = newNoticeCnt;
     }
 
     return {

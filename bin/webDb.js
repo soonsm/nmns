@@ -169,7 +169,8 @@ exports.newWebUser = function (user) {
         pushList: [],
         isFirstVisit: true,
         feedback: [],
-        kakaotalk: user.kakaotalk || null
+        kakaotalk: user.kakaotalk || null,
+        lastNoticeId: '0'
     };
 };
 
@@ -850,6 +851,12 @@ exports.getUser = async function (userKey) {
 exports.getAlrimTalkUserList = async function () {
     return await getList({
         TableName: 'AlrimTalkUser'
+    });
+};
+
+exports.getNoticeList = async function () {
+    return await getList({
+        TableName: 'Notice'
     });
 };
 
