@@ -2135,10 +2135,12 @@
     });
     $('#announcementModal').on('show.bs.modal', function(){
       if($('#announcementBody').children('.announcement').length === 0){
-        NMNS.announcementPage = 1
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
+        NMNS.announcementPage = 1
       }
+    }).on('shown.bs.modal', function(){
+      $('#announcementBody').scrollTop(0);
     }).on('hidden.bs.modal', function(){
       $('#announcementBody .badge-danger').hide();
     })
