@@ -49,10 +49,11 @@ exports.getShop = async function () {
         }
         let noticeList = await db.getNoticeList() || [];
         let user = await db.getWebUser(this.email);
-        let lastNoticeId = user.lastNoticeId || '0';
+
+        let redNoticeList = user.redNoticeList || [];
         let newNoticeCnt = 0;
         for(let i=0;i<noticeList.length; i++){
-            if(noticeList[i].id > lastNoticeId){
+            if(!redNoticeList.includes(noticeList[i].id)){
                 newNoticeCnt++;
             }
         }

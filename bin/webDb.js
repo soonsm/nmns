@@ -170,7 +170,7 @@ exports.newWebUser = function (user) {
         isFirstVisit: true,
         feedback: [],
         kakaotalk: user.kakaotalk || null,
-        lastNoticeId: '0'
+        redNoticeList: []
     };
 };
 
