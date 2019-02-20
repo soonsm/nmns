@@ -4,6 +4,7 @@ const
     emailValidator = require('email-validator'),
     db = require('./webDb'),
     util = require('./util'),
+    path = require('path'),
     alrimTalk = require('./alrimTalkSender'),
     emailSender = require('./emailSender');
 
@@ -13,7 +14,6 @@ const logger = global.nmns.LOGGER;
 
 const mainView = require('../client/template/main');
 const indexView = require('../client/template/index');
-const indexAMPView = require('../client/template/index.amp');
 const signupView = require('../client/template/signup');
 const cancelView = require('../client/template/reservationCancel');
 
@@ -92,11 +92,7 @@ module.exports = function(passport) {
                 });
             }
         } else {
-            render(res, indexAMPView, {
-                email: req.cookies.email,
-                message: req.session.errorMessage,
-                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
-            });
+            return res.sendFile(path.join(__dirname, '../client/template/index.amp.html'))
         }
     });
 
