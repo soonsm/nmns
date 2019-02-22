@@ -61,7 +61,7 @@ module.exports = function(passport) {
     router.get('/index', async function(req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
-            if (user.authStatus === process.nmns.EMAIL_VERIFICATED) {
+            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
                 //로그인 되있으면 main으로 이동
                 res.redirect("/");
             } else {
@@ -82,7 +82,7 @@ module.exports = function(passport) {
     router.get('/index.amp', async function(req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
-            if (user.authStatus === process.nmns.EMAIL_VERIFICATED) {
+            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
                 //로그인 되있으면 main으로 이동
                 res.redirect("/");
             } else {
@@ -92,7 +92,12 @@ module.exports = function(passport) {
                 });
             }
         } else {
-            return res.sendFile(path.join(__dirname, '../client/template/index.amp.html'))
+            return res.render('index.amp.html', {
+                email: req.cookies.email,
+                message: req.session.errorMessage,
+                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
+            });
+            // return res.sendFile(path.join(__dirname, '../client/template/index.amp.html'))
         }
     });
 

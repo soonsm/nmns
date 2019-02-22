@@ -35,6 +35,7 @@ const
     server = Server(app),
     compression = require('compression'),
     morgan = require("morgan"),
+    mustacheExpress = require('mustache-express'),
     cookieParser = require('cookie-parser');
     
 const
@@ -64,6 +65,11 @@ app.use(body_parser.urlencoded({extended:false}));
 
 //cookie parser
 app.use(cookieParser());
+
+// Register '.html' extension with The Mustache Express
+app.engine('html', mustacheExpress());
+app.set('view engine', 'html');
+app.set('views', __dirname + '/client/template');
 
 //flash && session setting
 const DynamoStore = require('connect-dynamodb-session')(session);
