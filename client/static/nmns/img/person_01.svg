@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="65" height="65" viewBox="0 0 65 65">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-2);
+      }
+
+      .cls-3 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-4, .cls-5, .cls-6 {
+        fill-rule: evenodd;
+      }
+
+      .cls-4 {
+        fill: url(#linear-gradient-4);
+      }
+
+      .cls-5 {
+        fill: #f08956;
+      }
+
+      .cls-6 {
+        fill: #fff;
+      }
+
+      .cls-7 {
+        clip-path: url(#clip-path-2);
+      }
+
+      .cls-8 {
+        fill: #ffa789;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#806a6a"/>
+      <stop offset="1" stop-color="#665654"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.5" y1="1" x2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffc9b3"/>
+      <stop offset="1" stop-color="#ffd2c2"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <circle id="Mask" class="cls-1" cx="32.5" cy="32.5" r="32.5" transform="translate(820 3150.063)"/>
+    </clipPath>
+    <linearGradient id="linear-gradient-4" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f7b186"/>
+      <stop offset="1" stop-color="#ffc299"/>
+    </linearGradient>
+    <clipPath id="clip-path-2">
+      <path id="Combined-Shape" class="cls-2" d="M48.75,11.762Q50.813,15.956,52,25.629H0q1.188-9.674,3.25-13.867Q4.62,8.976,17.333,3.614q.253-2.451.867-2.8C18.814.46,33.069.46,33.8.811q.731.351.867,2.8Q47.383,8.982,48.75,11.762Z" transform="translate(0 -0.547)"/>
+    </clipPath>
+  </defs>
+  <g id="Person_01" class="cls-3" transform="translate(-820 -3150.063)">
+    <g id="User-02b" transform="translate(820 3150.063)">
+      <circle id="Mask-2" data-name="Mask" class="cls-1" cx="32.5" cy="32.5" r="32.5"/>
+      <path id="Mask-3" data-name="Mask" class="cls-4" d="M123.127,96.883v6.067H109.26q.026-8.97,0-14.909c-3.105-4.025-3.105-6.541-.65-9.141q2.455-2.6,19.933-3.9,1.311,12.612,1.517,16.033c.083,1.376.975,5.85-2.492,5.85Z" transform="translate(-83.694 -58.75)"/>
+      <path id="Path-48" class="cls-5" d="M153.017,164.6A18.767,18.767,0,0,1,145,162q1.517,4.117,8.017,5.417Z" transform="translate(-113.583 -126.9)"/>
+      <path id="Combined-Shape-2" data-name="Combined-Shape" class="cls-6" d="M98.782,47.858a2.2,2.2,0,0,0-2.71-.375c-2.806,1.458-.944,7.077,2.2,6.967,1.083-.038.587,2.121-2.307,3.547,0-2.275-3.467-7.908-3.769-13.037-3.489-1.3-2.623-6.5-.227-6.5-.383-4.765,7.246-7.225,10.2-4.491,3-3.6,10.588-1.758,11.046,1.365,5.214-2.784,8.642,5.218,3.759,8.324-2.009,1.278-6.709,1.765-13.493,1.765-3.256,0-1.383,7.62-.366,10.08,1.3,3.142,8.558,3.575,10.833,3.25,1.776-.254,2.708-.975,2.817-1.408,1.625,4.333-.433,6.933-3.683,6.933-5.525,0-11.05-1.625-11.917-5.633C100.472,55.457,100.509,50.309,98.782,47.858Z" transform="translate(-70.395 -25.064)"/>
+      <g id="Group-2" transform="translate(6.5 41.502)">
+        <g id="그룹_27" data-name="그룹 27" transform="translate(0 0)">
+          <path id="Combined-Shape-3" data-name="Combined-Shape" class="cls-2" d="M48.75,11.762Q50.813,15.956,52,25.629H0q1.188-9.674,3.25-13.867Q4.62,8.976,17.333,3.614q.253-2.451.867-2.8C18.814.46,33.069.46,33.8.811q.731.351.867,2.8Q47.383,8.982,48.75,11.762Z" transform="translate(0 -0.547)"/>
+          <g id="마스크_그룹_5" data-name="마스크 그룹 5" class="cls-7" transform="translate(0 0)">
+            <path id="Combined-Shape-4" data-name="Combined-Shape" class="cls-8" d="M-16,35H42.283v1.733H-16Zm0,4.333H42.283v1.733H-16Zm0,4.333H42.283V45.4H-16ZM-16,48H42.283v1.733H-16Z" transform="translate(12.533 -27.535)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
