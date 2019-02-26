@@ -79,6 +79,10 @@ module.exports = function(passport) {
         }
     });
 
+    // router.get('/amp', async function(req, res){
+    //    res.render('test.amp.html', {'world': 'ksm'});
+    // });
+
     router.get('/index.amp', async function(req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);

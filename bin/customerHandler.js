@@ -52,6 +52,7 @@ exports.getCustomerDetail = async function(data){
 };
 
 exports.getCustomerInfo = async function (data) {
+
     let email = this.email;
     let status = true,
         message = '',

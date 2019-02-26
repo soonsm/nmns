@@ -860,6 +860,12 @@ exports.getNoticeList = async function () {
     });
 };
 
+exports.getAllWebUser = async function () {
+    return await getList({
+        TableName: 'WebSecheduler'
+    });
+};
+
 exports.getAlrimTalk = async function (reservationKey) {
     return await get({
         TableName: 'AlrimTalk',
