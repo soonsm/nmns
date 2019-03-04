@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  <defs>
+    <style>
+      .cls-1, .cls-4 {
+        fill: none;
+      }
+
+      .cls-1 {
+        stroke: #fff;
+        stroke-width: 2px;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        stroke: none;
+      }
+    </style>
+  </defs>
+  <g id="instagram" transform="translate(-1222 -3457)">
+    <g id="사각형_191" data-name="사각형 191" class="cls-1" transform="translate(1222 3457)">
+      <rect class="cls-3" width="28" height="28" rx="8"/>
+      <rect class="cls-4" x="1" y="1" width="26" height="26" rx="7"/>
+    </g>
+    <g id="타원_454" data-name="타원 454" class="cls-1" transform="translate(1229 3464)">
+      <circle class="cls-3" cx="7" cy="7" r="7"/>
+      <circle class="cls-4" cx="7" cy="7" r="6"/>
+    </g>
+    <circle id="타원_455" data-name="타원 455" class="cls-2" cx="1.25" cy="1.25" r="1.25" transform="translate(1242 3462)"/>
+  </g>
+</svg>

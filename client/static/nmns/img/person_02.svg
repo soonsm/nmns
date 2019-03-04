@@ -1,0 +1,99 @@
+<svg id="Person_02" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="65" height="65" viewBox="0 0 65 65">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-2);
+      }
+
+      .cls-3 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-4 {
+        clip-path: url(#clip-path-2);
+      }
+
+      .cls-5 {
+        fill: #ffa573;
+      }
+
+      .cls-6 {
+        fill: url(#linear-gradient-5);
+      }
+
+      .cls-11, .cls-7, .cls-9 {
+        fill-rule: evenodd;
+      }
+
+      .cls-7 {
+        opacity: 0.6;
+      }
+
+      .cls-8 {
+        fill: url(#linear-gradient-6);
+      }
+
+      .cls-9 {
+        fill: url(#linear-gradient-7);
+      }
+
+      .cls-10 {
+        fill: #db6f3d;
+      }
+
+      .cls-11 {
+        fill: #fff;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.5" y1="1" x2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffc9b3"/>
+      <stop offset="1" stop-color="#ffd2c2"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0.887" y1="0.852" x2="0.088" y2="0.108" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#e2834c"/>
+      <stop offset="1" stop-color="#df6638"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <circle id="Mask" class="cls-1" cx="32.5" cy="32.5" r="32.5"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <path id="Mask-2" data-name="Mask" class="cls-2" d="M42.25,10.4q1.589,3.033,2.383,14.083H0Q.794,13.433,2.383,10.4,4.767,5.85,22.317,0,39.867,5.85,42.25,10.4Z"/>
+    </clipPath>
+    <linearGradient id="linear-gradient-5" x1="0.5" y1="1" x2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#1d0024"/>
+      <stop offset="1" stop-color="#100014"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-6" y1="0" y2="1" xlink:href="#linear-gradient-5"/>
+    <linearGradient id="linear-gradient-7" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#e6864e"/>
+      <stop offset="1" stop-color="#eb965e"/>
+    </linearGradient>
+  </defs>
+  <g id="마스크_그룹_8" data-name="마스크 그룹 8" class="cls-3">
+    <g id="그룹_102" data-name="그룹 102">
+      <circle id="Mask-3" data-name="Mask" class="cls-1" cx="32.5" cy="32.5" r="32.5"/>
+      <g id="body" transform="translate(10.183 42.25)">
+        <g id="그룹_16" data-name="그룹 16">
+          <path id="Mask-4" data-name="Mask" class="cls-2" d="M42.25,10.4q1.589,3.033,2.383,14.083H0Q.794,13.433,2.383,10.4,4.767,5.85,22.317,0,39.867,5.85,42.25,10.4Z"/>
+          <g id="마스크_그룹_7" data-name="마스크 그룹 7" class="cls-4">
+            <path id="Combined-Shape" class="cls-5" d="M2.633,24.933a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,2.633,24.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,11.3,24.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,19.967,24.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,28.633,24.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,37.3,24.933ZM-1.7,20.6A1.3,1.3,0,0,1-3,19.3,1.3,1.3,0,0,1-1.7,18,1.3,1.3,0,0,1-.4,19.3,1.3,1.3,0,0,1-1.7,20.6Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,6.967,20.6Zm26,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,32.967,20.6Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,41.633,20.6Zm-39,13a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,2.633,33.6Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,11.3,33.6Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,19.967,33.6Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,28.633,33.6Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,37.3,33.6Zm-39-4.333a1.3,1.3,0,0,1-1.3-1.3,1.3,1.3,0,0,1,1.3-1.3,1.3,1.3,0,0,1,1.3,1.3A1.3,1.3,0,0,1-1.7,29.267Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,6.967,29.267Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,15.633,29.267Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,24.3,29.267Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,32.967,29.267Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,41.633,29.267ZM-1.7,37.933a1.3,1.3,0,0,1-1.3-1.3,1.3,1.3,0,0,1,1.3-1.3,1.3,1.3,0,0,1,1.3,1.3A1.3,1.3,0,0,1-1.7,37.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,6.967,37.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,15.633,37.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,24.3,37.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,32.967,37.933Zm8.667,0a1.3,1.3,0,1,1,1.3-1.3A1.3,1.3,0,0,1,41.633,37.933Z" transform="translate(2.35 -14.1)"/>
+          </g>
+        </g>
+      </g>
+      <g id="bun" transform="translate(34.737 6.067)">
+        <g id="그룹_17" data-name="그룹 17" transform="translate(0 0)">
+          <path id="Mask-5" data-name="Mask" class="cls-6" d="M12.968,6.151c.867,3.792-3.243,6.7-7.475,4.7C-4.473,6.151,1.455-.413,5.139.02S12.1,2.359,12.968,6.151Z" transform="translate(13.085 11.504) rotate(180)"/>
+          <path id="Path-3" class="cls-7" d="M17.5,27.5q7.367,4.767,9.208,2.167c.19,1.086-.684,4.152-2.058,4.117Q20.538,33.676,17.5,27.5Z" transform="translate(-13.779 -21.542)"/>
+        </g>
+      </g>
+      <path id="hair" class="cls-8" d="M91.757,68.692c-4.655,2.236-5.334,2.116-15.6-6.283C60.665,49.734,75.29,38.142,91,44.317,108.007,51.792,102.308,63.623,91.757,68.692Z" transform="translate(-54.49 -33.376)"/>
+      <path id="face" class="cls-9" d="M109.846,115.875c-1.589,2.6-8.811,2.6-10.4,0v-4.333q-.707.021-1.192,0c-5.068-.217-6.761-8.369-5.966-16.523.582-5.972,5.641,2.223,13.874-3.518-.325,6.283,2.383,5.633,3.575,4.875,5.417-2.492,5.462,7.722.108,6.933Z" transform="translate(-72.146 -71.675)"/>
+      <path id="shade" class="cls-10" d="M.068,3.015Q3,2.9,7.465,0A8.93,8.93,0,0,1,0,4.964Z" transform="translate(27.127 36.855) rotate(-2)"/>
+      <path id="collar" class="cls-11" d="M125.433,196.4V195a4.976,4.976,0,0,1,2.12,1.733c2.313,3.142-.253,5.958-2.345,5.958-2.64,0-4.39-2.206-4.975-3.267-.585,1.061-2.335,3.267-4.975,3.267-2.093,0-4.658-2.817-2.345-5.958a4.976,4.976,0,0,1,2.12-1.733v1.4c0,1.657,3.627,2.424,5.193,2.495C121.709,198.824,125.433,198.057,125.433,196.4Z" transform="translate(-87.733 -152.75)"/>
+    </g>
+  </g>
+</svg>
