@@ -26,78 +26,38 @@
   <meta name="format-detection" content="telephone=no">
   <title>WA:SHOW - 노쇼 말고 왓쇼!</title>
   <!-- Bootstrap core CSS -->
-  <link rel="preload" as="style" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"  onload="this.rel='stylesheet'">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/v4-shims.css">
   
-  <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="preload" as="style" crossorigin="anonymous" onload="this.rel='stylesheet'">
-  <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="preload" as="style" crossorigin="anonymous" onload="this.rel='stylesheet'">
-  <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch" onload="this.rel='stylesheet'">
-  <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="prefetch" onload="this.rel='stylesheet'">
+  <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
+  <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch">
+  <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="prefetch">
   <!--[if IE 9]>
   <link href="/lib/datetimepicker/ie.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
   <![endif]-->
   <!-- Custom styles for this template -->
-  <link href="/nmns/css/main.min.css" rel="preload" as="style" crossorigin="anonymous" onload="this.rel='stylesheet'">
+  <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="${input.cdn}/nmns/css/ko_font.min.css" rel="preload" as="font" crossorigin="anonymous" onload="this.rel='stylesheet'">
-  <link href="${input.cdn}/nmns/css/en_font.min.css" rel="preload" as="font" crossorigin="anonymous" onload="this.rel='stylesheet'">
-  
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="preload" as="font" crossorigin onload="this.rel='stylesheet'">
+
   <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="prefetch">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
+  <!--fonts-->
+  <style>
+    @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}*{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat'}
+  </style>
 </head>
 
-<body id="page-top">
-
-  <!-- Navigation -->
-  <nav class="navbar bg-primary fixed-top" id="mainNav">
-    <a class="navbar-brand js-scroll-trigger" href="/" aria-label="No More No Show">No More No Show</a>
-    <button id="announcementMenu" class="btn bg-transparent btn-flat text-white d-md-block d-none ml-auto" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="fa fa-bullhorn" aria-label="공지사항"></i><span class="badge badge-pill badge-danger announcementCount"></span></button>
-    <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat text-white" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
-      <i class="fa fa-bars d-block d-sm-none" aria-label="메뉴"></i>
-      <span class="d-none d-sm-block font-weight-bold"><if(input.user.shopName)><span id="mainShopName">${input.user.shopName}</span><small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav text-white mr-auto godo w700">
-        <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal" aria-label="내 매장 정보"><i class="fas fa-store fa-fw align-middle"></i> 내 매장 정보</a>
-        </li>
-        <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal" aria-label="알림톡 정보"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
-        </li>
-        <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left customerMenuLink" href ="#" aria-label="고객관리"><i class="fas fa-user-cog fa-fw align-middle"></i> 고객관리<!--<small class="badge new">new</small>--></a>
-        </li>
-        <li class="nav-item mx-0 d-lg-none customerMenu" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left calendarMenuLink" href ="#" aria-label="예약관리"><i class="far fa-calendar-alt fa-fw align-middle"></i> 예약관리</a>
-        </li>
-        <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가"><i class="fas fa-plus fa-fw align-middle"></i> 노쇼 추가</a>
-        </li>
-        <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기"><i class="fas fa-search fa-fw align-middle"></i> 노쇼 찾기</a>
-        </li>
-        <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#"><i class="fas fa-calendar-plus fa-fw align-middle" aria-label="예약 추가"></i> 예약 추가</a>
-        </li>
-        <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
-        </li>
-        <li class="nav-item mx-0 d-md-none" data-toggle="collapse" data-target="#navbarResponsive">
-          <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#announcementModal" aria-label="공지사항"><i class="fas fa-bell fa-fw align-middle"></i> 공지사항<span class="badge badge-pill badge-danger announcementCount"></span></a>
-        </li>
-        <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-          <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout" aria-label="로그아웃"><i class="fas fa-sign-out-alt fa-fw align-middle"></i> 로그아웃</a>
-        </li>
-      </ul>
+<body>
+  <aside id="mainAside" class="sidebar position-relative">
+    <div class="topNav bg-primary">
+      <a class="navbar-brand js-scroll-trigger montserrat" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" class="align-middle"/></a>
+      <i class="fa fa-bars" aria-label="메뉴"></i>
     </div>
-  </nav>
-  
-  <div id="notifications"></div>
-  
-  <div id="mainRow" class="row col px-0 mx-auto">
-    <div id="sidebarContainer" class="d-none d-lg-block col-2 sidebar-expanded px-0">
+    <div id="sidebarContainer" class="col-2 sidebar-expanded px-0">
       <ul class="list-group">
         <li>
           <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가">
@@ -184,6 +144,54 @@
         </li>
       </ul>
     </div>
+  </aside>
+  
+  <div id="notifications"></div>
+  
+  <div id="mainRow" class="row col px-0 mx-auto position-relative">
+    <!-- Navigation -->
+    <nav class="navbar topNav" id="mainNav">
+      <button id="announcementMenu" class="btn bg-transparent btn-flat text-white d-md-block d-none ml-auto" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="fa fa-bullhorn" aria-label="공지사항"></i><span class="badge badge-pill badge-danger announcementCount"></span></button>
+      <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat text-white" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
+        <i class="fa fa-bars d-block d-sm-none" aria-label="메뉴"></i>
+        <span class="d-none d-sm-block font-weight-bold"><if(input.user.shopName)><span id="mainShopName">${input.user.shopName}</span><small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav text-white mr-auto godo w700">
+          <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
+            <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal" aria-label="내 매장 정보"><i class="fas fa-store fa-fw align-middle"></i> 내 매장 정보</a>
+          </li>
+          <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
+            <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal" aria-label="알림톡 정보"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
+          </li>
+          <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left customerMenuLink" href ="#" aria-label="고객관리"><i class="fas fa-user-cog fa-fw align-middle"></i> 고객관리<!--<small class="badge new">new</small>--></a>
+          </li>
+          <li class="nav-item mx-0 d-lg-none customerMenu" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left calendarMenuLink" href ="#" aria-label="예약관리"><i class="far fa-calendar-alt fa-fw align-middle"></i> 예약관리</a>
+          </li>
+          <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가"><i class="fas fa-plus fa-fw align-middle"></i> 노쇼 추가</a>
+          </li>
+          <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기"><i class="fas fa-search fa-fw align-middle"></i> 노쇼 찾기</a>
+          </li>
+          <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#"><i class="fas fa-calendar-plus fa-fw align-middle" aria-label="예약 추가"></i> 예약 추가</a>
+          </li>
+          <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
+          </li>
+          <li class="nav-item mx-0 d-md-none" data-toggle="collapse" data-target="#navbarResponsive">
+            <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#announcementModal" aria-label="공지사항"><i class="fas fa-bell fa-fw align-middle"></i> 공지사항<span class="badge badge-pill badge-danger announcementCount"></span></a>
+          </li>
+          <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
+            <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout" aria-label="로그아웃"><i class="fas fa-sign-out-alt fa-fw align-middle"></i> 로그아웃</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
     <div id="mainContents" class="col px-0">
       <div id="mainCalendarTools" class="text-center align-middle bg-light calendarMenu">
         <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전"><i class="fas fa-chevron-left"></i></button>
