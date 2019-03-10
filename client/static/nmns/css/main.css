@@ -1,5 +1,8 @@
+/* commons */
+.cursor-pointer{
+    cursor:pointer;
+}
 /*main contents*/
-
 html {
     min-height: 100%;
     position: relative;
@@ -9,15 +12,148 @@ html {
 #mainNav {
     min-height: 4.05rem;
 }
+.topNav{
+    height:78px;
+    border-bottom:0.5px solid rgba(255,255,255,0.5);
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+}
+#logo:before{
+    vertical-align: middle;
+}
+.sidebar-handler{
+    position:relative;
+}
+#mainAside{
+    width:270px;
+    transition:0.3s ease-in-out;
+}
+#mainAside.sidebar-toggled{
+    width:50px;
+}
+#mainRow {
+    width:calc(100% - 270px);
+    transition:0.3s ease-in-out;
+}
+#mainRow.sidebar-toggled{
+    width:calc(100% - 50px);
+}
+@media(max-width:576px){
+    #mainAside{
+        width:0;
+    }
+    #mainAside.sidebar-toggled{
+        width:100%;
+    }
+    #mainRow{
+        width:100%;
+    }
+    #mainRow.sidebar-toggled{
+        width:0;
+    }
+}
+
+/* side bar */
+#sidebarContainer{
+    margin-top:79px;
+    padding-left:30px;
+    padding-right:30px;
+}
+#sidebarContainer .list-group-item span{
+    color:#fff;
+}
+#sidebarContainer .list-group-item{
+    background-color:transparent;
+}
+#sidebarContainer .list-group-item-action{
+    opacity:.35;
+}
+#sidebarContainer .list-group-item-action.list-group-item-active{
+    opacity:1;
+}
+
+#sidebarContainer ul li {
+    list-style: none;
+}
+#lnbManagerList small, #lnbManagerList label{
+    color:#fff;
+}
+#lnbManagerList div:first-child {
+    margin-top: .7rem;
+}
+
+#lnbManagerList .lnbManagerItem,
+#lnbManagerList+.lnbManagerItem {
+    line-height: .8rem;
+    margin-left: .25rem;
+}
+
+#lnbManagerList .lnbManagerItem {
+    height: 1.5rem;
+    line-height: 1.5rem;
+}
+
+#lnbManagerList .lnbManagerItem:last-child {
+    margin-bottom: .5rem;
+}
+
+#lnbManagerList .lnbManagerItem label {
+    margin-bottom: 0;
+}
+
+#lnbManagerList .addManagerItem input[type="text"] {
+    padding-left: 0;
+    padding-right: 0;
+    height: 1.4rem;
+}
+
+#lnbManagerList .addManagerItem .addManagerColor {
+    cursor: default;
+}
+
+#lnbLastMenu a {
+    cursor: default;
+    border-bottom: 0;
+}
+
+#lnbLastMenu a div {
+    cursor: pointer;
+}
+
+.addManagerItem label {
+    width: calc(100% - 35px);
+}
+
+.addManagerItem input[type='text'] {
+    width: calc(100% - 23px);
+    font-size: .8rem;
+    display: inline-block;
+}
+
+.addManagerItem input[type='text']:focus {
+    border-color: #ced4da;
+    box-shadow: none;
+}
+
+.addManagerItem .submitAddManager,
+.addManagerItem .cancelAddManager,
+.infoManagerItem .deleteManager {
+    cursor: pointer;
+}
+
+.tui-full-calendar-weekday-schedule {
+    overflow-y: hidden;
+}
+
+
 
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
     border-width: .05rem;
     border-radius: 0;
 }
 
-#mainRow {
-    margin-top: 4.05rem;
-}
 
 #mainRow .tui-full-calendar-time-date:last-child {
     border-right: none !important;
@@ -95,7 +231,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
         display: inline;
     }
 }
-
+/*
 #mainCalendar .tui-full-calendar-dayname-layout,
 #mainCalendar .tui-full-calendar-month div[data-panel-index='0'] {
     position: fixed;
@@ -104,22 +240,19 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     z-index: 1;
     background-color: white;
     right: 0;
-}
+}*/
 
 #mainRow #mainContents {
     margin-bottom: 5.8rem;
 }
-
+/*
 @media (min-width: 992px) {
-    #mainRow #mainContents {
-        margin-left: 230px;
-    }
     #mainCalendar .tui-full-calendar-dayname-layout,
     #mainCalendar .tui-full-calendar-month div[data-panel-index='0'],
     #mainCalendarTools {
         width: calc(100% - 230px);
     }
-}
+}*/
 
 .tui-full-calendar-week-container .tui-full-calendar-vlayout-area {
     margin-top: 5.8rem;
@@ -286,97 +419,6 @@ button.moveDate:focus {
     background-color: #009688;
     border-color: #009688;
 }
-
-
-/* side bar */
-
-#sidebarContainer {
-    max-width: 230px;
-    position: fixed;
-    top: 4.05rem;
-    left: 0;
-    height: calc(100% - 4.05rem);
-    border-right: 15px solid #f8f9fa;
-}
-
-#sidebarContainer ul li {
-    list-style: none;
-}
-
-#lnbManagerList div:first-child {
-    margin-top: .7rem;
-}
-
-#lnbManagerList .lnbManagerItem,
-#lnbManagerList+.lnbManagerItem {
-    line-height: .8rem;
-    margin-left: .25rem;
-}
-
-#lnbManagerList .lnbManagerItem {
-    height: 1.5rem;
-    line-height: 1.5rem;
-}
-
-#lnbManagerList .lnbManagerItem:last-child {
-    margin-bottom: .5rem;
-}
-
-#lnbManagerList .lnbManagerItem label {
-    margin-bottom: 0;
-}
-
-#lnbManagerList .addManagerItem input[type="text"] {
-    padding-left: 0;
-    padding-right: 0;
-    height: 1.4rem;
-}
-
-#lnbManagerList .addManagerItem .addManagerColor {
-    cursor: default;
-}
-
-
-/*#lnbLastMenu{
-    position:absolute;
-    bottom:0;
-    width:100%;
-}*/
-
-#lnbLastMenu a {
-    cursor: default;
-    border-bottom: 0;
-}
-
-#lnbLastMenu a div {
-    cursor: pointer;
-}
-
-.addManagerItem label {
-    width: calc(100% - 35px);
-}
-
-.addManagerItem input[type='text'] {
-    width: calc(100% - 23px);
-    font-size: .8rem;
-    display: inline-block;
-}
-
-.addManagerItem input[type='text']:focus {
-    border-color: #ced4da;
-    box-shadow: none;
-}
-
-.addManagerItem .submitAddManager,
-.addManagerItem .cancelAddManager,
-.infoManagerItem .deleteManager {
-    cursor: pointer;
-}
-
-.tui-full-calendar-weekday-schedule {
-    overflow-y: hidden;
-}
-
 
 /* creation popup */
 
