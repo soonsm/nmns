@@ -27,22 +27,6 @@ section {
   }
 }
 
-// Scroll to Top Button
-.floatingButton {
-  z-index: 1042;
-  right: 1rem;
-  bottom: 1rem;
-  font-size: 1.3rem;
-}
-
-.bg-primary {
-  background-color: $primary !important;
-}
-
-.bg-secondary {
-  background-color: $secondary !important;
-}
-
 .text-primary {
   color: $textPrimary !important;
 }

@@ -3,6 +3,7 @@
 html {
     min-height: 100%;
     position: relative;
+    background-color:#f1f2f3;
 }
 
 #mainNav {
@@ -1547,14 +1548,12 @@ button.customerSortType.active {
 
 #customerModal #customerName {
     font-size: 2rem;
-    font-family: Montserrat, 'Nanum Gothic';
     font-weight: bold;
     height: 3rem;
 }
 
 #customerModal #customerContact {
     font-size: 1.5rem;
-    font-family: Montserrat, 'Nanum Gothic';
 }
 
 #customerModal #customerEtc {

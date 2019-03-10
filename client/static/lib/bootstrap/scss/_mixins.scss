@@ -1,10 +1,10 @@
 @mixin body-font() {
-  font-family: 'Lato', "Nanum Gothic";
+  font-family: 'Spoqa Han Sans', 'Nanum Gothic', sans-serif;
   font-display: auto;
   color: $textPrimary;
 }
 @mixin heading-font() {
   font-weight: 700;
   font-display: swap;
-  font-family: 'Montserrat', 'Nanum Gothic';
+  font-family: 'Spoqa Han Sans', 'Nanum Gothic', sans-serif;
 }
