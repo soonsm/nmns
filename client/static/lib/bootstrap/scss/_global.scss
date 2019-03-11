@@ -1,6 +1,8 @@
 // Typography
 body {
   @include body-font;
+  height:100%;
+  background-color:#f1f2f3;
 }
 
 h1,

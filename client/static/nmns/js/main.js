@@ -259,6 +259,7 @@
             delete NMNS.needInit;
             setSchedules();
         }
+        refreshScheduleVisibility();
     }));
 
     //business specific functions about calendar start
@@ -398,10 +399,10 @@
 
     function onChangeManagers(e) {
         var checked = e.target.checked;
+/*
         var viewAll = document.querySelector('.lnbManagerItem input');
         var managerElements = Array.prototype.slice.call(document.querySelectorAll('#lnbManagerList input'));
         var allCheckedCalendars = true;
-
         if ($(e.target).is("#managerCheckAll")) {
             allCheckedCalendars = checked;
 
@@ -415,23 +416,13 @@
                 manager.checked = checked;
             });
         } else {
-            var manager = $(e.target).parents(".lnbManagerItem");
-            if (manager.is(".addManagerItem")) {
-                return;
-            }
-            var managerId = manager.data("value");
-            if (managerId) {
-                findManager(managerId).checked = checked;
-                allCheckedCalendars = managerElements.every(function(input) {
-                    return input.checked;
-                });
-
-                if (allCheckedCalendars) {
-                    viewAll.checked = true;
-                } else {
-                    viewAll.checked = false;
-                }
-            }
+*/        var manager = $(e.target).parents(".lnbManagerItem");
+        if (manager.is(".addManagerItem")) {
+            return;
+        }
+        var managerId = manager.data("value");
+        if (managerId) {
+            findManager(managerId).checked = checked;
         }
 
         refreshScheduleVisibility();
@@ -448,7 +439,8 @@
 
         managerElements.forEach(function(input) {
             var span = input.nextElementSibling;
-            span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
+            span.style.backgroundColor = input.checked ? span.getAttribute('data-color') : 'transparent';
+            span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
     }
 
@@ -528,7 +520,7 @@
         var html = "";
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span style='background-color:" + item.bgColor + "; border-color:" + item.borderColor + "' title='이 담당자의 예약 가리기/보이기'></span><small>" + item.name + "</small></label></div>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.bgColor + "'></span><span class='menu-collapsed'>" + item.name + "</span></label></div>";
         });
         return html;
     }
@@ -1561,7 +1553,7 @@
         var id = name.data("id");
         var color = lnbManagerItem.find(".addManagerColor").data("color");
         lnbManagerItem.removeClass("addManagerItem");
-        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "'></span><small>" + name.val() + "</small></label>");
+        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "' title='이 담당자의 예약 가리기/보이기' data-color='"+name.data('color')+"'></span><span class='menu-collapsed'>" + name.val() + "</span></label>");
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,

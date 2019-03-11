@@ -4,7 +4,8 @@
 }
 /*main contents*/
 html {
-    min-height: 100%;
+    min-height: 100vh;
+    height:100%;
     position: relative;
     background-color:#f1f2f3;
 }
@@ -14,7 +15,6 @@ html {
 }
 .topNav{
     height:78px;
-    border-bottom:0.5px solid rgba(255,255,255,0.5);
     position:absolute;
     top:0;
     left:0;
@@ -54,49 +54,56 @@ html {
         width:0;
     }
 }
-
+#mainAside .topNav{
+    border-bottom:0.5px solid rgba(255,255,255,0.5);
+}
+#mainRow .topNav{
+    border-bottom:0.5px solid rgba(57,53,53,0.35);
+}
 /* side bar */
 #sidebarContainer{
     margin-top:79px;
     padding-left:30px;
     padding-right:30px;
+    padding-top:50px;
+    font-size:15px;
 }
 #sidebarContainer .list-group-item span{
     color:#fff;
 }
+#sidebarContainer .far, #sidebarContainer .fas{
+    margin-right:15px;
+}
+#sidebarContainer input[type=checkbox].tui-full-calendar-checkbox-round+span{
+    margin-left:2px;
+    margin-right:17px;
+}
 #sidebarContainer .list-group-item{
     background-color:transparent;
+    padding:0 0 35px 0;
 }
-#sidebarContainer .list-group-item-action{
+#sidebarContainer .sidebar-item{
     opacity:.35;
 }
-#sidebarContainer .list-group-item-action.list-group-item-active{
+#sidebarContainer .sidebar-item.list-group-item-active{
     opacity:1;
 }
 
 #sidebarContainer ul li {
     list-style: none;
 }
+#managerElements{
+    margin-top:15px;
+}
 #lnbManagerList small, #lnbManagerList label{
     color:#fff;
 }
-#lnbManagerList div:first-child {
-    margin-top: .7rem;
+#lnbManagerList .lnbManagerItem{
+    margin-top: 35px;
 }
 
-#lnbManagerList .lnbManagerItem,
-#lnbManagerList+.lnbManagerItem {
-    line-height: .8rem;
-    margin-left: .25rem;
-}
-
-#lnbManagerList .lnbManagerItem {
-    height: 1.5rem;
-    line-height: 1.5rem;
-}
-
-#lnbManagerList .lnbManagerItem:last-child {
-    margin-bottom: .5rem;
+#lnbManagerList .lnbManagerItem .menu-collapsed{
+    vertical-align: middle;
 }
 
 #lnbManagerList .lnbManagerItem label {
@@ -191,9 +198,6 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarTools {
     min-height: 50px;
     line-height: 50px;
-    position: fixed;
-    top: 4.05rem;
-    z-index: 2;
     width: 100%;
 }
 
@@ -243,7 +247,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }*/
 
 #mainRow #mainContents {
-    margin-bottom: 5.8rem;
+    margin-top:79px;
 }
 /*
 @media (min-width: 992px) {
@@ -253,11 +257,6 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
         width: calc(100% - 230px);
     }
 }*/
-
-.tui-full-calendar-week-container .tui-full-calendar-vlayout-area {
-    margin-top: 5.8rem;
-}
-
 #mainCalendar .tui-full-calendar-month div[data-panel-index='1'] {
     margin-top: 5.2rem;
 }

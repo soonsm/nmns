@@ -41,18 +41,18 @@
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="preload" as="font" crossorigin onload="this.rel='stylesheet'">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="prefetch">
 
   <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="prefetch">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
   <!--fonts-->
   <style>
-    @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}*{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat'}
+    @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}html{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat'}
   </style>
 </head>
 
 <body>
-  <div class="row">
+  <div class="row mx-0 h-100">
     <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white">
       <div class="topNav" style="padding:30px">
         <a class="montserrat" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:100%;vertical-align:initial"/></a>
@@ -93,54 +93,57 @@
             </a>
           </li>-->
           <li>
-            <a href="#" class="list-group-item list-group-item-action list-group-item-active rounded-0 border-0" aria-label="예약/일정 관리">
+            <a href="#" class="list-group-item list-group-item-action list-group-item-active sidebar-item rounded-0 border-0" aria-label="예약/일정 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="far fa-calendar-alt fa-fw mr-2"></span>
+                <span class="far fa-calendar-check fa-fw"></span>
                 <span class="menu-collapsed">예약/일정 관리</span>
               </div>
             </a>
           </li>
           <li>
-            <a href="#" class="list-group-item list-group-item-action rounded-0 border-0" aria-label="고객 관리">
+            <a href="#" class="list-group-item list-group-item-action sidebar-item rounded-0 border-0" aria-label="고객 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-user-cog fa-fw mr-2"></span>
+                <span class="fas fa-user fa-fw"></span>
                 <span class="menu-collapsed">고객 관리</span>
               </div>
             </a>
           </li>
           <li>
-            <a href="#" class="list-group-item list-group-item-action rounded-0 border-0" aria-label="매출 관리">
+            <a href="#" class="list-group-item list-group-item-action sidebar-item rounded-0 border-0" aria-label="매출 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-calculator fa-fw mr-2"></span>
+                <span class="fas fa-calculator fa-fw"></span>
                 <span class="menu-collapsed">매출 관리</span>
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
             </a>
           </li>
           <li>
-            <a href="#" class="list-group-item list-group-item-action rounded-0 border-0" aria-label="메뉴 관리">
+            <a href="#" class="list-group-item list-group-item-action sidebar-item rounded-0 border-0" aria-label="메뉴 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-clipboard fa-fw mr-2"></span>
+                <span class="far fa-clipboard fa-fw"></span>
                 <span class="menu-collapsed">메뉴 관리</span>
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
             </a>
           </li>
           <li>
-            <a href="#" class="list-group-item list-group-item-action rounded-0 border-0" aria-label="고객센터">
+            <a href="#" class="list-group-item list-group-item-action sidebar-item rounded-0 border-0" aria-label="고객센터">
               <div class="d-flex w-100 align-items-center">
-                <span class="far fa-question-circle fa-fw mr-2"></span>
+                <span class="far fa-question-circle fa-fw"></span>
                 <span class="menu-collapsed">고객센터</span>
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
             </a>
           </li>
-          <li id="managerElements" class="list-group-item rounded-0 border-0 pb-1">
-            <div class="lnbManagerItem btn pl-2 pt-0 addManager">
-              <small class="text-white align-top">
-                <i class="fas fa-plus text-white"></i> 담당자 추가하기
-              </small>
-            </div>
+          <li id="managerElements">
+            <a href="#" class="list-group-item list-group-item-action rounded-0 border-0 pb-1" aria-label="담당자 추가하기">
+              <div class="lnbManagerItem addManager">
+                <div class="d-flex w-100 align-items-center">
+                  <span class="fas fa-plus fa-fw"></span>
+                  <span class="menu-collapsed">담당자 추가</span>
+                </div>
+              </div>
+            </a>
             <div id="lnbManagerList" class="lnb-calendars-d1">
             </div>
           </li>
@@ -153,10 +156,10 @@
     <div id="mainRow" class="row col px-0 mx-auto position-relative sidebar-handler col">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
-        <button id="announcementMenu" class="btn bg-transparent btn-flat text-white d-md-block d-none ml-auto" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="fa fa-bullhorn" aria-label="공지사항"></i><span class="badge badge-pill badge-danger announcementCount"></span></button>
-        <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat text-white" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
+        <button id="announcementMenu" class="btn bg-transparent btn-flat d-md-block d-none ml-auto" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="far fa-bell" aria-label="공지사항"></i><span class="badge badge-pill badge-danger announcementCount"></span></button>
+        <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
           <i class="fa fa-bars d-block d-sm-none" aria-label="메뉴"></i>
-          <span class="d-none d-sm-block font-weight-bold"><if(input.user.shopName)><span id="mainShopName">${input.user.shopName}</span><small class="d-none d-md-inline-block">(${input.user.email})</small></if><else>${input.user.email}</else></span>
+          <span class="d-none d-sm-block font-weight-bold"><if(input.user.shopName)><span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]>${input.user.shopName}</span></if><else>${input.user.email}</else></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav text-white mr-auto godo w700">
