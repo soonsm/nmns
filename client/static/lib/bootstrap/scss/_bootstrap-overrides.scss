@@ -10,6 +10,8 @@ a {
 
 .btn {
   border-width: 1px;
+  font-size:13px;
+  padding:12px 20px;
 }
 
 .bg-primary {
@@ -51,6 +53,8 @@ a.text-primary {
     background-color: $darkPrimary;
     border-color: $darkPrimary;
   }
+  box-shadow: 0 5px 6px 0 rgba(51, 65, 80, 0.25);
+  color: #fff;
 }
 
 .btn-secondary {
@@ -62,6 +66,23 @@ a.text-primary {
     background-color: $darkPrimary;
     border-color: $darkPrimary;
   }
+}
+
+.btn-accent {
+  background-color: $accent;
+  border-color: $accent;
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: $darkPrimary;
+    border-color: $darkPrimary;
+  }
+  box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);
+  color: #fff;
+}
+
+.text-accent{
+  color:$accent;
 }
 
 .border-bottom {

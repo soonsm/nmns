@@ -8,6 +8,7 @@ html {
     height:100%;
     position: relative;
     background-color:#f1f2f3;
+    font-size:15px;
 }
 
 #mainNav {
@@ -66,7 +67,6 @@ html {
     padding-left:30px;
     padding-right:30px;
     padding-top:50px;
-    font-size:15px;
 }
 #sidebarContainer .list-group-item span{
     color:#fff;
@@ -99,7 +99,7 @@ html {
     color:#fff;
 }
 #lnbManagerList .lnbManagerItem{
-    margin-top: 35px;
+    margin-top: 30px;
 }
 
 #lnbManagerList .lnbManagerItem .menu-collapsed{
@@ -154,7 +154,37 @@ html {
     overflow-y: hidden;
 }
 
+#mainNav{
+    padding-left:30px;
+    padding-right:30px;
+}
 
+#mainRow #mainNav #searchNoShow{
+    min-width:260px;
+    margin-left:15px;
+    background-color:transparent;
+}
+#mainRow #mainNav #searchNoShow::placeholder, #mainRow #mainNav #searchNoShow::-webkit-input-placeholder, #mainRow #mainNav #searchNoShow:-ms-input-placeholder{
+    color:#393535;
+    opacity:0.5;
+}
+.divider{
+    border-left:1px solid #393535;
+    margin-left:30px;
+    margin-right:30px;
+    line-height:16px;
+    opacity:0.5;
+}
+
+#mainRow #mainNav #mainMenu{
+    font-size:13px;
+}
+
+#mainRow #mainNav #mainMenu #mainShopIcon{
+    width:32px;
+    height:32px;
+    margin-right:10px;
+}
 
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
     border-width: .05rem;
@@ -187,7 +217,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }
 
 #renderRange {
-    font-size: 1.5rem;
+    font-size: 28px;
+    font-weight:bold;
 }
 
 .calendarTypeGroup {
@@ -199,6 +230,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     min-height: 50px;
     line-height: 50px;
     width: 100%;
+    margin-bottom:12px;
 }
 
 #mainCalendarTools .dropdown-menu {
@@ -213,28 +245,16 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: auto;
 }
 
-#mainCalendarTools #calendarTypeMenu .calendarTypeText {
-    display: none;
-}
-
 #mainCalendarTools #calendarTypeMenu.dropdown-toggle:after {
     margin-left: 0;
 }
 
 @media (min-width: 360px) {
-    #mainCalendarTools #calendarTypeMenu i.calendarTypeText {
-        display: inline-block;
-    }
     #mainCalendarTools #calendarTypeMenu.dropdown-toggle:after {
         margin-left: .255rem;
     }
 }
 
-@media(min-width:430px) {
-    #mainCalendarTools #calendarTypeMenu span.calendarTypeText {
-        display: inline;
-    }
-}
 /*
 #mainCalendar .tui-full-calendar-dayname-layout,
 #mainCalendar .tui-full-calendar-month div[data-panel-index='0'] {
@@ -295,10 +315,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 
 .tui-full-calendar-dayname-layout .tui-full-calendar-past,
 .tui-full-calendar-timegrid-timezone .tui-full-calendar-past,
-.tui-full-calendar-month .tui-full-calendar-past:not(.tui-full-calendar-extra-date) span,
-.tui-full-calendar-time-date-schedule-block.tui-full-calendar-past,
-.tui-full-calendar-daygrid-layout .tui-full-calendar-weekday-schedule-block.tui-full-calendar-past {
-    opacity: .8;
+.tui-full-calendar-month .tui-full-calendar-past:not(.tui-full-calendar-extra-date) span {
+    opacity: .5;
 }
 
 .tui-full-calendar-layout .tui-full-calendar-week-week .tui-full-calendar-dayname-name.weekViewDayName {
@@ -340,13 +358,18 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 
 button.calendarType {
     border: 0;
+    opacity:0.5;
+    text-align:right;
+    padding:0 0 0 23px;
 }
 
 button.calendarType:active,
 button.calendarType:hover,
 button.calendarType:focus,
 button.calendarType.active {
-    background-color: #b2dfdb !important;
+    opacity:1;
+    background-color:#fff !important;
+    text-decoration:underline;
 }
 
 button.moveDate {
@@ -1811,6 +1834,10 @@ button.customerSortType.active {
 }
 
 /* announcement */
-.announcementCount{
+.btn .announcementCount, .announcementCount{
     vertical-align: super;
+    right:-8px;
+    top:8px;
+    border:2px solid #f1f2f3;
+    border-radius:1em
 }

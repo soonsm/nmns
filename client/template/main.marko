@@ -32,8 +32,8 @@
   
   <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
-  <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch">
-  <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="prefetch">
+  <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch" onload="this.rel='stylesheet'">
+  <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="prefetch" onload="this.rel='stylesheet'">
   <!--[if IE 9]>
   <link href="/lib/datetimepicker/ie.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
@@ -41,9 +41,9 @@
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="prefetch">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="prefetch" onload="this.rel='stylesheet'">
 
-  <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="prefetch">
+  <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="prefetch" onload="this.rel='stylesheet'">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
   <!--fonts-->
   <style>
@@ -156,10 +156,19 @@
     <div id="mainRow" class="row col px-0 mx-auto position-relative sidebar-handler col">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
-        <button id="announcementMenu" class="btn bg-transparent btn-flat d-md-block d-none ml-auto" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="far fa-bell" aria-label="공지사항"></i><span class="badge badge-pill badge-danger announcementCount"></span></button>
-        <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
-          <i class="fa fa-bars d-block d-sm-none" aria-label="메뉴"></i>
-          <span class="d-none d-sm-block font-weight-bold"><if(input.user.shopName)><span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]>${input.user.shopName}</span></if><else>${input.user.email}</else></span>
+        <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
+        <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." id="searchNoShow">
+        <button class="btn btn-primary ml-auto" type="button" title="노쇼 추가"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
+        <span class="divider">&nbsp;</span>
+        <button id="announcementMenu" class="btn btn-flat d-md-block d-none px-0 position-relative" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="far fa-bell" aria-label="공지사항" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
+        <span class="divider">&nbsp;</span>
+        <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
+          <div>
+            <span>
+              <img id="mainShopIcon" src="/nmns/img/person_01.svg" class="rounded-circle">
+            </span>
+            <if(input.user.shopName)><span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]>${input.user.shopName}</span></if><else>${input.user.email}</else>
+          </div>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav text-white mr-auto godo w700">
@@ -188,7 +197,7 @@
               <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
             </li>
             <li class="nav-item mx-0 d-md-none" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#announcementModal" aria-label="공지사항"><i class="fas fa-bell fa-fw align-middle"></i> 공지사항<span class="badge badge-pill badge-danger announcementCount"></span></a>
+              <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#announcementModal" aria-label="공지사항"><i class="fas fa-bell fa-fw align-middle"></i> 공지사항<span class="badge badge-danger announcementCount"></span></a>
             </li>
             <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
               <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout" aria-label="로그아웃"><i class="fas fa-sign-out-alt fa-fw align-middle"></i> 로그아웃</a>
@@ -197,26 +206,37 @@
         </div>
       </nav>
       
-      <div id="mainContents" class="col px-0">
-        <div id="mainCalendarTools" class="text-center align-middle bg-light calendarMenu">
-          <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전"><i class="fas fa-chevron-left"></i></button>
-          <span id="renderRange" class="align-middle"></span>
-          <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button" aria-label="다음"><i class="fas fa-chevron-right"></i></button>
-          <div class="btn-group btn-group-sm position-absolute py-2 d-none d-md-inline-flex calendarTypeGroup" role="group" aria-label="캘린더 종류">
-            <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></button>
-            <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-weekly" aria-label="1주"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></button>
-            <button type="button" class="btn btn-light btn-flat calendarType" data-action="toggle-monthly" aria-label="1달"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></button>
+      <div id="mainContents" class="col" style="padding:42px 30px 30px 30px">
+        <div class="calendarMenu">
+          <div id="mainCalendarTitle" class="d-flex" style="margin-bottom:30px;align-items:center;">
+            <span class="h4 mb-0 font-weight-bold">예약 관리</span>
+            <span class="divider" style="display:inline-table">&nbsp;</span>
+            <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
+            <span class="h5 mb-0 text-accent font-weight-bold" id="todayTask">0</span>
+            <button class="btn btn-accent ml-auto" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
           </div>
-          <div class="btn-group btn-group-sm d-inline-flex d-md-none position-absolute py-2 calendarTypeGroup" role="group">
-            <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="다른 단위로 보기"></button>
-            <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
-              <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily" aria-label="1일"><i class="fas fa-bars calendarTypeText"></i><span class="calendarTypeText"> 1일</span></a>
-              <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly" aria-label="1주"><i class="fas fa-bars fa-rotate-90 calendarTypeText"></i><span class="calendarTypeText"> 1주</span></a>
-              <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly" aria-label="1달"><i class="fas fa-th calendarTypeText"></i><span class="calendarTypeText"> 1달</span></a>
+          <div class="bg-white" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:30px 34px 30px 26px">
+            <div id="mainCalendarTools" class="text-center align-middle d-flex">
+              <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전"><i class="fas fa-chevron-left"></i></button>
+              <span id="renderRange" class="align-middle montserrat"></span>
+              <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button" aria-label="다음"><i class="fas fa-chevron-right"></i></button>
+              <div class="d-none d-md-inline-flex calendarTypeGroup ml-auto" role="group" aria-label="캘린더 종류">
+                <button type="button" class="btn btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></button>
+                <button type="button" class="btn btn-flat calendarType" data-action="toggle-weekly" aria-label="1주"><span class="calendarTypeText">1주</span></button>
+                <button type="button" class="btn btn-flat calendarType" data-action="toggle-monthly" aria-label="1달"><span class="calendarTypeText">1달</span></button>
+              </div>
+              <div class="d-inline-flex d-md-none ml-auto calendarTypeGroup" role="group">
+                <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="다른 단위로 보기"></button>
+                <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
+                  <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></a>
+                  <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly" aria-label="1주"><span class="calendarTypeText">1주</span></a>
+                  <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly" aria-label="1달"><span class="calendarTypeText">1달</span></a>
+                </div>
+              </div>
             </div>
+            <div id="mainCalendar"></div>
           </div>
         </div>
-        <div id="mainCalendar" class="calendarMenu"></div>
         <div id="mainCustomerTools" class="customerMenu col-12 text-center">
           <h4 class="text-left mt-4 mb-3 ml-3">고객관리</h4>
           <p class="col-12 col-sm-10 text-right text-muted mx-auto mb-0 px-0">총 <b id="customerCount">0</b>명의 고객이 등록되어 있습니다.</p>

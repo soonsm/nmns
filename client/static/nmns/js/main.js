@@ -1,4 +1,4 @@
-/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification */
+/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification, getBackgroundColor */
 (function($) {
     if ( /*@cc_on!@*/ false || !!document.documentMode) {
         var word;
@@ -28,9 +28,9 @@
 
     //calendars init
     NMNS.calendar = new tui.Calendar("#mainCalendar", {
-        taskView: ["task"],
+        taskView: [],
         defaultView: $(window).width() > 550 ? "week" : "day",
-        scheduleView: true,
+        scheduleView: ['time'],
         useCreationPopup: true,
         useDetailPopup: true,
         disableDblClick: true,
@@ -127,20 +127,21 @@
             hourEnd: NMNS.info ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            'week.currentTime.color': '#009688',
-            'week.currentTimeLinePast.border': '1px dashed #009688',
-            'week.currentTimeLineBullet.backgroundColor': '#009688',
-            'week.currentTimeLineToday.border': '1px solid #009688',
-            "common.border": ".07rem solid #e5e5e5",
-            "common.saturday.color": "#304ffe",
-            'common.dayname.color': '#212121',
+            'week.currentTime.color': '#fd5b77',
+            'week.currentTimeLinePast.border': '1px solid #fd5b77',
+            'week.currentTimeLineBullet.backgroundColor': 'transparent',
+            'week.currentTimeLineToday.border': '1px solid #fd5b77',
+            'week.currentTimeLineFuture.border': '1px solid #fd5b77',
+            "common.border": ".07rem solid #707070",
+            "common.saturday.color": "#393535",
+            'common.dayname.color': '#393535',
             "week.timegridOneHour.height": "68px",
             "week.timegridHalfHour.height": "34px",
             "week.vpanelSplitter.height": "5px",
-            "week.pastDay.color": "#212121",
-            "week.futureDay.color": "#212121",
-            "week.pastTime.color": "#212121",
-            "week.futureTime.color": "#212121",
+            "week.pastDay.color": "#393535",
+            "week.futureDay.color": "#393535",
+            "week.pastTime.color": "#393535",
+            "week.futureTime.color": "#393535",
             'month.schedule.marginLeft': '0px',
             'month.schedule.marginRight': '1px',
             'month.schedule.height': '20px',
@@ -148,7 +149,14 @@
             'common.creationGuide.border': '1px solid #448aff',
             'week.creationGuide.color': '#448aff',
             'week.timegrid.paddingRight': '1px',
-            'week.dayGridSchedule.marginRight': '1px'
+            'week.dayGridSchedule.marginRight': '1px',
+            'week.dayname.borderTop':'none',
+            'week.dayname.borderBottom':'none',
+            'week.dayname.borderLeft':'none',
+            'week.dayname.textAlign': 'center',
+            'week.dayname.height': '51px',
+            'week.dayGridSchedule.borderLeft': '2px solid',
+            'week.timegridLeft.borderRight': 'none',
         }
     });
 
@@ -248,9 +256,9 @@
     NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {
         e.data.forEach(function(item) {
             item.checked = true;
-            item.bgColor = item.color;
+            item.bgColor = getBackgroundColor(item.color);
             item.borderColor = item.color;
-            item.color = getColorFromBackgroundColor(item.bgColor);
+            item.color = item.color;
         });
 
         $("#lnbManagerList").html(generateLnbManagerList(e.data));
@@ -271,12 +279,12 @@
             if (schedule.category === 'task') {
                 html += "<span title='일정이름:" + schedule.title + "'><span class='calendar-font-icon'># </span>";
             } else if (!isAllDay) {
-                html += "<strong class='calendar-font-icon'>" + moment(schedule.start.toDate()).format("HH:mm") + "</strong> ";
+                html += "<span class='calendar-font-icon montserrat'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</span> ";
             } else {
                 html += "<span class='calendar-font-icon far fa-clock'></span> ";
             }
 
-            html += schedule.title + "</span><br/>";
+            html += "<br/>" + schedule.title + "</span>";
         }
         switch (schedule.raw.status) {
             case "CANCELED":
@@ -529,7 +537,6 @@
         if ($("#mainShopName").length) {
             if (shopName !== "") {
                 $("#mainShopName").text(shopName);
-                git
             } else {
                 $("#navbarResponsive").prev().children("span").html(NMNS.email);
             }
@@ -857,8 +864,8 @@
                     if (input.data("color") !== manager.bgColor || input.val() !== manager.name) { //수정
                         diff = true;
                         var color = input.data("color");
-                        NMNS.calendar.setCalendar(manager.id, { color: getColorFromBackgroundColor(color), bgColor: color, borderColor: color, name: input.val() }, true);
-                        NMNS.calendar.setCalendarColor(manager.id, { color: getColorFromBackgroundColor(color), bgColor: color, borderColor: color }, true);
+                        NMNS.calendar.setCalendar(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color, name: input.val() }, true);
+                        NMNS.calendar.setCalendarColor(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color }, true);
                         NMNS.history.push({ id: manager.id, color: manager.bgColor, name: manager.name });
                         NMNS.socket.emit("update manager", { id: manager.id, color: color, name: input.val() });
                     }
@@ -1316,8 +1323,8 @@
                             isAllDay: false,
                             category: "task",
                             dueDateClass: "",
-                            color: getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
-                            bgColor: $("#taskManager").data("bgcolor"),
+                            color: $("#taskManager").data("bgcolor"),
+                            bgColor: getBackgroundColor($("#taskManager").data("bgcolor")),
                             borderColor: $("#taskManager").data("bgcolor"),
                             raw: {
                                 contents: $("#taskContents").val(),
@@ -1355,8 +1362,8 @@
                         isAllDay: false,
                         category: "task",
                         dueDateClass: "",
-                        color: getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
-                        bgColor: $("#taskManager").data("bgcolor"),
+                        color: $("#taskManager").data("bgcolor"),
+                        bgColor: getBackgroundColor($("#taskManager").data("bgcolor")),
                         borderColor: $("#taskManager").data("bgcolor"),
                         raw: {
                             contents: $("#taskContents").val(),
@@ -1482,10 +1489,10 @@
                 isPrivate: false,
                 customStyle: "",
                 location: "",
-                bgColor: manager.bgColor || "#b2dfdb",
-                borderColor: manager.borderColor || "#b2dfdb",
-                color: manager.color || getColorFromBackgroundColor("#b2dfdb"),
-                dragBgColor: manager.bgColor || "#b2dfdb",
+                bgColor: getBackgroundColor(manager.color || "#334150"),
+                borderColor: manager.borderColor || "#334150",
+                color: manager.color || "#334150",
+                dragBgColor: manager.bgColor || "#334150",
                 raw: {
                     contact: schedule.contact,
                     contents: schedule.contents,
@@ -1559,9 +1566,9 @@
             id: id,
             name: name.val(),
             checked: true,
-            bgColor: color,
+            bgColor: getBackgroundColor(color),
             borderColor: color,
-            color: getColorFromBackgroundColor(color)
+            color: color
         });
         NMNS.calendar.setCalendars(calendars);
         NMNS.socket.emit("add manager", { id: id, name: name.val(), color: color });
