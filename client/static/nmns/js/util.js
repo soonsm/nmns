@@ -123,8 +123,11 @@ function removeNonCharacter(string) {
     return string.replace(nonCharacter, '');
 }
 
-function dashContact(contact) {
-    return (contact ? (contact.length === 11 ? (contact.substring(0, 3) + "-" + contact.substring(3, 7) + "-" + contact.substring(7)) : (contact.length === 10 ? (contact.substring(0, 3) + "-" + contact.substring(3, 6) + "-" + contact.substring(6)) : contact)) : "");
+function dashContact(contact, delimiter) {
+    if(!delimiter){
+        delimiter = '-'
+    }
+    return (contact ? (contact.length === 11 ? (contact.substring(0, 3) + delimiter + contact.substring(3, 7) + delimiter + contact.substring(7)) : (contact.length === 10 ? (contact.substring(0, 3) + delimiter + contact.substring(3, 6) + delimiter + contact.substring(6)) : contact)) : "");
 }
 
 function findById(item, target) {
@@ -383,5 +386,7 @@ function debounce(func, wait, immediate) {
 }
 
 function getBackgroundColor(color){
-    return color + "80"
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+    var temp = [Math.floor((parseInt(result[1], 16) + 255)/2).toString(16), Math.floor((parseInt(result[2], 16) + 255)/2).toString(16), Math.floor((parseInt(result[3], 16) + 255)/2).toString(16)]
+    return result ? "#" + (temp[0].length === 1? '0' + temp[0] : temp[0] + '') + (temp[1].length === 1? '0' + temp[1] : temp[1] + '') + (temp[2].length === 1? '0' + temp[2] : temp[2] + '') : null;
 }

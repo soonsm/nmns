@@ -303,6 +303,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     height: auto !important;
 }
 
+.tui-full-calendar-week-day .tui-full-calendar-dayname-layout{
+    display:none;
+}
+
 .tui-full-calendar-weekday-grid-line:not(.tui-full-calendar-today) .tui-full-calendar-weekday-grid-date {
     width: auto;
     text-align: left;
@@ -313,7 +317,6 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     background-color: #009688;
 }
 
-.tui-full-calendar-dayname-layout .tui-full-calendar-past,
 .tui-full-calendar-timegrid-timezone .tui-full-calendar-past,
 .tui-full-calendar-month .tui-full-calendar-past:not(.tui-full-calendar-extra-date) span {
     opacity: .5;
@@ -348,12 +351,21 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }
 
 .tui-full-calendar-time-schedule {
-    white-space: nowrap;
-    line-height: 15px;
+    word-break:break-all;
+    line-height: 1.2;
+}
+
+.tui-full-calendar-time-schedule-title{
+    font-size:14px;
+    font-weight:bold;
 }
 
 .tui-full-calendar-time-schedule .badge {
     vertical-align: top;
+}
+
+.tui-full-calendar-time-schedule-contact{
+    font-size:10px;
 }
 
 button.calendarType {

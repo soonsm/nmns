@@ -1,4 +1,4 @@
-/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification, getBackgroundColor */
+/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification, getBackgroundColor */
 (function($) {
     if ( /*@cc_on!@*/ false || !!document.documentMode) {
         var word;
@@ -135,6 +135,7 @@
             "common.border": ".07rem solid #707070",
             "common.saturday.color": "#393535",
             'common.dayname.color': '#393535',
+            'common.holiday.color':'#393535',
             "week.timegridOneHour.height": "68px",
             "week.timegridHalfHour.height": "34px",
             "week.vpanelSplitter.height": "5px",
@@ -273,32 +274,44 @@
     //business specific functions about calendar start
     function getTimeSchedule(schedule, isAllDay) {
         var type = schedule.category === 'task' ? "일정" : "예약";
-        var html = "<div class='tui-full-calendar-schedule-cover'>";
-        if (schedule.title) {
-            html += "<span title='" + type + "이름:" + schedule.title + "'>";
-            if (schedule.category === 'task') {
-                html += "<span title='일정이름:" + schedule.title + "'><span class='calendar-font-icon'># </span>";
-            } else if (!isAllDay) {
-                html += "<span class='calendar-font-icon montserrat'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</span> ";
-            } else {
-                html += "<span class='calendar-font-icon far fa-clock'></span> ";
-            }
-
-            html += "<br/>" + schedule.title + "</span>";
+        var html = "";
+        if(NMNS.calendar.getViewName() === 'week'){
+          html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center'><div class='col-11 px-0'>"
+          if(!isAllDay){
+              html += "<div class='row' style='margin-bottom:10px'><div class='montserrat col' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
+          }
+          if (schedule.title) {
+              html += "<div class='row'><div class='col' title='" + type + "이름:" + schedule.title + "'>";
+              if (schedule.category === 'task') {
+                  html += "<span>#</span>";
+              } else if (isAllDay) {
+                  html += "<span class='far fa-clock'></span> ";
+              }
+              html += (schedule.title + "</div></div>");
+          }
+          html += "</div></div>"
+        }else if(NMNS.calendar.getViewName() === 'day'){
+          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
+          if(schedule.raw.contents){
+            html += ("<div title='"+type+"내용:'"+schedule.raw.contents+" class='tui-full-calendar-time-schedule-title'>" + schedule.raw.contents+"</div>");
+          }
+          switch (schedule.raw.status) {
+              case "CANCELED":
+                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
+                  break;
+              case "NOSHOW":
+                  html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
+                  break;
+              case "CUSTOMERCANCELED":
+                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
+                  break;
+          }
+          html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
+          
+        }else{
+          html += "</div>"
         }
-        switch (schedule.raw.status) {
-            case "CANCELED":
-                html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
-                break;
-            case "NOSHOW":
-                html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
-                break;
-            case "CUSTOMERCANCELED":
-                html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
-                break;
-        }
 
-        html += (schedule.raw.contents ? ((schedule.raw.status === "RESERVED" ? "<span title='" + type + "내용:" + schedule.raw.contents + "'><i class='fas fa-tasks calendar-font-icon'></i> " : " ") + schedule.raw.contents + "</span><br/>") : "") + (schedule.raw.contact ? "<span title='연락처:" + schedule.raw.contact + "'><i class='fas fa-phone fa-rotate-90 calendar-font-icon'></i> " + schedule.raw.contact + "</span>" : "") + "</div>";
         return html;
     }
 
@@ -450,6 +463,7 @@
             span.style.backgroundColor = input.checked ? span.getAttribute('data-color') : 'transparent';
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
+        
     }
 
     function setDropdownCalendarType() {
@@ -473,17 +487,18 @@
         var renderRange = document.getElementById('renderRange');
         var options = NMNS.calendar.getOptions();
         var viewName = NMNS.calendar.getViewName();
-        var html = [];
+        var html = "";
         if (viewName === 'day') {
-            html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM.DD'));
+            html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM. DD');
+            html += "<span class='ml-2 base-font' style='opacity:0.5;font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span>"
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
-            html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM'));
+            html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
         } else {
-            html.push(moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY.MM.DD'));
-            html.push(' – ');
-            html.push(moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM.DD'));
+            html += moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY. MM. DD');
+            html += ' – ';
+            html += moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM. DD');
         }
-        renderRange.innerHTML = html.join('');
+        renderRange.innerHTML = html;
     }
 
     function setSchedules() {
@@ -519,7 +534,7 @@
     function generateManagerList(managerList) {
         var html = "";
         managerList.forEach(function(item) {
-            html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:" + item.bgColor + "; border-color:" + item.bgColor + ";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='" + item.id + "' data-color='" + item.bgColor + "' placeholder='담당자 이름' value='" + item.name + "' data-name='" + item.name + "'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>";
+            html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:" + item.color + "; border-color:" + item.color + ";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='" + item.id + "' data-color='" + item.color + "' placeholder='담당자 이름' value='" + item.name + "' data-name='" + item.name + "'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>";
         });
         return html;
     }
@@ -528,7 +543,7 @@
         var html = "";
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.bgColor + "'></span><span class='menu-collapsed'>" + item.name + "</span></label></div>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label></div>";
         });
         return html;
     }
