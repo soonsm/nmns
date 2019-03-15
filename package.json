@@ -9,6 +9,7 @@
   "dependencies": {
     "aws-sdk": "^2.282.1",
     "body-parser": "^1.18.3",
+    "bootstrap": "^4.3.1",
     "compression": "^1.7.3",
     "connect-dynamodb-session": "^1.1.0",
     "connect-flash": "^0.1.1",
