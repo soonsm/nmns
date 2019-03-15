@@ -392,7 +392,7 @@ button.moveDate:focus {
     box-shadow: none;
 }
 
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat,
+/*.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat,
 .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat+span {
     color: #304ffe;
 }
@@ -403,7 +403,7 @@ button.moveDate:focus {
 .tui-full-calendar-month-more-title-day.tui-full-calendar-holiday+span {
     color: #ff4040;
 }
-
+*/
 .flatpickr-input {
     background-color: white;
 }

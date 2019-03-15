@@ -542,8 +542,8 @@
     function generateLnbManagerList(managerList) {
         var html = "";
         managerList.forEach(function(item) {
-            html += "<div class='lnbManagerItem' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label></div>";
+            html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label><button class='btn btn-sm btn-flat lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v'></i></button></div>";
         });
         return html;
     }
@@ -1575,7 +1575,7 @@
         var id = name.data("id");
         var color = lnbManagerItem.find(".addManagerColor").data("color");
         lnbManagerItem.removeClass("addManagerItem");
-        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "' title='이 담당자의 예약 가리기/보이기' data-color='"+name.data('color')+"'></span><span class='menu-collapsed'>" + name.val() + "</span></label>");
+        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "' title='이 담당자의 예약 가리기/보이기' data-color='"+name.data('color')+"'></span><span class='menu-collapsed'>" + name.val() + "</span></label><button class='btn btn-sm btn-flat lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v'></i></button>");
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2216,7 +2216,7 @@
         var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
         var list = $(this).prev();
         var clazz = list.attr("id") === "lnbManagerList" ? "lnbManagerItem" : "infoManagerItem";
-        var row = $("<div class='" + clazz + " addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
+        var row = $("<div class='" + clazz + " addManagerItem row mx-0'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
         list.append(row);
         if (clazz === "lnbManagerItem") {
             row.find(".submitAddManager").off("touch click").on("touch click", function() {
