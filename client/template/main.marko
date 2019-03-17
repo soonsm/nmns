@@ -53,13 +53,13 @@
 
 <body>
   <div class="row mx-0 h-100">
-    <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white">
+    <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white container px-0 d-flex">
       <div class="topNav" style="padding:30px">
         <a class="montserrat" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:100%;vertical-align:initial"/></a>
         <i id="sidebarToggler" class="fa fa-bars float-right cursor-pointer text-white" aria-label="메뉴"></i>
       </div>
-      <div id="sidebarContainer">
-        <ul class="list-group">
+      <div id="sidebarContainer" class="row mx-0 col-12">
+        <ul class="list-group w-100">
           <!--<li>
             <a href="#" class="addNoShowLink list-group-item list-group-item-action rounded-0 border-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가">
               <div class="d-flex w-100 align-items-center">
@@ -147,6 +147,7 @@
             <div id="lnbManagerList" class="lnb-calendars-d1">
             </div>
           </li>
+          <div class="mt-auto menu-collapsed" style="margin-bottom:30px;opacity:0.5;font-size:12px">Copyright &copy; washow.co.kr 2019</div>
         </ul>
       </div>
     </aside>
@@ -943,7 +944,7 @@
       email:"${input.user.email}",
       needInit : true,
       history : [],
-      colorTemplate : ["#b2dfdb", "#757575", "#009688", "#303f9f", "#cc333f", "#eb6841", "#edc951", "#e91e63", "#4caf50", "#ffc107", "#ffeb3b", "#795548", "#607d8b", "#9e9e9e", "#673ab7", "#ffba00", "#cddc39", "#228dff", "#ff5252", "#ff9800", "#000000"]
+      colorTemplate : ["#fd5b77", "#039fed", "#7c46e9", "#86cdbd", "#6a747d", "#f490b2", "#a51783", "#447270", "#bd902b", "#db531f", "#785f37", "#b26112", "#d0a348", "#e6bb86", "#73c267", "#028c99", "#f4866b", "#948b60", "#8d4640", "#6092c3"]
     };
     if(window.tui){
       window.tui.usageStatistics = false;

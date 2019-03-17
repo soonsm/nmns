@@ -32,7 +32,7 @@ html {
     transition:0.3s ease-in-out;
 }
 #mainAside.sidebar-toggled{
-    width:50px;
+    width:74px;
 }
 #mainRow {
     width:calc(100% - 270px);
