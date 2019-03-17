@@ -277,10 +277,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
         width: calc(100% - 230px);
     }
 }*/
-#mainCalendar .tui-full-calendar-month div[data-panel-index='1'] {
+/*#mainCalendar .tui-full-calendar-month div[data-panel-index='1'] {
     margin-top: 5.2rem;
 }
-
+*/
 .tui-full-calendar-timegrid-right+div+.ps__rail-y {
     opacity: 0;
 }
@@ -310,15 +310,14 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 .tui-full-calendar-weekday-grid-line:not(.tui-full-calendar-today) .tui-full-calendar-weekday-grid-date {
     width: auto;
     text-align: left;
-    padding-left: .25rem;
+    font-family:'montserrat';
 }
 
 .tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator {
     background-color: #009688;
 }
 
-.tui-full-calendar-timegrid-timezone .tui-full-calendar-past,
-.tui-full-calendar-month .tui-full-calendar-past:not(.tui-full-calendar-extra-date) span {
+.tui-full-calendar-timegrid-timezone .tui-full-calendar-past{
     opacity: .5;
 }
 

@@ -132,10 +132,10 @@
             'week.currentTimeLineBullet.backgroundColor': 'transparent',
             'week.currentTimeLineToday.border': '1px solid #fd5b77',
             'week.currentTimeLineFuture.border': '1px solid #fd5b77',
-            "common.border": ".07rem solid #707070",
-            "common.saturday.color": "#393535",
+            "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
+            "common.saturday.color": "#1736ff",
             'common.dayname.color': '#393535',
-            'common.holiday.color':'#393535',
+            'common.holiday.color':'#fd5b77',
             "week.timegridOneHour.height": "68px",
             "week.timegridHalfHour.height": "34px",
             "week.vpanelSplitter.height": "5px",
@@ -145,7 +145,15 @@
             "week.futureTime.color": "#393535",
             'month.schedule.marginLeft': '0px',
             'month.schedule.marginRight': '1px',
-            'month.schedule.height': '20px',
+            'month.schedule.height': '18px',
+            'month.dayname.height':'52px',
+            'month.dayname.borderLeft':'none',
+            'month.dayname.borderTop':'none',
+            'month.dayname.textAlign':'center',
+            'month.dayname.fontWeight': 'normal',
+            'month.holidayExceptThisMonth.color': 'rgba(57, 53, 53, 0.35)',
+            'month.dayExceptThisMonth.color': 'rgba(57, 53, 53, 0.35)',
+            'month.day.fontSize': '13px',
             'common.creationGuide.backgroundColor': 'rgba(68, 138, 255, 0.05)',
             'common.creationGuide.border': '1px solid #448aff',
             'week.creationGuide.color': '#448aff',
@@ -333,7 +341,7 @@
                 break;
             case 'toggle-monthly':
                 viewName = 'month';
-                $("#mainCalendar").css("height", "62rem");
+                $("#mainCalendar").css("height", "598px");
                 break;
             default:
                 break;
@@ -495,7 +503,7 @@
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
         } else {
             html += moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY. MM. DD');
-            html += ' – ';
+            html += ' - ';
             html += moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM. DD');
         }
         renderRange.innerHTML = html;
