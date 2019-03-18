@@ -307,14 +307,19 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     display:none;
 }
 
-.tui-full-calendar-weekday-grid-line:not(.tui-full-calendar-today) .tui-full-calendar-weekday-grid-date {
+.tui-full-calendar-weekday-grid-line .tui-full-calendar-weekday-grid-date {
     width: auto;
     text-align: left;
     font-family:'montserrat';
 }
 
-.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator {
-    background-color: #009688;
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-tomorrow{
+    border-left:1px solid #393535;
+}
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today{
+    border-left:1px solid #393535;
+    border-top:1px solid #393535;
+    border-bottom:1px solid #393535;
 }
 
 .tui-full-calendar-timegrid-timezone .tui-full-calendar-past{

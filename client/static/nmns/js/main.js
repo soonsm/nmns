@@ -95,10 +95,6 @@
                 var date = parseInt(model.date.split('-')[2], 10);
                 var classNames = ["tui-full-calendar-weekday-grid-date"];
 
-                if (model.isToday) {
-                    classNames.push('tui-full-calendar-weekday-grid-date-decorator');
-                }
-
                 var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.date }) : undefined;
                 if (holiday) {
                     classNames.push("tui-full-calendar-holiday");
@@ -106,7 +102,7 @@
                 return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
             },
             monthGridHeaderExceed: function(hiddenSchedules) {
-                return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="숨겨진 항목 더보기">+' + hiddenSchedules + '</span>';
+                return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <i class="fa fa-chevron-right"></i></span>';
             },
             monthMoreTitleDate: function(date, dayname) {
                 var dateFormat = date.split(".").join("-");
@@ -151,7 +147,8 @@
             'month.dayname.borderTop':'none',
             'month.dayname.textAlign':'center',
             'month.dayname.fontWeight': 'normal',
-            'month.holidayExceptThisMonth.color': 'rgba(57, 53, 53, 0.35)',
+            'month.holidayExceptThisMonth.color': 'rgba(253, 91, 119, 0.35)',
+            'month.saturdayExceptThisMonth.color': 'rgba(23, 54, 255, 0.35)',
             'month.dayExceptThisMonth.color': 'rgba(57, 53, 53, 0.35)',
             'month.day.fontSize': '13px',
             'common.creationGuide.backgroundColor': 'rgba(68, 138, 255, 0.05)',
@@ -283,6 +280,7 @@
     function getTimeSchedule(schedule, isAllDay) {
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
+        console.log("get time schedule : ", schedule);
         if(NMNS.calendar.getViewName() === 'week'){
           html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center'><div class='col-11 px-0'>"
           if(!isAllDay){
