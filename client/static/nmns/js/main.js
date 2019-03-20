@@ -14,7 +14,7 @@
         var reg = new RegExp(word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})");
 
         if (reg.exec(agent) !== null && parseFloat(RegExp.$1 + RegExp.$2) < 10) {
-            if (!confirm("오래된 IE" + parseFloat(RegExp.$1 + RegExp.$2) + " 브라우저를 사용하고 계십니다.\n 계속하시면 페이지가 정확히 표시되지 않을 수 있습니다. 그래도 계속하시겠습니까?\n *No More No Show는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")) {
+            if (!confirm("오래된 IE" + parseFloat(RegExp.$1 + RegExp.$2) + " 브라우저를 사용하고 계십니다.\n 계속하시면 페이지가 정확히 표시되지 않을 수 있습니다. 그래도 계속하시겠습니까?\n *WA:SHOW는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")) {
                 location.href = '/signout';
                 return;
             }
@@ -568,10 +568,10 @@
           html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
           day.task.forEach(function(task){
             var manager = findManager(task.manager) || {};
-            html += "<div class='row'><div class='col col-12 position-relative'><span class='far fa-square'></span><div class='flex-column d-inline-flex' style='margin-left:10px'><div>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
-            moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')+ ' - '
-            + moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
-            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top: 6px;right:15px;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div></div>"
+            html += "<div class='row'><div class='col col-12 position-relative cursor-pointer'><span class='far fa-square task-checkbox'></span><div class='flex-column d-inline-flex task' style='margin-left:10px;max-width:calc(100% - 35px)'><div class='ellipsis' style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+            moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
+            + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
+            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:6px;right:15px;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div></div>"
           })
         }
       })
