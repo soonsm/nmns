@@ -11,6 +11,32 @@ html {
     font-size:15px;
 }
 
+.hr-text {
+    line-height: 1em;
+    position: relative;
+    outline: 0;
+    border: 0;
+    height: 1.5em;
+}
+.hr-text:before {
+    content: '';
+    background-color:#393535;
+    opacity:0.35;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+}
+.hr-text:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    padding-right:.5em;
+    line-height: 1.5em;
+    background-color: #fff;
+}
+
 #mainNav {
     min-height: 4.05rem;
 }
@@ -184,6 +210,33 @@ html {
     width:32px;
     height:32px;
     margin-right:10px;
+}
+
+#mainRow #mainTask{
+    display:none;
+    position:relative;
+}
+
+#mainRow #mainTask.show{
+    display:initial;
+    max-width:237px;
+    margin-right:23px;
+}
+
+#mainRow #mainTask #mainTaskTip{
+    border-left: 12px solid transparent;
+    width: 0;
+    height: 0;
+    border-right: 12px solid transparent;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid #fff;
+    position: absolute;
+    top: -24px;
+    right: 32px;
+}
+
+#mainRow #mainTask #mainTaskContents{
+    margin-top:30px;
 }
 
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
