@@ -101,7 +101,10 @@
                 }
                 return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
             },
-            monthGridHeaderExceed: function(hiddenSchedules) {
+            monthGridHeaderExceed: function(){
+              return ''
+            },
+            monthGridFooterExceed: function(hiddenSchedules) {
                 return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <i class="fa fa-chevron-right"></i></span>';
             },
             monthMoreTitleDate: function(date, dayname) {
@@ -219,7 +222,7 @@
 
     NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e) {
         drawSchedule(e.data);
-        NMNS.holiday = e.holiday;
+        NMNS.holiday = NMNS.holiday.concat(e.holiday.filter(function(day){return !NMNS.holiday.some(function(holiday){return holiday.date === day.date})}));
         refreshScheduleVisibility();
     }));
 
@@ -500,8 +503,11 @@
         var viewName = NMNS.calendar.getViewName();
         var html = "";
         if (viewName === 'day') {
-            html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM. DD');
-            html += "<span class='ml-2 base-font' style='opacity:0.5;font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span>"
+          var today = moment(NMNS.calendar.getDate().getTime());
+            html += today.format('YYYY. MM. DD');
+            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
+            //return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? ("[" + holiday.title + "]") : "") + '</span>'
+            html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
         } else {
@@ -554,7 +560,7 @@
         var html = "";
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label><button class='btn btn-sm btn-flat lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v'></i></button></div>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label><button class='btn btn-sm btn-flat lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v menu-collapsed'></i></button></div>";
         });
         return html;
     }
@@ -1503,6 +1509,10 @@
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
         flatpickr.localize("ko");
         $(".taskMenu").on("touch click", onClickTask);
+        $('#sidebarToggler').on('touch click', function(){
+          $('#mainAside').toggleClass('sidebar-toggled')
+          $('#mainAside .menu-collapsed').toggle();
+        })
     }
 
     function getSchedule(start, end) {

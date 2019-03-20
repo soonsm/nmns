@@ -101,7 +101,6 @@ html {
     margin-right:15px;
 }
 #sidebarContainer input[type=checkbox].tui-full-calendar-checkbox-round+span{
-    margin-left:2px;
     margin-right:17px;
 }
 #sidebarContainer .list-group-item{
@@ -274,6 +273,16 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     font-weight:bold;
 }
 
+#renderRange .render-range-text-holiday{
+    font-size:11px;
+    color:#fd5b77;
+    line-height:3;
+    height:13px;
+}
+
+#renderRange .render-range-text-holiday + span{
+    color:#fd5b77;
+}
 .calendarTypeGroup {
     right: 0.5rem;
     height: 50px;

@@ -55,7 +55,7 @@
   <div class="row mx-0 h-100">
     <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white container px-0 d-flex">
       <div class="topNav" style="padding:30px">
-        <a class="montserrat" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:100%;vertical-align:initial"/></a>
+        <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:100%;vertical-align:initial"/></a>
         <i id="sidebarToggler" class="fa fa-bars float-right cursor-pointer text-white" aria-label="메뉴"></i>
       </div>
       <div id="sidebarContainer" class="row mx-0 col-12">
@@ -218,8 +218,8 @@
             </span>
             <button class="btn btn-accent ml-auto" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
           </div>
-          <div class="container">
-            <div class="row">
+          <div>
+            <div class="row mx-0">
               <div id="mainTask" class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:20px">
                 <div id="mainTaskTip"></div>
                 <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right fa fa-times cursor-pointer"></span></span>
@@ -228,7 +228,7 @@
               <div class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:30px 34px 30px 26px">
                 <div id="mainCalendarTools" class="text-center align-middle d-flex">
                   <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전" style="padding-left:0;padding-right:30px"><i class="fas fa-chevron-left"></i></button>
-                  <span id="renderRange" class="align-middle montserrat"></span>
+                  <span id="renderRange" class="align-middle montserrat row align-items-center"></span>
                   <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="next" type="button" aria-label="다음" style="padding-left:30px"><i class="fas fa-chevron-right"></i></button>
                   <div class="d-none d-md-inline-flex calendarTypeGroup ml-auto" role="group" aria-label="캘린더 종류">
                     <button type="button" class="btn btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></button>
@@ -955,6 +955,7 @@
       email:"${input.user.email}",
       needInit : true,
       history : [],
+      holiday: [],
       colorTemplate : ["#fd5b77", "#039fed", "#7c46e9", "#86cdbd", "#6a747d", "#f490b2", "#a51783", "#447270", "#bd902b", "#db531f", "#785f37", "#b26112", "#d0a348", "#e6bb86", "#73c267", "#028c99", "#f4866b", "#948b60", "#8d4640", "#6092c3"]
     };
     if(window.tui){
