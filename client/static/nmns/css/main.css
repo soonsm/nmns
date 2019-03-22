@@ -1355,7 +1355,7 @@ button.form-control {
 }
 
 
-/* tipsModal, announcementModal */
+/* tipsModal, announcementMenu */
 
 #tipsModal .modal-header #tipsTitle, #announcementModal .modal-header #announcementTitle {
     display: initial;
@@ -1385,15 +1385,25 @@ button.form-control {
     opacity: .5;
 }
 
-#announcementModal .modal-body #announcementBody{
-    overflow-y:scroll;
-    max-height:500px;
+#announcementBody{
+    overflow-y:auto;
+    max-height:543px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-#announcementModal .modal-body{
-    padding-top:0;
-    padding-bottom:0;
+#announcementBody .announcement{
+    padding: 25px 30px;
 }
+
+#announcementBody .announcement:not(:last-child){
+    border-bottom:1px solid rgba(58, 54, 54, 0.35);
+}
+
+#announcementBody .announcement .announcementTitle{
+    font-weight: bold;
+}
+
 /* feedbackModal */
 
 #feedbackModal #feedbackBody {

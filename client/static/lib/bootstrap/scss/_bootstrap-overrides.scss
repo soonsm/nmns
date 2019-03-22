@@ -142,3 +142,14 @@ a.text-primary {
   background-color:$primary;
   border-color:$primary;
 }
+.popover{
+  @include body-font;
+  border-radius: 5px;
+  box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.12);
+  background-color: #ffffff;
+  border:none;
+  max-width:unset;
+}
+.bs-popover-auto[x-placement^=bottom]>.arrow::before, .bs-popover-bottom>.arrow::before{
+  border-bottom-color:#fff;
+}

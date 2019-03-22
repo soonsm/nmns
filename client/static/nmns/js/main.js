@@ -1537,7 +1537,12 @@
           $('#mainAside').toggleClass('sidebar-toggled')
           $('#mainAside .menu-collapsed').toggle();
         })
-        $("[data-toggle=popover]").popover();
+        $(".announcementMenuLink").popover({
+          template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button fa fa-times ml-auto cursor-pointer"></span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
+          html:true,
+          sanitize:false,
+          placement:'auto'
+        })
     }
 
     function getSchedule(start, end) {
@@ -1721,7 +1726,7 @@
     function drawAnnouncementList(data){
       var list = "";
       data.forEach(function(item){
-        list += '<div class="announcement col-12 card px-0 border-0 rounded-0 shadow-sm mb-3"><div class="card-header"><h6 class="d-inline-block mb-0">'+item.title + (item.isRead?'':'<span class="badge badge-danger badge-pill ml-1">new</span>') +'</h6><small class="float-right">'+(item.registeredDate? moment(item.registeredDate, 'YYYYMMDD').format('Y년 M월 D일') : '')+'</small></div><div class="card-body"><p class="card-text">'+item.contents+'</p></div></div>'
+        list += '<div class="announcement"><div class="d-flex align-items-center" style="margin-bottom:15px"><span class="announcementTitle">' + item.title + '</span><span class="d-flex ml-auto montserrat" style="font-size:12px;opacity:0.5;font-weight:500">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+item.contents+'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">공지사항</span></div></div>'
       })
       return list;
     }
@@ -2041,8 +2046,11 @@
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
+      if($('#announcementBody').children().length === 0){
+        $('#announcementBody').html('');//대기문구 삭제
+      }
       $('#announcementBody').append(drawAnnouncementList(e.data));
-      var count = parseInt($('.announcementCount').text());
+      var count = NMNS.info.newAnnouncement;
       if(count && count > 0){
         var unread = 0;
         e.data.forEach(function(item){
@@ -2050,8 +2058,10 @@
         })
         if(count > unread){
           $('.announcementCount').text(count - unread > 99? '99+' : count - unread);
+          NMNS.info.newAnnouncement = count - unread;
         }else if(count === unread){
           $('.announcementCount').text('');
+          NMNS.info.newAnnouncement = 0;
         }
       }
       $('#announcementBody').parent().removeClass('wait');
@@ -2224,8 +2234,7 @@
             $("#tutorialModal").modal();
         }
     });
-    $('#announcementMenu').on('show.bs.popover', function(){
-      console.log('aa');
+    $('.announcementMenuLink').on('show.bs.popover', function(){
       if($('#annoumcementBody').children().length === 0){
         NMNS.announcementPage = 1
         $('#announcementBody').parent().addClass('wait');
@@ -2248,6 +2257,19 @@
         NMNS.expectMoreAnnouncement = true;*/
         //for test
       }
+    }).on('shown.bs.popover', function(){
+      $('#announcementBody').parents('.popover').find('.close-button').on('touch click', function(){
+        $(this).parents('.popover').popover('hide')
+      })
+      $(document).off('touch click').on('touch click', function (e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function () {
+          //the 'is' for buttons that trigger popups
+          //the 'has' for icons within a button that triggers a popup
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+          }
+        });
+      });
     })
     //Modal events end
     //mobile horizontal scroll handling
