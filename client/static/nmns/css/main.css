@@ -1404,6 +1404,11 @@ button.form-control {
     font-weight: bold;
 }
 
+#announcementBody .announcement .announcementTime{
+    font-size:12px;
+    opacity:0.5;
+    font-weight:500;
+}
 /* feedbackModal */
 
 #feedbackModal #feedbackBody {
