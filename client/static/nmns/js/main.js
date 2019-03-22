@@ -166,6 +166,8 @@
             'week.dayname.height': '51px',
             'week.dayGridSchedule.borderLeft': '2px solid',
             'week.timegridLeft.borderRight': 'none',
+            'week.daygridLeft.width': '54px',
+            'week.timegridLeft.width': '54px'
         }
     });
 
@@ -258,7 +260,7 @@
         //tutorial & tip end
         //announcement start
         if(NMNS.info.newAnnouncement){
-            $('.announcementCount').html(NMNS.info.newAnnouncement)
+            $('.announcementCount').html(NMNS.info.newAnnouncement > 99? '99+' : NMNS.info.newAnnouncement)
         }
         //announcement end
     }));
@@ -319,7 +321,7 @@
           html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
           
         }else{
-          html += "</div>"
+          html += "예약 " + schedule.count + "건</div>"
         }
 
         return html;
@@ -503,10 +505,9 @@
         var viewName = NMNS.calendar.getViewName();
         var html = "";
         if (viewName === 'day') {
-          var today = moment(NMNS.calendar.getDate().getTime());
+            var today = moment(NMNS.calendar.getDate().getTime());
             html += today.format('YYYY. MM. DD');
             var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
-            //return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? ("[" + holiday.title + "]") : "") + '</span>'
             html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
@@ -1513,6 +1514,7 @@
           $('#mainAside').toggleClass('sidebar-toggled')
           $('#mainAside .menu-collapsed').toggle();
         })
+        $("[data-toggle=popover]").popover();
     }
 
     function getSchedule(start, end) {
@@ -2017,14 +2019,14 @@
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
       $('#announcementBody').append(drawAnnouncementList(e.data));
-      var count = ($('.announcementCount').text() * 1);
+      var count = parseInt($('.announcementCount').text());
       if(count && count > 0){
         var unread = 0;
         e.data.forEach(function(item){
           if(!item.isRead) unread++;
         })
         if(count > unread){
-          $('.announcementCount').text(count - unread);
+          $('.announcementCount').text(count - unread > 99? '99+' : count - unread);
         }else if(count === unread){
           $('.announcementCount').text('');
         }
@@ -2199,7 +2201,8 @@
             $("#tutorialModal").modal();
         }
     });
-    $('#announcementModal').on('show.bs.modal', function(){
+    $('#announcementMenu').on('show.bs.popover', function(){
+      console.log('aa');
       if($('#annoumcementBody').children().length === 0){
         NMNS.announcementPage = 1
         $('#announcementBody').parent().addClass('wait');
