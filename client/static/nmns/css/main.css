@@ -108,8 +108,9 @@ html {
 }
 #sidebarContainer .sidebar-item{
     opacity:.35;
+    cursor:pointer;
 }
-#sidebarContainer .sidebar-item.list-group-item-active{
+#sidebarContainer .sidebar-item.menuLinkActive{
     opacity:1;
 }
 
@@ -132,6 +133,7 @@ html {
 
 #lnbManagerList .lnbManagerItem label {
     margin-bottom: 0;
+    cursor:pointer;
 }
 
 #lnbManagerList .addManagerItem input[type="text"] {
@@ -247,6 +249,11 @@ html {
     border-radius: 0;
 }
 
+#mainRow .menuTitle{
+    margin-bottom:30px;
+    align-items:center;
+    min-height:45px;
+}
 
 #mainRow .tui-full-calendar-time-date:last-child {
     border-right: none !important;
@@ -1309,7 +1316,7 @@ input[name='etc'] {
     overflow: hidden;
 }
 
-.customerMenu {
+.customerMenu, .salesMenu, .menuMenu, .infoCenter {
     display: none;
 }
 

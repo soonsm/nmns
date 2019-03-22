@@ -2438,9 +2438,8 @@
         });
     }));
     //notification handling end
-    //customer management menu switch start
-    $(".customerMenuLink").off("touch click").on("touch click", function(e) {
-        e.preventDefault();
+    //menu switch start
+    $(".customerMenuLink").off("touch click").on("touch click", function() {
         var action = $($(".customerSortType.active")[0]).data("action");
         if (!document.getElementById("customerScript")) {
             var script = document.createElement("script");
@@ -2450,13 +2449,9 @@
 
             script.onload = function() {
                 NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
-                $(".calendarMenu").addClass("d-none");
-                $(".customerMenu").css("display", "block");
             };
         } else {
             NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
-            $(".calendarMenu").addClass("d-none");
-            $(".customerMenu").css("display", "block");
         }
         $("#customerAddManager").next().html("<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='' data-bgcolor='#b2dfdb'><span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color:#b2dfdb'></span><span class='tui-full-calendar-content'>(담당자 없음)</span></button>").append(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
             $("#customerAddManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
@@ -2466,11 +2461,22 @@
             $("#customerManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
         });
     });
-    $(".calendarMenuLink").off("touch click").on("touch click", function(e) {
-        e.preventDefault();
-        $(".customerMenu").css("display", "none");
-        $(".calendarMenu").removeClass("d-none");
+    $(".calendarMenuLink").off("touch click").on("touch click", function() {
         setSchedules();
     });
-    //customer management menu switch end
+    $(".menuLink").on("touch click", function(e){
+      e.preventDefault();
+      if(!$(this).hasClass("menuLinkActive")){
+        $(".switchingMenu:not(."+$(this).data('link')+")").hide();
+        $("."+$(this).data('link')).show();
+        $(".menuLinkActive").removeClass("menuLinkActive");
+        $(this).addClass("menuLinkActive");
+        // hide mainTask field
+        $("#mainCalendarArea").css('minWidth', '');
+        $("#mainContents").css("minWidth", '100%');
+        $("#mainAside").css('minWidth', 'unset');
+        $("#mainTask").removeClass("show");
+      }
+    })
+    //menu switch end
 })(jQuery);
