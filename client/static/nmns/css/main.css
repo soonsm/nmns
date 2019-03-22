@@ -1418,11 +1418,13 @@ button.form-control {
 }
 /* feedbackModal */
 
-#feedbackModal #feedbackBody {
-    height: 100px;
-    width: 100%;
-    font-size: .9rem;
-    border: .05rem solid #ced4da;
+#feedbackBody {
+    height: 186px;
+    font-size: 14px;
+    border:none;
+    border-radius: 2px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    padding:25px 30px;
 }
 
 #snackbar {
@@ -1971,4 +1973,72 @@ button.customerSortType.active {
     top:8px;
     border:2px solid #f1f2f3;
     border-radius:1em
+}
+
+/* faq */
+
+#faq{
+    border-top:2px solid #393535;
+    font-size: 14px;
+}
+
+#faq .faqRow {
+    width: 100%;
+    cursor: pointer;
+    padding: 17.5px 20px;
+    position:relative;
+}
+
+#faq .faqRow .ellipsis{
+    width:100%;
+    display:flex;
+}
+
+#faq .row .faqDetailLink {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    bottom:0;
+    z-index: 1;
+    border-bottom: none;
+}
+
+#faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
+    border-bottom: 1px solid rgba(58, 54, 54, 0.35);
+}
+
+#faq .row .faqDetailLink:not(.collapsed)+div{
+    font-weight:bold;
+}
+
+#faq .row .faqDetailLink+div:after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: '\f078';
+    margin-left:auto;
+    display: inline-block;
+    transition: 0.3s all ease;
+    -webkit-transition: 0.3s all ease;
+    -moz-transition: 0.3s all ease;
+    -ms-transition: 0.3s all ease;
+    -o-transition: 0.3s all ease;
+}
+
+#faq .row .faqDetailLink[aria-expanded=true]+div:after {
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+    filter: none;
+    -webkit-filter: none;
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
+}
+
+#faq .faqDetailRow {
+    padding: 0 20px 15px 20px;
+    flex: 0 0 100%;
+    -ms-flex: 0 0 100%;
+    max-width: 100%;
+    word-break: break-all;
+    opacity:0.7;
 }

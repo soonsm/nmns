@@ -2464,6 +2464,21 @@
     $(".calendarMenuLink").off("touch click").on("touch click", function() {
         setSchedules();
     });
+    $(".infoCenterLink").off("touch click").on("touch click", function(){
+      if($("#faq").children().length === 0){
+        var html = "";
+        var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
+        faqs.forEach(function(item, index) {
+            html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
+                '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex"><span>ㄴ</span></div><span class="col px-2">' + item.contents + '</span></div></div>';
+            if (index > 0 && index % 50 === 0) {
+                $("#faq").append(html);
+                html = "";
+            }
+        });
+        $("#faq").append(html);
+      }
+    })
     $(".menuLink").on("touch click", function(e){
       e.preventDefault();
       if(!$(this).hasClass("menuLinkActive")){
