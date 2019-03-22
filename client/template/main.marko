@@ -161,7 +161,7 @@
         <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." id="searchNoShow">
         <button class="btn btn-primary ml-auto" type="button" title="노쇼 추가"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
-        <button id="announcementMenu" class="btn btn-flat d-md-block d-none px-0 position-relative" type="button" title="공지사항" data-toggle="modal" data-target="#announcementModal"><i class="far fa-bell" aria-label="공지사항" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
+        <button id="announcementMenu" class="btn btn-flat d-md-block d-none px-0 position-relative" type="button" title="공지사항" data-toggle="popover" data-content="알림 내역을 가져오는 중입니다..." data-template='<div class="popover" role="tooltip"><div class="arrow"></div><span><h3 class="popover-header"></h3><span class="close fa fa-times"></span></span><div class="popover-body" id="announcementBody"></div></div>' data-html="true" data-placement="bottom"><i class="far fa-bell" aria-label="공지사항" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
         <span class="divider">&nbsp;</span>
         <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
           <div>
@@ -774,7 +774,7 @@
       </div>
     </div>
   </div>
-
+<!--
   <div id="announcementModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content rounded-0">
@@ -792,7 +792,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 
   <div id="customerModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -919,15 +919,6 @@
     </li>
   </ul>
 
-  <!--<footer class="footer text-center px-0 bg-light">
-    <div class="py-2 text-center text-secondary container">
-      <h4 class="my-0"><span><a class="text-secondary openAppLink" href="https://www.instagram.com/nomorenoshow" target="_blank" title="인스타그램에서 보기" data-ios="https://www.instagram.com/nomorenoshow" data-ios-install="https://itunes.apple.com/kr/app/instagram/id389801252?l=en&mt=8" data-android="https://www.instagram.com/nomorenoshow"><i class="fab fa-instagram"></i></a>&nbsp; <a class="text-secondary openAppLink" href="http://pf.kakao.com/_xdHxjxgxl" target="_blank" title="카카오톡에서 보기" data-ios="kakaoplus://plusfriend/home/@nmns" data-ios-install="https://itunes.apple.com/kr/app/kakaotalk-messenger/id362057947?l=en&mt=8" data-android="kakaoplus://plusfriend/home/@nmns"><i class="far fa-comment"></i></a>&nbsp; <a class="text-secondary" href="mailto:support@nomorenoshow.co.kr" title="이메일 보내기"><i class="far fa-envelope"></i></a></span></h4>
-      <small>문의 : <a class="text-secondary" id="copyEmail" href="#" title="메일주소 복사">support@nomorenoshow.co.kr</a></small>
-      <br/>
-      <small>Copyright &copy; nomorenoshow.co.kr 2018</small><small class="godo w400">.</small>
-    </div>
-  </footer>-->
-
 <!--[if lte IE 8]>
 <script type="text/jscript">
   document.getElementById("page-top").innerHTML = "";
@@ -938,8 +929,7 @@
 <![endif]-->
   <!-- Bootstrap core JavaScript -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
 
   <!-- Plugin JavaScript -->
   <script src="${input.cdn}/nmns/js/util.min.js"></script>
@@ -949,7 +939,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js" integrity="sha256-pOydVY7re8c1n+fEgg3uoslR/di9NMsOFXJ0Esf2xjQ=" crossorigin="anonymous"></script>
 
   <script src="${input.cdn}/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.4.0/dist/tui-code-snippet.min.js" integrity="sha256-FgKOFh2KVK+6GsNtR4UHfzXvwuuvPTPS9f/QwekFYHA=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.5.0/dist/tui-code-snippet.min.js" integrity="sha256-G/qL3YkywOsmOqpj4hbIEhPEFgnz6FhJyF+E5rYngUo=" crossorigin="anonymous"></script>
   <script>
     var NMNS = {
       email:"${input.user.email}",
