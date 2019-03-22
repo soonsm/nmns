@@ -159,11 +159,11 @@
       <nav class="navbar topNav" id="mainNav">
         <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
         <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." id="searchNoShow">
-        <button class="btn btn-primary ml-auto" type="button" title="노쇼 추가"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
+        <button class="btn btn-primary ml-auto menuLink" data-link="noShowMenu" type="button" title="노쇼 추가"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
-        <button class="btn btn-flat d-md-block d-none px-0 position-relative announcementMenuLink" type="button" title="공지사항" data-toggle="popover" data-placement="bottom"><i class="far fa-bell" aria-label="공지사항" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
+        <button class="btn btn-flat d-md-block d-none px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom"><i class="far fa-bell" aria-label="알림" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
         <span class="divider">&nbsp;</span>
-        <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="상위 메뉴 열기/닫기">
+        <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" title="메뉴" data-toggle="popover" data-placement="bottom" aria-label="메뉴 열기/닫기">
           <div>
             <span>
               <img id="mainShopIcon" src="/nmns/img/person_01.svg" class="rounded-circle">
@@ -171,40 +171,6 @@
             <if(input.user.shopName)><span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]>${input.user.shopName}</span></if><else>${input.user.email}</else>
           </div>
         </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav text-white mr-auto godo w700">
-            <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-              <a id="infoLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href="#" data-toggle="modal" data-target="#infoModal" aria-label="내 매장 정보"><i class="fas fa-store fa-fw align-middle"></i> 내 매장 정보</a>
-            </li>
-            <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-              <a id="alrimLink" class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#alrimModal" aria-label="알림톡 정보"><i class="fas fa-bell fa-fw align-middle"></i> 알림톡 정보</a>
-            </li>
-            <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left customerMenuLink" href ="#" aria-label="고객관리"><i class="fas fa-user-cog fa-fw align-middle"></i> 고객관리<!--<small class="badge new">new</small>--></a>
-            </li>
-            <li class="nav-item mx-0 d-lg-none customerMenu" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left calendarMenuLink" href ="#" aria-label="예약관리"><i class="far fa-calendar-alt fa-fw align-middle"></i> 예약관리</a>
-            </li>
-            <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block addNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가"><i class="fas fa-plus fa-fw align-middle"></i> 노쇼 추가</a>
-            </li>
-            <li class="nav-item mx-0 d-lg-none" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block getNoShowLink text-left" href ="#" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기"><i class="fas fa-search fa-fw align-middle"></i> 노쇼 찾기</a>
-            </li>
-            <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block addReservLink text-left" href ="#"><i class="fas fa-calendar-plus fa-fw align-middle" aria-label="예약 추가"></i> 예약 추가</a>
-            </li>
-            <li class="nav-item mx-0 d-lg-none calendarMenu" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block addTaskLink text-left" href ="#" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가"><i class="fas fa-calendar-check fa-fw align-middle"></i> 일정 추가</a>
-            </li>
-            <li class="nav-item mx-0 d-md-none" data-toggle="collapse" data-target="#navbarResponsive">
-              <a class="btn btn-primary btn-flat py-1 my-1 d-block text-left" href ="#" data-toggle="modal" data-target="#announcementModal" aria-label="공지사항"><i class="fas fa-bell fa-fw align-middle"></i> 공지사항<span class="badge badge-danger announcementCount"></span></a>
-            </li>
-            <li class="nav-item mx-0" data-toggle="collapse" data-target="#navbarResponsive">
-              <a id="signoutLink" class="btn btn-secondary btn-flat py-1 my-1 text-left" href="/signout" aria-label="로그아웃"><i class="fas fa-sign-out-alt fa-fw align-middle"></i> 로그아웃</a>
-            </li>
-          </ul>
-        </div>
       </nav>
       
       <div id="mainContents" style="padding:42px 30px 30px 30px;min-width:100%">
@@ -361,6 +327,14 @@
             <button class="btn btn-primary ml-auto" type="button">수정</button>
             <button class="btn btn-accent ml-2" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>메뉴 추가</button>
           </div>
+        </div>
+        
+        <div class="switchingMenu noShowMenu">
+          노쇼 메뉴!!
+        </div>
+        
+        <div class="switchingMenu infoMenu">
+          내 정보 관리 메뉴!!
         </div>
         
       </div>

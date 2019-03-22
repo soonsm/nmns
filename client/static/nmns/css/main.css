@@ -1316,7 +1316,7 @@ input[name='etc'] {
     overflow: hidden;
 }
 
-.customerMenu, .salesMenu, .menuMenu, .infoCenter {
+.switchingMenu:not(.calendarMenu){
     display: none;
 }
 
@@ -2008,7 +2008,7 @@ button.customerSortType.active {
     border-bottom: 1px solid rgba(58, 54, 54, 0.35);
 }
 
-#faq .row .faqDetailLink:not(.collapsed)+div{
+#faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{
     font-weight:bold;
 }
 
@@ -2041,4 +2041,23 @@ button.customerSortType.active {
     max-width: 100%;
     word-break: break-all;
     opacity:0.7;
+}
+
+/* mainMenu */
+
+.mainMenuRow{
+    display:flex;
+    padding:13px 0;
+}
+.mainMenuRow:hover{
+    font-weight:bold;
+}
+.mainMenuRow:first-child{
+    padding-top:0;
+}
+.mainMenuRow:last-child{
+    padding-bottom:0;
+}
+.mainMenuRow a:hover{
+    text-decoration: none;
 }

@@ -1543,6 +1543,12 @@
           sanitize:false,
           placement:'auto'
         })
+        $("#mainMenu").popover({
+          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a id="infoLink" class="d-block menuLink" data-link="infoMenu" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a id="alrimLink" class="d-block menuLink" data-link="infoMenu" href ="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a id="passwordLink" class="d-block menuLink" data-link="infoMenu" href ="#" aria-label="비밀번호 변경">비밀번호 변경</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
+          html:true,
+          sanitize:false,
+          placement:'auto'
+        })
     }
 
     function getSchedule(start, end) {
@@ -2286,6 +2292,18 @@
         });
       });
     })
+    $('#mainMenu').on('shown.bs.popover', function(){
+      $(document).off('touch click').on('touch click', function (e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function () {
+          //the 'is' for buttons that trigger popups
+          //the 'has' for icons within a button that triggers a popup
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+          }
+        });
+        $(".mainMenuRow .menuLink").on("touch click", switchMenu);
+      });
+    })
     //Modal events end
     //mobile horizontal scroll handling
     // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
@@ -2479,7 +2497,7 @@
         $("#faq").append(html);
       }
     })
-    $(".menuLink").on("touch click", function(e){
+    function switchMenu(e){
       e.preventDefault();
       if(!$(this).hasClass("menuLinkActive")){
         $(".switchingMenu:not(."+$(this).data('link')+")").hide();
@@ -2492,6 +2510,8 @@
         $("#mainAside").css('minWidth', 'unset');
         $("#mainTask").removeClass("show");
       }
-    })
+    }
+    
+    $(".menuLink").on("touch click", switchMenu)
     //menu switch end
 })(jQuery);
