@@ -379,6 +379,21 @@
     }
 
     function onClickTask(e){
+      if($(window).width() < 1600){
+        if($("#mainTask").hasClass("show")){// about to hide task
+          $("#mainCalendarArea").css('minWidth', '');
+          $("#mainContents").css("minWidth", '100%');
+          $("#mainAside").css('minWidth', 'unset');
+        }else{// about to show task
+          $("#mainCalendarArea").css('minWidth', $("#mainCalendarArea").width());
+          $("#mainContents").css("minWidth", '');
+          if($("#mainAside").hasClass("sidebar-toggled")){//hided
+            $("#mainAside").css('minWidth', 'unset');
+          }else{
+            $("#mainAside").css('minWidth', '270px');
+          }
+        }
+      }
       $("#mainTask").toggleClass('show');
     }
     
@@ -576,10 +591,10 @@
           html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
           day.task.forEach(function(task){
             var manager = findManager(task.manager) || {};
-            html += "<div class='row'><div class='col col-12 position-relative cursor-pointer'><span class='far fa-square task-checkbox'></span><div class='flex-column d-inline-flex task' style='margin-left:10px;max-width:calc(100% - 35px)'><div class='ellipsis' style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+            html += "<div class='row'><div class='col col-12 position-relative cursor-pointer'><span class='far fa-square task-checkbox'></span><div class='flex-column d-inline-flex task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
             moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
             + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
-            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:6px;right:15px;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div></div>"
+            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:15px;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div></div>"
           })
         }
       })
@@ -1512,6 +1527,13 @@
         flatpickr.localize("ko");
         $(".taskMenu").on("touch click", onClickTask);
         $('#sidebarToggler').on('touch click', function(){
+          if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
+            if($("#mainTask").hasClass("show")){
+              $("#mainAside").css('minWidth', '270px');
+            }
+          }else{// about to hide aside
+            $("#mainAside").css('minWidth', 'unset');
+          }
           $('#mainAside').toggleClass('sidebar-toggled')
           $('#mainAside .menu-collapsed').toggle();
         })

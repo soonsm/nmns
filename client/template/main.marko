@@ -52,7 +52,7 @@
 </head>
 
 <body>
-  <div class="row mx-0 h-100">
+  <div class="d-flex" style="min-height:100vh">
     <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white container px-0 d-flex">
       <div class="topNav" style="padding:30px">
         <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:100%;vertical-align:initial"/></a>
@@ -154,7 +154,7 @@
     
     <div id="notifications"></div>
     
-    <div id="mainRow" class="row col px-0 mx-auto position-relative sidebar-handler col">
+    <div id="mainRow" class="row col px-0 mx-auto sidebar-handler">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
         <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
@@ -207,8 +207,8 @@
         </div>
       </nav>
       
-      <div id="mainContents" class="col" style="padding:42px 30px 30px 30px">
-        <div class="calendarMenu">
+      <div id="mainContents" style="padding:42px 30px 30px 30px;min-width:100%">
+        <div class="calendarMenu" style="display:inline-block;width:auto;min-width:100%">
           <div id="mainCalendarTitle" class="d-flex" style="margin-bottom:30px;align-items:center;">
             <span class="h4 mb-0 font-weight-bold">예약 관리</span>
             <span class="divider" style="display:inline-table">&nbsp;</span>
@@ -218,14 +218,14 @@
             </span>
             <button class="btn btn-accent ml-auto" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
           </div>
-          <div>
-            <div class="row mx-0">
+          <div style="display:inline-block;width:auto;min-width:100%">
+            <div id="mainArea">
               <div id="mainTask" class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:20px">
                 <div id="mainTaskTip"></div>
                 <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right fa fa-times cursor-pointer"></span></span>
                 <div id="mainTaskContents"></div>
               </div>
-              <div class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:30px 34px 30px 26px">
+              <div id="mainCalendarArea" class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:30px 34px 30px 26px">
                 <div id="mainCalendarTools" class="text-center align-middle d-flex">
                   <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전" style="padding-left:0;padding-right:30px"><i class="fas fa-chevron-left"></i></button>
                   <span id="renderRange" class="align-middle montserrat row align-items-center"></span>
