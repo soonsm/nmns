@@ -189,6 +189,8 @@ html {
     min-width:260px;
     margin-left:15px;
     background-color:transparent;
+    display:inline-flex;
+    flex-grow:1;
 }
 #mainRow #mainNav #searchNoShow::placeholder, #mainRow #mainNav #searchNoShow::-webkit-input-placeholder, #mainRow #mainNav #searchNoShow:-ms-input-placeholder{
     color:#393535;
@@ -215,6 +217,7 @@ html {
 #mainRow #mainTask{
     display:none;
     position:relative;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
 }
 
 #mainRow #mainTask.show{
@@ -253,6 +256,14 @@ html {
     margin-bottom:30px;
     align-items:center;
     min-height:45px;
+}
+
+#mainRow .menuTitle .menuTitleNumber{
+    font-family:'Montserrat';
+    font-size:18px;
+    font-weight:bold;
+    line-height:27px;
+    margin-left:15px;
 }
 
 #mainRow .tui-full-calendar-time-date:last-child {
@@ -328,22 +339,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     }
 }
 
-/*
-#mainCalendar .tui-full-calendar-dayname-layout,
-#mainCalendar .tui-full-calendar-month div[data-panel-index='0'] {
-    position: fixed;
-    width: 100%;
-    top: 7.3rem;
-    z-index: 1;
-    background-color: white;
-    right: 0;
-}*/
-
 #mainRow #mainContents {
     margin-top:79px;
-    /*display:inline-block;
-    width:auto;
-    min-width:100%;*/
 }
 
 #mainArea{
@@ -362,6 +359,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width:auto;
     display:inline-block;
     min-width:100%;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
 }
 
 @media(min-width:1600px){
@@ -369,18 +367,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
         min-width:unset;
     }
 }
-/*
-@media (min-width: 992px) {
-    #mainCalendar .tui-full-calendar-dayname-layout,
-    #mainCalendar .tui-full-calendar-month div[data-panel-index='0'],
-    #mainCalendarTools {
-        width: calc(100% - 230px);
-    }
-}*/
-/*#mainCalendar .tui-full-calendar-month div[data-panel-index='1'] {
-    margin-top: 5.2rem;
-}
-*/
+
 .tui-full-calendar-timegrid-right+div+.ps__rail-y {
     opacity: 0;
 }
@@ -394,7 +381,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     opacity: 0;
     background-color: black;
     transition: opacity 0.15s linear;
-    visibility: "hidden";
+    visibility: hidden;
     z-index: 3;
 }
 
@@ -496,18 +483,6 @@ button.moveDate:focus {
     box-shadow: none;
 }
 
-/*.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat+span {
-    color: #304ffe;
-}
-
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun+span,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday+span {
-    color: #ff4040;
-}
-*/
 .flatpickr-input {
     background-color: white;
 }
@@ -991,8 +966,6 @@ button.moveDate:focus {
     border: .05rem solid #bdbdbd;
     background-color: white;
     border-top: 0;
-    -webkit-box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
-    -moz-box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
     box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
 }
 
@@ -1311,9 +1284,11 @@ input[name='etc'] {
 .flatpickr-mobile {
     white-space: nowrap;
     text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.switchingMenu{
+    min-height:100%;
 }
 
 .switchingMenu:not(.calendarMenu){
@@ -1356,8 +1331,6 @@ button.form-control {
 .ellipsis {
     white-space: nowrap;
     text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
     overflow: hidden;
 }
 
@@ -1444,7 +1417,6 @@ button.form-control {
 
 #snackbar.show {
     visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
     animation: fadein 0.5s, fadeout 0.5s 4.5s;
 }
 
@@ -1457,7 +1429,6 @@ button.form-control {
         min-width: 350px;
     }
     #snackbar.show {
-        -webkit-animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
         animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
     }
 }
@@ -1639,7 +1610,6 @@ button.customerSortType.active {
     margin-right: auto;
     font-size: .9rem;
     flex-direction: row;
-    -ms-flex-direction: row;
 }
 
 #mainCustomerList .card .cardLeftBorder,
@@ -1841,19 +1811,11 @@ button.customerSortType.active {
     margin: 0 .25rem;
     display: inline-block;
     transition: 0.3s all ease;
-    -webkit-transition: 0.3s all ease;
-    -moz-transition: 0.3s all ease;
-    -ms-transition: 0.3s all ease;
-    -o-transition: 0.3s all ease;
 }
 
 #customerModal #customerAlrim .card button.card-header[aria-expanded=true]:before {
-    -ms-transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
     transform: rotate(90deg);
     filter: none;
-    -webkit-filter: none;
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
 }
 
 
@@ -1920,19 +1882,11 @@ button.customerSortType.active {
     margin: 0 .25rem;
     display: inline-block;
     transition: 0.3s all ease;
-    -webkit-transition: 0.3s all ease;
-    -moz-transition: 0.3s all ease;
-    -ms-transition: 0.3s all ease;
-    -o-transition: 0.3s all ease;
 }
 
 #alrimModal #alrimHistoryList .row .alrimDetailLink[aria-expanded=true]+div:before {
-    -ms-transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
     transform: rotate(90deg);
     filter: none;
-    -webkit-filter: none;
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
 }
 
 #alrimModal #alrimHistoryList {
@@ -1947,7 +1901,6 @@ button.customerSortType.active {
     padding-left: .75rem;
     padding-right: .75rem;
     flex: 0 0 100%;
-    -ms-flex: 0 0 100%;
     max-width: 100%;
 }
 
@@ -1975,7 +1928,7 @@ button.customerSortType.active {
     border-radius:1em
 }
 
-/* faq */
+/* faq in infoCenter */
 
 #faq{
     border-top:2px solid #393535;
@@ -2019,25 +1972,16 @@ button.customerSortType.active {
     margin-left:auto;
     display: inline-block;
     transition: 0.3s all ease;
-    -webkit-transition: 0.3s all ease;
-    -moz-transition: 0.3s all ease;
-    -ms-transition: 0.3s all ease;
-    -o-transition: 0.3s all ease;
 }
 
 #faq .row .faqDetailLink[aria-expanded=true]+div:after {
-    -ms-transform: rotate(180deg);
-    -webkit-transform: rotate(180deg);
     transform: rotate(180deg);
     filter: none;
-    -webkit-filter: none;
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
 }
 
 #faq .faqDetailRow {
     padding: 0 20px 15px 20px;
     flex: 0 0 100%;
-    -ms-flex: 0 0 100%;
     max-width: 100%;
     word-break: break-all;
     opacity:0.7;
@@ -2060,4 +2004,23 @@ button.customerSortType.active {
 }
 .mainMenuRow a:hover{
     text-decoration: none;
+}
+
+/* noShow menu */
+
+#noShowSearchList .row{
+    padding:16px 25px;
+}
+
+#noShowSearchList .noShowRow{
+    margin: 5px 0;
+    border-radius: 2px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    font-size:12px;
+    font-family: 'Montserrat';
+}
+
+#noShowSearchList .noShowSearchDelete{
+    cursor:pointer;
 }

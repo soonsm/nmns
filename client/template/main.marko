@@ -158,7 +158,7 @@
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
         <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
-        <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." id="searchNoShow">
+        <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowMenu" id="searchNoShow">
         <button class="btn btn-primary ml-auto menuLink" data-link="noShowMenu" type="button" title="노쇼 추가"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
         <button class="btn btn-flat d-md-block d-none px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom"><i class="far fa-bell" aria-label="알림" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
@@ -181,18 +181,18 @@
             <span class="divider" style="display:inline-table">&nbsp;</span>
             <span class="taskMenu cursor-pointer">
               <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
-              <span class="h5 mb-0 text-accent font-weight-bold" id="todayTask">0</span>
+              <span class="text-accent menuTitleNumber" id="todayTask">0</span>
             </span>
             <button class="btn btn-accent ml-auto" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
           </div>
           <div style="display:inline-block;width:auto;min-width:100%">
             <div id="mainArea">
-              <div id="mainTask" class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:20px">
+              <div id="mainTask" class="bg-white col" style="padding:20px">
                 <div id="mainTaskTip"></div>
                 <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right fa fa-times cursor-pointer"></span></span>
                 <div id="mainTaskContents"></div>
               </div>
-              <div id="mainCalendarArea" class="bg-white col" style="box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);padding:30px 34px 30px 26px">
+              <div id="mainCalendarArea" class="bg-white col" style="padding:30px 34px 30px 26px">
                 <div id="mainCalendarTools" class="text-center align-middle d-flex">
                   <button class="btn bg-transparent btn-sm moveDate rounded-circle" data-action="prev" type="button" aria-label="이전" style="padding-left:0;padding-right:30px"><i class="fas fa-chevron-left"></i></button>
                   <span id="renderRange" class="align-middle montserrat row align-items-center"></span>
@@ -220,7 +220,7 @@
         <div class="customerMenu switchingMenu">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">고객 관리</span>
-            <b id="customerCount" class="text-accent h5 font-weight-bold ml-3 mb-0">0</b>
+            <span id="customerCount" class="text-accent menuTitleNumber">0</span>
             <span class="divider" style="display:inline-table">&nbsp;</span>
             <span class="taskMenu cursor-pointer">
               <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
@@ -310,7 +310,7 @@
           <div class="menuContents">
             <textarea id="feedbackBody" placeholder="왓쇼를 이용하면서 불편하거나 바라는 점이 있으신가요?\n원하는 점을 적어주시면 최대한 빨리 확인하여 이메일로 답변드릴게요!" class="han col-12"></textarea>
             <div class="text-center" style="margin: 20px 0 49px 0">
-              <button type="button" class="btn btn-primary">문의 보내기</button>
+              <button id="submitFeedback" type="button" class="btn btn-primary">문의 보내기</button>
             </div>
           </div>
           <div class="d-flex menuTitle">
@@ -329,8 +329,42 @@
           </div>
         </div>
         
-        <div class="switchingMenu noShowMenu">
-          노쇼 메뉴!!
+        <div class="switchingMenu noShowMenu h-100">
+          <div id="noShowClean" class="container flex-column d-flex h-100" style="justify-content:center">
+            <div class="row">
+              <div class="mx-auto">
+                <img class="col-12" id="noShowImage" alt="노쇼를 하신 적이 없는 고객입니다!"/>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="mx-auto" id="noShowSentense" style="font-size:20px">
+                안심하세요. 노쇼를 하신 적이 없어요!
+              </div>
+            </div>
+          </div>
+          <div id="noShowDirty" class="container flex-column d-flex" style="justify-content:center">
+            <div class="row">
+              <div class="mx-auto">
+                <img class="col-12" id="noShowDirtyImage" alt="노쇼 내역이 있습니다. 주의하세요!"/>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="mx-auto text-center" style="font-size:20px">
+                이런! 노쇼 이력이 있는 고객이에요.<br>
+                <span id="noShowSearchSummary"></span>
+              </div>
+            </div>
+            <div class="menuTitle row" style="margin-top:72px">
+              <span class="h4 mb-0 font-weight-bold">우리 매장 노쇼 이력</span>
+              <span id="myNoShowCount" class="text-accent menuTitleNumber">0</span>
+              <span class="divider" style="display:inline-table">&nbsp;</span>
+              <span class="h4 mb-0 font-weight-bold">다른 매장 노쇼</span>
+              <span id="otherNoShowCount" class="text-accent menuTitleNumber">0</span>
+            </div>
+            <div class="row">
+              <div id="noShowSearchList" class="col-12 text-center montserrat"></div>
+            </div>
+          </div>
         </div>
         
         <div class="switchingMenu infoMenu">
@@ -585,7 +619,7 @@
                   </div>
                 </div>
               </div>
-              <div id="noShowSearchSummary" class="row col-12 px-0"></div>
+              <!--<div id="noShowSearchSummary" class="row col-12 px-0"></div>-->
               <div class="row col-12"><span class="mx-auto d-inline-flex"><b>우리매장</b>&nbsp;노쇼 목록</span></div>
               <div class="row col-12 px-0">
                 <div class="col-12 border-left border-right border-top row px-0">
@@ -594,7 +628,7 @@
                   <span class="col-3 pr-0 d-inline-flex">노쇼사유</span>
                   <span class="col-1 d-inline-flex"></span>
                 </div>
-                <div id="noShowSearchList" class="col-12 border px-0"><div class="row col-12 px-0 mt-2 empty text-center"><span class="d-inline-flex mx-auto">전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div></div>
+                <!--<div id="noShowSearchList" class="col-12 border px-0"><div class="row col-12 px-0 mt-2 empty text-center"><span class="d-inline-flex mx-auto">전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div></div>-->
               </div>
               <div id="noShowSearchAdd" class="ml-3 px-0 btn">
                 <p class="text-secondary align-top mb-0" aria-label="노쇼 직접 추가하기">
@@ -770,7 +804,7 @@
     </div>
   </div>
 
-  <div id="feedbackModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
+  <!--<div id="feedbackModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content rounded-0">
         <div class="modal-header">
@@ -791,7 +825,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 <!--
   <div id="announcementModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
     <div class="modal-dialog modal-dialog-centered" role="document">

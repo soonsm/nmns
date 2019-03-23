@@ -1502,9 +1502,9 @@
     NMNS.initTaskModal = initTaskModal;
 
     function setEventListener() {
-        $('.moveDate').on('touch click', onClickNavi);
-        $('.calendarType').on('touch click', onClickMenu);
-        $("#calendarTypeMenu").next().children("a").on("touch click", function(e) {
+        $('.moveDate').on('touch click', onClickNavi); //prev, next
+        $('.calendarType').on('touch click', onClickMenu); //calendar type
+        $("#calendarTypeMenu").next().children("a").on("touch click", function(e) { //calendar type on mobile
             e.preventDefault();
             var target = $(e.target);
             if (!target.hasClass("dropdown-item")) {
@@ -1514,7 +1514,7 @@
             $("#calendarTypeMenu").attr("data-action", target.data("action"));
             $("#calendarTypeMenu").trigger("click");
         });
-        $('#managerElements').on('change', onChangeManagers);
+        $('#managerElements').on('change', onChangeManagers);// toggle schedules of manager
 
         $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
         $(".addReservLink").on("touch click", createNewSchedule);
@@ -1525,8 +1525,9 @@
         $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
         flatpickr.localize("ko");
-        $(".taskMenu").on("touch click", onClickTask);
-        $('#sidebarToggler').on('touch click', function(){
+        
+        $(".taskMenu").on("touch click", onClickTask);// toggle task column
+        $('#sidebarToggler').on('touch click', function(){// toggle side menu
           if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
             if($("#mainTask").hasClass("show")){
               $("#mainAside").css('minWidth', '270px');
@@ -1549,6 +1550,18 @@
           sanitize:false,
           placement:'auto'
         })
+        setNumericInput(
+          $("#searchNoShow").on("keyup", function(e){
+            if(e.keyCode === 13 || e.which === 13){
+              if($(this).val().length === 11 || $(this).val().length === 10){
+                switchMenu.apply(this, e);
+                NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
+              }else{
+                showSnackBar("전화번호를 정확히 입력해주세요.");
+              }
+            }
+          })[0]
+        )
     }
 
     function getSchedule(start, end) {
@@ -1627,7 +1640,7 @@
 
     function deleteNoShow(self) {
         var row = self.parentsUntil("#noShowSearchList", ".row");
-        NMNS.history.push({ id: row.data("id"), contact: row.data("contact"), date: row.data("date"), noShowCase: row.data("noshowcase") });
+        NMNS.history.push({ id: row.data("id"), contact: row.data("contact") + "", date: row.data("date") + "", noShowCase: row.data("noshowcase") });
         NMNS.socket.emit("delete noshow", { id: row.data("id") });
         row.remove();
     }
@@ -1716,15 +1729,14 @@
         });
     });
 
-    $("#submitFeedback").off("touch click").on("touch click", function(e) {
+    $("#submitFeedback").off("touch click").on("touch click", function() {
         var text = $("#feedbackBody").val();
         if (text && text.trim().length > 0) {
             NMNS.socket.emit("submit feedback", { data: text.trim() });
-            $("#feedbackModal").modal("hide");
             showSnackBar("제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.");
             $("#feedbackBody").val("");
         } else {
-            alert("제안/문의하실 내용을 입력해주세요!");
+            showSnackBar("제안/문의하실 내용을 입력해주세요.");
             return;
         }
     });
@@ -1920,27 +1932,35 @@
     }));
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
-        var html = "";
         if (e.data.summary.noShowCount > 0) {
-            $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 " + (e.data.detail.length > 0 ? (e.data.detail.length == e.data.summary.noShowCount ? "우리매장에서만 " : "다른 매장 포함 ") : "다른 매장에서만 ") + (e.data.summary.noShowCount > 1 ? "총 " : "") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year() + "") === e.data.summary.lastNoShowDate.substring(0, 4) ? "올해 " : (((moment().year() - 1) + "") === e.data.summary.lastNoShowDate.substring(0, 4) ? "작년 " : e.data.summary.lastNoShowDate.substring(0, 4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4, 6), 10) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6), 10) + "일이었어요.").show();
-            if (e.data.detail.length > 0) {
-                e.data.detail.forEach(function(item) {
-                    html += "<div class='row col-12 px-0 mt-1' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><span class='col-4 pr-0'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</span><span class='col-4'>" + (item.date ? (item.date.substring(0, 4) + "-" + item.date.substring(4, 6) + "-" + item.date.substring(6)) : "") + "</span><span class='col-3'>" + (item.noShowCase ? ("<span class='badge badge-danger'>" + item.noShowCase + "</span>") : "") + "</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>";
-                });
-            } else {
-                html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!<br/>이분이 노쇼를 하셨다면 아래 추가 버튼을 눌러 다른 매장에도 공유해주세요.</span></div>";
-            }
+          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});
+          $("#noShowClean").removeClass('d-flex').addClass('d-none');
+          if(!$("#noShowDirtyImage").attr('src')){
+            $("#noShowDirtyImage").attr('src', '/nmns/img/sub_img.svg');
+          }
+          $("#myNoShowCount").text(e.data.detail.length);
+          $("#otherNoShowCount").text(e.data.summary.noShowCount - e.data.detail.length);
+          if(e.data.summary.lastNoShowDate){
+            $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
+          }
+          if (e.data.detail.length > 0) {
+            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
+            e.data.detail.forEach(function(item) {
+                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + item.noShowCase + "</div><div class='col-2 pr-0 text-right'><i class='fas fa-times noShowSearchDelete' title='삭제'></i></div></div>";
+            });
+            $("#noShowSearchList").html(html);
+            $("#noShowSearchList .noShowSearchDelete").on("touch click", function(){
+              deleteNoShow($(this));
+            })
+          }
+          $("#noShowDirty").removeClass('d-none').addClass('d-flex');
         } else {
-            $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.").show();
-            html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>이분은 노쇼를 한 적이 없으시네요! 안심하세요 :)</span></div>";
-        }
-        var list = $("#noShowSearchList");
-        list.addClass("summary").html(html);
-        list.find(".noShowSearchDelete").off("touch click").on("touch click", function() {
-            deleteNoShow($(this));
-        });
-        if (list.hasClass("ps")) {
-            list.data("scroll").update();
+          $("#noShowDirty").removeClass('d-flex').addClass('d-none');
+          $("#noShowClean").removeClass('d-none').addClass('d-flex');
+          if(!$("#noShowImage").attr('src')){
+            $("#noShowImage").attr('src', '/nmns/img/sub_img.svg');
+          }
+          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 이력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
         }
     }));
 
@@ -1948,7 +1968,7 @@
         var html, badge = "";
         if ($("#noShowSearch").is(":visible")) {
             badge = (e.data.noShowCase ? ("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
-            html = $("<div class='row col-12 px-0 mt-1' data-id='" + e.data.id + "' data-contact='" + e.data.contact + "' data-date='" + e.data.date + "' data-noshowcase='" + e.data.noShowCase + "'><span class='col-4'>" + (e.data.contact || $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] input[name='noShowSearchAddContact']").val()) + "</span><span class='col-4'>" + (e.data.date ? e.data.date.substring(0, 4) + "-" + e.data.date.substring(4, 6) + "-" + e.data.date.substring(6) : "") + "</span><span class='col-3'>" + badge + "</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
+            html = $("<div class='row col-12 noShowRow' data-id='" + e.data.id + "' data-contact='" + e.data.contact + "' data-date='" + e.data.date + "' data-noshowcase='" + e.data.noShowCase + "'><div class='col-3'>" + (e.data.contact || dashContact($("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] input[name='noShowSearchAddContact']").val())) + "</div><div class='col-3'>" + (e.data.date ? e.data.date.substring(0, 4) + ". " + e.data.date.substring(4, 6) + ". " + e.data.date.substring(6) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + e.data.noShowCase + "</div><div class='col-2 pr-0 text-right'><i class='fas fa-times noShowSearchDelete' title='삭제'></i></div></div>");
             html.insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
             html.find(".noShowSearchDelete").on("touch click", function() {
                 deleteNoShow($(this));
@@ -1967,10 +1987,10 @@
     NMNS.socket.on("delete noshow", socketResponse("노쇼 삭제하기", function(e) {
         NMNS.history.remove(e.data.id, findById);
     }, function(e) {
-        if (e && e.data) {
+        if (e && e.data) { 
             var origin = NMNS.history.find(function(item) { return item.id === e.data.id });
             if (origin) {
-                var newRow = $("<div class='row col-12 px-0 mt-1' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" (origin.noShowCase || "") + "'><span class='col-4'>" + (origin.contact ? dashContact(origin.contact) : "") + "</span><span class='col-4'>" + (origin.date ? (origin.date.substring(0, 4) + "-" + origin.date.substring(4, 6) + "-" + origin.date.substring(6)) : "") + "</span><span class='col-3'>" + (origin.noShowCase ? ("<span class='badge badge-light'>" + origin.noShowCase + "</span>") : "") + "</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
+                var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col col-3'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col col-3'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + origin.noShowCase + "</div><div class='col-2 pr-0 text-right'><i class='fas fa-times noShowSearchDelete' title='삭제'></i></div></div>");
                 newRow.find(".noShowSearchDelete").off("touch click").on("touch click", function() {
                     deleteNoShow($(this));
                 });
@@ -2498,7 +2518,9 @@
       }
     })
     function switchMenu(e){
-      e.preventDefault();
+      if(e && e.preventDefault){
+        e.preventDefault();
+      }
       if(!$(this).hasClass("menuLinkActive")){
         $(".switchingMenu:not(."+$(this).data('link')+")").hide();
         $("."+$(this).data('link')).show();
