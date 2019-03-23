@@ -158,7 +158,7 @@
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
         <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
-        <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowMenu" id="searchNoShow">
+        <input type="text" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" id="searchNoShow">
         <button class="btn btn-primary ml-auto menuLink" data-link="noShowMenu" type="button" title="노쇼 추가"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
         <button class="btn btn-flat d-md-block d-none px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom"><i class="far fa-bell" aria-label="알림" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
@@ -189,7 +189,7 @@
             <div id="mainArea">
               <div id="mainTask" class="bg-white col" style="padding:20px">
                 <div id="mainTaskTip"></div>
-                <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right fa fa-times cursor-pointer"></span></span>
+                <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right cursor-pointer">&times;</span></span>
                 <div id="mainTaskContents"></div>
               </div>
               <div id="mainCalendarArea" class="bg-white col" style="padding:30px 34px 30px 26px">
@@ -329,7 +329,7 @@
           </div>
         </div>
         
-        <div class="switchingMenu noShowMenu h-100">
+        <div class="switchingMenu noShowSearchMenu h-100">
           <div id="noShowClean" class="container flex-column d-flex h-100" style="justify-content:center">
             <div class="row">
               <div class="mx-auto">
@@ -363,6 +363,94 @@
             </div>
             <div class="row">
               <div id="noShowSearchList" class="col-12 text-center montserrat"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="switchingMenu noShowMenu h-100">
+          <div class="container flex-column d-flex h-100">
+            <div class="row mx-0">
+              <div class="menuBlock">
+                <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                  <ul id="noShowTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
+                    <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true" aria-label="노쇼 추가">직접 추가</a></li>
+                    <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#noShowSchedule" data-toggle="tab" aria-label="예약에서 추가">예약에서 추가</a></li>
+                  </ul>
+                  <button type="button" class="close p-0 ml-auto" aria-label="닫기">
+                    <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>
+                  </button>
+                </div>
+                <div class="row mx-0 col-12 tab-content" style="padding:30px">
+                  
+                  <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel" style="font-size:13px">
+                    <div class="row mx-0">
+                      <div>연락처 입력</div>
+                      <input type="text" class="form-control mt-3" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">
+                      <div>노쇼 사유</div>
+                      <div id="noShowAddContent" class="row mx-0 col-12 px-0 mt-3 mb-5">
+                        <span class="btn noShowAddCase" data-value="지각">지각</span>
+                        <span class="btn noShowAddCase" data-value="잠수">잠수</span>
+                        <span class="btn noShowAddCase" data-value="직전취소">직전취소</span>
+                        <input id="noShowAddCaseEtc" type="text" class="form-control col" placeholder="사유를 직접 입력하세요.">
+                      </div>
+                      <button id="noShowAddBtn" type="button" class="btn btn-accent col-12 mt-1"><span style="opacity:0.35">노쇼 이력 저장</span></button>
+                        <!--<div id="noShowAddBtn">
+                          <span id="noShowAddContactIcon" class="input-group-text rounded-0">저장</span>
+                        </div>-->
+                    </div>
+                  </div>
+                  
+                  <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                    <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0 col-3">
+      	    			    <a href="#" class="dropdown-item" data-status="RESERVED" aria-label="정상"><span class="badge badge-success">정상</span></a>
+      	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각" aria-label="노쇼(지각)"><span class="badge badge-danger">노쇼(지각)</span></a>
+      	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수" aria-label="노쇼(잠수)"><span class="badge badge-danger">노쇼(잠수)</span></a>
+      	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소" aria-label="노쇼(직전취소)"><span class="badge badge-danger">노쇼(직전취소)</span></a>
+      	    			    <a href="#" class="dropdown-item dropdown-item-etc d-inline-flex" aria-label="노쇼(기타)"><input type="text" class="form-control form-control-sm rounded-0" placeholder="노쇼 유형(기타)"><i class="fas fa-check noShowScheduleCheck pt-2" aria-label="확인"></i></a>
+        			      </div>
+                    <div class="row mx-0">
+                      <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>
+                      <div class="row col-12 col-sm-10 px-0 mb-2">
+                        <div class="px-0 d-inline-block noShowScheduleDate">
+                          <div id="noShowScheduleStartDatePicker" class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                              <i id="noShowScheduleStartDateIcon" class="input-group-text far fa-calendar-alt rounded-0"></i>
+                            </div>
+                            <input id="noShowScheduleStartDate" class="form-control rounded-0" aria-describedby="noShowScheduleStartDateIcon"/>
+                          </div>
+                        </div>
+                        <span class="px-2 pt-1">—</span>
+                        <div class="px-0 d-inline-block noShowScheduleDate">
+                          <div id="noShowScheduleEndDatePicker" class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                              <i id="noShowScheduleEndDateIcon" class="input-group-text far fa-calendar-alt rounded-0"></i>
+                            </div>
+                            <input id="noShowScheduleEndDate" class="form-control rounded-0" aria-describedby="noShowScheduleEndDateIcon"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row col-12 px-0 mb-2">
+                      <input type="text" class="form-control form-control-sm rounded-0 ml-0 han" id="noShowScheduleName" placeholder="고객 이름" autocomplete="false">
+                      <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호" autocomplete="false">
+                      <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-primary ml-3">
+                        <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
+                      </div>
+                    </div>
+                    <div class="row col-12 px-0">
+                      <div class="col-12 border-left border-right border-top row text-left px-0">
+                        <span class="col-3 col-lg-2 pr-0 d-inline-flex">날짜</span>
+                        <span class="col-4 col-lg-3 d-inline-flex">고객이름</span>
+                        <span class="col-3 col-lg-2 px-0 d-inline-flex">연락처</span>
+                        <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
+                        <span class="col-2 px-0 d-inline-flex">상태</span>
+                      </div>
+                    </div>
+                    <div id="noShowScheduleList" class="row col-12 border px-0"><div class="row col-12 px-0 mt-2"><span class="col-12 text-center">검색버튼을 눌러 예약을 검색하여 노쇼로 추가해보세요!</span></div></div>
+                  </div>
+                  
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -579,112 +667,9 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content rounded-0">
         <div class="modal-header p-0 mx-0">
-          <ul id="noShowTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;">
-            <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true" aria-label="노쇼 추가"><i class="fas fa-plus"></i> 노쇼 추가</a></li>
-            <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0" href="#noShowSearch" data-toggle="tab" aria-label="노쇼 찾기"><i class="fas fa-search"></i> 노쇼 찾기</a></li>
-            <li class="nav-item" style="display:inline-flex !important;"><a class="nav-link p-2 rounded-0" href="#noShowSchedule" data-toggle="tab" aria-label="예약에서 추가"><i class="far fa-calendar-plus"></i> 예약에서 추가</a></li>
-          </ul>
-          <button type="button" class="close m-0 p-0 pr-3 pt-2" data-dismiss="modal" aria-label="닫기">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          
         </div>
         <div class="modal-body px-0 mx-2">
-          <div class="row tab-content mx-3">
-            <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
-              <div class="row my-auto col-12 px-0">
-                <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0 my-auto">
-                  <input type="text" class="form-control form-control-sm rounded-0" id="noShowAddContact" placeholder="고객 연락처" aria-describedby="noShowAddContactIcon" autocomplete="false">
-                  <div id="noShowAddBtn" class="input-group-append">
-                    <span id="noShowAddContactIcon" class="input-group-text rounded-0">저장</span>
-                  </div>
-                  <div id="noShowAddContent" class="row col-12 px-0 mt-2">
-                    <span>노쇼 유형 : </span>
-                    <span class="btn btn-light badge badge-light noShowAddCase" data-value="지각">지각</span>
-                    <span class="btn btn-light badge badge-danger noShowAddCase" data-value="잠수">잠수</span>
-                    <span class="btn btn-light badge badge-light noShowAddCase" data-value="직전취소">직전취소</span>
-                    <br class="d-lg-none d-inline-block"/>
-                    <span id="noShowAddCaseEtc" class="btn btn-light badge badge-light noShowAddCase">기타</span>
-                    <input type="text" class="form-control form-control-sm rounded-0" placeholder="직접입력" disabled>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="noShowSearch" class="tab-pane col-12 px-0 fade" role="tabpanel">
-              <div class="row mb-2 col-12 px-0">
-                <div class="input-group input-group-sm col-12 col-sm-10 col-lg-6 pr-0">
-                  <input type="text" class="form-control form-control-sm rounded-0" id="noShowSearchContact" placeholder="고객 연락처" autocomplete="false">
-                  <div id="noShowSearchBtn" class="input-group-append">
-                    <i class="input-group-text fas fa-search d-sm-none rounded-0"></i>
-                    <span class="input-group-text d-none d-sm-block rounded-0">검색</span>
-                  </div>
-                </div>
-              </div>
-              <!--<div id="noShowSearchSummary" class="row col-12 px-0"></div>-->
-              <div class="row col-12"><span class="mx-auto d-inline-flex"><b>우리매장</b>&nbsp;노쇼 목록</span></div>
-              <div class="row col-12 px-0">
-                <div class="col-12 border-left border-right border-top row px-0">
-                  <span class="col-4 pr-0 d-inline-flex">전화번호</span>
-                  <span class="col-4 pr-0 d-inline-flex">노쇼 날짜</span>
-                  <span class="col-3 pr-0 d-inline-flex">노쇼사유</span>
-                  <span class="col-1 d-inline-flex"></span>
-                </div>
-                <!--<div id="noShowSearchList" class="col-12 border px-0"><div class="row col-12 px-0 mt-2 empty text-center"><span class="d-inline-flex mx-auto">전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div></div>-->
-              </div>
-              <div id="noShowSearchAdd" class="ml-3 px-0 btn">
-                <p class="text-secondary align-top mb-0" aria-label="노쇼 직접 추가하기">
-                  <i class="fas fa-plus"></i> 노쇼 직접 추가하기
-                </p>
-              </div>
-            </div>
-            <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
-              <div id="noShowScheduleDropdown" class="dropdown-menu rounded-0 col-3">
-	    			    <a href="#" class="dropdown-item" data-status="RESERVED" aria-label="정상"><span class="badge badge-success">정상</span></a>
-	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="지각" aria-label="노쇼(지각)"><span class="badge badge-danger">노쇼(지각)</span></a>
-	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="잠수" aria-label="노쇼(잠수)"><span class="badge badge-danger">노쇼(잠수)</span></a>
-	    			    <a href="#" class="dropdown-item" data-status="NOSHOW" data-type="직전취소" aria-label="노쇼(직전취소)"><span class="badge badge-danger">노쇼(직전취소)</span></a>
-	    			    <a href="#" class="dropdown-item dropdown-item-etc d-inline-flex" aria-label="노쇼(기타)"><input type="text" class="form-control form-control-sm rounded-0" placeholder="노쇼 유형(기타)"><i class="fas fa-check noShowScheduleCheck pt-2" aria-label="확인"></i></a>
-  			      </div>
-              <div class="row col-12 px-0">
-                <label for="noShowScheduleStart" class="col-12 col-sm-2 pl-0 col-form-label col-form-label-sm">검색기간</label>
-                <div class="row col-12 col-sm-10 px-0 mb-2">
-                  <div class="px-0 d-inline-block noShowScheduleDate">
-                    <div id="noShowScheduleStartDatePicker" class="input-group input-group-sm">
-                      <div class="input-group-prepend">
-                        <i id="noShowScheduleStartDateIcon" class="input-group-text far fa-calendar-alt rounded-0"></i>
-                      </div>
-                      <input id="noShowScheduleStartDate" class="form-control rounded-0" aria-describedby="noShowScheduleStartDateIcon"/>
-                    </div>
-                  </div>
-                  <span class="px-2 pt-1">—</span>
-                  <div class="px-0 d-inline-block noShowScheduleDate">
-                    <div id="noShowScheduleEndDatePicker" class="input-group input-group-sm">
-                      <div class="input-group-prepend">
-                        <i id="noShowScheduleEndDateIcon" class="input-group-text far fa-calendar-alt rounded-0"></i>
-                      </div>
-                      <input id="noShowScheduleEndDate" class="form-control rounded-0" aria-describedby="noShowScheduleEndDateIcon"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row col-12 px-0 mb-2">
-                <input type="text" class="form-control form-control-sm rounded-0 ml-0 han" id="noShowScheduleName" placeholder="고객 이름" autocomplete="false">
-                <input type="text" class="form-control form-control-sm rounded-0 ml-3" id="noShowScheduleContact" placeholder="고객 전화번호" autocomplete="false">
-                <div id="noShowScheduleSearch" class="btn btn-flat btn-sm btn-primary ml-3">
-                  <span class="d-none d-sm-block">검색</span><i class="fas fa-search d-sm-none"></i>
-                </div>
-              </div>
-              <div class="row col-12 px-0">
-                <div class="col-12 border-left border-right border-top row text-left px-0">
-                  <span class="col-3 col-lg-2 pr-0 d-inline-flex">날짜</span>
-                  <span class="col-4 col-lg-3 d-inline-flex">고객이름</span>
-                  <span class="col-3 col-lg-2 px-0 d-inline-flex">연락처</span>
-                  <span class="col-3 d-none pr-0 d-lg-inline-flex">예약내용</span>
-                  <span class="col-2 px-0 d-inline-flex">상태</span>
-                </div>
-              </div>
-              <div id="noShowScheduleList" class="row col-12 border px-0"><div class="row col-12 px-0 mt-2"><span class="col-12 text-center">검색버튼을 눌러 예약을 검색하여 노쇼로 추가해보세요!</span></div></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

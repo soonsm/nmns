@@ -81,6 +81,11 @@ a.text-primary {
   color: #fff;
 }
 
+.bg-accent{
+  background-color:$accent;
+  color:#fff;
+}
+
 .text-accent{
   color:$accent;
 }
@@ -117,7 +122,13 @@ a.text-primary {
 #noShowModal .nav-pills .nav-link.active, #noShowModal .nav-pills .show > .nav-link{
   background-color:$primary;
 }
-
+.form-control{
+  border-radius:2px;
+  border-color:#707070;
+  font-size:13px;
+  height:auto;
+  padding:10px 15px;
+}
 .form-control, .form-control-sm, div.rounded-0{
   border-width: 0.05rem;
 }

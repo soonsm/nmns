@@ -1082,9 +1082,9 @@
         dropdown.hide(300);
     }
 
-    function initNoShowModal() {
-        if (!NMNS.initedNoShowModal) {
-            NMNS.initedNoShowModal = true;
+    function initNoShowMenu() {
+        if (!NMNS.initedNoShowMenu) {
+            NMNS.initedNoShowMenu = true;
             var datetimepickerOption = {
                 format: "Y-m-d",
                 defaultDate: new Date(),
@@ -1101,20 +1101,34 @@
             }
 
             $(".noShowAddCase").off("touch click").on("touch click", function() {
-                $(".noShowAddCase").not($(this)).removeClass("badge-danger").addClass("badge-light");
-                if ($(this).removeClass("badge-light").addClass("badge-danger").is("#noShowAddCaseEtc")) {
-                    $(this).next().removeAttr("disabled").focus();
-                } else {
-                    $(this).siblings("input").attr("disabled", "disabled");
+                $(".noShowAddCase").not($(this)).removeClass("bg-accent");
+                $(this).toggleClass('bg-accent');
+                if($("#noShowAddContent .bg-accent").length > 0 || $("#noShowAddCaseEtc").val().trim().length > 0){
+                  $("#noShowAddBtn span").css('opacity', 1)
+                }else{
+                  $("#noShowAddBtn span").css('opacity', 0.35)
                 }
             });
+            $("#noShowAddCaseEtc").on("keyup", function(e){
+              $(this).siblings().removeClass('bg-accent')
+              if($("#noShowAddContent .bg-accent").length > 0 || $("#noShowAddCaseEtc").val().trim().length > 0){
+                $("#noShowAddBtn span").css('opacity', 1)
+              }else{
+                $("#noShowAddBtn span").css('opacity', 0.35)
+              }
+              if(e.which === 13){
+                $("#noShowAddBtn").trigger("click");
+              }
+            })
             $("#noShowAddBtn").off("touch click").on("touch click", function() {
                 if ($("#noShowAddContact").val() === "") {
-                    alert("저장할 전화번호를 입력해주세요!");
+                    showSnackBar("<span>저장할 전화번호를 입력해주세요!</span>");
                     return;
+                }else if($(".noShowAddCase.bg-accent").length === 0 && $("#noShowAddCaseEtc").val().trim().length === 0){
+                  showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+                  return;
                 }
-                var noShowCase = $("#noShowAddContent .badge-danger").is("#noShowAddCaseEtc") ? $("#noShowAddContent input").val() : $("#noShowAddContent .badge-danger").data("value");
-                NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: noShowCase });
+                NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: $("#noShowAddContent .bg-accent").length === 0 ? $("#noShowAddCaseEtc").val().trim() : $("#noShowAddContent .bg-accent").data("value") });
             });
             $("#noShowSearchBtn").off("touch click").on("touch click", function() {
                 if ($("#noShowSearchContact").val() === "") {
@@ -1150,46 +1164,21 @@
                 $("#noShowScheduleList .row").remove(); //깜빡임 효과
                 NMNS.socket.emit("get summary", parameters);
             });
-            $("#noShowSearchAdd").off("touch click").on("touch click", function() {
-                var id = generateRandom();
-                var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='" + id + "'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker" + id + "' class='col-4 input-group input-group-sm pr-0'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon" + id + "' class='input-group-text far fa-calendar rounded-0'></i></div><input id='noShowSearchAddDate" + id + "' type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon" + id + "'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle' title='저장'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1' title='취소'></i></div></div>");
-                if ($("#noShowSearchList .empty").length) {
-                    $("#noShowSearchList").html(newRow);
-                } else {
-                    $("#noShowSearchList").append(newRow);
-                }
-                newRow.find(".noShowSearchAddSubmit").off("touch click").on("touch click", function() {
-                    submitAddNoShow($(this));
-                });
-                newRow.find(".noShowSearchAddCancel").off("touch click").on("touch click", function() {
-                    cancelAddNoShow($(this));
-                });
-                newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function() {
-                    filterNonNumericCharacter($(this));
-                }).val($("#noShowSearchContact").val()).select().focus();
-                newRow.data("datetimepicker", flatpickr("#noShowSearchAddDate" + id, datetimepickerOption));
-            });
-            $("#noShowSearchContact, #noShowAddContact, #noShowScheduleContact").off("blur").on("blur", function() {
-                filterNonNumericCharacter($(this));
-            });
-            $("#noShowSearchContact").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#noShowSearchBtn").trigger("click");
-                }
-            });
-            $("#noShowAddContact").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#noShowAddBtn").trigger("click");
-                }
-            });
-            $("#noShowScheduleContact").off("keyup").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#noShowScheduleSearch").trigger("click");
-                }
-            });
+            setNumericInput(
+              $("#noShowAddContact").on("keyup", function(e) {
+                  if (e.which === 13) {
+                      $("#noShowAddBtn").trigger("click");
+                  }
+              })[0]
+            );
+
+            setNumericInput(
+              $("#noShowScheduleContact").off("keyup").on("keyup", function(e) {
+                  if (e.which === 13) {
+                      $("#noShowScheduleSearch").trigger("click");
+                  }
+              })[0]
+            );
             flatpickr("#noShowScheduleStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
             flatpickr("#noShowScheduleEndDate", datetimepickerOption).setDate(moment().add(1, "M").toDate());
             $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(e) {
@@ -1234,29 +1223,6 @@
             });
 
             $("#noShowAddContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {}
-            }, NMNS.socket);
-
-            $("#noShowSearchContact").autocomplete({
                 serviceUrl: "get customer info",
                 paramName: "contact",
                 zIndex: 1060,
@@ -1522,7 +1488,7 @@
 
         $("#infoLink").on("touch click", NMNS.initInfoModal);
         $("#alrimLink").on("touch click", NMNS.initAlrimModal);
-        $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
+        $(".menuLink[data-link=noShowMenu]").one("touch click", initNoShowMenu);
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
         flatpickr.localize("ko");
         
@@ -1539,7 +1505,7 @@
           $('#mainAside .menu-collapsed').toggle();
         })
         $(".announcementMenuLink").popover({
-          template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button fa fa-times ml-auto cursor-pointer"></span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
+          template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
           html:true,
           sanitize:false,
           placement:'auto'
@@ -1561,7 +1527,29 @@
               }
             }
           })[0]
-        )
+        );
+        $("#searchNoShow").autocomplete({
+            serviceUrl: "get customer info",
+            paramName: "contact",
+            zIndex: 1060,
+            maxHeight: 150,
+            triggerSelectOnValidInput: false,
+            transformResult: function(response, originalQuery) {
+                response.forEach(function(item) {
+                    item.data = item.name;
+                    item.value = item.contact;
+                    delete item.contact;
+                    delete item.name;
+                });
+                return { suggestions: response };
+            },
+            onSearchComplete: function() {},
+            formatResult: function(suggestion, currentValue) {
+                return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+            },
+            onSearchError: function() {},
+            onSelect: function(suggestion) {}
+        }, NMNS.socket);
     }
 
     function getSchedule(start, end) {
@@ -1946,7 +1934,7 @@
           if (e.data.detail.length > 0) {
             var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
             e.data.detail.forEach(function(item) {
-                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + item.noShowCase + "</div><div class='col-2 pr-0 text-right'><i class='fas fa-times noShowSearchDelete' title='삭제'></i></div></div>";
+                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + item.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
             });
             $("#noShowSearchList").html(html);
             $("#noShowSearchList .noShowSearchDelete").on("touch click", function(){
@@ -1968,7 +1956,7 @@
         var html, badge = "";
         if ($("#noShowSearch").is(":visible")) {
             badge = (e.data.noShowCase ? ("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
-            html = $("<div class='row col-12 noShowRow' data-id='" + e.data.id + "' data-contact='" + e.data.contact + "' data-date='" + e.data.date + "' data-noshowcase='" + e.data.noShowCase + "'><div class='col-3'>" + (e.data.contact || dashContact($("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] input[name='noShowSearchAddContact']").val())) + "</div><div class='col-3'>" + (e.data.date ? e.data.date.substring(0, 4) + ". " + e.data.date.substring(4, 6) + ". " + e.data.date.substring(6) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + e.data.noShowCase + "</div><div class='col-2 pr-0 text-right'><i class='fas fa-times noShowSearchDelete' title='삭제'></i></div></div>");
+            html = $("<div class='row col-12 noShowRow' data-id='" + e.data.id + "' data-contact='" + e.data.contact + "' data-date='" + e.data.date + "' data-noshowcase='" + e.data.noShowCase + "'><div class='col-3'>" + (e.data.contact || dashContact($("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] input[name='noShowSearchAddContact']").val())) + "</div><div class='col-3'>" + (e.data.date ? e.data.date.substring(0, 4) + ". " + e.data.date.substring(4, 6) + ". " + e.data.date.substring(6) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + e.data.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>");
             html.insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
             html.find(".noShowSearchDelete").on("touch click", function() {
                 deleteNoShow($(this));
@@ -1990,7 +1978,7 @@
         if (e && e.data) { 
             var origin = NMNS.history.find(function(item) { return item.id === e.data.id });
             if (origin) {
-                var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col col-3'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col col-3'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + origin.noShowCase + "</div><div class='col-2 pr-0 text-right'><i class='fas fa-times noShowSearchDelete' title='삭제'></i></div></div>");
+                var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col col-3'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col col-3'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + origin.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>");
                 newRow.find(".noShowSearchDelete").off("touch click").on("touch click", function() {
                     deleteNoShow($(this));
                 });
@@ -2369,7 +2357,7 @@
         var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
         var list = $(this).prev();
         var clazz = list.attr("id") === "lnbManagerList" ? "lnbManagerItem" : "infoManagerItem";
-        var row = $("<div class='" + clazz + " addManagerItem row mx-0'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
+        var row = $("<div class='" + clazz + " addManagerItem row mx-0'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><span class='cancelAddManager pl-1' title='취소'>&times;</span>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
         list.append(row);
         if (clazz === "lnbManagerItem") {
             row.find(".submitAddManager").off("touch click").on("touch click", function() {
