@@ -1082,84 +1082,65 @@
         dropdown.hide(300);
     }
 
-    function initNoShowMenu() {
-        if (!NMNS.initedNoShowMenu) {
-            NMNS.initedNoShowMenu = true;
-            var datetimepickerOption = {
-                format: "Y-m-d",
-                defaultDate: new Date(),
-                appendTo: document.getElementById("noShowModal"),
-                locale: "ko",
-                closeOnSelect: true
-            };
-
-            if (!$("#noShowSearchList").hasClass("ps")) {
-                $("#noShowSearchList").data("scroll", new PerfectScrollbar("#noShowSearchList", { suppressScrollX: true }));
-            }
+    function initNoShowModal() {
+        if (!NMNS.initedNoShowModal) {
+            NMNS.initedNoShowModal = true;
+            
             if (!$("#noShowScheduleList").hasClass("ps")) {
-                $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+              $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
             }
 
             $(".noShowAddCase").off("touch click").on("touch click", function() {
-                $(".noShowAddCase").not($(this)).removeClass("bg-accent");
-                $(this).toggleClass('bg-accent');
-                if($("#noShowAddContent .bg-accent").length > 0 || $("#noShowAddCaseEtc").val().trim().length > 0){
-                  $("#noShowAddBtn span").css('opacity', 1)
-                }else{
-                  $("#noShowAddBtn span").css('opacity', 0.35)
-                }
-            });
-            $("#noShowAddCaseEtc").on("keyup", function(e){
-              $(this).siblings().removeClass('bg-accent')
-              if($("#noShowAddContent .bg-accent").length > 0 || $("#noShowAddCaseEtc").val().trim().length > 0){
-                $("#noShowAddBtn span").css('opacity', 1)
+              $(this).siblings().removeClass("bg-primary");
+              $(this).toggleClass('bg-primary');
+              if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
+                $(this).parent().next().children("span").css('opacity', 1)
+              } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
+                $(this).parent().next().children("span").css('opacity', 1)
               }else{
-                $("#noShowAddBtn span").css('opacity', 0.35)
+                $(this).parent().next().children("span").css('opacity', 0.35)
+              }
+            });
+            $("#noShowAddCaseEtc,#noShowScheduleCaseEtc").on("keyup", function(e){
+              $(this).siblings().removeClass('bg-primary')
+              if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && $(this).val().trim().length > 0){
+                $(this).parent().next().children("span").css('opacity', 1)
+              } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && $(this).val().trim().length > 0){
+                $(this).parent().next().children("span").css('opacity', 1)
+              }else{
+                $(this).parent().next().children("span").css('opacity', 0.35)
               }
               if(e.which === 13){
-                $("#noShowAddBtn").trigger("click");
+                $(this).parent().next().trigger("click");
               }
             })
             $("#noShowAddBtn").off("touch click").on("touch click", function() {
-                if ($("#noShowAddContact").val() === "") {
-                    showSnackBar("<span>저장할 전화번호를 입력해주세요!</span>");
-                    return;
-                }else if($(".noShowAddCase.bg-accent").length === 0 && $("#noShowAddCaseEtc").val().trim().length === 0){
-                  showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
-                  return;
-                }
-                NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: $("#noShowAddContent .bg-accent").length === 0 ? $("#noShowAddCaseEtc").val().trim() : $("#noShowAddContent .bg-accent").data("value") });
+              if ($("#noShowAddContact").val() === "") {
+                showSnackBar("<span>저장할 전화번호를 입력해주세요!</span>");
+                return;
+              }else if($("#noShowAddContent .noShowAddCase.bg-primary").length === 0 && $("#noShowAddCaseEtc").val().trim().length === 0){
+                showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+                return;
+              }
+              NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: $("#noShowAddContent .bg-primary").length === 0 ? $("#noShowAddCaseEtc").val().trim() : $("#noShowAddContent .bg-primary").data("value") });
             });
-            $("#noShowSearchBtn").off("touch click").on("touch click", function() {
-                if ($("#noShowSearchContact").val() === "") {
-                    alert("검색할 전화번호를 입력해주세요!");
-                    return;
-                }
-                NMNS.socket.emit("get noshow", { contact: $("#noShowSearchContact").val(), mine: false });
-            });
+
+            $("#noShowScheduleBtn").off("touch click").on("touch click", function(){
+              if($("#noShowScheduleList input:checked").length === 0){
+                showSnackBar("<span>노쇼로 등록할 예약을 선택해주세요.</span>");
+                return;
+              }else if($("#noShowScheduleContent .noShowAddCase.bg-primary").length === 0 && $("#noShowScheduleCaseEtc").val().trim().length === 0){
+                showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+                return;
+              }
+              var item = $("#noShowScheduleList input:checked").parent().parent();
+              NMNS.history.push({id:item.data('id'), status:item.data('status'), manager:item.data('manager'), contents:item.data('contents')})
+              NMNS.socket.emit("update reserv", {id:item.data("id"), status:"NOSHOW", noShowCase:($("#noShowScheduleContent .noShowAddCase.bg-primary").length > 0? $("#noShowScheduleContent .noShowAddCase.bg-primary").data('value') : $("#noShowScheduleCaseEtc").val().trim())})
+            })
             $("#noShowScheduleSearch").off("touch click").on("touch click", function() {
                 var parameters = {};
-                if ($("#noShowScheduleStartDate").val() !== "") {
-                    var start = moment($("#noShowScheduleStartDate").val(), "YYYY-MM-DD");
-                    if (!start.isValid()) {
-                        alert("검색 시작일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.start = start.format("YYYYMMDD");
-                }
-                if ($("#noShowScheduleEndDate").val() !== "") {
-                    var end = moment($("#noShowScheduleEndDate").val(), "YYYY-MM-DD");
-                    if (!end.isValid()) {
-                        alert("검색 끝일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.end = end.format("YYYYMMDD");
-                }
-                if ($("#noShowScheduleName").val() !== "") {
-                    parameters.name = $("#noShowScheduleName").val();
-                }
-                if ($("#noShowScheduleContact").val() !== "") {
-                    parameters.contact = $("#noShowScheduleContact").val();
+                if ($("#noShowScheduleTarget").val() !== "") {
+                    parameters.target = $("#noShowScheduleTarget").val();
                 }
                 $("#noShowScheduleList .row").remove(); //깜빡임 효과
                 NMNS.socket.emit("get summary", parameters);
@@ -1172,56 +1153,9 @@
               })[0]
             );
 
-            setNumericInput(
-              $("#noShowScheduleContact").off("keyup").on("keyup", function(e) {
-                  if (e.which === 13) {
-                      $("#noShowScheduleSearch").trigger("click");
-                  }
-              })[0]
-            );
-            flatpickr("#noShowScheduleStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
-            flatpickr("#noShowScheduleEndDate", datetimepickerOption).setDate(moment().add(1, "M").toDate());
-            $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(e) {
-                var dropdown = $(this).parent();
-                e.preventDefault();
-                NMNS.history.push({ id: dropdown.data("id"), calendarId: dropdown.data("manager"), raw: { status: dropdown.data("status") } });
-                NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), { raw: { status: $(this).data("status") } });
-                NMNS.socket.emit("update reserv", { id: dropdown.data("id"), status: $(this).data("status"), noShowCase: $(this).data("type") });
-                var row = $("#noShowScheduleList .row[data-id='" + dropdown.data("id") + "']");
-                row.children("span:last-child").html($(generateScheduleStatusBadge($(this).data("status"))));
-                row.find(".badge, .noShowScheduleNoShow").each(function() {
-                    $(this).on("touch click", function(e) {
-                        e.stopPropagation();
-                        noShowScheduleBadge($(this));
-                    });
-                });
-                row.find(".noShowScheduleNormal").on("touch click", function(e) {
-                    e.stopPropagation();
-                    noShowScheduleNormal($(this));
-                });
-                dropdown.hide(300);
+            $("#noShowTabList a[href='#noShowSchedule']").on("show.bs.tab", function(){
+              $("#noShowScheduleSearch").trigger('click');
             });
-            $("#noShowScheduleDropdown .noShowScheduleCheck").off("touch click").on("touch click", function() {
-                submitNoShowEtcReason($(this).parent());
-            });
-            $("#noShowScheduleDropdown .dropdown-item-etc").off("touch click").on("touch click", function(e) {
-                e.preventDefault();
-            });
-            $("#noShowScheduleDropdown .dropdown-item-etc input").off("keyup").on("keyup", function(e) {
-                switch (e.which) {
-                    case 13:
-                        submitNoShowEtcReason($(this).parent());
-                        break;
-                    case 27:
-                        $(this).parent().parent().hide(300);
-                        break;
-                }
-            }).off("touch click").on("touch click", function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                $(this).focus();
-            });
-
             $("#noShowAddContact").autocomplete({
                 serviceUrl: "get customer info",
                 paramName: "contact",
@@ -1245,9 +1179,13 @@
                 onSelect: function(suggestion) {}
             }, NMNS.socket);
 
-            $("#noShowScheduleName").autocomplete({
+            $("#noShowScheduleTarget").on("keyup", function(e){
+              if (e.which === 13) {
+                  $("#noShowScheduleSearch").trigger("click");
+              }
+            }).autocomplete({
                 serviceUrl: "get customer info",
-                paramName: "name",
+                paramName: "target",
                 zIndex: 1060,
                 maxHeight: 150,
                 triggerSelectOnValidInput: false,
@@ -1267,30 +1205,6 @@
                 onSearchError: function() {},
                 onSelect: function(suggestion) {
                     $("#noShowScheduleContact").val(suggestion.data);
-                }
-            }, NMNS.socket);
-            $("#noShowScheduleContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#noShowScheduleName").val(suggestion.data);
                 }
             }, NMNS.socket);
         } else {
@@ -1488,7 +1402,7 @@
 
         $("#infoLink").on("touch click", NMNS.initInfoModal);
         $("#alrimLink").on("touch click", NMNS.initAlrimModal);
-        $(".menuLink[data-link=noShowMenu]").one("touch click", initNoShowMenu);
+        $(".addNoShowLink").one("touch click", initNoShowModal);
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
         flatpickr.localize("ko");
         
@@ -1776,20 +1690,19 @@
             html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>";
         } else {
             e.data.forEach(function(item) {
-                html += "<div class='row col-12 px-0 mt-1' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + (item.contents ? (" title='" + item.contents + "'") : "") + "><span class='col-3 col-lg-2 pr-0'>" + (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD") : "") + "</span><span class='col-4 col-lg-3'>" + (item.name || "") + "</span><span class='col-3 col-lg-2 px-0'>" + dashContact(item.contact) + "</span><span class='col-3 d-none d-lg-inline-flex'>" + (item.contents || "") + "</span><span class='col-2 px-0'>" + generateScheduleStatusBadge(item.status) + "</span></div>";
+                html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + (item.contents ? (" title='" + item.contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" + (item.contents || "") + "</div></div>";
             });
         }
         $("#noShowScheduleList").html(html);
-        $("#noShowScheduleList .badge, #noShowScheduleList .noShowScheduleNoShow").each(function() {
-            $(this).off("touch click").on("touch click", function(e) {
-                e.stopPropagation();
-                noShowScheduleBadge($(this));
-            });
-        });
-        $("#noShowScheduleList .noShowScheduleNormal").off("touch click").on("touch click", function(e) {
-            e.stopPropagation();
-            noShowScheduleNormal($(this));
-        });
+        $("#noShowScheduleList input[type=checkbox]").on("change", function(e){
+          $("#noShowScheduleList input[type=checkbox]").not(this).prop('checked', false);
+          if($(this).prop('checked') && ($('#noShowScheduleContent .bg-primary').length > 0 || $("#noShowScheduleCaseEtc").val().trim().length > 0)){
+            $("#noShowScheduleBtn span").css('opacity', 1)
+          }else{
+            $("#noShowScheduleBtn span").css('opacity', 0.35)
+          }
+        })
+        
         if ($("#noShowScheduleList").hasClass("ps")) {
             $("#noShowScheduleList").data("scroll").update();
         }
@@ -1806,6 +1719,11 @@
 
     NMNS.socket.on("update reserv", socketResponse("예약/일정 정보 변경하기", function(e) {
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
+        if ($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='" + e.data.id + "']").length) { //예약으로 추가 모달
+          showSnackBar('<span>노쇼로 등록하였습니다.</span>');
+          $("#noShowScheduleList .row[data-id='" + e.data.id + "']").remove();
+          $("#noShowScheduleBtn span").css('opacity', 0.35)
+        }
     }, function(e) {
         var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
@@ -1829,20 +1747,6 @@
                 if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
                 NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
             }
-        }
-        if ($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='" + e.data.id + "']").length) { //예약으로 추가 모달
-            var row = $("#noShowScheduleList .row[data-id='" + e.data.id + "']");
-            row.children("span:last-child").html($(generateScheduleStatusBadge(origin.status || origin.raw.status)));
-            row.find(".badge, .noShowScheduleNoShow").each(function() {
-                $(this).on("touch click", function(e) {
-                    e.stopPropagation();
-                    noShowScheduleBadge($(this));
-                });
-            });
-            row.find(".noShowScheduleNormal").on("touch click", function(e) {
-                e.stopPropagation();
-                noShowScheduleNormal($(this));
-            });
         }
     }));
 

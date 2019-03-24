@@ -13,9 +13,15 @@ a {
   font-size:13px;
   padding:12px 20px;
 }
+.btn-sm{
+  padding:10px 15px;
+  line-height:1;
+  height:35px;
+}
 
 .bg-primary {
   background-color: $primary !important;
+  color:#fff;
 }
 
 .bg-secondary {
@@ -119,15 +125,15 @@ a.text-primary {
   background-color:$primary;
 }
 
-#noShowModal .nav-pills .nav-link.active, #noShowModal .nav-pills .show > .nav-link{
-  background-color:$primary;
-}
 .form-control{
   border-radius:2px;
   border-color:#707070;
   font-size:13px;
   height:auto;
   padding:10px 15px;
+}
+.form-control-sm{
+  height:35px;
 }
 .form-control, .form-control-sm, div.rounded-0{
   border-width: 0.05rem;
