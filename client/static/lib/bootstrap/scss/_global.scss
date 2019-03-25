@@ -62,7 +62,7 @@ section {
 input[type=checkbox]{
   display:none;
 }
-input[type=checkbox] + label:before{
+input[type=checkbox]:not(.custom-control-input) + label:before{
   font-family: "Font Awesome 5 Free";
   font-weight: 400;
   display: inline-block;
@@ -74,7 +74,7 @@ input[type=checkbox]:not(:checked):hover + label:before{
   font-weight: 900;
   color: $lightPrimary;
 }
-input[type=checkbox]:checked + label:before{
+input[type=checkbox]:not(.custom-control-input):checked + label:before{
   content: "\f14a";
   font-weight: 900;
   color: $primary;
@@ -84,4 +84,31 @@ input[type=checkbox] + label + label{
 }
 .base-font{
   @include body-font;
+}
+
+.custom-switch .custom-control-label::before {
+    left: -2.25rem;
+    width: 22px;
+    pointer-events: all;
+    border-radius: .5rem;
+    height: 14px;
+    border: 1px solid #393535;
+}
+
+.custom-control-input:checked~.custom-control-label::before{
+  background-color:$accent;
+  border-color:$accent;
+}
+
+.custom-switch .custom-control-label::after {
+  top: calc(.25rem + 4px);
+  left: calc(-2.25rem + 4px);
+  width: calc(1rem - 9px);
+  height: calc(1rem - 9px);
+  background-color: #fff;
+  border: 1px solid #393535;
+}
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(8px);
+  border-color: #fff;
 }

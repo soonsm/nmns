@@ -635,7 +635,7 @@
         list.data("scroll").update();
     }
 
-    function refreshAlrimModal() {
+    function refreshAlrimTab() {
         if (NMNS.info.alrimTalkInfo.useYn === "Y") {
             $("#alrimUseYn").prop("checked", true);
             $("#alrimScreen").hide();
@@ -648,12 +648,9 @@
         $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
         $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
         $("#noticeByteCount").text($("#alrimNotice").val().length);
-        if ($("#alrimModalTitle").text() !== "알림톡 정보") {
-            $("#alrimSwitchBtn").trigger("click");
-        }
     }
 
-    function submitAlrimModal() {
+    function submitAlrimTab() {
         if ($("#alrimNotice").val().length > 700) {
             alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요 :)");
             $("#alrimNotice").focus();
@@ -718,12 +715,17 @@
         }
     }
 
-    NMNS.initAlrimModal = function() {
-        if (!NMNS.initedAlrimModal) {
-            NMNS.initedAlrimModal = true;
+    NMNS.initAlrimTab = function() {
+        if (!NMNS.initedAlrimTab) {
+            NMNS.initedAlrimTab = true;
+            
+            //alrimTab
+            $("#labelAlrimUseYn").on("touch click", function(){
+              $(this).next().children('label').trigger('click');
+            })
             $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
                 $("#noticeByteCount").text($(this).val().length);
-                $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
+                //$(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
             }).on("blur", function(){
                 $(this).val(removeNonCharacter($(this).val()));
             });
@@ -734,12 +736,9 @@
                     $("#alrimScreen").show();
                 }
             });
-            $("#alrimModalRefresh").off("touch click").on("touch click", refreshAlrimModal);
-            $("#alrimModalSave").off("touch click").on("touch click", submitAlrimModal);
-            $("#alrimCallbackPhone").off("blur").on("blur", function() {
-                filterNonNumericCharacter($(this));
-            });
-
+            setNumericInput($("#alrimCallbackPhone")[0]);
+            $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimTab);
+            /*
             $("#alrimHistorySearch").off("touch click").on("touch click", function() {
                 var parameters = {};
                 if ($("#alrimHistoryStartDate").val() !== "") {
@@ -837,12 +836,12 @@
                 onSelect: function(suggestion) {
                     $("#alrimHistoryName").val(suggestion.data);
                 }
-            }, NMNS.socket);
+            }, NMNS.socket);*/
         }
-        refreshAlrimModal();
+        refreshAlrimTab();
     }
 
-    function submitInfoModal() {
+    function submitInfoTab() {
         //validation start
         if ($(".infoManagerItem input[type='text']").length) { //추가하는것이 있을 경우 이름이 비어있는지 확인
             var cont = true;
@@ -954,7 +953,7 @@
             .show(300);
     }
 
-    function refreshInfoModal() {
+    function refreshInfoTab() {
         $("#infoEmail").text(NMNS.email);
         $("#infoPassword").val("");
         $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
@@ -1000,9 +999,9 @@
         });
     }
 
-    NMNS.initInfoModal = function() {
-        if (!NMNS.initedInfoModal) { //first init
-            NMNS.initedInfoModal = true;
+    NMNS.initInfoTab = function() {
+        if (!NMNS.initedInfoTab) { //first init
+            NMNS.initedInfoTab = true;
 
             /*var html = "";
             NMNS.colorTemplate.forEach(function(item, index) {
@@ -1039,8 +1038,8 @@
                 $("#infoManagerList").data("scroll", new PerfectScrollbar("#infoManagerList"));
             }
 
-            $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
-            $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoModal);
+            $("#infoModalSave").off("touch click").on("touch click", submitInfoTab);
+            $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoTab);
             $("#infoModalColorPickerClose").off("touch click").on("touch click", function() {
                 $("#infoModalColorPicker").hide(300);
             });
@@ -1053,27 +1052,8 @@
                 }
             });
             
-            $("#resetPasswordBtn").on("touch click", function(){
-              if($("#currentPassword").val().length === 0){
-                showSnackBar("현재 비밀번호를 입력해주세요.");
-                return;
-              }else if($("#newPassword").val().length === 0){
-                showSnackBar("새 비밀번호를 입력해주세요.");
-                return;
-              }else if($("#renewPassword").val().length === 0){
-                showSnackBar("새 비밀번호를 한 번 더 입력해주세요.");
-                return;
-              }else if($("#newPassword").val() !== $("#renewPassword").val()){
-                showSnackBar("새 비밀번호가 일치하지 않습니다.");
-                return;
-              }
-              NMNS.socket.emit("update password", { currentPassword: $("#currentPassword").val(), newPassword: $("#newPassword").val() });
-              $("#newPassword").val("");
-              $("#renewPassword").val("");
-              $("#infoModal").modal('hide');
-            })
         }
-        refreshInfoModal(); //setting data
+        refreshInfoTab(); //setting data
     }
 
     function submitNoShowEtcReason(dropdownItem) {
@@ -2078,12 +2058,7 @@
             }
         }
     }).on("shown.bs.modal", function() {
-      NMNS.initInfoModal();
-      $("#infoManagerList").data("scroll").update();
-      $("#infoManagerList")[0].scrollTop = 0;
-      if ($("body .popover").length) {
-          $("body .popover").popover("update");
-      }
+      
     }).on('show.bs.modal', function(){
       switch(NMNS.infoModal){
         case 'alrim':
@@ -2239,6 +2214,36 @@
         $('body').children('.popover.show').popover('hide');
       }
     });
+    $("#infoTabList a[data-target='#alrimTab']").on("show.bs.tab", NMNS.initAlrimTab)
+    $("#infoTabList a[data-target='#infoTab']").on("show.bs.tab", NMNS.initInfoTab).on('shown.bs.tab', function(){
+      $("#infoManagerList").data("scroll").update();
+      $("#infoManagerList")[0].scrollTop = 0;
+      if ($("body .popover").length) {
+          $("body .popover").popover("update");
+      }
+    })
+    $("#infoTabList a[data-target='#passwordTab]").one('show.bs.tab', function(){
+      //passwordTab
+      $("#resetPasswordBtn").on("touch click", function(){
+        if($("#currentPassword").val().length === 0){
+          showSnackBar("현재 비밀번호를 입력해주세요.");
+          return;
+        }else if($("#newPassword").val().length === 0){
+          showSnackBar("새 비밀번호를 입력해주세요.");
+          return;
+        }else if($("#renewPassword").val().length === 0){
+          showSnackBar("새 비밀번호를 한 번 더 입력해주세요.");
+          return;
+        }else if($("#newPassword").val() !== $("#renewPassword").val()){
+          showSnackBar("새 비밀번호가 일치하지 않습니다.");
+          return;
+        }
+        NMNS.socket.emit("update password", { currentPassword: $("#currentPassword").val(), newPassword: $("#newPassword").val() });
+        $("#newPassword").val("");
+        $("#renewPassword").val("");
+        $("#infoModal").modal('hide');
+      })
+    })
     //Modal events end
     //mobile horizontal scroll handling
     // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml

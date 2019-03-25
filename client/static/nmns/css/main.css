@@ -819,19 +819,26 @@ button.moveDate:focus {
     background-color: white;
 }
 
+#infoModal .subText{
+    opacity:0.5;
+    font-size:11px;
+    line-height:1.18;
+    margin-left:10px;
+}
 
 /*alrim modal*/
 
 #alrimNotice {
-    height: 130px;
+    height: 150px;
 }
 
 #alrimScreen {
     position: absolute;
     z-index: 1;
     left: 0;
+    top:0;
     width: 100%;
-    height: calc(100% - 55px);
+    height: 100%;
     background-color: white;
     opacity: .6;
     display: none;
@@ -1781,11 +1788,6 @@ button.customerSortType.active {
 
 
 /* alrim modal */
-
-#alrimModal #alrimSwitchBtn {
-    line-height: 1rem;
-    margin-left: 1rem;
-}
 
 #alrimModal .alrimHistory {
     display: none;

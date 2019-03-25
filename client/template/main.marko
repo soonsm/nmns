@@ -387,7 +387,7 @@
             <div class="modal-body">
               <div class="row mx-0 col-12 tab-content" style="padding:30px">
                   
-                <div id="infoTab" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+                <div id="infoTab" class="tab-pane col-12 px-0 fade show active mb-1" role="tabpanel">
                   <form id="infoForm">
                     <div class="form-group">
                       <div class="row mb-2">
@@ -443,57 +443,42 @@
                       </div>
                     </div>
                   </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-accent col ml-1" id="infoBtn">저장</button>
+                  </div>
                 </div>
     
                 <div id="alrimTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
-                  <form id="alrimForm" class="alrimData">
+                  <form id="alrimForm" class="alrimData mb-1">
                     <div class="form-group">
-                      <div class="row mb-2">
-                        <div class="col-12">
-                          <input type="checkbox" id="alrimUseYn">
-                          <label for="alrimUseYn"></label>
-                          <label for="alrimUseYn">알림톡 사용여부</label>
+                      <div class="mb-4">
+                        <span id="labelAlrimUseYn" class="d-inline" style="margin-right:8px">알림톡 사용여부</span>
+                        <div class="custom-control custom-switch d-inline">
+                          <input type="checkbox" class="custom-control-input" id="alrimUseYn">
+                          <label class="custom-control-label" for="alrimUseYn"></label>
                         </div>
                       </div>
-                      <div>
+                      <div style="position:relative">
                         <div id="alrimScreen"></div>
-                        <div class="row mb-2">
-                          <label for="alrimShopName" class="col-12 col-sm-4 col-form-label col-form-label-sm">매장이름</label>
-                          <div class="col-12 col-sm-8 pl-sm-0">
-                            <input id="alrimShopName" name="shopName" type="text" placeholder="매장이름" class="form-control form-control-sm rounded-0 han"/>
-                          </div>
+                        <div class="mt-2 mb-3">매장 이름</div>
+                        <input id="alrimShopName" name="shopName" type="text" placeholder="고객에게 보여질 매장 이름을 입력해주세요." class="form-control form-control-sm han mb-4"/>
+                        <div class="mt-2 mb-3">휴대폰 번호<span class="align-middle subText">고객이 예약취소 버튼을 눌렀을 때 알림톡을 보내드릴 휴대폰 번호</span></div>
+                        <input id="alrimCallbackPhone" name="callbackPhone" type="text" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4"/>
+                        <div class="mt-2 mb-3">알림 안내문구<span class="align-middle subText">고객에게 보낼 알림톡 안내문구</span><span class="float-right"><span id="noticeByteCount">0</span> / 700자</span></div>
+                        <textarea id="alrimNotice" name="notice" placeholder="예시.\n예약해주셔서 감사합니다.\n취소할 때에는 꼭 [예약취소] 버튼을 눌러 주세요!" class="form-control form-control-sm han mb-4"/>
+                        <div class="mt-2">예약취소 가능시간</div>
+                        <div class="subText mb-3">고객에게 보낸 알림톡 안에 별도의 안내문구로 추가됩니다. 이 시간 이후에도 예약취소 기능은 작동합니다.<br>비어있으면 별도의 안내문구가 추가되지 않습니다.
+                        <br/>예) "- 예약취소는 <span class="font-weight-bold">3시간</span> 전까지 가능합니다."라는 문구로 표기됩니다.
                         </div>
-                        <div class="row">
-                          <label for="alrimCallbackPhone" class="col-12 col-sm-4 col-form-label col-form-label-sm">휴대폰번호</label>
-                          <div class="col-12 col-sm-8 pl-sm-0">
-                            <input id="alrimCallbackPhone" name="callbackPhone" type="text" placeholder="휴대폰번호" class="form-control form-control-sm rounded-0"/>
-                          </div>
-                        </div>
-                        <div class="row col-12 mb-3 text-secondary">
-                          <small>고객이 예약취소 버튼을 눌렀을때 알림톡을 보내드릴 휴대폰번호입니다.</small>
-                        </div>
-                        <div class="row">
-                          <label for="alrimNotice" class="col-12 col-form-label col-form-label-sm">알림 안내문구</label>
-                          <div class="col-12">
-                            <textarea id="alrimNotice" name="notice" placeholder="예) 예약해주셔서 감사합니다. 예약시간을 꼭 지켜주세요!" class="form-control form-control-sm rounded-0 han"/>
-                          </div>
-                        </div>
-                        <div class="row col-12 mb-3 mx-0 px-0 text-secondary">
-                          <small>고객에게 보낼 알림톡에 들어갈 안내문구입니다. 현재 <span id="noticeByteCount"></span>자 / 최대 700자</small>
-                        </div>
-                        <div class="row">
-                          <label for="alrimCancelDue" class="col-12 col-sm-4 col-form-label col-form-label-sm">예약취소 가능시간</label>
-                          <div class="col-12 col-sm-8 pl-sm-0">
-                            <input id="alrimCancelDue" name="cancelDue" type="text" placeholder="예) 3시간" class="form-control form-control-sm rounded-0 han"/>
-                          </div>
-                        </div>
-                        <div class="row col-12 text-secondary">
-                          <small>고객에게 보낸 알림톡 안에 별도의 안내문구로 추가됩니다. 이 시간 이후에도 예약취소 기능은 작동합니다. 비어있으면 별도의 안내문구가 추가되지 않습니다.
-                          <br/>예) "- 예약취소는 <b>3시간</b> 전까지 가능합니다."라는 문구로 표기됩니다.</small>
-                        </div>
+                        <input id="alrimCancelDue" name="cancelDue" type="text" placeholder="예) 3시간" class="form-control form-control-sm han"/>
                       </div>
                     </div>
                   </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-accent col ml-1" id="alrimInfoBtn">저장</button>
+                  </div>
                 </div>
                 
                 <div id="passwordTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
@@ -514,11 +499,7 @@
 
               </div>
             </div>
-            <!--<div class="modal-footer">
-              <button type="button" id="infoModalRefresh" class="btn btn-light btn-flat border" aria-label="초기화">초기화</button>
-              <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
-              <button type="button" id="infoModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
-            </div>-->
+            
             <div id="infoModalColorPicker" class="position-absolute bg-white border">
               <div class="bg-light py-1 px-2">
                 색을 선택하세요
