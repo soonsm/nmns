@@ -370,7 +370,7 @@
       
       <!-- modal area -->
       <div id="infoModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="내 매장 정보" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header p-0 mx-0">
               <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
@@ -497,25 +497,28 @@
                 </div>
                 
                 <div id="passwordTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
-                  <form id="passwordForm">
+                  <form id="passwordForm" class="mb-1">
                     <div class="form-group">
-                      <div class="row mb-2">
-                        <label for="infoPassword" class="col-12 col-sm-3 col-form-label col-form-label-sm">비밀번호</label>
-                        <div class="col-12 col-sm-9 pl-sm-0">
-                          <input id="infoPassword" type="password" placeholder="변경할 비밀번호" class="form-control form-control-sm rounded-0" autocomplete="off"/>
-                        </div>
-                      </div>
+                      <div>현재 비밀번호</div>
+                      <input id="currentPassword" type="password" placeholder="현재 비밀번호를 입력해주세요." class="form-control form-control-sm rounded-0 mt-3" autocomplete="off"/>
+                      <div style="margin-top:35px">새 비밀번호</div>
+                      <input id="newPassword" type="password" placeholder="새 비밀번호를 입력해주세요." class="form-control form-control-sm rounded-0 mt-3 mb-2" autocomplete="off"/>
+                      <input id="renewPassword" type="password" placeholder="한번 더 입력해주세요." class="form-control form-control-sm rounded-0" autocomplete="off"/>
                     </div>
                   </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-accent col ml-1" id="resetPasswordBtn">저장</button>
+                  </div>
                 </div>
 
               </div>
             </div>
-            <div class="modal-footer">
+            <!--<div class="modal-footer">
               <button type="button" id="infoModalRefresh" class="btn btn-light btn-flat border" aria-label="초기화">초기화</button>
               <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
               <button type="button" id="infoModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
-            </div>
+            </div>-->
             <div id="infoModalColorPicker" class="position-absolute bg-white border">
               <div class="bg-light py-1 px-2">
                 색을 선택하세요
@@ -544,7 +547,7 @@
             <div class="modal-body px-0 mx-2">
               <div class="row mx-0 col-12 tab-content" style="padding:30px">
                       
-                <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel" style="font-size:13px">
+                <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
                   <div class="row mx-0">
                     <div>연락처 입력</div>
                     <input type="text" class="form-control form-control-sm mt-3" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">

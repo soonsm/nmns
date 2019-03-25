@@ -63,6 +63,18 @@ a.text-primary {
   color: #fff;
 }
 
+.btn-white:not(:disabled):not(.disabled) {
+  background-color: #fff;
+  border-color: $primary;
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: $darkPrimary;
+    border-color: $darkPrimary;
+  }
+  color: $primary;
+}
+
 .btn-secondary {
   background-color: $secondary;
   border-color: $secondary;
@@ -174,4 +186,8 @@ a.text-primary {
 .modal{
   height:100vh;
   position:absolute;
+}
+
+.modal-body{
+  padding:0;
 }

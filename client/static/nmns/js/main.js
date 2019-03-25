@@ -909,11 +909,6 @@
             NMNS.socket.emit("update info", parameters);
         }
         var diff = false;
-        if ($("#infoPassword").val() !== "") {
-            NMNS.socket.emit("update password", { password: $("#infoPassword").val() });
-            $("#infoPassword").val("");
-            diff = true;
-        }
         //update info end
         //update manager start
         $(".infoManagerItem").each(function() {
@@ -1009,7 +1004,7 @@
         if (!NMNS.initedInfoModal) { //first init
             NMNS.initedInfoModal = true;
 
-            var html = "";
+            /*var html = "";
             NMNS.colorTemplate.forEach(function(item, index) {
                 if (index < 21) {
                     html += '<i class="fas fa-circle infoModalColor" data-color="' + item + '" style="color:' + item + '" aria-label="' + item + '"></i>';
@@ -1017,7 +1012,7 @@
                     return;
                 }
             });
-            $("#infoModalColors").html(html);
+            $("#infoModalColors").html(html);*/
             flatpickr("#infoBizBeginTime", {
                 dateFormat: "H:i",
                 time_24hr: true,
@@ -1057,6 +1052,26 @@
                     target.prev().css("background-color", color).css("border-color", color).data("color", color);
                 }
             });
+            
+            $("#resetPasswordBtn").on("touch click", function(){
+              if($("#currentPassword").val().length === 0){
+                showSnackBar("현재 비밀번호를 입력해주세요.");
+                return;
+              }else if($("#newPassword").val().length === 0){
+                showSnackBar("새 비밀번호를 입력해주세요.");
+                return;
+              }else if($("#renewPassword").val().length === 0){
+                showSnackBar("새 비밀번호를 한 번 더 입력해주세요.");
+                return;
+              }else if($("#newPassword").val() !== $("#renewPassword").val()){
+                showSnackBar("새 비밀번호가 일치하지 않습니다.");
+                return;
+              }
+              NMNS.socket.emit("update password", { currentPassword: $("#currentPassword").val(), newPassword: $("#newPassword").val() });
+              $("#newPassword").val("");
+              $("#renewPassword").val("");
+              $("#infoModal").modal('hide');
+            })
         }
         refreshInfoModal(); //setting data
     }

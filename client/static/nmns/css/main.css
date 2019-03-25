@@ -2,6 +2,9 @@
 .cursor-pointer{
     cursor:pointer;
 }
+.tab-pane{
+     font-size:13px;
+}
 /*main contents*/
 html {
     min-height: 100vh;
@@ -841,7 +844,7 @@ button.moveDate:focus {
     font-size: 13px;
 }
 
-#noShowModal .modal-dialog{
+.modal-dialog.modal-lg{
     max-width:624px;
     width:100%;
 }
