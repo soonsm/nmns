@@ -147,12 +147,15 @@ a.text-primary {
 .form-control-sm{
   height:35px;
 }
+select.form-control-sm{
+  padding: 6px 32px 6px 15px;
+}
 .form-control, .form-control-sm, div.rounded-0{
   border-width: 0.05rem;
 }
 .form-control:focus{
   box-shadow:none;
-  border-color:#ced4da;
+  border-color:#707070;
 }
 .modal.fade .modal-dialog{
   transform:none;
@@ -189,5 +192,17 @@ a.text-primary {
 }
 
 .modal-body{
-  padding:0;
+  padding:30px;
+}
+
+.badge{
+  font-size:10px;
+  line-height: 1.2;
+  font-weight:normal;
+}
+
+.modal-title{
+  font-weight: bold;
+  opacity:1;
+  font-size:18px;
 }

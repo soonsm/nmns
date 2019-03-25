@@ -5,6 +5,13 @@
 .tab-pane{
      font-size:13px;
 }
+
+.ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 /*main contents*/
 html {
     min-height: 100vh;
@@ -819,17 +826,18 @@ button.moveDate:focus {
     background-color: white;
 }
 
-#infoModal .subText{
-    opacity:0.5;
-    font-size:11px;
-    line-height:1.18;
-    margin-left:10px;
-}
 
 /*alrim modal*/
 
 #alrimNotice {
     height: 150px;
+}
+
+#alrimModal .subText{
+    opacity:0.5;
+    font-size:11px;
+    line-height:1.18;
+    margin-left:10px;
 }
 
 #alrimScreen {
@@ -1296,13 +1304,6 @@ button.form-control {
     background-color: #fff;
 }
 
-.ellipsis {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-
 /* tipsModal, announcementMenu */
 
 #tipsModal .modal-header #tipsTitle, #announcementModal .modal-header #announcementTitle {
@@ -1357,138 +1358,6 @@ button.form-control {
     opacity:0.5;
     font-weight:500;
 }
-/* feedbackModal */
-
-#feedbackBody {
-    height: 186px;
-    font-size: 14px;
-    border:none;
-    border-radius: 2px;
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    padding:25px 30px;
-}
-
-#snackbar {
-    visibility: hidden;
-    width: calc(100% - 2rem);
-    margin-left: 1rem;
-    margin-right: 1rem;
-    background-color: #323232;
-    color: #fff;
-    padding: 16px 24px;
-    position: fixed;
-    z-index: 1060;
-    bottom: 90px;
-    font-size: .9rem;
-    left: 0;
-}
-
-#snackbar.show {
-    visibility: visible;
-    animation: fadein 0.5s, fadeout 0.5s 4.5s;
-}
-
-@media(min-width:576px) {
-    #snackbar {
-        bottom: 30px;
-        width: auto;
-        border-radius: 2px;
-        padding-right: 50px;
-        min-width: 350px;
-    }
-    #snackbar.show {
-        animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
-    }
-}
-
-@-webkit-keyframes fadein {
-    from {
-        bottom: 60px;
-        opacity: 0;
-    }
-    to {
-        bottom: 90px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadein {
-    from {
-        bottom: 60px;
-        opacity: 0;
-    }
-    to {
-        bottom: 90px;
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes fadeout {
-    from {
-        bottom: 90px;
-        opacity: 1;
-    }
-    to {
-        bottom: 60px;
-        opacity: 0;
-    }
-}
-
-@keyframes fadeout {
-    from {
-        bottom: 90px;
-        opacity: 1;
-    }
-    to {
-        bottom: 60px;
-        opacity: 0;
-    }
-}
-
-@-webkit-keyframes fadeinHigh {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadeinHigh {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes fadeoutHigh {
-    from {
-        bottom: 30px;
-        opacity: 1;
-    }
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
-}
-
-@keyframes fadeoutHigh {
-    from {
-        bottom: 30px;
-        opacity: 1;
-    }
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
-}
-
 
 /* customer menu */
 
@@ -1789,44 +1658,22 @@ button.customerSortType.active {
 
 /* alrim modal */
 
-#alrimModal .alrimHistory {
-    display: none;
-}
-
-#alrimModal .alrimHistoryDate {
-    width: calc(50% - 16px);
-}
-
-#alrimModal #alrimHistoryName {
-    width: calc(50% - 37px);
-}
-
-@media(min-width:576px) {
-    #alrimModal #alrimHistoryName {
-        width: calc(50% - 51px);
-    }
-}
-
-#alrimModal #alrimHistoryContact {
-    width: calc(50% - 27px);
-}
-
 #alrimModal #alrimHistoryList .alrimRow {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    width: 100%;
-    cursor: pointer;
-    padding: .125rem 0;
-    font-size: .9rem;
+    font-size: 13px;
+    padding:10px 15px;
+    position:relative;
+}
+#alrimModal #alrimHistoryList .alrimRow.show {
+    background-color:#f8f8f8;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+#alrimModal #alrimHistoryList .alrimRow .montserrat{
+    font-size:12px;
 }
 
 #alrimModal #alrimHistoryList .alrimRow:hover {
-    background-color: #b2dfdb;
-}
-
-#alrimModal #alrimHistoryList .alrimRow .col-4 {
-    display: inline-flex;
-    font-size: .9rem;
+    background-color: #f8f8f8;
 }
 
 #alrimModal #alrimHistoryList .row .alrimDetailLink {
@@ -1834,41 +1681,39 @@ button.customerSortType.active {
     left: 0;
     top: 0;
     width: 100%;
-    height: 1.5rem;
+    bottom:0;
     z-index: 1;
 }
 
-#alrimModal #alrimHistoryList .row .alrimDetailLink+div:before {
+#alrimModal #alrimHistoryList .row .alrimDetailLink ~ div:last-child:after {
     font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: '\f054';
+    font-weight: bold;
+    content: '\f078';
     margin: 0 .25rem;
     display: inline-block;
     transition: 0.3s all ease;
 }
 
-#alrimModal #alrimHistoryList .row .alrimDetailLink[aria-expanded=true]+div:before {
-    transform: rotate(90deg);
+#alrimModal #alrimHistoryList .row .alrimDetailLink[aria-expanded=true] ~ div:last-child:after {
+    transform: rotate(180deg);
     filter: none;
 }
 
 #alrimModal #alrimHistoryList {
-    height: 309px;
+    max-height: 740px;
     display: block;
 }
 
 #alrimModal #alrimHistoryList .row.alrimDetailRow {
-    color: #6c757d;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: .75rem;
-    padding-right: .75rem;
-    flex: 0 0 100%;
-    max-width: 100%;
-}
-
-#alrimModal .input-group-text {
-    background-color: #fff;
+    word-break:break-all;
+    font-size:11px;
+    opacity: 0.7;
+    line-height:1.82;
+    background-color:#f8f8f8;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    text-align:left;
+    padding-bottom:15px;
 }
 
 
@@ -1889,6 +1734,138 @@ button.customerSortType.active {
     top:8px;
     border:2px solid #f1f2f3;
     border-radius:1em
+}
+
+/* incoCenterMenu */
+
+#feedbackBody {
+    height: 186px;
+    font-size: 14px;
+    border:none;
+    border-radius: 2px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    padding:25px 30px;
+}
+
+#snackbar {
+    visibility: hidden;
+    width: calc(100% - 2rem);
+    margin-left: 1rem;
+    margin-right: 1rem;
+    background-color: #323232;
+    color: #fff;
+    padding: 16px 24px;
+    position: fixed;
+    z-index: 1060;
+    bottom: 90px;
+    font-size: .9rem;
+    left: 0;
+}
+
+#snackbar.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 4.5s;
+}
+
+@media(min-width:576px) {
+    #snackbar {
+        bottom: 30px;
+        width: auto;
+        border-radius: 2px;
+        padding-right: 50px;
+        min-width: 350px;
+    }
+    #snackbar.show {
+        animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
+    }
+}
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 60px;
+        opacity: 0;
+    }
+    to {
+        bottom: 90px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 60px;
+        opacity: 0;
+    }
+    to {
+        bottom: 90px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 90px;
+        opacity: 1;
+    }
+    to {
+        bottom: 60px;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 90px;
+        opacity: 1;
+    }
+    to {
+        bottom: 60px;
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes fadeinHigh {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeinHigh {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeoutHigh {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeoutHigh {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
 }
 
 /* faq in infoCenter */

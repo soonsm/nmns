@@ -112,3 +112,35 @@ input[type=checkbox] + label + label{
   transform: translateX(8px);
   border-color: #fff;
 }
+
+.select{
+  position:relative;
+}
+.select select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  border-right:none;
+}
+.select select::-ms-expand {
+  display: none;
+}
+.select::after {
+  font-family: "Font Awesome 5 Free";
+  content: '\f0d7';
+  font-weight:700;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding-right: 13px;
+  line-height: 2.6;
+  background: transparent;
+  pointer-events: none;
+  border-top:1px solid #707070;
+  border-bottom:1px solid #707070;
+  border-right:1px solid #707070;
+  border-top-right-radius:2px;
+  border-bottom-right-radius:2px;
+}

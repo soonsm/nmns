@@ -546,7 +546,7 @@
             case "BEFORE_EMAIL_VERIFICATION":
                 return "<span class='badge badge-danger' title='인증메일 보내기' style='cursor:pointer;'>이메일 미인증</span><span class='btn btn-sm btn-flat btn-secondary ml-2'>인증메일 보내기</span>";
             case "EMAIL_VERIFICATED":
-                return "<span class='badge badge-success'>인증</span>";
+                return "<span class='badge badge-primary badge-pill'><span class='fa fa-check mr-1'></span>인증완료</span>";
         }
         $("#infoAccountStatus").removeClass("pl-2"); //no auth status badge
         return "";
@@ -620,6 +620,16 @@
         }
         if (alrims && alrims.length > 0) {
             var html = "";
+            var base = $("#alrimHistoryList .alrimRow").length
+            alrims.forEach(function(item, index) {
+                html += '<div class="row alrimRow col mx-0 px-0" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-2 pr-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 offset-2 ellipsis">' + item.name + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1"></div></div>' +
+                    '<div class="row alrimDetailRow collapse mx-0 col-12" id="alrimDetail' + (index+base) + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
+                if (index > 0 && index % 50 === 0) {
+                    $("#alrimHistoryList").append(html);
+                    html = "";
+                }
+            });
+        /*
             alrims.forEach(function(item, index) {
                 html += '<div class="row alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + index + '" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + index + '"></a><div class="col-4 px-0 ellipsis">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm') + '</div><div class="col-4 ellipsis">' + item.name + '</div><div class="col-4 px-0 ellipsis">' + dashContact(item.contact) + '</div></div>' +
                     '<div class="row alrimDetailRow collapse" id="alrimDetail' + index + '"><small class="col px-0">' + item.contents + '</small></div>';
@@ -627,15 +637,18 @@
                     list.append(html);
                     html = "";
                 }
-            });
+            });*/
             list.append(html);
+            $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
+              $(this).parent().toggleClass('show');
+            })
         } else {
-            list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색 조건에 맞는 결과가 없습니다.</span></div>");
+            list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
         }
         list.data("scroll").update();
     }
 
-    function refreshAlrimTab() {
+    function refreshAlrimModal() {
         if (NMNS.info.alrimTalkInfo.useYn === "Y") {
             $("#alrimUseYn").prop("checked", true);
             $("#alrimScreen").hide();
@@ -650,7 +663,7 @@
         $("#noticeByteCount").text($("#alrimNotice").val().length);
     }
 
-    function submitAlrimTab() {
+    function submitAlrimModal() {
         if ($("#alrimNotice").val().length > 700) {
             alert("알림 안내문구의 길이가 너무 깁니다. 조금만 줄여주세요 :)");
             $("#alrimNotice").focus();
@@ -715,9 +728,9 @@
         }
     }
 
-    NMNS.initAlrimTab = function() {
-        if (!NMNS.initedAlrimTab) {
-            NMNS.initedAlrimTab = true;
+    NMNS.initAlrimModal = function() {
+        if (!NMNS.initedAlrimModal) {
+            NMNS.initedAlrimModal = true;
             
             //alrimTab
             $("#labelAlrimUseYn").on("touch click", function(){
@@ -737,49 +750,22 @@
                 }
             });
             setNumericInput($("#alrimCallbackPhone")[0]);
-            $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimTab);
-            /*
+            $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
+            
             $("#alrimHistorySearch").off("touch click").on("touch click", function() {
                 var parameters = {};
-                if ($("#alrimHistoryStartDate").val() !== "") {
-                    var start = moment($("#alrimHistoryStartDate").val(), "YYYY-MM-DD");
-                    if (!start.isValid()) {
-                        alert("검색 시작일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.start = start.format("YYYYMMDD");
-                }
-                if ($("#alrimHistoryEndDate").val() !== "") {
-                    var end = moment($("#alrimHistoryEndDate").val(), "YYYY-MM-DD");
-                    if (!end.isValid()) {
-                        alert("검색 끝일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.end = end.format("YYYYMMDD");
-                }
-                if ($("#alrimHistoryName").val() !== "") {
-                    parameters.name = $("#alrimHistoryName").val();
-                }
-                if ($("#alrimHistoryContact").val() !== "") {
-                    parameters.contact = $("#alrimHistoryContact").val();
+                if ($("#alrimHistoryTarget").val() !== "") {
+                    parameters.target = $("#alrimHistoryTarget").val();
                 }
                 $("#alrimHistoryList .row").remove(); //깜빡임 효과
                 NMNS.socket.emit("get alrim history", parameters);
             });
-            $("#alrimHistoryContact").off("keyup").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#alrimHistorySearch").trigger("click");
-                }
-            }).on("blur", function() {
-                filterNonNumericCharacter($(this));
-            });
-            $("#alrimHistoryName").off("keyup").on("keyup", function(e) {
+            $("#alrimHistoryTarget").off("keyup").on("keyup", function(e) {
                 if (e.which === 13) {
                     $("#alrimHistorySearch").trigger("click");
                 }
             });
-
+/*
             var datetimepickerOption = {
                 format: "Y-m-d",
                 defaultDate: new Date(),
@@ -838,10 +824,10 @@
                 }
             }, NMNS.socket);*/
         }
-        refreshAlrimTab();
+        refreshAlrimModal();
     }
 
-    function submitInfoTab() {
+    function submitInfoModal() {
         //validation start
         if ($(".infoManagerItem input[type='text']").length) { //추가하는것이 있을 경우 이름이 비어있는지 확인
             var cont = true;
@@ -859,14 +845,14 @@
             alert("담당자는 최소 1명 이상이 있어야 합니다.");
             return;
         }
-        var beginTime = moment($("#infoBizBeginTime").val(), "HH:mm");
-        if (!beginTime.isValid()) {
+        var beginTime = $("#infoBizBeginTime").val()//moment($("#infoBizBeginTime").val(), "HH:mm");
+        if (!beginTime) {
             alert("매장 운영 시작시간이 올바르지 않습니다.");
             $("#infoBizBeginTime").focus();
             return;
         }
-        var endTime = moment($("#infoBizEndTime").val(), "HH:mm");
-        if (!endTime.isValid()) {
+        var endTime = $("#infoBizEndTime").val()//moment($("#infoBizEndTime").val(), "HH:mm");
+        if (!endTime) {
             alert("매장 운영 종료시간이 올바르지 않습니다.");
             $("#infoBizEndTime").focus();
             return;
@@ -946,32 +932,34 @@
         }
     }
 
-    function showColorPickerPopup(self) {
+    /*function showColorPickerPopup(self) {
         $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + self.position().left) + "px")
             .css("top", ($("#infoManagerList").position().top + self.position().top + 74) + "px")
             .data("target", self.next().data("id"))
             .show(300);
-    }
+    }*/
 
-    function refreshInfoTab() {
+    function refreshInfoModal() {
         $("#infoEmail").text(NMNS.email);
-        $("#infoPassword").val("");
+        // $("#infoPassword").val("");
         $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
             NMNS.socket.emit("send verification", {});
             showSnackBar("<span>인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!</span>");
         }) : generateAuthStatusBadge(NMNS.info.authStatus));
         $("#infoShopName").val(NMNS.info.shopName);
         $("#infoBizType").val(NMNS.info.bizType);
-        var list = $("#infoManagerList");
+        $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
+        $("#infoBizEndTime").val(NMNS.info.bizEndTime);
+        /*var list = $("#infoManagerList");
         if (list.hasClass("ps")) {
             list.children(":not(.ps__rail-x):not(.ps__rail-y)").remove();
             $(generateManagerList(NMNS.calendar.getCalendars())).prependTo(list);
         } else {
             list.html(generateManagerList(NMNS.calendar.getCalendars()));
             list.data("scroll", new PerfectScrollbar(list[0]));
-        }
+        }*/
 
-        $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function() {
+        /*$(".infoManagerItem .deleteManager").off("touch click").on("touch click", function() {
             var item = $(this).parents(".infoManagerItem");
             if (item.siblings(".infoManagerItem:visible").length == 0) {
                 alert("담당자는 반드시 1명 이상 있어야합니다!");
@@ -996,12 +984,12 @@
         });
         $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function() {
             showColorPickerPopup($(this));
-        });
+        });*/
     }
 
-    NMNS.initInfoTab = function() {
-        if (!NMNS.initedInfoTab) { //first init
-            NMNS.initedInfoTab = true;
+    NMNS.initInfoModal = function() {
+        if (!NMNS.initedInfoModal) { //first init
+            NMNS.initedInfoModal = true;
 
             /*var html = "";
             NMNS.colorTemplate.forEach(function(item, index) {
@@ -1012,7 +1000,7 @@
                 }
             });
             $("#infoModalColors").html(html);*/
-            flatpickr("#infoBizBeginTime", {
+            /*flatpickr("#infoBizBeginTime", {
                 dateFormat: "H:i",
                 time_24hr: true,
                 defaultHour: Number((NMNS.info.bizBeginTime || "0900").substring(0, 2)),
@@ -1033,14 +1021,13 @@
                 enableTime: true,
                 appendTo: document.getElementById("infoModal"),
                 applyBtn: true
-            }).setDate(moment((NMNS.info.bizEndTime ? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());
-            if (!$("#infoManagerList").hasClass("ps")) {
+            }).setDate(moment((NMNS.info.bizEndTime ? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());*/
+            /*if (!$("#infoManagerList").hasClass("ps")) {
                 $("#infoManagerList").data("scroll", new PerfectScrollbar("#infoManagerList"));
-            }
+            }*/
 
-            $("#infoModalSave").off("touch click").on("touch click", submitInfoTab);
-            $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoTab);
-            $("#infoModalColorPickerClose").off("touch click").on("touch click", function() {
+            $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
+            /*$("#infoModalColorPickerClose").off("touch click").on("touch click", function() {
                 $("#infoModalColorPicker").hide(300);
             });
             $(".infoModalColor").off("touch click").on("touch click", function() {
@@ -1050,10 +1037,10 @@
                     target.data("color", color);
                     target.prev().css("background-color", color).css("border-color", color).data("color", color);
                 }
-            });
+            });*/
             
         }
-        refreshInfoTab(); //setting data
+        refreshInfoModal(); //setting data
     }
 
     function submitNoShowEtcReason(dropdownItem) {
@@ -1418,7 +1405,7 @@
           placement:'auto'
         })
         $("#mainMenu").popover({
-          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="info" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="alrim" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="password" data-toggle="modal" href="#" aria-label="비밀번호 변경">비밀번호 변경</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
+          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
           html:true,
           sanitize:false,
           placement:'bottom'
@@ -2013,22 +2000,22 @@
         }
         var changed = false;
 
-        if (moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizBeginTime)) {
+        if ($("#infoBizBeginTime").val() !== (NMNS.info.bizBeginTime)) {
             changed = true;
         }
-        if (!changed && moment($("#infoBizEndTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime)) {
+        if (!changed && $("#infoBizEndTime").val() !== (NMNS.info.bizEndTime)) {
             changed = true;
         }
         if (!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")) {
             changed = true;
         }
-        if (!changed && $("#infoPassword").val() !== "") {
+        /*if (!changed && $("#infoPassword").val() !== "") {
             changed = true;
-        }
+        }*/
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
         }
-        if (!changed) {
+        /*if (!changed) {
             $(".infoManagerItem").each(function() {
                 if (!changed) {
                     if ($(this).hasClass("addManagerItem")) { //추가
@@ -2046,33 +2033,19 @@
                     }
                 }
             });
-        }
+        }*/
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
     }).on("touch click", function(e) {
-        if ($("#infoModalColorPicker").is(":visible")) {
+        /*if ($("#infoModalColorPicker").is(":visible")) {
             var target = $(e.target);
             if (!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length && !target.hasClass("addManagerColor") && !target.parents(".addManagerColor").length && !target.parents(".addManagerColor").length) {
                 $("#infoModalColorPicker").hide(300);
             }
-        }
-    }).on("shown.bs.modal", function() {
-      
-    }).on('show.bs.modal', function(){
-      switch(NMNS.infoModal){
-        case 'alrim':
-          $("#infoTabList .nav-link[data-target='#alrimTab']").tab("show");
-          break;
-        case 'password':
-          $("#infoTabList .nav-link[data-target='#passwordTab']").tab("show");
-          break;
-        case 'info':
-        default:
-          $("#infoTabList .nav-link[data-target='#infoTab']").tab("show");
-          break;
-      }
-    })
+        }*/
+    }).on('show.bs.modal', NMNS.initInfoModal);
+    
     $("#alrimModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2102,7 +2075,11 @@
         if ($("body .popover").length) {
             $("body .popover").popover("update");
         }
+    }).on("show.bs.modal", function(){
+      NMNS.initAlrimModal();
+      $("#alrimTabList a[data-target='#alrimTab']").tab('show');
     });
+    
     $("#noShowModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2114,6 +2091,7 @@
             $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
         }
     });
+    
     $("#taskModal").on("hide.bs.modal", function(e) {
         var task = $(this).data("task");
         if (task && task.guide) {
@@ -2137,18 +2115,7 @@
     $("#lnbLastMenu a").on("touch click", function(e) {
         e.preventDefault();
     });
-    $("#alrimSwitchBtn").on("touch click", function(e) {
-        e.preventDefault();
-        if ($("#alrimForm").is(":visible")) {
-            $("#alrimModalTitle").text("알림톡 사용내역");
-            $(this).text("알림톡 정보");
-        } else {
-            $("#alrimModalTitle").text("알림톡 정보");
-            $(this).text("알림톡 사용내역");
-        }
-        $("#alrimModal .alrimData").toggle();
-        $(this).blur();
-    });
+    
     $("#navbarResponsive").on("show.bs.collapse", function(){
         $("#mainNav").addClass("shadow"); 
     }).on("hidden.bs.collapse", function(){
@@ -2197,13 +2164,9 @@
       })
     })
     $('#mainMenu').on('shown.bs.popover', function(){
-      
       $(".mainMenuRow a[data-link]").off("touch click").on("touch click", function(e){
         $("#mainMenu").popover('hide')
-        if($(this).data('link')){
-          NMNS.infoModal = $(this).data('link');
-        }
-        $("#infoModal").modal("show")
+        $($(this).data('link')).modal("show")
       });
       $("#signoutLink").on("touch click", function(){
         NMNS.socket.close();
@@ -2214,14 +2177,11 @@
         $('body').children('.popover.show').popover('hide');
       }
     });
-    $("#infoTabList a[data-target='#alrimTab']").on("show.bs.tab", NMNS.initAlrimTab)
-    $("#infoTabList a[data-target='#infoTab']").on("show.bs.tab", NMNS.initInfoTab).on('shown.bs.tab', function(){
-      $("#infoManagerList").data("scroll").update();
-      $("#infoManagerList")[0].scrollTop = 0;
-      if ($("body .popover").length) {
-          $("body .popover").popover("update");
-      }
+    $("#alrimTabList a[data-target='#alrimTab']").on("show.bs.tab", NMNS.initAlrimModal)
+    $("#alrimTabList a[data-target='#alrimHistoryTab']").on("show.bs.tab", function(){
+      $("#alrimHistorySearch").trigger('click');
     })
+    
     $("#infoTabList a[data-target='#passwordTab]").one('show.bs.tab', function(){
       //passwordTab
       $("#resetPasswordBtn").on("touch click", function(){
