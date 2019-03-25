@@ -122,8 +122,8 @@
         },
         week: {
             daynames: ["일", "월", "화", "수", "목", "금", "토"],
-            hourStart: NMNS.info ? parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10) : 9,
-            hourEnd: NMNS.info ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
+            hourStart: NMNS.info.bizBeginTime ? parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10) : 9,
+            hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
             'week.currentTime.color': '#fd5b77',
@@ -577,7 +577,7 @@
         var html = "";
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label><button class='btn btn-sm btn-flat lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v menu-collapsed'></i></button></div>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label><button class='btn btn-flat menu-collapsed lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v menu-collapsed'></i></button></div>";
         });
         return html;
     }
@@ -1400,8 +1400,6 @@
         $(".addReservLink").on("touch click", createNewSchedule);
         $(".addTaskLink").on("touch click", initTaskModal);
 
-        $("#infoLink").on("touch click", NMNS.initInfoModal);
-        $("#alrimLink").on("touch click", NMNS.initAlrimModal);
         $(".addNoShowLink").one("touch click", initNoShowModal);
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
         flatpickr.localize("ko");
@@ -1425,10 +1423,10 @@
           placement:'auto'
         })
         $("#mainMenu").popover({
-          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a id="infoLink" class="d-block menuLink" data-link="infoMenu" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a id="alrimLink" class="d-block menuLink" data-link="infoMenu" href ="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a id="passwordLink" class="d-block menuLink" data-link="infoMenu" href ="#" aria-label="비밀번호 변경">비밀번호 변경</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
+          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="info" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="alrim" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="password" data-toggle="modal" href="#" aria-label="비밀번호 변경">비밀번호 변경</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
           html:true,
           sanitize:false,
-          placement:'auto'
+          placement:'bottom'
         })
         setNumericInput(
           $("#searchNoShow").on("keyup", function(e){
@@ -1567,7 +1565,7 @@
         var id = name.data("id");
         var color = lnbManagerItem.find(".addManagerColor").data("color");
         lnbManagerItem.removeClass("addManagerItem");
-        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "' title='이 담당자의 예약 가리기/보이기' data-color='"+name.data('color')+"'></span><span class='menu-collapsed'>" + name.val() + "</span></label><button class='btn btn-sm btn-flat lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v'></i></button>");
+        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "' title='이 담당자의 예약 가리기/보이기' data-color='"+name.data('color')+"'></span><span class='menu-collapsed'>" + name.val() + "</span></label><button class='btn btn-flat menu-collapsed lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v'></i></button>");
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2008,6 +2006,12 @@
     }))
     //websocket response end
     //Modal events start  
+    $(".modal").on("shown.bs.modal", function(){
+      $(".modal-backdrop").on("touch click", function(e){//click on menubar
+        $(".modal.show").modal('hide');
+      })
+    });
+    
     $("#infoModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2059,12 +2063,26 @@
             }
         }
     }).on("shown.bs.modal", function() {
-        $("#infoManagerList").data("scroll").update();
-        $("#infoManagerList")[0].scrollTop = 0;
-        if ($("body .popover").length) {
-            $("body .popover").popover("update");
-        }
-    });
+      NMNS.initInfoModal();
+      $("#infoManagerList").data("scroll").update();
+      $("#infoManagerList")[0].scrollTop = 0;
+      if ($("body .popover").length) {
+          $("body .popover").popover("update");
+      }
+    }).on('show.bs.modal', function(){
+      switch(NMNS.infoModal){
+        case 'alrim':
+          $("#infoTabList .nav-link[data-target='#alrimTab']").tab("show");
+          break;
+        case 'password':
+          $("#infoTabList .nav-link[data-target='#passwordTab']").tab("show");
+          break;
+        case 'info':
+        default:
+          $("#infoTabList .nav-link[data-target='#infoTab']").tab("show");
+          break;
+      }
+    })
     $("#alrimModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2095,14 +2113,7 @@
             $("body .popover").popover("update");
         }
     });
-    $("#noShowModal").on("touch click", function(e) {
-        if ($("#noShowScheduleDropdown").is(":visible")) {
-            var target = $(e.target);
-            if (!target.parents("#noShowScheduleDropdown").length && !target.hasClass("badge") && !target.parents(".noShowScheduleNoShow").length) {
-                $("#noShowScheduleDropdown").hide(300);
-            }
-        }
-    }).on("hide.bs.modal", function() {
+    $("#noShowModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
         }
@@ -2194,28 +2205,25 @@
       $('#announcementBody').parents('.popover').find('.close-button').on('touch click', function(){
         $(this).parents('.popover').popover('hide')
       })
-      $(document).off('touch click').on('touch click', function (e) {
-        $('[data-toggle="popover"],[data-original-title]').each(function () {
-          //the 'is' for buttons that trigger popups
-          //the 'has' for icons within a button that triggers a popup
-          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
-            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
-          }
-        });
-      });
     })
     $('#mainMenu').on('shown.bs.popover', function(){
-      $(document).off('touch click').on('touch click', function (e) {
-        $('[data-toggle="popover"],[data-original-title]').each(function () {
-          //the 'is' for buttons that trigger popups
-          //the 'has' for icons within a button that triggers a popup
-          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
-            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
-          }
-        });
-        $(".mainMenuRow .menuLink").on("touch click", switchMenu);
+      
+      $(".mainMenuRow a[data-link]").off("touch click").on("touch click", function(e){
+        $("#mainMenu").popover('hide')
+        if($(this).data('link')){
+          NMNS.infoModal = $(this).data('link');
+        }
+        $("#infoModal").modal("show")
       });
+      $("#signoutLink").on("touch click", function(){
+        NMNS.socket.close();
+      })
     })
+    $('html').on('click', function(e) {// click outside popover to close
+      if ($('body').children('.popover.show').length > 0 && typeof $(e.target).data('original-title') == 'undefined' && !$(e.target).parents().is('.popover.show') && $(e.target).parents('[data-toggle="popover"]').length === 0) {
+        $('body').children('.popover.show').popover('hide');
+      }
+    });
     //Modal events end
     //mobile horizontal scroll handling
     // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml

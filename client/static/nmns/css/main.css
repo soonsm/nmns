@@ -66,6 +66,7 @@ input[type=checkbox]+label{
 }
 #mainRow {
     transition:0.3s ease-in-out;
+    position:relative;
 }
 #mainRow.sidebar-toggled{
     width:calc(100% - 50px);

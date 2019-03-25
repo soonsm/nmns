@@ -170,3 +170,8 @@ a.text-primary {
 .bs-popover-auto[x-placement^=bottom]>.arrow::before, .bs-popover-bottom>.arrow::before{
   border-bottom-color:#fff;
 }
+
+.modal{
+  height:100vh;
+  position:absolute;
+}
