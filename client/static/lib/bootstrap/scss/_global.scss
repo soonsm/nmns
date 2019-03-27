@@ -116,15 +116,14 @@ input[type=checkbox] + label + label{
 .select{
   position:relative;
 }
-.select select{
+.select select, .select input[list], .select input[list]:hover{
   -webkit-appearance: none;
   -moz-appearance: none;
   -ms-appearance: none;
   appearance: none;
-  border-right:none;
 }
-.select select::-ms-expand {
-  display: none;
+.select select::-ms-expand, .select input[list]::-ms-expand, .select input[list]:hover::-ms-expand, input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator {
+  display: none !important;
 }
 .select::after {
   font-family: "Font Awesome 5 Free";
@@ -138,9 +137,4 @@ input[type=checkbox] + label + label{
   line-height: 2.6;
   background: transparent;
   pointer-events: none;
-  border-top:1px solid #707070;
-  border-bottom:1px solid #707070;
-  border-right:1px solid #707070;
-  border-top-right-radius:2px;
-  border-bottom-right-radius:2px;
 }

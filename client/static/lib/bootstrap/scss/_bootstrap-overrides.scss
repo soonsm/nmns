@@ -130,11 +130,16 @@ a.text-primary {
     z-index:0;
   }
 }
-.btn.btn-flat{
-  border-radius:0;
+
+.dropdown-menu{
+  right:0;
 }
 .dropdown-item.active, .dropdown-item:active{
   background-color:$primary;
+}
+.dropdown-toggle:after{
+  float: right;
+  margin-top: 5px;
 }
 
 .form-control{

@@ -12,6 +12,9 @@
     overflow: hidden;
 }
 
+input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator{
+    display:none;
+}
 /*main contents*/
 html {
     min-height: 100vh;
@@ -59,9 +62,6 @@ input[type=checkbox]+label{
     top:0;
     left:0;
     right:0;
-}
-#logo:before{
-    vertical-align: middle;
 }
 .sidebar-handler{
     position:relative;
@@ -565,58 +565,13 @@ button.moveDate:focus {
 
 /* creation popup */
 
-#creationPopup {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-
-#creationPopup #tui-full-calendar-popup-arrow {
-    display: none;
-}
-
-.tui-full-calendar-button.tui-full-calendar-popup-close {
-    font-size: 1.2rem;
-    right: 16px;
-}
-
-.tui-full-calendar-popup {
-    font-size: 0.9rem;
-}
-
 #creationPopupAllDay,
 #creationPopupAllDay+label,
 #creationPopupAllDay+label+label {
-    font-size: 0.9rem;
+    font-size: 11px;
 }
 
-#creationPopupAllDay {
-    display: none;
-}
-
-#tui-full-calendar-schedule-start-date,
-#tui-full-calendar-schedule-end-date {
-    max-width: 140px;
-}
-
-.tui-full-calendar-popup .input-group-prepend i {
-    width: 31px;
-    background-color: white;
-    border-radius: 0 !important;
-    border-width: .06rem;
-}
-
-.tui-full-calendar-popup input.form-control {
-    border-radius: 0;
-}
-
-#creationPopup .tui-full-calendar-popup-container {
-    width: 300px;
-    min-width: 300px;
-}
-
-#creationPopup #creationPopupManager+.dropdown-menu,
+#scheduleForm #creationPopupManager+.dropdown-menu,
 #taskForm #taskManager+.dropdown-menu {
     margin-top: 0;
     padding: .25rem 0;
@@ -625,25 +580,20 @@ button.moveDate:focus {
     left: 2.8rem;
 }
 
-#creationPopup .dropdown-menu .dropdown-item {
+#scheduleForm .dropdown-menu .dropdown-item {
     padding-left: 0.5rem;
     font-size: .9rem;
 }
 
 @media (min-width: 576px) {
-    #creationPopup .tui-full-calendar-popup-container {
+    #scheduleForm .tui-full-calendar-popup-container {
         width: 535px;
     }
-    #creationPopup #creationPopupManager+div.dropdown-menu,
+    #scheduleForm #creationPopupManager+div.dropdown-menu,
     #taskForm #taskManager+.dropdown-menu {
         width: calc(100% - 30px);
         left: 1rem;
     }
-}
-
-#creationPopupForm {
-    border-radius: 0;
-    border: 0;
 }
 
 .tui-full-calendar-dash {
@@ -653,45 +603,10 @@ button.moveDate:focus {
     display: inline-flex;
 }
 
-#creationPopupManagerIcon {
-    padding-left: 8px;
-}
-
-#creationPopupStartDateIcon,
-#creationPopupEndDateIcon {
-    line-height: 1.7;
-}
-
-#creationPopupManager {
-    border-bottom: .05rem solid #ced4da;
-}
-
-#creationPopupManager:focus {
-    box-shadow: none;
-}
-
 #creationPopupManager.dropdown-toggle:after {
     position: absolute;
     right: 5%;
-    top: 45%;
-}
-
-.tui-full-calendar-section-allday {
-    line-height: 30px;
-    height: 31px;
-}
-
-.tui-full-calendar-section-allday #creationPopupAllDay+label {
-    width: 15px;
-    margin-bottom: 0;
-}
-
-.tui-full-calendar-section-allday #creationPopupAllDay+label+label {
-    margin-bottom: 0;
-}
-
-.compactLabel {
-    letter-spacing: -1px;
+    top: 60%;
 }
 
 #creationPopup .creationPopupEtcNotice {
@@ -833,7 +748,7 @@ button.moveDate:focus {
     height: 150px;
 }
 
-#alrimModal .subText{
+#alrimModal .subText, #scheduleModal .subText{
     opacity:0.5;
     font-size:11px;
     line-height:1.18;
@@ -1234,7 +1149,8 @@ span.flatpickr-apply-btn.flatpickr-am-pm:focus {
 input[name='name'],
 input[name='title'],
 input[name='contents'],
-input[name='etc'] {
+input[name='etc'],
+.han{
     ime-mode: active;
 }
 
@@ -1989,4 +1905,8 @@ button.customerSortType.active {
     font-weight: bold;
     border-bottom: 3px solid #393535;
     opacity:1;
+}
+
+#scheduleModal #scheduleTabContents input:not(:last-child){
+    margin-bottom:10px;
 }

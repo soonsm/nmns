@@ -612,66 +612,119 @@
         </div>
       </div>
       
-      <div id="taskModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+      <div id="scheduleModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
+            <div class="modal-header p-0">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>
+                </ul>
+                <button type="button" class="close p-0 ml-auto my-0 mr-0" data-dismiss="modal" aria-label="닫기">
+                  <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>
+                </button>
+              </div>
+            </div>
             <div class="modal-body">
-              <span class="information"><i class="far fa-question-circle"></i></span>
-              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <form id="taskForm">
-                <div class="form-group">
-                  <div class="row mb-2 mb-sm-3">
-                    <label for="taskName" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label col-form-label-sm">일정이름<span class="text-danger">*</span></label>
-                    <div class="col-9 col-sm-5 input-group input-group-sm">
-                      <div class="d-inline-block input-group-prepend d-sm-none">
-                        <i id="taskNameIcon" class="input-group-text far fa-calendar-check" title="일정이름"></i>
-                      </div>
-                      <input class="form-control form-control-sm han" id="taskName" name="name" placeholder="일정이름" aria-describedby="taskNameIcon" autocomplete="nope" value="" type="text">
+              <div class="row mx-0 col-12 px-0 tab-content">
+                
+                <div id="scheduleTab" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+                  <form id="scheduleForm" class="mb-1">
+                    <div>고객 이름</div>
+                    <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
+                    <div style="margin-top:35px">고객 연락처</div>
+                    <input type="text" class="form-control form-control-sm mt-3" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
+                    <div style="margin-top:35px">예약시간
+                      <span class="float-right">
+                        <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>
+                        <label for="scheduleAllDay"></label>
+                        <label for="scheduleAllDay">하루종일</label>
+                      </span>
                     </div>
-                  </div>
-                  <div class="row mb-2 mb-sm-3">
-                    <div id="taskStartDatePicker" class="input-group input-group-sm pr-sm-0 col-9 col-sm-5 mb-2 mb-sm-0">
-                      <div class="input-group-prepend">
-                        <i id="taskStartDateIcon" class="input-group-text far fa-calendar-alt" title="일정 시작시간"></i>
+                    <div class="d-flex col-12 px-0 align-items-center mt-3">
+                      <div class="select mr-1">
+                        <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
                       </div>
-                      <input id="taskStartDate" name="start" class="form-control form-control-sm" aria-describedby="taskStartDateIcon" placeholder="시작시간">
+                      <div class="select ml-1">
+                        <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                      </div>
+                      <span class="px-2 mx-3">~</span>
+                      <div class="select mr-1">
+                        <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                      </div>
+                      <datalist id="scheduleTabTimeList">
+                        <option value="오전 00:00"/><option value="오전 00:30"/><option value="오전 01:00"/><option value="오전 01:30"/><option value="오전 02:00"/><option value="오전 02:30"/><option value="오전 03:00"/><option value="오전 03:30"/><option value="오전 04:00"/><option value="오전 04:30"/><option value="오전 05:00"/><option value="오전 05:30"/><option value="오전 06:00"/><option value="오전 06:30"/><option value="오전 07:00"/><option value="오전 07:30"/><option value="오전 08:00"/><option value="오전 08:30"/><option value="오전 09:00"/><option value="오전 09:30"/><option value="오전 10:00"/><option value="오전 10:30"/><option value="오전 11:00"/><option value="오전 11:30"/><option value="오후 12:00"/><option value="오후 12:30"/><option value="오후 01:00"/><option value="오후 01:30"/><option value="오후 02:00"/><option value="오후 02:30"/><option value="오후 03:00"/><option value="오후 03:30"/><option value="오후 04:00"/><option value="오후 04:30"/><option value="오후 05:00"/><option value="오후 05:30"/><option value="오후 06:00"/><option value="오후 06:30"/><option value="오후 07:00"/><option value="오후 07:30"/><option value="오후 08:00"/><option value="오후 08:30"/><option value="오후 09:00"/><option value="오후 09:30"/><option value="오후 10:00"/><option value="오후 10:30"/><option value="오후 11:00"/><option value="오후 11:30"/>
+                      </datalist>
                     </div>
-                    <div class="w-100 d-sm-none"></div>
-                    <span class="px-2 ml-3 ml-sm-0 tui-full-calendar-dash">—</span>
-                    <div id="taskEndDatePicker" class="input-group input-group-sm pl-0 col-9 col-sm-5 pr-4 pr-sm-3">
-                      <div class="input-group-prepend">
-                        <i id="taskEndDateIcon" class="input-group-text far fa-calendar-alt" title="일정 종료시간"></i>
-                      </div>
-                      <input id="taskEndDate" name="end" class="form-control form-control-sm" aria-describedby="taskEndDateIcon" placeholder="종료시간">
+                    <div style="margin-top:35px">예약 내용</div>
+                    <div class="row flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
+                    <div class="col-12 text-center">
+                      <button type="button" class="btn btn-sm btn-flat" id="scheduleAddContents">
+                        <span class="fa fa-plus"></span> 내용 추가
+                      </button>
                     </div>
-                  </div>
-                  <div class="row mb-2 mb-sm-3">
-                    <label for="taskContents" class="col-2 pr-sm-0 d-sm-inline-block d-none col-form-label col-form-label-sm">일정내용</label>
-                    <div class="col-sm-9 col-11 input-group input-group-sm">
-                      <div class="d-inline-block input-group-prepend d-sm-none">
-                        <i id="taskContentsIcon" class="input-group-text fas fa-list-ul" title="일정내용"></i>
+                    <datalist id="scheduleTabContentList"></datalist>
+                    <div class="row mx-0" style="margin-top:35px">
+                      <div class="col mr-1 px-0 flex-column">
+                        <div class="d-flex">담당자</div>
+                        <div class="d-flex mt-3">
+                          <button id="scheduleManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자 선택">
+                            <span>담당자 선택</span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="scheduleManager" role="menu" id="scheduleManagerList">
+                              <!--<button type="button" class="dropdown-item {{CSS_PREFIX}}dropdown-item" data-calendar-id="{{id}}" aria-label="{{name}}">
+                                  <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}calendar-dot" style="background-color: {{borderColor}}"></span>
+                                  <span class="{{CSS_PREFIX}}content">{{name}}</span>
+                              </button>-->
+                          </div>
+                        </div>
                       </div>
-                      <input class="form-control form-control-sm han" id="taskContents" name="content" aria-describedby="taskContentsIcon" placeholder="일정내용" value="" type="text">
+                      <div class="col ml-1 px-0 flex-column">
+                        <div class="d-flex">고객 메모<span class="mb-0 scheduleEtcNotice subText" style="display:none">이미 등록된 고객의 메모는 고객관리에서 변경하실 수 있습니다.</span></div>
+                        <input type="text" class="form-control form-control-sm han mt-3" id="scheduleEtc" name="etc" aria-label="고객 메모" placeholder="고객 메모">
+                      </div>
                     </div>
-                  </div>
-                  <div class="row mb-2 mb-sm-3">
-                    <label for="taskManager" class="col-2 pr-0 col-form-label col-form-label-sm d-sm-inline-block d-none">담당자</label>
-                    <div class="input-group input-group-sm btn-group dropdown col-sm-9 col-11">
-                      <div class="d-inline-block input-group-prepend d-sm-none">
-                        <i id="taskManagerIcon" class="input-group-text fas fa-user-tie" title="담당자"></i>
-                      </div>
-                      <button id="taskManager" type="button" aria-describedby="taskManagerIcon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
-                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="taskManager" role="menu">
-                      </div>
-                    </div>
+                      
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">예약 추가 완료</button>
                   </div>
                 </div>
-              </form>
-              <div id="taskModalButtons">
-                <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
-                <button type="button" id="taskModalSave" class="btn btn-primary btn-flat" aria-label="저장">저장</button>
+
+                <div id="taskTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <form id="taskForm" class="mb-1">
+                    <div>일정 내용</div>
+                    <input class="form-control form-control-sm han mt-3" id="taskName" placeholder="일정 내용" aria-label="일정 내용" type="text">
+                    <div style="margin-top:35px">예약시간
+                      <span class="float-right">
+                        <input id="taskAllDay" name="isAllDay" type="checkbox"/>
+                        <label for="taskAllDay"></label>
+                        <label for="taskAllDay">하루종일</label>
+                      </span>
+                    </div>
+                    <div class="d-flex col-12 px-0 align-items-center mt-3">
+                      <input id="taskStartDate" name="start" class="form-control form-control-sm mr-1 montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
+                      <input id="taskStartTime" type="text" class="form-control form-control-sm ml-1" aria-label="일정 시작 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                      <span class="px-2 mx-3">~</span>
+                      <input id="taskEndDate" name="end" class="form-control form-control-sm mr-1 montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
+                      <input id="taskEndTime" type="text" class="form-control form-control-sm ml-1" aria-label="일정 끝 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                    </div>
+                    <div style="margin-top:35px">담당자</div>
+                    <button id="taskManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자 선택">
+                      <span>담당자 선택</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>
+                    
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-accent col ml-1" id="taskBtn">일정 추가 완료</button>
+                  </div>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -927,6 +980,8 @@
       history : [],
       holiday: [],
       info:{},
+      refreshScheduleManager: true,
+      refreshTaskManager: true,
       colorTemplate : ["#fd5b77", "#039fed", "#7c46e9", "#86cdbd", "#6a747d", "#f490b2", "#a51783", "#447270", "#bd902b", "#db531f", "#785f37", "#b26112", "#d0a348", "#e6bb86", "#73c267", "#028c99", "#f4866b", "#948b60", "#8d4640", "#6092c3"]
     };
     if(window.tui){

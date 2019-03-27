@@ -411,3 +411,31 @@ function getBackgroundColor(color){
     var temp = [Math.floor((parseInt(result[1], 16) + 255)/2).toString(16), Math.floor((parseInt(result[2], 16) + 255)/2).toString(16), Math.floor((parseInt(result[3], 16) + 255)/2).toString(16)]
     return result ? "#" + (temp[0].length === 1? '0' + temp[0] : temp[0] + '') + (temp[1].length === 1? '0' + temp[1] : temp[1] + '') + (temp[2].length === 1? '0' + temp[2] : temp[2] + '') : null;
 }
+
+function getTimeFormat(time){
+    var hour = time.hour();
+    var format = "";
+    if(hour > 11){
+        format += '오후 ';
+    }else{
+        format += '오전 ';
+    }
+    format += time.format("HH:mm");
+    return format;
+}
+
+function parseTime(input){
+    if(typeof input !== 'string'){
+        return null;
+    }
+    var result = /(오전|오후)\s?([\d]{2}):([\d]{2})/.exec(input);
+    if(result){
+        var res = result[2] + result[3];
+        if(moment(res, 'HHmm').isValid()){
+            return res;
+        }else{
+            return null;
+        }
+    }
+    return null;
+}
