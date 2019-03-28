@@ -684,7 +684,7 @@
                         </div>
                       </div>
                       <div class="col ml-1 px-0 flex-column">
-                        <div class="d-flex">고객 메모<span class="mb-0 scheduleEtcNotice subText" style="display:none">이미 등록된 고객의 메모는 고객관리에서 변경하실 수 있습니다.</span></div>
+                        <div class="d-flex">고객 메모<span id="scheduleEtcNotice" class="mb-0 subText" style="display:none">이미 등록된 고객의 메모는 고객관리에서 변경하실 수 있습니다.</span></div>
                         <input type="text" class="form-control form-control-sm han mt-3" id="scheduleEtc" name="etc" aria-label="고객 메모" placeholder="고객 메모">
                       </div>
                     </div>
@@ -982,6 +982,7 @@
       info:{},
       refreshScheduleManager: true,
       refreshTaskManager: true,
+      refreshMenu: true,
       colorTemplate : ["#fd5b77", "#039fed", "#7c46e9", "#86cdbd", "#6a747d", "#f490b2", "#a51783", "#447270", "#bd902b", "#db531f", "#785f37", "#b26112", "#d0a348", "#e6bb86", "#73c267", "#028c99", "#f4866b", "#948b60", "#8d4640", "#6092c3"]
     };
     if(window.tui){

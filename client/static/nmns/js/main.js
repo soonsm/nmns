@@ -174,47 +174,36 @@
 
     NMNS.calendar.on({
         beforeCreateSchedule: function(e) {
+          console.log('create', e);
+          
           NMNS.scheduleTarget = e;
-          console.log(e);
           initScheduleTab(e);
           $("#scheduleTabList a[data-target='#scheduleTab']").tab('show')
           $("#scheduleModal").modal('show')
             //saveNewSchedule(e);
         },
         beforeUpdateSchedule: function(e) {
-          NMNS.scheduleTarget = e;
-          console.log('update', e);
-          initScheduleTab(e);
-          $("#scheduleTabList a[data-target='#scheduleTab']").tab('show')
-          $("#scheduleModal").modal('show');
-            /*var history = e.history || $.extend(true, {}, e.schedule);
+          if(e.schedule && e.start && e.end){// move or resize schedule
+            var history = e.schedule || $.extend(true, {}, e.schedule);
             NMNS.history.push(history);
             e.schedule.start = e.start || e.schedule.start;
             e.schedule.end = e.end || e.schedule.end;
-            e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
 
-            if (e.history && e.history.selectedCal.id !== e.schedule.calendarId) { //manager changed
-                NMNS.calendar.deleteSchedule(e.schedule.id, e.history.selectedCal.id, true);
-                e.schedule.category = e.schedule.isAllDay ? 'allday' : 'time';
-                e.schedule.dueDateClass = '';
-                NMNS.calendar.createSchedules([e.schedule]);
-                e.history.newCalendarId = e.schedule.calendarId;
-            } else {
-                NMNS.calendar.updateSchedule(e.schedule.id, e.history ? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
-            }
+            NMNS.calendar.updateSchedule(e.schedule.id, e.history ? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
 
             NMNS.socket.emit("update reserv", {
                 id: e.schedule.id,
                 start: moment(e.schedule.start.toDate ? e.schedule.start.toDate() : e.schedule.start).format("YYYYMMDDHHmm"),
                 end: moment(e.schedule.end.toDate ? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
-                manager: e.schedule.calendarId,
-                name: e.schedule.title,
-                contact: e.schedule.contact || e.schedule.raw.contact,
-                contents: e.schedule.contents || e.schedule.raw.contents,
-                etc: e.schedule.etc || e.schedule.raw.etc,
-                status: e.schedule.status || e.schedule.raw.status,
-                isAllDay: e.schedule.isAllDay
-            });*/
+            });
+            
+          }else{
+            NMNS.scheduleTarget = e;
+            console.log('update', e);
+            initScheduleTab(e);
+            $("#scheduleTabList a[data-target='#scheduleTab']").tab('show')
+            $("#scheduleModal").modal('show');
+          }
         },
         beforeDeleteSchedule: function(e) {
             NMNS.history.push(e.schedule);
@@ -250,7 +239,7 @@
         if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
             showNotification({
                 title: "이메일을 인증해주세요!",
-                body: "인증메일은 내 매장 정보 화면에서 다시 보내실 ����������� 있습니다. 이메일을 인증해주세요!"
+                body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
             });
         }
         //tutorial & tip start
@@ -299,12 +288,12 @@
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
         if(NMNS.calendar.getViewName() === 'week'){
-          html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center'><div class='col-11 px-0'>"
+          html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center text-center'><div class='col-11 px-0'>"
           if(!isAllDay){
-              html += "<div class='row' style='margin-bottom:10px'><div class='montserrat col' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
+              html += "<div class='row mx-0'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
           }
           if (schedule.title) {
-              html += "<div class='row'><div class='col' title='" + type + "이름:" + schedule.title + "'>";
+              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>";
               if (schedule.category === 'task') {
                   html += "<span>#</span>";
               } else if (isAllDay) {
@@ -1052,7 +1041,7 @@
         refreshInfoModal(); //setting data
     }
 
-    function submitNoShowEtcReason(dropdownItem) {
+    /*function submitNoShowEtcReason(dropdownItem) {
         var input = dropdownItem.children("input");
         var dropdown = dropdownItem.parent();
         NMNS.history.push({ id: dropdown.data("id"), calendarId: dropdown.data("manager"), status: "NOSHOW" });
@@ -1071,7 +1060,7 @@
             noShowScheduleNormal($(this));
         });
         dropdown.hide(300);
-    }
+    }*/
 
     function initNoShowModal() {
         if (!NMNS.initedNoShowModal) {
@@ -1218,16 +1207,40 @@
     }
     
     function generateContentsList(contents){
+      console.log('input contents : ', contents)
       var html = "";
       if(typeof contents === 'string'){
+        try{
+          contents = JSON.parse(contents);
+        }catch(error){
+          contents = [contents];
+        }
+      }else if(!Array.isArray(contents)){
         contents = [contents];
       }
-      contents.forEach(function(item){
-        html += '<input type="text" class="form-control form-control-sm han" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." list="scheduleTabContentList" value="'+item+'">';
+      contents.filter(function(item){
+        return $("#scheduleTabContents").find('input[value="'+(item && item.value || item)+'"]').length === 0
+      }).forEach(function(item){
+        var temp = $("#scheduleTabContents").find('input[value=""]');
+        if(temp.length > 0){
+          temp = $(temp[0]);
+          temp.data('menu-id', item?item.menuId:null).val(item && item.value || item);
+        }else{
+          html += '<input type="text" class="form-control form-control-sm han" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." autocomplete="off" list="scheduleTabContentList" value="'+(item && item.value || item)+'" '+(item && item.menuId? ('data-menu-id="'+item.menuId+'"') : '')+'>';
+        }
+      });
+      console.log('result contents : ', html)
+      return html;
+    }
+    
+    function generateMenuList(menuList){
+      var html = '';
+      menuList.forEach(function(item){
+        html += '<options value="'+item.menuId+'">'+item.menuName+'</option>';
       });
       return html;
     }
-
+    
     function refreshScheduleTab(e){
       var calendar;
       if(NMNS.refreshScheduleManager){
@@ -1236,16 +1249,22 @@
           $("#scheduleManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
       }
+      if(NMNS.refreshMenu){
+        NMNS.refreshMenu = false;
+        NMNS.socket.emit('get menu list');//TODO : needed api alignment
+        $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//for test
+      }
       $("#scheduleBtn span").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
       $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
+        console.log(e);
         document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
         document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule?e.schedule.end.toDate():e.end.toDate());
         $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule?e.schedule.start.toDate():e.start.toDate())));
         $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule?e.schedule.end.toDate():e.end.toDate())));
   
         $('#scheduleName').val(e.schedule?e.schedule.title : '');
-        $("#scheduleTabContents").html(generateContentsList(e.schedule && e.schedule.raw ?e.schedule.raw.contents : ""));
+        $("#scheduleTabContents").append(generateContentsList(e.schedule && e.schedule.raw ?e.schedule.raw.contents : ""));
         //$('#scheduleContents').val(e.schedule? (e.schedule.raw? e.schedule.raw.contents : e.schedule.contents) : '');
         $('#scheduleContact').val(e.schedule? (e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact) : '');
         $('#scheduleEtc').val(e.schedule? (e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc) : '').prop('readonly', !!e.schedule);
@@ -1284,7 +1303,6 @@
         $("#scheduleEndTime").val(getTimeFormat(now));
 
         $('#scheduleName').val('');
-        //$('#scheduleContents').val('');
         $("#scheduleTabContents").html(generateContentsList(""));
         $('#scheduleContact').val('');
         $('#scheduleEtc').val('').prop('readonly', false);
@@ -1434,12 +1452,12 @@
             return;
           }
       
-          if (startDate.getTime() < endDate.getTime()) { // swap two dates
+          if (startDate.getTime() > endDate.getTime()) { // swap two dates
               startDate = [endDate, endDate = startDate][0];
           }
       
           title = $('#scheduleName').val();
-          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {menuId:this.getAttribute('data-menuId'), value:this.value}}).toArray());
+          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {menuId:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): undefined), value:this.value}}).toArray());
           contact = $('#scheduleContact').val();
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
@@ -1451,78 +1469,112 @@
           }
       
           if (NMNS.scheduleTarget && NMNS.scheduleTarget.schedule) {
-            NMNS.calendar.fire('beforeUpdateSchedule', {
-              schedule: {
-                  id: NMNS.scheduleTarget.schedule.id,
-                  calendarId: calendarId,
-                  title: title,
-                  raw: {
-                      contents: contents,
-                      contact: contact,
-                      etc: etc,
-                      status: NMNS.scheduleTarget.schedule.raw.status
-                  },
-                  start: startDate,
-                  end: endDate,
-                  isAllDay: isAllDay,
-                  category: isAllDay ? 'allday' : 'time',
+              var origin = NMNS.scheduleTarget.schedule;
+              origin.manager = origin.calendarId;
+              NMNS.history.push(origin);
+              if (origin.calendarId !== calendarId) { //담당자 변경
+                  origin.newCalendarId = calendarId
+                  NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
+                  
+                  NMNS.calendar.createSchedules([{
+                      id: origin.id,
+                      calendarId: calendarId,
+                      title: title,
+                      start: startDate,
+                      end: endDate,
+                      isAllDay: false,//하루종일 항목 없앰
+                      category: "time",
+                      attendees: [],
+                      recurrenceRule: false,
+                      isPending: false,
+                      dueDateClass: "",
+                      color: manager.color,
+                      isFocused: false,
+                      isVisible: true,
+                      isReadOnly: false,
+                      isPrivate: false,
+                      customStyle: "",
+                      location: "",
+                      bgColor: getBackgroundColor(manager.color),
+                      borderColor: manager.color,
+                      dragBgColor: manager.bgColor || "#334150",
+                      raw: {
+                        contact: contact,
+                        contents: contents,
+                        etc: etc,
+                        status: "RESERVED"
+                      }
+                  }]);
+              } else { //담당자 유지
+                  NMNS.calendar.updateSchedule(origin.id, origin.calendarId, {
+                      title: title,
+                      start: startDate,
+                      end: endDate,
+                      isAllDay: false,//하루종일 항목 없앰
+                  });
+              }
+              NMNS.socket.emit("update reserv", { //서버로 요청
+                  id: origin.id,
                   manager: calendarId,
                   name: title,
-                  contents: contents,
-                  contact: contact,
-                  etc: etc,
-                  status: NMNS.scheduleTarget.schedule.raw.status,
+                  start: moment(startDate).format("YYYYMMDDHHmm"),
+                  end: moment(endDate).format("YYYYMMDDHHmm"),
+                  isAllDay: isAllDay
+              });
+          } else { //신규 예약 추가
+              var id = NMNS.email + generateRandom();
+              NMNS.calendar.createSchedules([{
+                  id: id,
+                  calendarId: calendarId,
+                  title: title,
+                  start: startDate,
+                  end: endDate,
+                  isAllDay: false,//하루종일 항목 없앰
+                  category: "time",
+                  attendees: [],
+                  recurrenceRule: false,
+                  isPending: false,
+                  dueDateClass: "",
                   color: manager.color,
-                  bgColor: manager.bgColor,
-                  borderColor: manager.borderColor,
-                  dragBgColor: manager.bgColor,
-                  triggerEventName: 'click'
-              },
-              history: NMNS.scheduleTarget.schedule,
-              start: startDate,
-              end: endDate,
-              calendar: manager,
-              triggerEventName: 'click'
-            });
-          } else {
-            NMNS.calendar.fire('beforeCreateSchedule', {
-              calendarId: calendarId,
-              title: title,
-              name: title,
-              raw: {
-                  'class': 'public',
-                  location: '',
-                  contents: contents,
+                  isFocused: false,
+                  isVisible: true,
+                  isReadOnly: false,
+                  isPrivate: false,
+                  customStyle: "",
+                  location: "",
+                  bgColor: getBackgroundColor(manager.color),
+                  borderColor: manager.color,
+                  dragBgColor: manager.bgColor || "#334150",
+                  raw: {
+                    contact: contact,
+                    contents: contents,
+                    etc: etc,
+                    status: "RESERVED"
+                  }
+              }]);
+              NMNS.history.push({
+                  id: id,
+                  manager: calendarId
+              });
+              NMNS.socket.emit("add reserv", {
+                  id: id,
+                  manager: calendarId,
+                  name: title,
+                  start: moment(startDate).format("YYYYMMDDHHmm"),
+                  end: moment(endDate).format("YYYYMMDDHHmm"),
+                  isAllDay: isAllDay,
+                  type: "R",
+                  bgColor: getBackgroundColor(manager.color),
+                  borderColor: manager.color,
+                  dragBgColor: manager.bgColor || "#334150",
+                  color: manager.color,
                   contact: contact,
+                  contents: contents,
                   etc: etc,
-                  status: 'RESERVED'
-              },
-              start: startDate,
-              end: endDate,
-              isAllDay: isAllDay,
-              state: 'Busy',
-              category: isAllDay ? 'allday' : 'time',
-              dueDateClass: '',
-              attendees: [],
-              recurrenceRule: false,
-              isPending: false,
-              isFocused: false,
-              isVisible: true,
-              isReadOnly: false,
-              isPrivate: false,
-              customStyle: '',
-              location: '',
-              bgColor: manager ? manager.bgColor : '#99a0a8',
-              borderColor: manager ? manager.borderColor : '#334150',
-              color: manager ? manager.borderColor : '#334150',
-              dragBgColor: manager ? manager.bgColor : '#99a0a8',
-              manager: calendarId,
-              contents: contents,
-              contact: contact,
-              etc: etc,
-              status: 'RESERVED'
-            });
+                  status: "RESERVED"
+              });
           }
+      
           $("#scheduleModal").modal('hide');
         })
       }
@@ -1627,7 +1679,7 @@
                       title: $("#taskName").val(),
                       start: start,
                       end: end,
-                      isAllDay: $("#taskAllDay").prop('checked'),
+                      isAllDay: false,//하루종일 항목 없앰
                       category: "task",
                       dueDateClass: "",
                       color: $("#taskManager").data("bgcolor"),
@@ -1642,7 +1694,7 @@
                       title: $("#taskName").val(),
                       start: start,
                       end: end,
-                      isAllDay: $("#taskAllDay").prop('checked'),
+                      isAllDay: false,//하루종일 항목 없앰
                   });
               }
               NMNS.socket.emit("update reserv", { //서버로 요청
@@ -1664,7 +1716,7 @@
                   title: $("#taskName").val(),
                   start: start,
                   end: end,
-                  isAllDay: $("#taskAllDay").prop('checked'),
+                  isAllDay: false,//하루종일 항목 없앰
                   category: "task",
                   dueDateClass: "",
                   color: $("#taskManager").data("bgcolor"),
@@ -1803,7 +1855,7 @@
                 title: schedule.name || schedule.title, //?schedule.name:(schedule.contact?schedule.contact:schedule.content),
                 start: (typeof schedule.start === "string" ? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
                 end: (typeof schedule.end === "string" ? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
-                isAllDay: schedule.isAllDay,
+                isAllDay: false,//하루종일 항목 없앰
                 category: (schedule.type === "T" ? "task" : (schedule.isAllday ? "allday" : "time")),
                 dueDateClass: (schedule.type === "T" ? "dueDateClass" : ""),
                 attendees: [],
@@ -2052,7 +2104,7 @@
         } else {
             if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
                 NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
-                origin.category = origin.category === 'task' ? 'task' : (origin.isAllDay ? 'allday' : 'time');
+                origin.category = origin.category === 'task' ? 'task' : 'time';
                 origin.dueDateClass = '';
                 origin.calendarId = origin.selectedCal ? origin.selectedCal.id : origin.calendarId;
                 origin.start = (typeof origin.start === "string" ? moment(origin.start, "YYYYMMDDHHmm").toDate() : origin.start);
@@ -2241,13 +2293,11 @@
               if (e.data.manager) {//변경된 경우에만 덮어쓰기
                   var manager = findManager(e.data.manager);
                   if (manager) {
-                      popup.find("#scheduleManager").html(popup.find("#scheduleManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendarid", manager.id);
+                      popup.find("#scheduleManager").html(popup.find("#scheduleManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendar-id", manager.id);
                   }
               }
               if (e.data.contents) {
-                if(popup.find("#scheduleTabContents input[value='']").val(e.data.contents).length === 0){
-                  popup.find("#scheduleTabContents").append('<input type="text" class="form-control form-control-sm han" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." list="scheduleTabContentList" value="'+e.data.contents+'">')
-                }
+                popup.find("#scheduleTabContents").append(generateContentsList(e.data.contents))
               }
               if (e.data.isAllDay !== undefined) {
                   popup.find("#scheduleAllDay").attr("checked", e.data.isAllDay);
@@ -2259,7 +2309,7 @@
                   popup.find("#scheduleContact").val(e.data.contact);
               }
               popup.find('#scheduleEtc').prop('readonly', true);
-              popup.find('.scheduleEtcNotice').show();
+              popup.find('#scheduleEtcNotice').show();
           }
           if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0 && popup.find("#scheduleContact").is(":visible")) {
               popup.find("#scheduleContact").tooltip({
@@ -2329,6 +2379,13 @@
     }, function(e){
       $('#announcementBody').parent().removeClass('wait');
     }))
+    
+    NMNS.socket.on("get menu list", socketResponse('메뉴 목록 조회', function(e){
+      if($("#scheduleTabContentList").is(":visible")){
+        $("#scheduleTabContentList").html(generateMenuList(e.data));
+        NMNS.menuList = e.data;
+      }
+    }, undefined, true))
     //websocket response end
     //Modal events start  
     $(".modal").on("shown.bs.modal", function(){
@@ -2655,7 +2712,7 @@
         if (document.execCommand('copy')) {
             title = "메일주소가 복사되었습니다.";
         } else {
-            title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사해주세요.";
+            title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사���주세요.";
         }
         $(this).attr("title", title).tooltip({
             trigger: "manual",

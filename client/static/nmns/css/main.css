@@ -15,6 +15,48 @@
 input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator{
     display:none;
 }
+
+.modal-dialog.modal-lg{
+    max-width:624px;
+    width:100%;
+}
+
+.new {
+    font-size: .65rem;
+    padding: 0;
+    color: #dc3545;
+    vertical-align: text-top;
+}
+
+.modal-content {
+    border: 0;
+}
+
+.tooltip .arrow {
+    display: none;
+}
+
+.tooltip-inner {
+    max-width: 300px;
+    white-space: pre-wrap;
+    background-color: #232F34;
+    font-size: .8rem;
+    text-align: left;
+}
+
+*:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+input[name='name'],
+input[name='title'],
+input[name='contents'],
+input[name='etc'],
+.han{
+    ime-mode: active;
+}
+
 /*main contents*/
 html {
     min-height: 100vh;
@@ -774,22 +816,6 @@ button.moveDate:focus {
     font-size: 13px;
 }
 
-.modal-dialog.modal-lg{
-    max-width:624px;
-    width:100%;
-}
-/*
-#noShowModal .input-group-append i,
-#noShowModal .input-group-append span {
-    border-width: .06rem;
-}
-
-#noShowModal .input-group-prepend i {
-    background-color: white;
-    border-width: .06rem;
-    line-height: 1.4rem;
-}
-*/
 #noShowModal #noShowScheduleList {
     height: 140px;
     margin-bottom: .5rem;
@@ -1086,74 +1112,6 @@ button.moveDate:focus {
     margin-left: .5rem;
 }
 
-
-/* footer */
-
-footer {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    position: absolute;
-}
-
-
-/* commons */
-
-.new {
-    font-size: .65rem;
-    padding: 0;
-    color: #dc3545;
-    vertical-align: text-top;
-}
-
-.modal-content {
-    border: 0;
-}
-
-.tooltip .arrow {
-    display: none;
-}
-
-.tooltip-inner {
-    max-width: 300px;
-    white-space: pre-wrap;
-    background-color: #232F34;
-    font-size: .8rem;
-    text-align: left;
-}
-
-*:focus,
-.btn:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.flatpickr-current-month span.cur-month {
-    font-weight: 400;
-}
-
-.flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
-    border-top: 0;
-}
-
-span.flatpickr-apply-btn.flatpickr-am-pm {
-    background-color: #009688;
-    color: white;
-}
-
-span.flatpickr-apply-btn.flatpickr-am-pm:hover,
-span.flatpickr-apply-btn.flatpickr-am-pm:focus {
-    background-color: #00796b;
-}
-
-input[name='name'],
-input[name='title'],
-input[name='contents'],
-input[name='etc'],
-.han{
-    ime-mode: active;
-}
-
 .float {
     position: absolute;
     width: 60px;
@@ -1170,6 +1128,23 @@ input[name='etc'],
 }
 
 .float:focus {
+    background-color: #00796b;
+}
+.flatpickr-current-month span.cur-month {
+    font-weight: 400;
+}
+
+.flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
+    border-top: 0;
+}
+
+span.flatpickr-apply-btn.flatpickr-am-pm {
+    background-color: #009688;
+    color: white;
+}
+
+span.flatpickr-apply-btn.flatpickr-am-pm:hover,
+span.flatpickr-apply-btn.flatpickr-am-pm:focus {
     background-color: #00796b;
 }
 
@@ -1909,4 +1884,13 @@ button.customerSortType.active {
 
 #scheduleModal #scheduleTabContents input:not(:last-child){
     margin-bottom:10px;
+}
+
+/* schedule modal */
+#scheduleEtcNotice{
+    max-width:calc(100% - 70px);
+}
+
+#scheduleManagerList{
+    right:0;
 }
