@@ -26,10 +26,6 @@
 
 /* customer menu */
 
-#mainCustomerTools {
-    font-size: .9rem;
-}
-
 #mainCustomerTools #customerSearchManager {
     display: none;
 }
@@ -65,20 +61,35 @@
     width: auto;
 }
 
-button.customerSortType {
-    border: 0;
-    background-color: #fff;
+#mainCustomerTools .customerHead{
+    justify-content: center;
 }
 
-button.customerSortType:active,
-button.customerSortType:hover,
-button.customerSortType:focus,
-button.customerSortType.active {
-    background-color: #b2dfdb !important;
+#mainCustomerTools .customerSortType{
+    cursor:pointer;
+}
+
+#mainCustomerTools .customerSortType:active,
+#mainCustomerTools .customerSortType:hover,
+#mainCustomerTools .customerSortType:focus,
+#mainCustomerTools .customerSortType.active {
+    font-weight:bold;
+}
+
+#mainCustomerTools .customerSortType:after{
+    font-family:'Font Awesome 5 Free';
+    font-weight:700;
+    margin-left:3px;
+    content:'\f0dc';
+    opacity: 1;
+}
+
+#mainCustomerTools .customerSortType:not(.active):after{
+    opacity:0.5;
 }
 
 #mainCustomerList {
-    min-height: calc(100vh - 275px);
+    min-height: calc(100vh - 315px);
     display:flex;
     align-items:center;
 }
@@ -86,7 +97,7 @@ button.customerSortType.active {
 #mainCustomerList .customer{
   position:relative;
   text-align:center;
-  padding:10px 15px;
+  padding:10px 7px;
   margin-top:5px;
   background-color:#fff;
   display:flex;
@@ -102,6 +113,17 @@ button.customerSortType.active {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  display:inline-block;
+}
+
+#mainCustomerList .customer > .col:nth-child(2){
+    margin-left:36px;
+}
+
+#mainCustomerList .customer .tui-full-calendar-weekday-schedule-bullet{
+    top:50%;
+    transform:translateY(-50%);
+    left:16px;
 }
 
 #mainCustomerList .customer .customerModalLink{

@@ -290,20 +290,22 @@
             </div>
           </div>-->
           <div id="mainCustomer" class="col-12 mb-5">
-            <div id="mainCustomerTools">
-              <div class="d-flex col-12 px-0 text-center py-2" style="white-space: nowrap">
+            <div id="mainCustomerTools" style="font-size:13px">
+              <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:10px 7px;justify-content:center">
                 <div class="d-inline-flex customerHead customerSortType" data-action="sort-manager">담당</div>
                 <div class="d-inline-flex col-1 customerHead customerSortType active" data-action="sort-name">이름</div>
                 <div class="d-inline-flex col-2 customerHead">연락처</div>
-                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-visit">방문횟수</div>
-                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-date">마지막 방문</div>
-                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-sales">매출액</div>
-                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-membership">멤버십 잔액</div>
+                <div class="d-inline-flex col-1 px-0 customerHead customerSortType" data-action="sort-visit">방문횟수</div>
+                <div class="col-4">
+                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-date">마지막 방문</div>
+                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-sales">매출액</div>
+                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-membership">멤버십 잔액</div>
+                </div>
                 <div class="d-inline-flex col customerHead">메모</div>
               </div>
             </div>
             <div id="mainCustomerList" class="col-12 px-0 mx-0 text-center flex-column">
-              <div class="text-center flex-column w-100">
+              <div class="flex-column" style="margin-top:50%">
                 <div class="bouncingLoader">
                   <div></div>
                   <div></div>
@@ -313,7 +315,7 @@
               </div>
             </div>
             <div id="mainCustomerLoading" style="display:none">
-              <div class="text-center flex-column w-100">
+              <div class="flex-column">
                 <div class="bouncingLoader">
                   <div></div>
                   <div></div>
@@ -854,74 +856,6 @@
           </div>
         </div>
       </div>-->
-    
-      <div id="customerModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <span>
-                <h5 class="modal-title" id="customerTitle">고객 상세정보</h5>
-              </span>
-              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="form-group">
-                <div class="row mb-2">
-                  <div class="col-lg-6 col-12 text-center">
-                    <input id="customerName" type="text" placeholder="이름" class="form-control col-12 border-0 text-center my-3"/>
-                    <input id="customerContact" type="text" placeholder="연락처" class="form-control col-12 border-0 text-center my-3"/>
-                  </div>
-                  <div class="col-lg-6 col-12">
-                    <label for="customerEtc" class="col-12 px-0 col-form-label col-form-label-sm">메모</label>
-                    <div class="col-12 px-0">
-                      <textarea id="customerEtc" type="text" placeholder="이 고객에 대한 메모를 적어주세요." class="form-control han"></textarea>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-2 px-3">
-                  <label for="customerManager" class="col-2 col-lg-1 p-0 col-form-label col-form-label-sm">담당자</label>
-                  <div class="col-lg-10 col-sm-8 col-7 px-0 mr-auto">
-                    <button id="customerManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
-                    <div class="dropdown-menu rounded-0" aria-labelledby="customerManager" role="menu">
-                    </div>
-                  </div>
-                  <button type="button" id="submitCustomer" class="btn btn-primary btn-flat col-auto" aria-label="수정">수정</button>
-                </div>
-                <div class="form-group d-flex">
-                  <label for="customerNoShow" class="col-2 col-lg-1 p-0 col-form-label col-form-label-sm">노쇼내역</label>
-                  <div class="col-10 col-lg-11 pl-sm-0 mr-auto">
-                    <span id="customerNoShow"></span>
-                  </div>
-                </div>
-                <div class="form-group border-top">
-                  <ul id="customerTabs" class="nav nav-tabs mt-3" role="tablist">
-                    <li class="nav-item active" style="display:flex;">
-                      <a class="nav-link active" id="customerHistoryTab" data-toggle="tab" href="#customerHistory" role="tab" aria-controls="customerHistory" aria-selected="true">예약내역</a>
-                    </li>
-                    <li class="nav-item" style="display:flex;">
-                      <a class="nav-link" id="customerAlrimTab" data-toggle="tab" href="#customerAlrim" role="tab" aria-controls="customerAlrim" aria-selected="false">알림톡 내역</a>
-                    </li>
-                  </ul>
-                  <!--<label for="customerHistory" class="col-form-label col-form-label-sm">예약내역</label>-->
-                  <div class="tab-content">
-                    <div id="customerHistory" class="col-12 my-3 tab-pane fade show active px-0" role="tabpanel" aria-labelledby="customerHistoryTab"></div>
-                    <div id="customerAlrim" class="col-12 my-3 tab-pane fade accordion px-0" role="tabpanel" aria-labelledby="customerAlrimTab"></div>
-                  </div>
-                  <div class="ml-3 px-0 btn addHistory">
-                    <p class="text-secondary align-top mb-0">
-                      <i class="fas fa-plus" aria-label="예약 추가하기"></i> 예약 추가하기
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      
       
     </div>
   </div>
