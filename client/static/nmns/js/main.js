@@ -1278,7 +1278,7 @@
       }
       $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
       
-      $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e.schedule?e.schedule.title : '');
+      $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
         console.log(e);
         document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
@@ -1630,7 +1630,7 @@
           maxHeight:175,
           triggerSelectOnValidInput: false,
           zIndex:1060
-        };        
+        };
         $('#taskStartTime').autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
         $("#taskEndTime").autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
         
@@ -2654,6 +2654,11 @@
       }
     });
 
+    $("#scheduleAddBtn").on("touch click", function(){
+      $("#scheduleTabList a[data-target='#scheduleTab']").tab('show');
+      initScheduleTab();
+      $("#scheduleModal").modal('show');
+    })
     $("#userModal").one('show.bs.modal', function(){
       //passwordTab
       $("#resetPasswordBtn").on("touch click", function(){
