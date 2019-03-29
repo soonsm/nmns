@@ -1313,6 +1313,23 @@ button.form-control {
     padding-bottom:15px;
 }
 
+/* user modal */
+
+#naverBtn, #kakaoBtn{
+    font-size:13px;
+}
+#naverBtn.connected{
+    background-color:#ffeb00;
+    border-color:#ffeb00;
+    cursor:default;
+}
+
+#kakaoBtn.connected{
+    background-color:#1ec800;
+    border-color:#1ec800;
+    cursor:default;
+    color:#fff;
+}
 
 /* tutorial */
 

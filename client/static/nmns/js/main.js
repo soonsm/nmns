@@ -2676,10 +2676,34 @@
           return;
         }
         NMNS.socket.emit("update password", { currentPassword: $("#currentPassword").val(), newPassword: $("#newPassword").val() });
+        $("#currentPassword").val("");
         $("#newPassword").val("");
         $("#renewPassword").val("");
         $("#infoModal").modal('hide');
       })
+      $("#kakaoBtn").on("touch click", function(){
+        if($(this).hasClass('connected')){
+          return;
+        }
+        alert('카카오톡 계정 연동!');
+      })
+      $("#naverBtn").on("touch click", function(){
+        if($(this).hasClass('connected')){
+          return;
+        }
+        alert('네이버 계정 연동!');
+      });
+    }).on('shown.bs.modal', function(){
+      if(NMNS.info.kakaotalk){
+        $("#kakaoBtn").addClass('connected').find('span').text('카카오 계정 연동 완료')
+      }
+      if(NMNS.info.naver){
+        $("#naverBtn").addClass('connected').find('span').text('네이버 계정 연동 완료')
+      }
+    }).on("hidden.bs.modal", function(){
+      $("#currentPassword").val("");
+      $("#newPassword").val("");
+      $("#renewPassword").val("");
     })
     //Modal events end
     //mobile horizontal scroll handling
