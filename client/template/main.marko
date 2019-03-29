@@ -182,7 +182,7 @@
               <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
               <span class="text-accent menuTitleNumber" id="todayTask">0</span>
             </span>
-            <button class="btn btn-accent ml-auto" type="button" id="scheduleAddBtn"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
+            <button class="btn btn-accent ml-auto" type="button" id="addScheduleBtn"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
           </div>
           <div style="display:inline-block;width:auto;min-width:100%">
             <div id="mainArea">
@@ -221,12 +221,11 @@
             <span class="h4 mb-0 font-weight-bold">고객 관리</span>
             <span id="customerCount" class="text-accent menuTitleNumber">0</span>
             <span class="divider" style="display:inline-table">&nbsp;</span>
-            <span class="taskMenu cursor-pointer">
-              <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
-            </span>
-            <button class="btn btn-accent ml-auto" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>고객 추가</button>
+            <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
+            <input type="text" class="border-0" placeholder="이름, 연락처, 담당자 이름으로 검색하세요." aria-label="고객 검색" id="searchCustomer">
+            <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><i class="fas fa-plus" style="margin-right:8px"></i>고객 추가</button>
           </div>
-          <div id="mainCustomerTools" class="col-12 text-center">
+          <!--<div id="mainCustomerTools" class="col-12 text-center">
             <div id="customerAddForm" class="row col-12 col-sm-10 mx-auto border py-2 px-3 mt-2">
               <div class="text-left col-12 my-2">
                 <b>신규 고객등록</b>
@@ -289,10 +288,40 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
           <div id="mainCustomer" class="col-12 mb-5">
-            <div id="mainCustomerList" class="col-12 col-sm-10 px-0 mx-auto"><p class="text-center w-100"><i class="fas fa-circle-notch fa-spin"></i> <span>고객 정보를 불러오는 중입니다...</span></p></div>
-            <div id="mainCustomerLoading"><i class="fas fa-circle-notch fa-spin"></i><small> 로딩 중...</small></div>
+            <div id="mainCustomerTools">
+              <div class="d-flex col-12 px-0 text-center py-2" style="white-space: nowrap">
+                <div class="d-inline-flex customerHead customerSortType" data-action="sort-manager">담당</div>
+                <div class="d-inline-flex col-1 customerHead customerSortType active" data-action="sort-name">이름</div>
+                <div class="d-inline-flex col-2 customerHead">연락처</div>
+                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-visit">방문횟수</div>
+                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-date">마지막 방문</div>
+                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-sales">매출액</div>
+                <div class="d-inline-flex col-2 customerHead customerSortType" data-action="sort-membership">멤버십 잔액</div>
+                <div class="d-inline-flex col customerHead">메모</div>
+              </div>
+            </div>
+            <div id="mainCustomerList" class="col-12 px-0 mx-0 text-center flex-column">
+              <div class="text-center flex-column w-100">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>고객 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+            <div id="mainCustomerLoading" style="display:none">
+              <div class="text-center flex-column w-100">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>고객 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
           </div>
         </div>
         
