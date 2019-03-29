@@ -280,6 +280,21 @@
             setSchedules();
         }
         $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
+        $("#mainTaskContents input").on('change', function(e){
+          console.log($(this).prop('checked'));
+          e.stopPropagation();
+          var data = $(this).parent();
+          NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
+          NMNS.socket.emit('update reserv', {id:data.data('id'), isDone:$(this).prop('checked')});
+        })
+        $("#mainTaskContents .task").on('touch click', function(e){
+          e.stopPropagation();
+          console.log('aa')
+          var data = $(this).parent();
+          initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
+          $("#scheduleTabList a[data-target='#taskTab']").tab('show');
+          $("#scheduleModal").modal('show')
+        });
         refreshScheduleVisibility();
     }));
 
@@ -587,12 +602,12 @@
       taskList.forEach(function(day){
         if(day.task.length > 0){
           html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
-          day.task.forEach(function(task){
+          day.task.forEach(function(task, index){
             var manager = findManager(task.manager) || {};
-            html += "<div class='row'><div class='col col-12 position-relative cursor-pointer'><span class='far fa-square task-checkbox'></span><div class='flex-column d-inline-flex task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+            html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
             moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
             + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
-            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:15px;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div></div>"
+            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
           })
         }
       })
@@ -1231,7 +1246,7 @@
       });
       return html;
     }
-    
+
     function removeContent(target){
       if($("#scheduleTabContents .row").length === 1){
         $(target).prev().data('menu-id', null).val('');
@@ -1607,11 +1622,18 @@
       if (typeof task === 'object') { // update existing task
       
         $("#taskTab").data("edit", task.id ? true : false).data("task", task);
-        document.getElementById("taskStartDate")._flatpickr.setDate(task.start.toDate());
-        document.getElementById("taskEndDate")._flatpickr.setDate(task.end.toDate());
-        $("#taskStartTime").val(getTimeFormat(moment(task.start.toDate())));
-        $("#taskEndTime").val(getTimeFormat(moment(task.end.toDate())));
-
+        document.getElementById("taskStartDate")._flatpickr.setDate(moment(task.start, 'YYYYMMDDHHmm').toDate());
+        document.getElementById("taskEndDate")._flatpickr.setDate(moment(task.end, 'YYYYMMDDHHmm').toDate());
+        
+        var autoCompleteOption = {
+          lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
+          maxHeight:175,
+          triggerSelectOnValidInput: false,
+          zIndex:1060
+        };        
+        $('#taskStartTime').autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
+        $("#taskEndTime").autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
+        
         $("#taskName").val(task.title || "");
         $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
         calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
@@ -2103,8 +2125,13 @@
     }));
 
     NMNS.socket.on("update reserv", socketResponse("예약/일정 정보 변경하기", function(e) {
+        var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
-        if ($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='" + e.data.id + "']").length) { //예약으로 추가 모달
+        if (origin.category === 'task'){
+          if(typeof origin.isDone !== 'boolean'){
+            NMNS.socket.emit('get task');
+          }
+        } else if ($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='" + e.data.id + "']").length) { //예약으로 추가 모달
           showSnackBar('<span>노쇼로 등록하였습니다.</span>');
           $("#noShowScheduleList .row[data-id='" + e.data.id + "']").remove();
           $("#noShowScheduleBtn span").css('opacity', 0.35)
@@ -2112,10 +2139,15 @@
     }, function(e) {
         var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
-        if ((origin.status || origin.raw.status) === "DELETED") {
-            drawSchedule([origin]);
-            refreshScheduleVisibility();
-        } else {
+        if(origin.category === 'task'){
+          if(typeof origin.isDone === 'boolean'){
+            $("#mainTaskContents .task[data-id='"+origin.id+"'] input").prop('checked', origin.isDone);
+          }
+        }else{
+          if ((origin.status || origin.raw.status) === "DELETED") {
+              drawSchedule([origin]);
+              refreshScheduleVisibility();
+          } else {
             if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
                 NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
                 origin.category = origin.category === 'task' ? 'task' : 'time';
@@ -2132,6 +2164,7 @@
                 if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
                 NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
             }
+          }
         }
     }));
 
@@ -2143,7 +2176,23 @@
           e.data.find(function(date){return date.date === moment().format('YYYYMMDD')}).task.length
         )
       }
-      $('#mainTaskContents').html(generateTaskList(e.data));
+      $('#mainTaskContents').html(generateTaskList(e.data))
+      $("#mainTaskContents input").on('change', function(e){
+        console.log($(this).prop('checked'));
+        e.stopPropagation();
+        var data = $(this).parent();
+        NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
+        NMNS.socket.emit('update reserv', {id:data.data('id'), isDone:$(this).prop('checked')});
+      })
+      $("#mainTaskContents .task").on('touch click', function(e){
+        e.stopPropagation();
+        console.log('aa')
+        var data = $(this).parent();
+        initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
+        $("#scheduleTabList a[data-target='#taskTab']").tab('show');
+        $("#scheduleModal").modal('show')
+      });
+      
     }));
     
     NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e) {

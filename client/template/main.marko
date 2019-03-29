@@ -656,9 +656,6 @@
                       <div class="select ml-1">
                         <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
                       </div>
-                      <datalist id="scheduleTabTimeList">
-                        <option value="오전 00:00"/><option value="오전 00:30"/><option value="오전 01:00"/><option value="오전 01:30"/><option value="오전 02:00"/><option value="오전 02:30"/><option value="오전 03:00"/><option value="오전 03:30"/><option value="오전 04:00"/><option value="오전 04:30"/><option value="오전 05:00"/><option value="오전 05:30"/><option value="오전 06:00"/><option value="오전 06:30"/><option value="오전 07:00"/><option value="오전 07:30"/><option value="오전 08:00"/><option value="오전 08:30"/><option value="오전 09:00"/><option value="오전 09:30"/><option value="오전 10:00"/><option value="오전 10:30"/><option value="오전 11:00"/><option value="오전 11:30"/><option value="오후 12:00"/><option value="오후 12:30"/><option value="오후 01:00"/><option value="오후 01:30"/><option value="오후 02:00"/><option value="오후 02:30"/><option value="오후 03:00"/><option value="오후 03:30"/><option value="오후 04:00"/><option value="오후 04:30"/><option value="오후 05:00"/><option value="오후 05:30"/><option value="오후 06:00"/><option value="오후 06:30"/><option value="오후 07:00"/><option value="오후 07:30"/><option value="오후 08:00"/><option value="오후 08:30"/><option value="오후 09:00"/><option value="오후 09:30"/><option value="오후 10:00"/><option value="오후 10:30"/><option value="오후 11:00"/><option value="오후 11:30"/>
-                      </datalist>
                     </div>
                     <div style="margin-top:35px">예약 내용</div>
                     <div class="row flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
@@ -707,11 +704,19 @@
                       </span>
                     </div>
                     <div class="d-flex col-12 px-0 align-items-center mt-3">
-                      <input id="taskStartDate" name="start" class="form-control form-control-sm mr-1 montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
-                      <input id="taskStartTime" type="text" class="form-control form-control-sm ml-1" aria-label="일정 시작 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                      <div class="select mr-1">
+                        <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
                       <span class="px-2 mx-3">~</span>
-                      <input id="taskEndDate" name="end" class="form-control form-control-sm mr-1 montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
-                      <input id="taskEndTime" type="text" class="form-control form-control-sm ml-1" aria-label="일정 끝 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                      <div class="select mr-1">
+                        <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
                     </div>
                     <div style="margin-top:35px">담당자</div>
                     <button id="taskManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자 선택">
