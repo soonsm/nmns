@@ -554,7 +554,10 @@ button.moveDate {
 button.moveDate:focus {
     box-shadow: none;
 }
-
+.flatpickr-months, .flatpickr-days{
+    font-family:'Montserrat', 'Spoqa Han Sans';
+}
+/*
 .flatpickr-input {
     background-color: white;
 }
@@ -604,7 +607,7 @@ button.moveDate:focus {
     background-color: #009688;
     border-color: #009688;
 }
-
+*/
 /* creation popup */
 
 #creationPopupAllDay,
@@ -885,10 +888,9 @@ button.moveDate:focus {
 }
 
 .autocomplete-suggestions {
-    border: .05rem solid #bdbdbd;
+    border-radius: 2px;
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
     background-color: white;
-    border-top: 0;
-    box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
 }
 
 .autocomplete-suggestion {
@@ -896,11 +898,12 @@ button.moveDate:focus {
     overflow: hidden;
     white-space: nowrap;
     cursor: pointer;
-    padding-left: .5rem;
+    padding: 10px 15px;
+    font-size:13px;
 }
 
 .autocomplete-selected {
-    background-color: #b2dfdb;
+    background-color: rgba(0,0,0,0.07);
 }
 
 /*#noShowAdd {

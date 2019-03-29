@@ -420,7 +420,7 @@ function getTimeFormat(time){
     }else{
         format += '오전 ';
     }
-    format += time.format("HH:mm");
+    format += time.format("hh:mm");
     return format;
 }
 
@@ -430,7 +430,13 @@ function parseTime(input){
     }
     var result = /(오전|오후)\s?([\d]{2}):([\d]{2})/.exec(input);
     if(result){
-        var res = result[2] + result[3];
+        var res;
+        if(result[1] === '오후' && result[2] !== '12'){
+            res += '' + ((result[2]*1) + 12)
+        }else{
+            res += result[2];
+        }
+        res += result[3];
         if(moment(res, 'HHmm').isValid()){
             return res;
         }else{

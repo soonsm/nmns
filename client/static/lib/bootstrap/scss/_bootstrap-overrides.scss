@@ -75,6 +75,14 @@ a.text-primary {
   color: $primary;
 }
 
+.btn-form{
+  color:$textPrimary;
+  border-color:#707070;
+  box-shadow:none;
+  font-size:11px;
+  padding:10px;
+}
+
 .btn-secondary {
   background-color: $secondary;
   border-color: $secondary;

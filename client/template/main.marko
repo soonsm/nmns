@@ -490,7 +490,7 @@
                 </button>
               </div>
             </div>
-            <div class="modal-body px-0 mx-2">
+            <div class="modal-body">
               <div class="row mx-0 col-12 tab-content p-0">
                       
                 <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
@@ -647,14 +647,14 @@
                         <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
                       </div>
                       <div class="select ml-1">
-                        <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                        <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                       </div>
                       <span class="px-2 mx-3">~</span>
                       <div class="select mr-1">
                         <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
                       </div>
                       <div class="select ml-1">
-                        <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" list="scheduleTabTimeList" placeholder="오전(후) **:**">
+                        <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
                       </div>
                       <datalist id="scheduleTabTimeList">
                         <option value="오전 00:00"/><option value="오전 00:30"/><option value="오전 01:00"/><option value="오전 01:30"/><option value="오전 02:00"/><option value="오전 02:30"/><option value="오전 03:00"/><option value="오전 03:30"/><option value="오전 04:00"/><option value="오전 04:30"/><option value="오전 05:00"/><option value="오전 05:30"/><option value="오전 06:00"/><option value="오전 06:30"/><option value="오전 07:00"/><option value="오전 07:30"/><option value="오전 08:00"/><option value="오전 08:30"/><option value="오전 09:00"/><option value="오전 09:30"/><option value="오전 10:00"/><option value="오전 10:30"/><option value="오전 11:00"/><option value="오전 11:30"/><option value="오후 12:00"/><option value="오후 12:30"/><option value="오후 01:00"/><option value="오후 01:30"/><option value="오후 02:00"/><option value="오후 02:30"/><option value="오후 03:00"/><option value="오후 03:30"/><option value="오후 04:00"/><option value="오후 04:30"/><option value="오후 05:00"/><option value="오후 05:30"/><option value="오후 06:00"/><option value="오후 06:30"/><option value="오후 07:00"/><option value="오후 07:30"/><option value="오후 08:00"/><option value="오후 08:30"/><option value="오후 09:00"/><option value="오후 09:30"/><option value="오후 10:00"/><option value="오후 10:30"/><option value="오후 11:00"/><option value="오후 11:30"/>
@@ -684,7 +684,7 @@
                         </div>
                       </div>
                       <div class="col ml-1 px-0 flex-column">
-                        <div class="d-flex">고객 메모<span id="scheduleEtcNotice" class="mb-0 subText" style="display:none">이미 등록된 고객의 메모는 고객관리에서 변경하실 수 있습니다.</span></div>
+                        <div class="d-flex">고객 메모</div>
                         <input type="text" class="form-control form-control-sm han mt-3" id="scheduleEtc" name="etc" aria-label="고객 메모" placeholder="고객 메모">
                       </div>
                     </div>
