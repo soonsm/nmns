@@ -40,9 +40,9 @@
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="prefetch" onload="this.rel='stylesheet'">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="prefetch" as="font" onload="this.rel='stylesheet'">
 
-  <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="prefetch" onload="this.rel='stylesheet'">
+  <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
   <!--fonts-->
   <style>
@@ -54,7 +54,7 @@
   <div class="d-flex" style="min-height:100vh">
     <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white container px-0 d-flex">
       <div class="topNav" style="padding:30px">
-        <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:100%;vertical-align:initial"/></a>
+        <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:auto;vertical-align:initial"/></a>
         <i id="sidebarToggler" class="fa fa-bars float-right cursor-pointer text-white" aria-label="메뉴"></i>
       </div>
       <div id="sidebarContainer" class="row mx-0 col-12">
@@ -156,8 +156,8 @@
     <div id="mainRow" class="row col px-0 mx-auto sidebar-handler">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
-        <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
-        <input type="number" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" id="searchNoShow">
+        <label class="fa fa-search" style="font-size:24px;opacity:0.5" for="searchNoShow"></label>
+        <input type="text" pattern="[0-9]*" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" id="searchNoShow">
         <button class="btn btn-primary ml-auto addNoShowLink" data-toggle="modal" data-target="#noShowModal" type="button" title="노쇼 추가" style="white-space:nowrap"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
         <button class="btn btn-flat px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom"><i class="far fa-bell" aria-label="알림" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
@@ -532,7 +532,7 @@
                 <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
                   <div class="row mx-0">
                     <div>연락처 입력</div>
-                    <input type="text" class="form-control form-control-sm mt-3" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">
+                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">
                     <div>노쇼 사유</div>
                     <div id="noShowAddContent" class="row mx-0 col-12 px-0 mt-3 mb-5">
                       <span class="btn noShowAddCase" data-value="지각">지각</span>
@@ -609,7 +609,7 @@
                         <div class="mt-2 mb-3">매장 이름</div>
                         <input id="alrimShopName" name="shopName" type="text" placeholder="고객에게 보여질 매장 이름을 입력해주세요." class="form-control form-control-sm han mb-4"/>
                         <div class="pt-2 mb-3">휴대폰 번호<span class="align-middle subText">고객이 예약취소 버튼을 눌렀을 때 알림톡을 보내드릴 휴대폰 번호</span></div>
-                        <input id="alrimCallbackPhone" name="callbackPhone" type="text" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4 montserrat"/>
+                        <input id="alrimCallbackPhone" name="callbackPhone" type="text" pattern="[0-9]*" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4 montserrat"/>
                         <div class="pt-2 mb-3">알림 안내문구<span class="align-middle subText">고객에게 보낼 알림톡 안내문구</span><span class="float-right"><span class="montserrat font-weight-bold"><span id="noticeByteCount">0</span> / 700</span>자</span></div>
                         <textarea id="alrimNotice" name="notice" placeholder="예시.\n예약해주셔서 감사합니다.\n취소할 때에는 꼭 [예약취소] 버튼을 눌러 주세요!" class="form-control form-control-sm han mb-4"/>
                         <div class="pt-2 mb-3">예약취소 가능시간<span class="subText">[예약취소는 n시간 전까지 가능합니다.] 라는 문구로 자동표기 됩니다.</span></div>
@@ -670,7 +670,7 @@
                     <div>고객 이름</div>
                     <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
                     <div style="margin-top:35px">고객 연락처</div>
-                    <input type="text" class="form-control form-control-sm mt-3" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
+                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
                     <div style="margin-top:35px">예약시간
                       <span class="float-right">
                         <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>

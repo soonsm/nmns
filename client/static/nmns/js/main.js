@@ -762,7 +762,6 @@
                     $("#alrimScreen").show();
                 }
             });
-            setNumericInput($("#alrimCallbackPhone")[0]);
             $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
             
             $("#alrimHistorySearch").off("touch click").on("touch click", function() {
@@ -1140,13 +1139,11 @@
                 $("#noShowScheduleList .row").remove(); //깜빡임 효과
                 NMNS.socket.emit("get summary", parameters);
             });
-            setNumericInput(
-              $("#noShowAddContact").on("keyup", function(e) {
-                  if (e.which === 13) {
-                      $("#noShowAddBtn").trigger("click");
-                  }
-              })[0]
-            );
+            $("#noShowAddContact").on("keyup", function(e) {
+                if (e.which === 13) {
+                    $("#noShowAddBtn").trigger("click");
+                }
+            })
 
             $("#noShowTabList a[href='#noShowSchedule']").on("show.bs.tab", function(){
               $("#noShowScheduleSearch").trigger('click');
@@ -1401,7 +1398,7 @@
             }, 300);
         });
 
-        setNumericInput($('#scheduleContact').autocomplete({
+        $('#scheduleContact').autocomplete({
             serviceUrl: 'get customer info',
             paramName: 'contact',
             zIndex: 1060,
@@ -1432,7 +1429,7 @@
             timeout = setTimeout(function() {
                 onContactBlur();
             }, 300);
-        })[0]);
+        });
         
         $("#scheduleBtn").on("touch click", function(){
           var title, isAllDay, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
@@ -1830,18 +1827,17 @@
           sanitize:false,
           placement:'bottom'
         })
-        setNumericInput(
-          $("#searchNoShow").on("keyup", function(e){
-            if(e.keyCode === 13 || e.which === 13){
-              if($(this).val().length === 11 || $(this).val().length === 10){
-                switchMenu.apply(this, e);
-                NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
-              }else{
-                showSnackBar("전화번호를 정확히 입력해주세요.");
-              }
+        $("#searchNoShow").on("keyup", function(e){
+          if(e.keyCode === 13 || e.which === 13){
+            if($(this).val().length === 11 || $(this).val().length === 10){
+              switchMenu.apply(this, e);
+              NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
+            }else{
+              showSnackBar("전화번호를 정확히 입력해주세요.");
             }
-          })[0]
-        );
+          }
+        })
+        
         $("#searchNoShow").autocomplete({
             serviceUrl: "get customer info",
             paramName: "contact",
