@@ -561,7 +561,7 @@
             case "EMAIL_VERIFICATED":
                 return "<span class='badge badge-primary badge-pill'><span class='fa fa-check mr-1'></span>인증완료</span>";
         }
-        $("#infoAccountStatus").removeClass("pl-2"); //no auth status badge
+        //$("#infoAccountStatus").removeClass("pl-2"); //no auth status badge
         return "";
     }
 
@@ -2273,7 +2273,7 @@
           if (e.data.detail.length > 0) {
             var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
             e.data.detail.forEach(function(item) {
-                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + item.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
+                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
             });
             $("#noShowSearchList").html(html);
             $("#noShowSearchList .noShowSearchDelete").on("touch click", function(){
