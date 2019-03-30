@@ -285,7 +285,7 @@
           e.stopPropagation();
           var data = $(this).parent();
           NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
-          NMNS.socket.emit('update reserv', {id:data.data('id'), isDone:$(this).prop('checked')});
+          NMNS.socket.emit('update reserv', {id:data.data('id'), type: 'T', isDone:$(this).prop('checked')});
         })
         $("#mainTaskContents .task").on('touch click', function(e){
           e.stopPropagation();
@@ -1739,6 +1739,7 @@
                   name: $("#taskName").val(),
                   start: moment(start).format("YYYYMMDDHHmm"),
                   end: moment(end).format("YYYYMMDDHHmm"),
+                  type: 'T',
                   isAllDay: $("#taskAllDay").prop('checked')
               });
           } else { //신규 일정 추가
@@ -2182,7 +2183,7 @@
         e.stopPropagation();
         var data = $(this).parent();
         NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
-        NMNS.socket.emit('update reserv', {id:data.data('id'), isDone:$(this).prop('checked')});
+        NMNS.socket.emit('update reserv', {id:data.data('id'), type: 'T', isDone:$(this).prop('checked')});
       })
       $("#mainTaskContents .task").on('touch click', function(e){
         e.stopPropagation();
