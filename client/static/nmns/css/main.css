@@ -116,6 +116,10 @@ input[type=checkbox]+label{
 #mainAside.sidebar-toggled{
     width:74px;
 }
+
+#mainAside.sidebar-toggled .menu-collapsed{
+    display:none;
+}
 #mainRow {
     transition:0.3s ease-in-out;
     position:relative;
@@ -240,10 +244,11 @@ input[type=checkbox]+label{
 #mainNav{
     padding-left:30px;
     padding-right:30px;
+    flex-wrap:nowrap;
 }
 
 #mainRow #mainNav #searchNoShow, #searchCustomer{
-    min-width:260px;
+    min-width:30px;
     margin-left:15px;
     background-color:transparent;
     display:inline-flex;
@@ -266,6 +271,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 
 #mainRow #mainNav #mainMenu{
     font-size:13px;
+    white-space:nowrap;
 }
 
 #mainRow #mainNav #mainMenu #mainShopIcon{
@@ -472,13 +478,16 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     font-family:'montserrat';
 }
 
-.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-tomorrow{
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-tomorrow:not(:first-child){
     border-left:1px solid #393535;
 }
 .tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today{
     border-left:1px solid #393535;
     border-top:1px solid #393535;
     border-bottom:1px solid #393535;
+}
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today:last-child{
+    border-right:1px solid #393535;
 }
 
 .tui-full-calendar-timegrid-timezone .tui-full-calendar-past{
@@ -1534,7 +1543,7 @@ button.form-control {
 }
 
 #faq .faqDetailRow {
-    padding: 0 20px 15px 20px;
+    padding: 0 20px;
     flex: 0 0 100%;
     max-width: 100%;
     word-break: break-all;

@@ -1816,7 +1816,7 @@
             $("#mainAside").css('minWidth', 'unset');
           }
           $('#mainAside').toggleClass('sidebar-toggled')
-          $('#mainAside .menu-collapsed').toggle();
+          //$('#mainAside .menu-collapsed').toggle();
         })
         $(".announcementMenuLink").popover({
           template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
@@ -2076,6 +2076,9 @@
     setDropdownCalendarType();
     setRenderRangeText();
     setEventListener();
+    if($(window).width() < 900){
+        $('#sidebarToggler').trigger('click')
+    }
     //after calendar initialization end
     //websocket response start
     NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e) {
@@ -2266,7 +2269,7 @@
             $("#noShowDirtyImage").attr('src', '/nmns/img/sub_img.svg');
           }
           $("#myNoShowCount").text(e.data.detail.length);
-          $("#otherNoShowCount").text(e.data.summary.noShowCount - e.data.detail.length);
+          $("#otherNoShowCount").text(Math.max(e.data.summary.noShowCount - e.data.detail.length, 0));
           if(e.data.summary.lastNoShowDate){
             $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
           }
@@ -2896,7 +2899,7 @@
         var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
         faqs.forEach(function(item, index) {
             html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
-                '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex"><span>ㄴ</span></div><span class="col px-2">' + item.contents + '</span></div></div>';
+                '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
             if (index > 0 && index % 50 === 0) {
                 $("#faq").append(html);
                 html = "";
