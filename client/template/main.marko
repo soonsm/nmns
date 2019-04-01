@@ -143,7 +143,37 @@
                 </div>
               </div>
             </a>
-            <div id="lnbManagerList" class="lnb-calendars-d1">
+            <div id="lnbManagerList"></div>
+            <div id="lnbManagerForm" class="menu-collapsed" style="margin-top:30px;display:none">
+              <div class='lnbManagerItem row mx-0 align-items-center'>
+                <label class="mb-0">
+                  <input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox' disabled><span title='담당자의 색깔을 선택하세요.'></span>
+                </label>
+                <input type="text" id="lnbManagerFormName" class="border-0 col bg-transparent form-control form-control-sm px-0" placeholder="이름을 입력하세요.">
+                <button type="button" id="lnbManagerFormSubmit" class="btn btn-flat text-white pr-0 pl-2">저장</button>
+              </div>
+              <div id="lnbManagerColor" class="mx-0">
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#fd5b77"><span style="background-color:#fd5b77"></span><span style="border-color:#fd5b77"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#039fed"><span style="background-color:#039fed"></span><span style="border-color:#039fed"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#7c46e9"><span style="background-color:#7c46e9"></span><span style="border-color:#7c46e9"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#86cdbd"><span style="background-color:#86cdbd"></span><span style="border-color:#86cdbd"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#6a747d"><span style="background-color:#6a747d"></span><span style="border-color:#6a747d"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#f490b2"><span style="background-color:#f490b2"></span><span style="border-color:#f490b2"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#a51783"><span style="background-color:#a51783"></span><span style="border-color:#a51783"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#447270"><span style="background-color:#447270"></span><span style="border-color:#447270"></span></label> 
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#bd902b"><span style="background-color:#bd902b"></span><span style="border-color:#bd902b"></span></label> 
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#db531f"><span style="background-color:#db531f"></span><span style="border-color:#db531f"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#785f37"><span style="background-color:#785f37"></span><span style="border-color:#785f37"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#b26112"><span style="background-color:#b26112"></span><span style="border-color:#b26112"></span></label> 
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#d0a348"><span style="background-color:#d0a348"></span><span style="border-color:#d0a348"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#e6bb86"><span style="background-color:#e6bb86"></span><span style="border-color:#e6bb86"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#73c267"><span style="background-color:#73c267"></span><span style="border-color:#73c267"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#028c99"><span style="background-color:#028c99"></span><span style="border-color:#028c99"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#f4866b"><span style="background-color:#f4866b"></span><span style="border-color:#f4866b"></span></label>
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#948b60"><span style="background-color:#948b60"></span><span style="border-color:#948b60"></span></label> 
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#8d4640"><span style="background-color:#8d4640"></span><span style="border-color:#8d4640"></span></label> 
+                <label><input class="lnbManagerColorTemplate" type="radio" name="lnbManagerColorTemplate" value="#6092c3"><span style="background-color:#6092c3"></span><span style="border-color:#6092c3"></span></label>
+              </div>
             </div>
           </li>
           <div class="mt-auto menu-collapsed" style="margin-bottom:30px;opacity:0.5;font-size:12px">Copyright &copy; washow.co.kr 2019</div>
@@ -156,7 +186,7 @@
     <div id="mainRow" class="row col px-0 mx-auto sidebar-handler">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
-        <label class="fa fa-search" style="font-size:24px;opacity:0.5" for="searchNoShow"></label>
+        <label class="fa fa-search mb-0" style="font-size:24px;opacity:0.5" for="searchNoShow"></label>
         <input type="text" pattern="[0-9]*" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" id="searchNoShow">
         <button class="btn btn-primary ml-auto addNoShowLink" data-toggle="modal" data-target="#noShowModal" type="button" title="노쇼 추가" style="white-space:nowrap"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
         <span class="divider">&nbsp;</span>

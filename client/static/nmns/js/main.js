@@ -578,19 +578,13 @@
         return "";
     }
 
-    function generateManagerList(managerList) {
-        var html = "";
-        managerList.forEach(function(item) {
-            html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:" + item.color + "; border-color:" + item.color + ";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='" + item.id + "' data-color='" + item.color + "' placeholder='담당자 이름' value='" + item.name + "' data-name='" + item.name + "'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>";
-        });
-        return html;
-    }
-
     function generateLnbManagerList(managerList) {
         var html = "";
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label><button class='btn btn-flat menu-collapsed lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v menu-collapsed'></i></button></div>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label>"+
+                  "<div class='dropdown menu-collapsed ml-auto'><button class='btn btn-flat dropdown-toggle lnbManagerAction text-white py-0 pr-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' data-offset='9,10'><i class='fa fa-ellipsis-v menu-collapsed'></i></button>"+
+                  "<div class='dropdown-menu dropdown-menu-right'><a class='dropdown-item updateManagerLink' href='#'>이름/컬러 변경</a><a class='dropdown-item removeManagerLink' href='#'>삭제</a></div></div></div>";
         });
         return html;
     }
@@ -2209,7 +2203,7 @@
         if (manager) {
             var calendars = NMNS.calendar.getCalendars();
             calendars.push(manager);
-            NMNS.calendar.setCalendars(NMNS.calendar.getCalendars());
+            NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars));
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
@@ -2747,8 +2741,15 @@
 
     //mobile horizontal scroll handling end
     $(".addManager").on("touch click", function() {
-        var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
-        var list = $(this).prev();
+        
+        if(!$("#lnbManagerForm").is(":visible")){
+          var colorIndex = Math.floor(Math.random() * NMNS.colorTemplate.length);
+          var color = $("#lnbManagerColor label:nth-child("+colorIndex+") input").prop('checked', true).val();
+          $("#lnbManagerFormName").val('').prev().find('span').css('border-color', color).css('background-color', color);
+        }
+        $("#lnbManagerForm").data('id', null).toggle();
+        /*
+        var list = $(this).next();
         var clazz = list.attr("id") === "lnbManagerList" ? "lnbManagerItem" : "infoManagerItem";
         var row = $("<div class='" + clazz + " addManagerItem row mx-0'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><span class='cancelAddManager pl-1' title='취소'>&times;</span>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
         list.append(row);
@@ -2793,7 +2794,7 @@
                 list.data("scroll").update();
             });
         }
-        list.find("div:last-child input[type='text']").focus();
+        list.find("div:last-child input[type='text']").focus();*/
     });
     $("#copyEmail").on("touch click", function(e) {
         e.preventDefault();
