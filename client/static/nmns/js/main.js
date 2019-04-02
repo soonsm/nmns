@@ -108,6 +108,36 @@
                 var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일" ? " tui-full-calendar-holiday-sun" : "") + (holiday ? " tui-full-calendar-holiday" : "") + (dayname === "토" ? " tui-full-calendar-holiday-sat" : "");
 
                 return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
+            },
+            monthlyDetailPopup: function(schedules, date){
+              var html = "<div class='d-flex flex-column position-relative'><button type='button' class='tui-full-calendar-popup-close close p-0 ml-auto my-0 mr-0 position-absolute' aria-label='닫기' style='right:0'><span aria-hidden='true' style='vertical-align:top;font-size:12px'>&times;</span></button>", contents;
+              var basis = moment(date);
+              schedules.forEach(function(schedule, index){
+                if(index === 0){
+                  html += "<div class='d-flex'>";
+                }
+                html += "<div class='monthlyDetailPopupTime montserrat col px-0'>"+(moment(schedule.start.toDate()).isSame(basis, 'days')?moment(schedule.start.toDate()).format('HH:mm'):moment(schedule.start.toDate()).format('MM. DD HH:mm')) +
+                        (schedule.end?(moment(schedule.end.toDate()).isSame(basis, 'days')?moment(schedule.end.toDate()).format(' - HH:mm'):moment(schedule.end.toDate()).format(' - MM. DD HH:mm')):"") +"</div>";
+                if(index === 0){
+                  html += "<div class='d-inline-block' style='width:25px'></div></div>";
+                }
+                if(schedule.title && schedule.title !== ''){
+                  contents = schedule.title;
+                }else if(schedule.raw.contents && schedule.raw.contents !== ''){
+                  try{
+                    contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
+                  }catch(error){
+                    contents = schedule.raw.contents;
+                  }
+                }else if(schedule.raw.contact && schedule.raw.contact !== ''){
+                  contents = schedule.raw.contact;
+                }else{
+                  contents = '';
+                }
+                html += "<div class='monthlyDetailPopupTitle col-12 px-0'>"+contents+"</div>";
+              });
+              html += '</div>';
+              return html;
             }
         },
         month: {
@@ -200,6 +230,10 @@
             NMNS.history.push(e.schedule);
             NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
             NMNS.socket.emit("update reserv", { id: e.schedule.id, status: "DELETED" });
+        },
+        beforeChangeView: function(e){
+          console.log(e);
+          console.log('aaaaa')
         }
     });
 
@@ -823,7 +857,7 @@
 
           $("#noShowScheduleBtn").off("touch click").on("touch click", function(){
             if($("#noShowScheduleList input:checked").length === 0){
-              showSnackBar("<span>노쇼로 등록할 예약을 선택해주세요.</span>");
+              showSnackBar("<span>노쇼로 등록할 예약을 선택해주세���.</span>");
               return;
             }else if($("#noShowScheduleContent .noShowAddCase.bg-primary").length === 0 && $("#noShowScheduleCaseEtc").val().trim().length === 0){
               showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
