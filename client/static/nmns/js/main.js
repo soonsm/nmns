@@ -273,7 +273,7 @@
             item.color = item.color;
         });
 
-        $("#lnbManagerList").html(generateLnbManagerList(e.data));
+        $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
         NMNS.calendar.setCalendars(e.data);
         if (NMNS.needInit) {
             delete NMNS.needInit;
@@ -582,11 +582,37 @@
         var html = "";
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'></span><span class='menu-collapsed'>" + item.name + "</span></label>"+
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'"+ (item.checked?" style='background-color:"+item.color+";border-color:"+item.color+"'":"")+"></span><span class='menu-collapsed'>" + item.name + "</span></label>"+
                   "<div class='dropdown menu-collapsed ml-auto'><button class='btn btn-flat dropdown-toggle lnbManagerAction text-white py-0 pr-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' data-offset='9,10'><i class='fa fa-ellipsis-v menu-collapsed'></i></button>"+
                   "<div class='dropdown-menu dropdown-menu-right'><a class='dropdown-item updateManagerLink' href='#'>이름/컬러 변경</a><a class='dropdown-item removeManagerLink' href='#'>삭제</a></div></div></div>";
         });
         return html;
+    }
+    
+    function updateManager(e){
+      if(e.stopPropagation){
+        e.stopPropagation();
+      }
+      if($("#lnbManagerForm").data('id')){
+        $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
+      }
+      initLnbManagerForm();
+      var manager = findManager($(this).parents(".lnbManagerItem").hide().data('value'));
+      $("#lnbManagerFormColor").data('value', manager.color).css('borderColor', manager.color).css('backgroundColor', manager.color);
+      $("#lnbManagerColor .lnbManagerColorTemplate").prop('checked', false).filter("[value='"+manager.color+"']").prop('checked', true);
+      $("#lnbManagerForm").data('id', manager.id).show();
+      $("#lnbManagerFormName").val(manager.name).focus();
+    }
+    
+    function removeManager(e){
+      if(e.stopPropagation){
+        e.stopPropagation();
+      }
+      var manager = findManager($(this).parents(".lnbManagerItem").data('value'));
+      NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
+      NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
+      $("#lnbManagerList .lnbManagerItem[value='"+manager.id+"']").remove();
+      NMNS.socket.emit("delete manager", { id: manager.id });
     }
     
     function generateTaskList(taskList) {
@@ -902,7 +928,7 @@
         var diff = false;
         //update info end
         //update manager start
-        $(".infoManagerItem").each(function() {
+        /*$(".infoManagerItem").each(function() {
             if ($(this).hasClass("addManagerItem")) { //추가
                 diff = true;
                 submitAddManager($(this).find("input[type='text']")[0]);
@@ -929,7 +955,7 @@
         if (diff) {
             $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
             refreshScheduleVisibility();
-        }
+        }*/
         //update manager end
         if (diff || Object.keys(parameters).length) {
             $("#infoModal").modal("hide");
@@ -1478,7 +1504,7 @@
           isAllDay = $('#scheduleAllDay').prop('checked');
 
           if (NMNS.info.alrimTalkInfo.useYn === 'Y' && !(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test(contact))) {
-              if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등록하시겠어요?')) {
+              if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등���하시겠어요?')) {
                   return;
               }
           }
@@ -2204,7 +2230,7 @@
             var calendars = NMNS.calendar.getCalendars();
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
-            $("#lnbManagerList").html(generateLnbManagerList(calendars));
+            $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -2215,10 +2241,15 @@
     }, function(e) {
         var manager = NMNS.history.find(function(item) { return item.id === e.data.id });
         if (manager) {
-            NMNS.calendar.setCalendar(e.data.id, manager);
-            $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
-            refreshScheduleVisibility();
-            NMNS.history.remove(e.data.id, findById);
+          var exist = $("#lnbManagerList .lnbManagerItem[value='"+e.data.id+"']");
+          exist.find('span:not(.menu-collapsed)').data('color', manager.color);
+          if(exist.find('input').prop('checked')){
+            exist.find('span:not(.menu-collapsed)').css('backgroundColor', manager.color).css('borderColor', manager.color);
+          }
+          exist.find('.menu-collapsed').text(manager.name)
+          exist.hide();
+          $("#lnbManagerForm").show();
+          NMNS.history.remove(e.data.id, findById);
         }
     }));
 
@@ -2740,62 +2771,82 @@
     });
 
     //mobile horizontal scroll handling end
-    $(".addManager").on("touch click", function() {
+    function initLnbManagerForm(){
+      if(NMNS.initedLnbManagerForm){
+        return;
+      }
+      NMNS.initedLnbManagerForm = true;
+      $("#lnbManagerColor").on('change', function(e){
+        e.stopPropagation();
+        var color = $(this).find('input:checked').val();
+        $("#lnbManagerFormColor").css('borderColor', color).css('background-color', color).data('value', color);
+      });
+      $("#lnbManagerFormSubmit").on("touch click", function(e){
+        var name = $("#lnbManagerFormName").val();
+        if (!name || name.length < 1) {
+            showSnackBar("담당자 이름을 입력해주세요.");
+            return;
+        }
+        var color = $("#lnbManagerFormColor").data("value");
         
-        if(!$("#lnbManagerForm").is(":visible")){
-          var colorIndex = Math.floor(Math.random() * NMNS.colorTemplate.length);
-          var color = $("#lnbManagerColor label:nth-child("+colorIndex+") input").prop('checked', true).val();
-          $("#lnbManagerFormName").val('').prev().find('span').css('border-color', color).css('background-color', color);
+        var id = $("#lnbManagerForm").data("id");
+        if(id){
+          var manager = findManager(id);
+          if(manager){//update
+            if (color !== manager.color || name !== manager.name) { //수정
+                NMNS.calendar.setCalendar(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color, name: name }, true);
+                NMNS.calendar.setCalendarColor(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color }, true);
+                NMNS.history.push({ id: manager.id, color: manager.color, name: manager.name });
+                var exist = $("#lnbManagerList .lnbManagerItem[data-value='"+manager.id+"']");
+                exist.find('span:not(.menu-collapsed)').data('color', color);
+                if(exist.find('input').prop('checked')){
+                  exist.find('span:not(.menu-collapsed)').css('backgroundColor', color).css('borderColor', color);
+                }
+                exist.find('span.menu-collapsed').text(name)
+                exist.show();
+                $("#lnbManagerForm").hide();
+                NMNS.socket.emit("update manager", { id: manager.id, color: color, name: name });
+            }
+            return;
+          }
         }
-        $("#lnbManagerForm").data('id', null).toggle();
-        /*
-        var list = $(this).next();
-        var clazz = list.attr("id") === "lnbManagerList" ? "lnbManagerItem" : "infoManagerItem";
-        var row = $("<div class='" + clazz + " addManagerItem row mx-0'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><span class='cancelAddManager pl-1' title='취소'>&times;</span>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
-        list.append(row);
-        if (clazz === "lnbManagerItem") {
-            row.find(".submitAddManager").off("touch click").on("touch click", function() {
-                submitAddManager(this);
-            });
-            row.find("input[type='text']").off("keyup").on("keyup", function(e) {
-                if (e.which === 27) {
-                    cancelAddManager(this);
-                    list.find("div:last-child input[type='text']").focus();
-                } else if (e.which === 13) {
-                    submitAddManager(this);
-                }
-            });
-            row.find(".cancelAddManager").off("touch click").on("touch click", function() {
-                cancelAddManager(this);
-                list.find("div:last-child input[type='text']").focus();
-            });
-            row.find(".addManagerColor").attr("title", "담당자 색상은 저장 후 내 매장 정보 메뉴에서 바꾸실 수 있습니다.");
-        } else {
-            row.find("input[type='text']").off("keyup").on("keyup", function(e) {
-                if (e.which === 27) {
-                    if (list.children(".infoManagerItem:visible").length == 1) {
-                        return;
-                    }
-                    cancelAddManager(this);
-                    list.find("div:last-child input[type='text']").focus();
-                    list.data("scroll").update();
-                }
-            });
-            row.find(".addManagerColor").off("touch click").on("touch click", function() {
-                showColorPickerPopup($(this));
-            });
-            row.find(".cancelAddManager").off("touch click").on("touch click", function() {
-                if (list.children(".infoManagerItem:visible").length == 1) {
-                    alert("담당자는 반드시 1명 이상 있어야합니다!");
-                    return;
-                }
-                cancelAddManager(this);
-                list.find("div:last-child input[type='text']").focus();
-                list.data("scroll").update();
-            });
+        //create
+        id = NMNS.email + generateRandom();
+        $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
+        var calendars = NMNS.calendar.getCalendars();
+        calendars.push({
+            id: id,
+            name: name,
+            checked: true,
+            bgColor: getBackgroundColor(color),
+            borderColor: color,
+            color: color
+        });
+        NMNS.calendar.setCalendars(calendars);
+        NMNS.socket.emit("add manager", { id: id, name: name, color: color });
+        $("#lnbManagerForm").hide();
+      })
+      $("#lnbManagerFormName").on("keyup", function(e){
+        if(e.which === 13){
+          $(this).next().trigger('click');
+        }else if(e.which === 27){
+          $('.addManager').trigger('click');
         }
-        list.find("div:last-child input[type='text']").focus();*/
-    });
+      });
+    }
+    $(".addManager").on("touch click", function() {
+      if($("#lnbManagerForm").data('id')){//was updating
+        $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
+      }
+      if(!$("#lnbManagerForm").is(":visible")){
+        var color = $("#lnbManagerColor label:nth-child("+Math.floor(Math.random() * $("#lnbManagerColor label").length)+") input").prop('checked', true).val();
+        $("#lnbManagerFormColor").css('border-color', color).css('background-color', color).data('value', color);
+        $("#lnbManagerForm").data('id', null).show();
+        $("#lnbManagerFormName").val('').focus();
+        return;
+      }
+      $("#lnbManagerForm").data('id', null).hide();
+    }).one("touch click", initLnbManagerForm);
     $("#copyEmail").on("touch click", function(e) {
         e.preventDefault();
         var range = document.createRange();
@@ -2807,7 +2858,7 @@
         if (document.execCommand('copy')) {
             title = "메일주소가 복사되었습니다.";
         } else {
-            title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사���주세요.";
+            title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사해 주세요.";
         }
         $(this).attr("title", title).tooltip({
             trigger: "manual",
@@ -2893,7 +2944,7 @@
     $(".infoCenterLink").off("touch click").on("touch click", function(){
       if($("#faq").children().length === 0){
         var html = "";
-        var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
+        var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 ���가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
         faqs.forEach(function(item, index) {
             html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
                 '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
