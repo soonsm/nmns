@@ -106,6 +106,9 @@ a.text-primary {
   box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);
   color: #fff;
 }
+.btn-flat:focus{
+  box-shadow:initial;
+}
 
 .bg-accent{
   background-color:$accent;

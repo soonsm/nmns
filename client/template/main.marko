@@ -134,7 +134,7 @@
               </div>
             </a>
           </li>
-          <li id="managerElements">
+          <li class="mt-3">
             <a href="#" class="list-group-item list-group-item-action rounded-0 border-0 pb-1 addManager" aria-label="담당자 추가하기">
               <div class="lnbManagerItem">
                 <div class="d-flex w-100 align-items-center">
@@ -195,7 +195,7 @@
             <span>
               <img id="mainShopIcon" src="/nmns/img/person_01.svg" class="rounded-circle">
             </span>
-            <if(input.user.shopName)><span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]>${input.user.shopName}</span></if><else>${input.user.email}</else>
+            <span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]><if(input.user.shopName)>${input.user.shopName}</if><else>${input.user.email}</else></span>
           </div>
         </button>
       </nav>
@@ -722,7 +722,7 @@
                       </div>
                     </div>
                     <div style="margin-top:35px">예약 내용</div>
-                    <div class="row flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
+                    <div class="flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
                     <div class="col-12 text-center">
                       <button type="button" class="btn btn-sm btn-flat" id="scheduleAddContents">
                         <span class="fa fa-plus"></span> 내용 추가

@@ -178,9 +178,6 @@ input[type=checkbox]+label{
 #sidebarContainer ul li {
     list-style: none;
 }
-#managerElements{
-    margin-top:15px;
-}
 #lnbManagerList small, #lnbManagerList label{
     color:#fff;
 }
@@ -1166,12 +1163,7 @@ button.moveDate:focus {
 }
 
 #taskForm #taskManager+.dropdown-menu {
-    margin-top: 0;
-    padding: .25rem 0;
-    border-radius: 0;
-    width: calc(100% - 61px);
-    font-size: .9rem;
-    min-width: 5rem;
+    width:100%;
 }
 
 #taskForm span.tui-full-calendar-content {
@@ -1179,35 +1171,9 @@ button.moveDate:focus {
 }
 
 #taskForm #taskManager+.dropdown-menu .dropdown-item {
-    padding-left: 0.5rem;
-    font-size: .9rem;
+    padding:10px 15px;
+    font-size: 13px;
     cursor: pointer;
-}
-
-@media (min-width: 576px) {
-    #taskForm #taskManager+.dropdown-menu {
-        width: calc(100% - 30px);
-    }
-}
-
-#taskModal .input-group-prepend i {
-    border-width: .06rem;
-    background-color: white;
-}
-
-@media(min-width:576px) {
-    #taskModal #taskStartDatePicker,
-    #taskModal #taskEndDatePicker {
-        width: calc(50% - 13px);
-    }
-}
-
-#taskModal #taskModalButtons {
-    text-align: right;
-}
-
-#taskModal #taskModalSave {
-    margin-left: .5rem;
 }
 
 .float {
@@ -1711,4 +1677,9 @@ button.form-control {
 
 #scheduleManagerList{
     right:0;
+}
+
+#scheduleTabContents{
+  max-height:200px;
+  overflow-y:auto;
 }

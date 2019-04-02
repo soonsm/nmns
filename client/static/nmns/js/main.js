@@ -21,11 +21,6 @@
         }
     }
 
-    // Closes responsive menu when a scroll trigger link is clicked
-    $('.js-scroll-trigger').click(function() {
-        $('.navbar-collapse').collapse('hide');
-    });
-
     //calendars init
     NMNS.calendar = new tui.Calendar("#mainCalendar", {
         taskView: [],
@@ -126,22 +121,12 @@
             hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            'week.currentTime.color': '#fd5b77',
-            'week.currentTimeLinePast.border': '1px solid #fd5b77',
-            'week.currentTimeLineBullet.backgroundColor': 'transparent',
-            'week.currentTimeLineToday.border': '1px solid #fd5b77',
-            'week.currentTimeLineFuture.border': '1px solid #fd5b77',
             "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
             "common.saturday.color": "#1736ff",
             'common.dayname.color': '#393535',
             'common.holiday.color':'#fd5b77',
-            "week.timegridOneHour.height": "68px",
-            "week.timegridHalfHour.height": "34px",
-            "week.vpanelSplitter.height": "5px",
-            "week.pastDay.color": "#393535",
-            "week.futureDay.color": "#393535",
-            "week.pastTime.color": "#393535",
-            "week.futureTime.color": "#393535",
+            'common.creationGuide.backgroundColor': '#ffdbdb',
+            'common.creationGuide.border': '1px solid #ffdbdb',
             'month.schedule.marginLeft': '0px',
             'month.schedule.marginRight': '1px',
             'month.schedule.marginTop':'5px',
@@ -155,8 +140,18 @@
             'month.saturdayExceptThisMonth.color': 'rgba(23, 54, 255, 0.35)',
             'month.dayExceptThisMonth.color': 'rgba(57, 53, 53, 0.35)',
             'month.day.fontSize': '13px',
-            'common.creationGuide.backgroundColor': '#ffdbdb',
-            'common.creationGuide.border': '1px solid #ffdbdb',
+            'week.currentTime.color': '#fd5b77',
+            'week.currentTimeLinePast.border': '1px solid #fd5b77',
+            'week.currentTimeLineBullet.backgroundColor': 'transparent',
+            'week.currentTimeLineToday.border': '1px solid #fd5b77',
+            'week.currentTimeLineFuture.border': '1px solid #fd5b77',
+            "week.timegridOneHour.height": "68px",
+            "week.timegridHalfHour.height": "34px",
+            "week.vpanelSplitter.height": "5px",
+            "week.pastDay.color": "#393535",
+            "week.futureDay.color": "#393535",
+            "week.pastTime.color": "#393535",
+            "week.futureTime.color": "#393535",
             'week.creationGuide.color': '#fd5b77',
             'week.timegrid.paddingRight': '1px',
             'week.dayGridSchedule.marginRight': '1px',
@@ -166,21 +161,18 @@
             'week.dayname.textAlign': 'center',
             'week.dayname.height': '51px',
             'week.dayGridSchedule.borderLeft': '2px solid',
-            'week.timegridLeft.borderRight': 'none',
             'week.daygridLeft.width': '54px',
+            'week.timegridLeft.borderRight': 'none',
             'week.timegridLeft.width': '54px'
         }
     });
 
     NMNS.calendar.on({
         beforeCreateSchedule: function(e) {
-          console.log('create', e);
-          
           NMNS.scheduleTarget = e;
           initScheduleTab(e);
           $("#scheduleTabList a[data-target='#scheduleTab']").tab('show')
           $("#scheduleModal").modal('show')
-            //saveNewSchedule(e);
         },
         beforeUpdateSchedule: function(e) {
           if(e.schedule && e.start && e.end){// move or resize schedule
@@ -199,7 +191,6 @@
             
           }else{
             NMNS.scheduleTarget = e;
-            console.log('update', e);
             initScheduleTab(e);
             $("#scheduleTabList a[data-target='#scheduleTab']").tab('show')
             $("#scheduleModal").modal('show');
@@ -209,11 +200,6 @@
             NMNS.history.push(e.schedule);
             NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
             NMNS.socket.emit("update reserv", { id: e.schedule.id, status: "DELETED" });
-        },
-        afterRenderSchedule: function(e) {
-          if (NMNS.calendar.getViewName() !== "month") {
-              //$("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
-          }
         }
     });
 
@@ -236,7 +222,7 @@
         NMNS.email = e.data.email || NMNS.email;
         NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
         $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-        if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
+        if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {// TODO : 알림 처리
             showNotification({
                 title: "이메일을 인증해주세요!",
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
@@ -265,7 +251,7 @@
         //announcement end
     }));
 
-    NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {
+    NMNS.socket.on("get manager", socketResponse("담당자 정보 받아오기", function(e) {
         e.data.forEach(function(item) {
             item.checked = true;
             item.bgColor = getBackgroundColor(item.color);
@@ -281,7 +267,6 @@
         }
         $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
         $("#mainTaskContents input").on('change', function(e){
-          console.log($(this).prop('checked'));
           e.stopPropagation();
           var data = $(this).parent();
           NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
@@ -289,7 +274,6 @@
         })
         $("#mainTaskContents .task").on('touch click', function(e){
           e.stopPropagation();
-          console.log('aa')
           var data = $(this).parent();
           initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
           $("#scheduleTabList a[data-target='#taskTab']").tab('show');
@@ -299,7 +283,7 @@
     }));
 
     //business specific functions about calendar start
-    function getTimeSchedule(schedule, isAllDay) {
+    function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
         if(NMNS.calendar.getViewName() === 'week'){
@@ -342,7 +326,7 @@
         return html;
     }
 
-    function onClickMenu(e) {
+    function onClickMenu(e) { // changer calendar view
         var action = e.target.getAttribute('data-action');
         if (!action) {
             action = e.target.parentElement.getAttribute('data-action');
@@ -372,7 +356,24 @@
         setSchedules();
     }
 
-    function onClickNavi(e) {
+    function setDropdownCalendarType() {// change calendar view on small device
+        $(".calendarType").removeClass("active");
+
+        switch (NMNS.calendar.getViewName()) {
+            case "day":
+                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
+                break;
+            case "week":
+                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
+                break;
+            default:
+                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
+                break;
+        }
+
+    }
+
+    function onClickNavi(e) { // prev, next button event on calendar
         var action = e.target.getAttribute('data-action');
         if (!action) {
             action = e.target.parentElement.getAttribute('data-action');
@@ -392,7 +393,7 @@
         setSchedules();
     }
 
-    function onClickTask(e){
+    function onClickTask(e){ // handle event when click today's task text
       if($(window).width() < 1600){
         if($("#mainTask").hasClass("show")){// about to hide task
           $("#mainCalendarArea").css('minWidth', '');
@@ -411,7 +412,7 @@
       $("#mainTask").toggleClass('show');
     }
     
-    function onChangeNewScheduleCalendar(e) {
+    /*function onChangeNewScheduleCalendar(e) {
         e.preventDefault();
         var target = $(e.target).closest('a[role="menuitem"]')[0];
         var calendarId = target.getAttribute('data-action');
@@ -428,9 +429,9 @@
 
         calendarNameElement.innerHTML = html.join('');
 
-    }
+    }*/
 
-    function createNewSchedule(e) {
+    /*function createNewSchedule(e) {
         e.preventDefault();
         var now = moment(new Date());
         if (now.hour() >= Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() + 1 == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
@@ -444,9 +445,9 @@
             start: now.toDate(),
             end: now.add(30, "m").toDate()
         });
-    }
+    }*/
 
-    function saveNewSchedule(scheduleData) {
+    /*function saveNewSchedule(scheduleData) {
         scheduleData.id = NMNS.email + generateRandom();
         NMNS.calendar.createSchedules([scheduleData]);
 
@@ -455,7 +456,7 @@
         serverSchedule.start = moment(serverSchedule.start.toDate()).format("YYYYMMDDHHmm");
         serverSchedule.end = moment(serverSchedule.end.toDate()).format("YYYYMMDDHHmm");
         NMNS.socket.emit("add reserv", serverSchedule);
-    }
+    }*/
 
     function findManager(managerId) {
         return NMNS.calendar.getCalendars().find(function(manager) {
@@ -464,34 +465,11 @@
     }
 
     function onChangeManagers(e) {
-        var checked = e.target.checked;
-/*
-        var viewAll = document.querySelector('.lnbManagerItem input');
-        var managerElements = Array.prototype.slice.call(document.querySelectorAll('#lnbManagerList input'));
-        var allCheckedCalendars = true;
-        if ($(e.target).is("#managerCheckAll")) {
-            allCheckedCalendars = checked;
-
-            managerElements.forEach(function(input) {
-                var span = input.parentNode;
-                input.checked = checked;
-                span.style.backgroundColor = checked ? span.style.borderColor : 'transparent';
-            });
-
-            NMNS.calendar.getCalendars().forEach(function(manager) {
-                manager.checked = checked;
-            });
-        } else {
-*/        var manager = $(e.target).parents(".lnbManagerItem");
-        if (manager.is(".addManagerItem")) {
-            return;
-        }
-        var managerId = manager.data("value");
-        if (managerId) {
-            findManager(managerId).checked = checked;
-        }
-
+      var manager = findManager($(e.target).parents(".lnbManagerItem").data("value"))
+      if (manager && manager.checked !== e.target.checked) {
+        manager.checked = e.target.checked;
         refreshScheduleVisibility();
+      }
     }
 
     function refreshScheduleVisibility() {
@@ -509,23 +487,6 @@
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
         
-    }
-
-    function setDropdownCalendarType() {
-        $(".calendarType").removeClass("active");
-
-        switch (NMNS.calendar.getViewName()) {
-            case "day":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
-                break;
-            case "week":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
-                break;
-            default:
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
-                break;
-        }
-
     }
 
     function setRenderRangeText() {
@@ -561,7 +522,6 @@
             case "EMAIL_VERIFICATED":
                 return "<span class='badge badge-primary badge-pill'><span class='fa fa-check mr-1'></span>인증완료</span>";
         }
-        //$("#infoAccountStatus").removeClass("pl-2"); //no auth status badge
         return "";
     }
 
@@ -608,6 +568,10 @@
       if(e.stopPropagation){
         e.stopPropagation();
       }
+      if($("#lnbManagerList .lnbManagerItem").length <= 1){
+        alert('담당자는 최소 1명 이상이 있어야 합니다.');
+        return;
+      }
       var manager = findManager($(this).parents(".lnbManagerItem").data('value'));
       NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
       NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
@@ -635,15 +599,7 @@
     }
 
     function changeMainShopName(shopName) {
-        if ($("#mainShopName").length) {
-            if (shopName !== "") {
-                $("#mainShopName").text(shopName);
-            } else {
-                $("#navbarResponsive").prev().children("span").html(NMNS.email);
-            }
-        } else if (shopName !== "") {
-            $("#navbarResponsive").prev().children("span").html("<span id='mainShopName'>" + shopName + "</span><small class='d-none d-md-inline-block'>(" + NMNS.email + ")</small>");
-        }
+      $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
     }
 
     function drawAlrimList(alrims) {
@@ -662,15 +618,6 @@
                     html = "";
                 }
             });
-        /*
-            alrims.forEach(function(item, index) {
-                html += '<div class="row alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + index + '" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + index + '"></a><div class="col-4 px-0 ellipsis">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm') + '</div><div class="col-4 ellipsis">' + item.name + '</div><div class="col-4 px-0 ellipsis">' + dashContact(item.contact) + '</div></div>' +
-                    '<div class="row alrimDetailRow collapse" id="alrimDetail' + index + '"><small class="col px-0">' + item.contents + '</small></div>';
-                if (index > 0 && index % 50 === 0) {
-                    list.append(html);
-                    html = "";
-                }
-            });*/
             list.append(html);
             $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
               $(this).parent().toggleClass('show');
@@ -704,11 +651,11 @@
         }
         if ($("#alrimUseYn").prop("checked")) {
             if ($("#alrimCallbackPhone").val() === "") {
-                alert("알림톡을 사용하시려면 반드시 휴대폰번호를 입력해주세요!");
+                alert("알림톡을 사용하시려면 예약취소 알림톡을 받을 휴대폰번호를 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
             } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val()))) {
-                alert("입력하신 휴대폰번호가 정확하지 않은 것 같습니다.\n휴대폰번호를 정확히 입력해주세요!");
+                alert("입력하신 휴대폰번호가 정확하지 않습니다.\n휴대폰번호를 정확히 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
             }
@@ -761,136 +708,25 @@
         }
     }
 
-    NMNS.initAlrimModal = function() {
-        if (!NMNS.initedAlrimModal) {
-            NMNS.initedAlrimModal = true;
-            
-            //alrimTab
-            $("#labelAlrimUseYn").on("touch click", function(){
-              $(this).next().children('label').trigger('click');
-            })
-            $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
-                $("#noticeByteCount").text($(this).val().length);
-                //$(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
-            }).on("blur", function(){
-                $(this).val(removeNonCharacter($(this).val()));
-            });
-            $("#alrimUseYn").off("change").on("change", function() {
-                if ($(this).prop("checked")) {
-                    $("#alrimScreen").hide();
-                } else {
-                    $("#alrimScreen").show();
-                }
-            });
-            $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
-            
-            $("#alrimHistorySearch").off("touch click").on("touch click", function() {
-                var parameters = {};
-                if ($("#alrimHistoryTarget").val() !== "") {
-                    parameters.target = $("#alrimHistoryTarget").val();
-                }
-                $("#alrimHistoryList .row").remove(); //깜빡임 효과
-                NMNS.socket.emit("get alrim history", parameters);
-            });
-            $("#alrimHistoryTarget").off("keyup").on("keyup", function(e) {
-                if (e.which === 13) {
-                    $("#alrimHistorySearch").trigger("click");
-                }
-            });
-/*
-            var datetimepickerOption = {
-                format: "Y-m-d",
-                defaultDate: new Date(),
-                appendTo: document.getElementById("alrimModal"),
-                locale: "ko",
-                closeOnSelect: true
-            };
-            flatpickr("#alrimHistoryStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
-            flatpickr("#alrimHistoryEndDate", datetimepickerOption).setDate(moment().toDate());
-            $("#alrimHistoryName").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "name",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.contact;
-                        item.value = item.name;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return suggestion.value + " (" + dashContact(suggestion.data) + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#alrimHistoryContact").val(suggestion.data);
-                }
-            }, NMNS.socket);
-            $("#alrimHistoryContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#alrimHistoryName").val(suggestion.data);
-                }
-            }, NMNS.socket);*/
-        }
-        refreshAlrimModal();
-    }
-
     function submitInfoModal() {
         //validation start
-        if ($(".infoManagerItem input[type='text']").length) { //추가하는것이 있을 경우 이름이 비어있는지 확인
-            var cont = true;
-            $(".infoManagerItem input[type='text']").each(function() {
-                if (!$(this).val().length) {
-                    cont = false;
-                    $(this).focus();
-                }
-            });
-            if (!cont) {
-                alert("담당자의 이름을 입력해주세요.");
-                return;
-            }
-        } else {
-            alert("담당자는 최소 1명 이상이 있어야 합니다.");
-            return;
-        }
-        var beginTime = $("#infoBizBeginTime").val()//moment($("#infoBizBeginTime").val(), "HH:mm");
-        if (!beginTime) {
+        var beginTime = moment($("#infoBizBeginTime").val(), 'HHmm');
+        if (!beginTime.isValid()) {
             alert("매장 운영 시작시간이 올바르지 않습니다.");
             $("#infoBizBeginTime").focus();
             return;
         }
-        var endTime = $("#infoBizEndTime").val()//moment($("#infoBizEndTime").val(), "HH:mm");
-        if (!endTime) {
+        var endTime = moment($("#infoBizEndTime").val(), 'HHmm');
+        if (!endTime.isValid()) {
             alert("매장 운영 종료시간이 올바르지 않습니다.");
             $("#infoBizEndTime").focus();
             return;
         }
-        if (beginTime.isAfter(endTime, 'hour')) {
+        if (beginTime.isAfter(endTime)) {
             beginTime = [endTime, endTime = beginTime][0];
+        } else if(beginTime.isSame(endTime)){
+          alert('매장 운영 시작시간과 종료시간이 같습니다.');
+          return;
         }
         if ($("#infoShopName").val() === "" && NMNS.info.alrimTalkInfo.useYn === "Y") {
             alert("알림톡을 사용하고 계실 때는 예약고객에게 보여드릴 매장이름이 반드시 있어야 합니다.\n매장이름을 삭제하고 싶으시다면 알림톡 사용을 먼저 해제해주세요.");
@@ -899,7 +735,7 @@
         }
         //validation end
         //update info start
-        var parameters = {},
+        var parameters = {}, diff = false,
             history = { id: "info" };
         if ((beginTime.format("HHmm") !== NMNS.info.bizBeginTime) || (endTime.format("HHmm") !== NMNS.info.bizEndTime)) {
             history.hourStart = NMNS.info.bizBeginTime || "0900";
@@ -909,321 +745,167 @@
             NMNS.info.bizBeginTime = parameters.bizBeginTime || "0900";
             NMNS.info.bizEndTime = parameters.bizEndTime || "2300";
             NMNS.calendar.setOptions({ week: { hourStart: (parameters.bizBeginTime ? parseInt(parameters.bizBeginTime.substring(0, 2), 10) : NMNS.calendar.getOptions().week.hourStart), hourEnd: (parameters.bizEndTime ? parseInt(parameters.bizEndTime.substring(0, 2), 10) : NMNS.calendar.getOptions().week.hourEnd) } });
+            diff = true;
         }
         if ($("#infoShopName").val() !== (NMNS.info.shopName || "")) {
             history.shopName = NMNS.info.shopName;
             parameters.shopName = $("#infoShopName").val();
             NMNS.info.shopName = parameters.shopName;
             changeMainShopName(parameters.shopName);
+            diff = true;
         }
         if ($("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             history.bizType = NMNS.info.bizType;
             parameters.bizType = $("#infoBizType").val();
             NMNS.info.bizType = parameters.bizType;
+            diff = true;
         }
-        if (Object.keys(parameters).length) {
+            
+        if (diff) {
             NMNS.history.push(history);
             NMNS.socket.emit("update info", parameters);
-        }
-        var diff = false;
-        //update info end
-        //update manager start
-        /*$(".infoManagerItem").each(function() {
-            if ($(this).hasClass("addManagerItem")) { //추가
-                diff = true;
-                submitAddManager($(this).find("input[type='text']")[0]);
-            } else {
-                var input = $(this).find("input[type='text']");
-                var manager = findManager(input.data("id"));
-                if ($(this).data("delete") && manager) { //삭제
-                    diff = true;
-                    NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
-                    NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
-                    NMNS.socket.emit("delete manager", { id: manager.id });
-                } else if (manager) {
-                    if (input.data("color") !== manager.bgColor || input.val() !== manager.name) { //수정
-                        diff = true;
-                        var color = input.data("color");
-                        NMNS.calendar.setCalendar(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color, name: input.val() }, true);
-                        NMNS.calendar.setCalendarColor(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color }, true);
-                        NMNS.history.push({ id: manager.id, color: manager.bgColor, name: manager.name });
-                        NMNS.socket.emit("update manager", { id: manager.id, color: color, name: input.val() });
-                    }
-                }
-            }
-        });
-        if (diff) {
-            $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
-            refreshScheduleVisibility();
-        }*/
-        //update manager end
-        if (diff || Object.keys(parameters).length) {
-            $("#infoModal").modal("hide");
         } else {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
+        //update info end
     }
-
-    /*function showColorPickerPopup(self) {
-        $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + self.position().left) + "px")
-            .css("top", ($("#infoManagerList").position().top + self.position().top + 74) + "px")
-            .data("target", self.next().data("id"))
-            .show(300);
-    }*/
 
     function refreshInfoModal() {
-        $("#infoEmail").text(NMNS.email);
-        // $("#infoPassword").val("");
-        $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
-            NMNS.socket.emit("send verification", {});
-            showSnackBar("<span>인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!</span>");
-        }) : generateAuthStatusBadge(NMNS.info.authStatus));
-        $("#infoShopName").val(NMNS.info.shopName);
-        $("#infoBizType").val(NMNS.info.bizType);
-        $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
-        $("#infoBizEndTime").val(NMNS.info.bizEndTime);
-        /*var list = $("#infoManagerList");
-        if (list.hasClass("ps")) {
-            list.children(":not(.ps__rail-x):not(.ps__rail-y)").remove();
-            $(generateManagerList(NMNS.calendar.getCalendars())).prependTo(list);
-        } else {
-            list.html(generateManagerList(NMNS.calendar.getCalendars()));
-            list.data("scroll", new PerfectScrollbar(list[0]));
-        }*/
-
-        /*$(".infoManagerItem .deleteManager").off("touch click").on("touch click", function() {
-            var item = $(this).parents(".infoManagerItem");
-            if (item.siblings(".infoManagerItem:visible").length == 0) {
-                alert("담당자는 반드시 1명 이상 있어야합니다!");
-                return;
-            }
-            item.hide();
-            $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
-            item.attr("data-delete", "true");
-            $("#infoManagerList").data("scroll").update();
-        });
-        $(".infoManagerItem input.form-control").off("keyup").on("keyup", function(e) {
-            if (e.which === 27) {
-                var item = $(this).parents(".infoManagerItem");
-                if (item.siblings(".infoManagerItem:visible").length == 0) {
-                    return;
-                }
-                item.hide();
-                $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
-                item.attr("data-delete", "true");
-                $("#infoManagerList").data("scroll").update();
-            }
-        });
-        $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function() {
-            showColorPickerPopup($(this));
-        });*/
+      $("#infoEmail").text(NMNS.email);
+      $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
+          NMNS.socket.emit("send verification", {});
+          showSnackBar("<span>인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!</span>");
+      }) : generateAuthStatusBadge(NMNS.info.authStatus));
+      $("#infoShopName").val(NMNS.info.shopName);
+      $("#infoBizType").val(NMNS.info.bizType);
+      $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
+      $("#infoBizEndTime").val(NMNS.info.bizEndTime);
     }
-
-    NMNS.initInfoModal = function() {
-        if (!NMNS.initedInfoModal) { //first init
-            NMNS.initedInfoModal = true;
-
-            /*var html = "";
-            NMNS.colorTemplate.forEach(function(item, index) {
-                if (index < 21) {
-                    html += '<i class="fas fa-circle infoModalColor" data-color="' + item + '" style="color:' + item + '" aria-label="' + item + '"></i>';
-                } else {
-                    return;
-                }
-            });
-            $("#infoModalColors").html(html);*/
-            /*flatpickr("#infoBizBeginTime", {
-                dateFormat: "H:i",
-                time_24hr: true,
-                defaultHour: Number((NMNS.info.bizBeginTime || "0900").substring(0, 2)),
-                defaultMinute: Number((NMNS.info.bizBeginTime || "0900").substring(2, 4)),
-                minuteIncrement: 10,
-                noCalendar: true,
-                enableTime: true,
-                appendTo: document.getElementById("infoModal"),
-                applyBtn: true
-            }).setDate(moment((NMNS.info.bizBeginTime ? NMNS.info.bizBeginTime : "0900"), "HHmm").toDate());
-            flatpickr("#infoBizEndTime", {
-                dateFormat: "H:i",
-                time_24hr: true,
-                defaultHour: Number((NMNS.info.bizEndTime || "2300").substring(0, 2)),
-                defaultMinute: Number((NMNS.info.bizEndTime || "2300").substring(2, 4)),
-                minuteIncrement: 10,
-                noCalendar: true,
-                enableTime: true,
-                appendTo: document.getElementById("infoModal"),
-                applyBtn: true
-            }).setDate(moment((NMNS.info.bizEndTime ? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());*/
-            /*if (!$("#infoManagerList").hasClass("ps")) {
-                $("#infoManagerList").data("scroll", new PerfectScrollbar("#infoManagerList"));
-            }*/
-
-            $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
-            /*$("#infoModalColorPickerClose").off("touch click").on("touch click", function() {
-                $("#infoModalColorPicker").hide(300);
-            });
-            $(".infoModalColor").off("touch click").on("touch click", function() {
-                var target = $(".infoManagerItem input[data-id='" + $("#infoModalColorPicker").data("target") + "']");
-                var color = $(this).attr("data-color");
-                if (target.length) {
-                    target.data("color", color);
-                    target.prev().css("background-color", color).css("border-color", color).data("color", color);
-                }
-            });*/
-            
-        }
-        refreshInfoModal(); //setting data
-    }
-
-    /*function submitNoShowEtcReason(dropdownItem) {
-        var input = dropdownItem.children("input");
-        var dropdown = dropdownItem.parent();
-        NMNS.history.push({ id: dropdown.data("id"), calendarId: dropdown.data("manager"), status: "NOSHOW" });
-        NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), { raw: { status: "NOSHOW" } });
-        NMNS.socket.emit("update reserv", { id: dropdown.data("id"), status: "NOSHOW", noShowCase: input.val() });
-        var row = $("#noShowScheduleList .row[data-id='" + dropdown.data("id") + "']");
-        row.children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")));
-        row.find(".badge, .noShowScheduleNoShow").each(function() {
-            $(this).on("touch click", function(e) {
-                e.stopPropagation();
-                noShowScheduleBadge($(this));
-            });
-        });
-        row.find(".noShowScheduleNormal").on("touch click", function(e) {
-            e.stopPropagation();
-            noShowScheduleNormal($(this));
-        });
-        dropdown.hide(300);
-    }*/
 
     function initNoShowModal() {
-        if (!NMNS.initedNoShowModal) {
-            NMNS.initedNoShowModal = true;
-            
-            if (!$("#noShowScheduleList").hasClass("ps")) {
-              $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+        if (!$("#noShowScheduleList").hasClass("ps")) {
+          $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+        
+          $(".noShowAddCase").off("touch click").on("touch click", function() {
+            $(this).siblings().removeClass("bg-primary");
+            $(this).toggleClass('bg-primary');
+            if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
+              $(this).parent().next().children("span").css('opacity', 1)
+            } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
+              $(this).parent().next().children("span").css('opacity', 1)
+            }else{
+              $(this).parent().next().children("span").css('opacity', 0.35)
             }
+          });
+          $("#noShowAddCaseEtc,#noShowScheduleCaseEtc").on("keyup", function(e){
+            $(this).siblings().removeClass('bg-primary')
+            if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && $(this).val().trim().length > 0){
+              $(this).parent().next().children("span").css('opacity', 1)
+            } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && $(this).val().trim().length > 0){
+              $(this).parent().next().children("span").css('opacity', 1)
+            }else{
+              $(this).parent().next().children("span").css('opacity', 0.35)
+            }
+            if(e.which === 13){
+              $(this).parent().next().trigger("click");
+            }
+          })
+          $("#noShowAddBtn").off("touch click").on("touch click", function() {
+            if ($("#noShowAddContact").val() === "") {
+              showSnackBar("<span>저장할 전화번호를 입력해주세요!</span>");
+              return;
+            }else if($("#noShowAddContent .noShowAddCase.bg-primary").length === 0 && $("#noShowAddCaseEtc").val().trim().length === 0){
+              showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+              return;
+            }
+            NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: $("#noShowAddContent .bg-primary").length === 0 ? $("#noShowAddCaseEtc").val().trim() : $("#noShowAddContent .bg-primary").data("value") });
+          });
 
-            $(".noShowAddCase").off("touch click").on("touch click", function() {
-              $(this).siblings().removeClass("bg-primary");
-              $(this).toggleClass('bg-primary');
-              if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
-                $(this).parent().next().children("span").css('opacity', 1)
-              } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
-                $(this).parent().next().children("span").css('opacity', 1)
-              }else{
-                $(this).parent().next().children("span").css('opacity', 0.35)
+          $("#noShowScheduleBtn").off("touch click").on("touch click", function(){
+            if($("#noShowScheduleList input:checked").length === 0){
+              showSnackBar("<span>노쇼로 등록할 예약을 선택해주세요.</span>");
+              return;
+            }else if($("#noShowScheduleContent .noShowAddCase.bg-primary").length === 0 && $("#noShowScheduleCaseEtc").val().trim().length === 0){
+              showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+              return;
+            }
+            var item = $("#noShowScheduleList input:checked").parent().parent();
+            NMNS.history.push({id:item.data('id'), status:item.data('status'), manager:item.data('manager'), contents:item.data('contents')})
+            NMNS.socket.emit("update reserv", {id:item.data("id"), status:"NOSHOW", noShowCase:($("#noShowScheduleContent .noShowAddCase.bg-primary").length > 0? $("#noShowScheduleContent .noShowAddCase.bg-primary").data('value') : $("#noShowScheduleCaseEtc").val().trim())})
+          })
+          $("#noShowScheduleSearch").off("touch click").on("touch click", function() {
+              var parameters = {};
+              if ($("#noShowScheduleTarget").val() !== "") {
+                  parameters.target = $("#noShowScheduleTarget").val();
               }
-            });
-            $("#noShowAddCaseEtc,#noShowScheduleCaseEtc").on("keyup", function(e){
-              $(this).siblings().removeClass('bg-primary')
-              if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && $(this).val().trim().length > 0){
-                $(this).parent().next().children("span").css('opacity', 1)
-              } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && $(this).val().trim().length > 0){
-                $(this).parent().next().children("span").css('opacity', 1)
-              }else{
-                $(this).parent().next().children("span").css('opacity', 0.35)
-              }
-              if(e.which === 13){
-                $(this).parent().next().trigger("click");
-              }
-            })
-            $("#noShowAddBtn").off("touch click").on("touch click", function() {
-              if ($("#noShowAddContact").val() === "") {
-                showSnackBar("<span>저장할 전화번호를 입력해주세요!</span>");
-                return;
-              }else if($("#noShowAddContent .noShowAddCase.bg-primary").length === 0 && $("#noShowAddCaseEtc").val().trim().length === 0){
-                showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
-                return;
-              }
-              NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: $("#noShowAddContent .bg-primary").length === 0 ? $("#noShowAddCaseEtc").val().trim() : $("#noShowAddContent .bg-primary").data("value") });
-            });
-
-            $("#noShowScheduleBtn").off("touch click").on("touch click", function(){
-              if($("#noShowScheduleList input:checked").length === 0){
-                showSnackBar("<span>노쇼로 등록할 예약을 선택해주세요.</span>");
-                return;
-              }else if($("#noShowScheduleContent .noShowAddCase.bg-primary").length === 0 && $("#noShowScheduleCaseEtc").val().trim().length === 0){
-                showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
-                return;
-              }
-              var item = $("#noShowScheduleList input:checked").parent().parent();
-              NMNS.history.push({id:item.data('id'), status:item.data('status'), manager:item.data('manager'), contents:item.data('contents')})
-              NMNS.socket.emit("update reserv", {id:item.data("id"), status:"NOSHOW", noShowCase:($("#noShowScheduleContent .noShowAddCase.bg-primary").length > 0? $("#noShowScheduleContent .noShowAddCase.bg-primary").data('value') : $("#noShowScheduleCaseEtc").val().trim())})
-            })
-            $("#noShowScheduleSearch").off("touch click").on("touch click", function() {
-                var parameters = {};
-                if ($("#noShowScheduleTarget").val() !== "") {
-                    parameters.target = $("#noShowScheduleTarget").val();
-                }
-                $("#noShowScheduleList .row").remove(); //깜빡임 효과
-                NMNS.socket.emit("get summary", parameters);
-            });
-            $("#noShowAddContact").on("keyup", function(e) {
-                if (e.which === 13) {
-                    $("#noShowAddBtn").trigger("click");
-                }
-            })
-
-            $("#noShowTabList a[href='#noShowSchedule']").on("show.bs.tab", function(){
-              $("#noShowScheduleSearch").trigger('click');
-            });
-            $("#noShowAddContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {}
-            }, NMNS.socket);
-
-            $("#noShowScheduleTarget").on("keyup", function(e){
+              $("#noShowScheduleList .row").remove(); //깜빡임 효과
+              NMNS.socket.emit("get summary", parameters);
+          });
+          $("#noShowAddContact").on("keyup", function(e) {
               if (e.which === 13) {
-                  $("#noShowScheduleSearch").trigger("click");
+                  $("#noShowAddBtn").trigger("click");
               }
-            }).autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "target",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.contact;
-                        item.value = item.name;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return suggestion.value + " (" + dashContact(suggestion.data) + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#noShowScheduleContact").val(suggestion.data);
-                }
-            }, NMNS.socket);
+          })
+
+          $("#noShowTabList a[href='#noShowSchedule']").on("show.bs.tab", function(){
+            $("#noShowScheduleSearch").trigger('click');
+          });
+          $("#noShowAddContact").autocomplete({
+              serviceUrl: "get customer info",
+              paramName: "contact",
+              zIndex: 1060,
+              maxHeight: 150,
+              triggerSelectOnValidInput: false,
+              transformResult: function(response, originalQuery) {
+                  response.forEach(function(item) {
+                      item.data = item.name;
+                      item.value = item.contact;
+                      delete item.contact;
+                      delete item.name;
+                  });
+                  return { suggestions: response };
+              },
+              onSearchComplete: function() {},
+              formatResult: function(suggestion, currentValue) {
+                  return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+              },
+              onSearchError: function() {},
+              onSelect: function(suggestion) {}
+          }, NMNS.socket);
+
+          $("#noShowScheduleTarget").on("keyup", function(e){
+            if (e.which === 13) {
+                $("#noShowScheduleSearch").trigger("click");
+            }
+          }).autocomplete({
+              serviceUrl: "get customer info",
+              paramName: "target",
+              zIndex: 1060,
+              maxHeight: 150,
+              triggerSelectOnValidInput: false,
+              transformResult: function(response, originalQuery) {
+                  response.forEach(function(item) {
+                      item.data = item.contact;
+                      item.value = item.name;
+                      delete item.contact;
+                      delete item.name;
+                  });
+                  return { suggestions: response };
+              },
+              onSearchComplete: function() {},
+              formatResult: function(suggestion, currentValue) {
+                  return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+              },
+              onSearchError: function() {},
+              onSelect: function(suggestion) {
+                  $("#noShowScheduleContact").val(suggestion.data);
+              }
+          }, NMNS.socket);
         } else {
-            $("#noShowAddContact").autocomplete().clearCache();
-            $("#noShowSearchContact").autocomplete().clearCache();
-            $("#noShowScheduleName").autocomplete().clearCache();
-            $("#noShowScheduleContact").autocomplete().clearCache();
+          $("#noShowAddContact").autocomplete().clearCache();
+          $("#noShowSearchContact").autocomplete().clearCache();
+          $("#noShowScheduleName").autocomplete().clearCache();
+          $("#noShowScheduleContact").autocomplete().clearCache();
         }
     }
 
@@ -1231,7 +913,7 @@
         var html = "";
         NMNS.calendar.getCalendars().forEach(function(item) {
             html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='" + item.id + "' data-color='" + item.color + "'>" +
-                "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + item.color + "'></span>" +
+                "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot mr-3' style='background-color: " + item.color + "'></span>" +
                 "<span class='tui-full-calendar-content'>" + item.name + "</span>" +
                 "</button>";
         });
@@ -1251,9 +933,9 @@
       }
       var inputs = $('#scheduleTabContents input').toArray();
       contents.filter(function(item){
-        return !inputs.find(function(input){return input.value === (item && item.value || item)});
+        return !inputs.find(function(input){return input.value === (item && item.value || item) && !(item === '' && input.value === '')});
       }).forEach(function(item){
-        var temp = inputs.find(function(input){return input.value === '' || !input.value})
+        var temp = inputs.find(function(input){return (input.value === '' || !input.value) && item !== ''})
         if(temp){
           $(temp).data('menu-id', item?item.menuId:null).val(item && item.value || item);
           return;
@@ -1291,13 +973,12 @@
       if(NMNS.refreshMenu){
         NMNS.refreshMenu = false;
         NMNS.socket.emit('get menu list');//TODO : needed api alignment
-        $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//for test
+        $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
       $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
       
       $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
-        console.log(e);
         document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
         document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule?e.schedule.end.toDate():e.end.toDate());
         $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule?e.schedule.start.toDate():e.start.toDate())));
@@ -1366,7 +1047,9 @@
         flatpickr("#scheduleStartDate", datetimepickerOption);
         flatpickr("#scheduleEndDate", datetimepickerOption);
         $("#scheduleAddContents").on("touch click", function(){
-          $("#scheduleTabContents").append('<input type="text" class="form-control form-control-sm han" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." list="scheduleTabContentList">');
+          $("#scheduleTabContents").append($(generateContentsList('')).on('touch click', 'button', function(){
+            removeContent(this);
+          }));
         });
 
         var autoCompleteOption = {
@@ -1801,95 +1484,6 @@
       refreshTaskTab(task);
     }
 
-    function setEventListener() {
-        $('.moveDate').on('touch click', onClickNavi); //prev, next
-        $('.calendarType').on('touch click', onClickMenu); //calendar type
-        $("#calendarTypeMenu").next().children("a").on("touch click", function(e) { //calendar type on mobile
-            e.preventDefault();
-            var target = $(e.target);
-            if (!target.hasClass("dropdown-item")) {
-                target = target.parents(".dropdown-item");
-            }
-            $("#calendarTypeMenu").html(target.html());
-            $("#calendarTypeMenu").attr("data-action", target.data("action"));
-            $("#calendarTypeMenu").trigger("click");
-        });
-        $('#managerElements').on('change', onChangeManagers);// toggle schedules of manager
-
-        $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
-        $(".addReservLink").on("touch click", createNewSchedule);
-
-        $(".addNoShowLink").one("touch click", initNoShowModal);
-        window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
-        flatpickr.localize("ko");
-        
-        $(".taskMenu").on("touch click", onClickTask);// toggle task column
-        $('#sidebarToggler').on('touch click', function(){// toggle side menu
-          if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
-            if($("#mainTask").hasClass("show")){
-              $("#mainAside").css('minWidth', '270px');
-            }
-          }else{// about to hide aside
-            $("#mainAside").css('minWidth', 'unset');
-          }
-          $('#mainAside').toggleClass('sidebar-toggled')
-          //$('#mainAside .menu-collapsed').toggle();
-        })
-        $(".announcementMenuLink").popover({
-          template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
-          html:true,
-          sanitize:false,
-          placement:'auto'
-        })
-        $("#mainMenu").popover({
-          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
-          html:true,
-          sanitize:false,
-          placement:'bottom'
-        })
-        $("#searchNoShow").on("keyup", function(e){
-          if(e.keyCode === 13 || e.which === 13){
-            if($(this).val().length === 11 || $(this).val().length === 10){
-              switchMenu.apply(this, e);
-              NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
-            }else{
-              showSnackBar("전화번호를 정확히 입력해주세요.");
-            }
-          }
-        })
-        
-        $("#searchNoShow").autocomplete({
-            serviceUrl: "get customer info",
-            paramName: "contact",
-            zIndex: 1060,
-            maxHeight: 150,
-            triggerSelectOnValidInput: false,
-            transformResult: function(response, originalQuery) {
-                response.forEach(function(item) {
-                    item.data = item.name;
-                    item.value = item.contact;
-                    delete item.contact;
-                    delete item.name;
-                });
-                return { suggestions: response };
-            },
-            onSearchComplete: function() {},
-            formatResult: function(suggestion, currentValue) {
-                return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-            },
-            onSearchError: function() {},
-            onSelect: function(suggestion) {}
-        }, NMNS.socket);
-        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)){//safari - datalist polyfill
-          if (!document.getElementById("datalistPolyfillScript")) {
-            var script = document.createElement("script");
-            script.src = "/lib/datalist-polyfill/datalist-polyfill.min.js";
-            script.id = "datalistPolyfillScript";
-            document.body.appendChild(script);
-          }
-        }
-    }
-
     function getSchedule(start, end) {
         NMNS.socket.emit("get reserv", { start: toYYYYMMDD(start._date) + "0000", end: toYYYYMMDD(end._date) + "2359" });
     }
@@ -1904,8 +1498,8 @@
             var manager = findManager(schedule.manager || schedule.calendarId) || {};
             return {
                 id: schedule.id,
-                calendarId: manager.id || "A1", //schedule.manager,
-                title: schedule.name || schedule.title, //?schedule.name:(schedule.contact?schedule.contact:schedule.content),
+                calendarId: manager.id || "A1",
+                title: schedule.name || schedule.title,
                 start: (typeof schedule.start === "string" ? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
                 end: (typeof schedule.end === "string" ? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
                 isAllDay: false,//하루종일 항목 없앰
@@ -1934,18 +1528,7 @@
         }), true);
     }
 
-    function noShowScheduleBadge(self) {
-        var row = self.parentsUntil("#noShowScheduleList", ".row");
-        $("#noShowScheduleDropdown")
-            .data("id", row.data("id"))
-            .data("manager", row.data("manager"))
-            .data("status", row.data("status"))
-            .css("top", (self[0].getBoundingClientRect().top - $("#noShowSchedule")[0].getBoundingClientRect().top + self.height() + 3) + "px")
-            .css("right", (self[0].getBoundingClientRect().right - $("#noShowSchedule")[0].getBoundingClientRect().right) < -20 ? "1rem" : (self[0].getBoundingClientRect().right - $("#noShowSchedule")[0].getBoundingClientRect().right) + "px")
-            .show();
-    }
-
-    function submitAddNoShow(self) {
+/*    function submitAddNoShow(self) {
         var row = self.parentsUntil("#noShowSearchList", ".row");
         if (row.find("input[name='noShowSearchAddContact']").val() === "") {
             alert("전화번호를 입력해주세요!");
@@ -1962,7 +1545,7 @@
         self.off("touch click").on("touch click", function() {
             alert("저장 요청중입니다..!");
         });
-    }
+    }*/
 
     function deleteNoShow(self) {
         var row = self.parentsUntil("#noShowSearchList", ".row");
@@ -1970,45 +1553,7 @@
         NMNS.socket.emit("delete noshow", { id: row.data("id") });
         row.remove();
     }
-
-    function cancelAddNoShow(self) {
-        var row = self.parentsUntil("#noShowSearchList", ".row");
-        row.data("datetimepicker").destroy();
-        row.remove();
-        if ($("#noShowSearchList").html() === "") {
-            $("#noShowSearchList").html("<div class='row col-12 px-0 mt-2 empty'><span class='col-12 text-center'>전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div>");
-        }
-    }
-
-    function submitAddManager(self) {
-        var lnbManagerItem = $(self).parents(".addManagerItem");
-        var name = lnbManagerItem.find("input[type='text']");
-        if (!name.val() || name.val().length < 1) {
-            alert("담당자 이름을 입력해주세요.");
-            return;
-        }
-
-        var id = name.data("id");
-        var color = lnbManagerItem.find(".addManagerColor").data("color");
-        lnbManagerItem.removeClass("addManagerItem");
-        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "' title='이 담당자의 예약 가리기/보이기' data-color='"+name.data('color')+"'></span><span class='menu-collapsed'>" + name.val() + "</span></label><button class='btn btn-flat menu-collapsed lnbManagerAction ml-auto text-white py-0 pr-0' type='button'><i class='fa fa-ellipsis-v'></i></button>");
-        var calendars = NMNS.calendar.getCalendars();
-        calendars.push({
-            id: id,
-            name: name.val(),
-            checked: true,
-            bgColor: getBackgroundColor(color),
-            borderColor: color,
-            color: color
-        });
-        NMNS.calendar.setCalendars(calendars);
-        NMNS.socket.emit("add manager", { id: id, name: name.val(), color: color });
-    }
-
-    function cancelAddManager(self) {
-        $(self).parents(".addManagerItem").remove();
-    }
-
+/*
     var noShowScheduleNormal = function(self) {
         var row = self.parentsUntil("#noShowScheduleList", ".row");
         NMNS.history.push({ id: row.data("id"), calendarId: row.data("manager"), raw: { status: row.data("status") } });
@@ -2017,7 +1562,7 @@
         row.children("span:last-child").html($(generateScheduleStatusBadge("RESERVED"))).on("touch click", function() {
             noShowScheduleBadge($(this));
         });
-    };
+    };*/
 
     $("#nextTips").one("touch click", function() {
         NMNS.socket.emit("get tips");
@@ -2055,17 +1600,7 @@
         });
     });
 
-    $("#submitFeedback").off("touch click").on("touch click", function() {
-        var text = $("#feedbackBody").val();
-        if (text && text.trim().length > 0) {
-            NMNS.socket.emit("submit feedback", { data: text.trim() });
-            showSnackBar("제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.");
-            $("#feedbackBody").val("");
-        } else {
-            showSnackBar("제안/문의하실 내용을 입력해주세요.");
-            return;
-        }
-    });
+    
     
     function drawAnnouncementList(data){
       var list = "";
@@ -2091,7 +1626,6 @@
     //after calendar initialization start
     setDropdownCalendarType();
     setRenderRangeText();
-    setEventListener();
     if($(window).width() < 900){
         $('#sidebarToggler').trigger('click')
     }
@@ -2198,7 +1732,6 @@
       }
       $('#mainTaskContents').html(generateTaskList(e.data))
       $("#mainTaskContents input").on('change', function(e){
-        console.log($(this).prop('checked'));
         e.stopPropagation();
         var data = $(this).parent();
         NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
@@ -2206,7 +1739,6 @@
       })
       $("#mainTaskContents .task").on('touch click', function(e){
         e.stopPropagation();
-        console.log('aa')
         var data = $(this).parent();
         initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
         $("#scheduleTabList a[data-target='#taskTab']").tab('show');
@@ -2316,23 +1848,7 @@
     }));
 
     NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e) {
-        var html, badge = "";
-        if ($("#noShowSearch").is(":visible")) {
-            badge = (e.data.noShowCase ? ("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
-            html = $("<div class='row col-12 noShowRow' data-id='" + e.data.id + "' data-contact='" + e.data.contact + "' data-date='" + e.data.date + "' data-noshowcase='" + e.data.noShowCase + "'><div class='col-3'>" + (e.data.contact || dashContact($("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] input[name='noShowSearchAddContact']").val())) + "</div><div class='col-3'>" + (e.data.date ? e.data.date.substring(0, 4) + ". " + e.data.date.substring(4, 6) + ". " + e.data.date.substring(6) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + e.data.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>");
-            html.insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
-            html.find(".noShowSearchDelete").on("touch click", function() {
-                deleteNoShow($(this));
-            });
-            var row = $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "']");
-            row.data("datetimepicker").destroy();
-            row.remove();
-        }
         showSnackBar("<span>추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)</span>");
-    }, function(e) {
-        $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] .noShowSearchAddSubmit").off("touch click").on("touch click", function() {
-            submitAddNoShow($(this));
-        });
     }));
 
     NMNS.socket.on("delete noshow", socketResponse("노쇼 삭제하기", function(e) {
@@ -2441,7 +1957,7 @@
       if($('#announcementBody').children().length === 0){
         $('#announcementBody').html('');//대기문구 삭제
       }
-      e.data.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})
+      e.data.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
       e.data.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
       $('#announcementBody').append(drawAnnouncementList(e.data));
       var count = NMNS.info.newAnnouncement;
@@ -2477,7 +1993,7 @@
     //websocket response end
     //Modal events start  
     $(".modal").on("shown.bs.modal", function(){
-      $(".modal-backdrop").on("touch click", function(e){//click on menubar
+      $(".modal-backdrop").one("touch click", function(e){//click on menubar
         $(".modal.show").modal('hide');
       })
     });
@@ -2497,42 +2013,15 @@
         if (!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")) {
             changed = true;
         }
-        /*if (!changed && $("#infoPassword").val() !== "") {
-            changed = true;
-        }*/
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
         }
-        /*if (!changed) {
-            $(".infoManagerItem").each(function() {
-                if (!changed) {
-                    if ($(this).hasClass("addManagerItem")) { //추가
-                        changed = true;
-                    } else {
-                        var input = $(this).find("input[type='text']");
-                        var manager = findManager(input.data("id"));
-                        if ($(this).data("delete") && manager) { //삭제
-                            changed = true;
-                        } else if (manager) {
-                            if (input.data("color") !== manager.bgColor || input.val() !== manager.name) { //수정
-                                changed = true;
-                            }
-                        }
-                    }
-                }
-            });
-        }*/
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
-    }).on("touch click", function(e) {
-        /*if ($("#infoModalColorPicker").is(":visible")) {
-            var target = $(e.target);
-            if (!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length && !target.hasClass("addManagerColor") && !target.parents(".addManagerColor").length && !target.parents(".addManagerColor").length) {
-                $("#infoModalColorPicker").hide(300);
-            }
-        }*/
-    }).on('show.bs.modal', NMNS.initInfoModal);
+    }).one('show.bs.modal', function(){
+      $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
+    }).on('show.bs.modal', refreshInfoModal);
     
     $("#alrimModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
@@ -2563,9 +2052,41 @@
         if ($("body .popover").length) {
             $("body .popover").popover("update");
         }
+    }).one('show.bs.modal', function(){
+      $("#labelAlrimUseYn").on("touch click", function(){
+        $(this).next().children('label').trigger('click');
+      })
+      $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
+          $("#noticeByteCount").text($(this).val().length);
+      }).on("blur", function(){
+          $(this).val(removeNonCharacter($(this).val()));
+      });
+      $("#alrimUseYn").off("change").on("change", function() {
+        if ($(this).prop("checked")) {
+          $("#alrimScreen").hide();
+        } else {
+          $("#alrimScreen").show();
+        }
+      });
+      $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
+      
+      $("#alrimHistorySearch").off("touch click").on("touch click", function() {
+        var parameters = {};
+        if ($("#alrimHistoryTarget").val() !== "") {
+          parameters.target = $("#alrimHistoryTarget").val();
+        }
+        $("#alrimHistoryList .row").remove(); //깜빡임 효과
+        NMNS.socket.emit("get alrim history", parameters);
+      });
+      $("#alrimHistoryTarget").off("keyup").on("keyup", function(e) {
+        if (e.which === 13) {
+          $("#alrimHistorySearch").trigger("click");
+        }
+      });
     }).on("show.bs.modal", function(){
-      NMNS.initAlrimModal();
       $("#alrimTabList a[data-target='#alrimTab']").tab('show');
+    }).on("hidden.bs.modal", function(){
+      refreshAlrimModal();
     });
     
     $("#noShowModal").on("hide.bs.modal", function() {
@@ -2588,7 +2109,6 @@
     }).on('hidden.bs.modal', function(){
       //reset form
       $('#scheduleName').val('');
-      //$('#scheduleContents').val('');
       $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
         removeContent(this);
       });
@@ -2627,7 +2147,7 @@
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
         //for test
-        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
+        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 ���목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
         var count = ($('.announcementCount').text() * 1);
         if(count && count > 0){
           var unread = 0;
@@ -2663,7 +2183,7 @@
         $('body').children('.popover.show').popover('hide');
       }
     });
-    $("#alrimTabList a[data-target='#alrimTab']").on("show.bs.tab", NMNS.initAlrimModal)
+    $("#alrimTabList a[data-target='#alrimTab']").on("show.bs.tab", refreshAlrimModal)
     $("#alrimTabList a[data-target='#alrimHistoryTab']").on("show.bs.tab", function(){
       $("#alrimHistorySearch").trigger('click');
     })
@@ -2732,37 +2252,7 @@
     })
     //Modal events end
     //mobile horizontal scroll handling
-    // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
-    function swipedetect(el, callback) {
-        var touchsurface = el,
-            swipedir, startX, distX,
-            threshold = 100, //required min distance traveled to be considered swipe
-            allowedTime = 300, // maximum time allowed to travel that distance
-            elapsedTime,
-            startTime,
-            handleswipe = callback || function(swipedir) {};
-
-        touchsurface.addEventListener('touchstart', function(e) {
-            var touchobj = e.changedTouches[0];
-            swipedir = 'none';
-            //dist = 0;
-            startX = touchobj.pageX;
-            startTime = new Date().getTime(); // record time when finger first makes contact with surface
-        }, false);
-
-        touchsurface.addEventListener('touchend', function(e) {
-            var touchobj = e.changedTouches[0];
-            distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
-            elapsedTime = new Date().getTime() - startTime; // get time elapsed
-            if (elapsedTime <= allowedTime) { // first condition for awipe met
-                if (Math.abs(distX) >= threshold) { // 2nd condition for horizontal swipe met
-                    swipedir = (distX < 0) ? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
-                    handleswipe(swipedir);
-                }
-            }
-        }, false);
-    }
-    swipedetect(document.getElementById('mainRow'), function(swipedir) {
+    swipedetect(document.getElementById('mainCalendar'), function(swipedir) {
         if (swipedir === "left") {
             $("#renderRange").next().trigger("click");
         } else if (swipedir === "right") {
@@ -2793,20 +2283,20 @@
         if(id){
           var manager = findManager(id);
           if(manager){//update
+            var exist = $("#lnbManagerList .lnbManagerItem[data-value='"+manager.id+"']");
             if (color !== manager.color || name !== manager.name) { //수정
-                NMNS.calendar.setCalendar(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color, name: name }, true);
-                NMNS.calendar.setCalendarColor(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color }, true);
-                NMNS.history.push({ id: manager.id, color: manager.color, name: manager.name });
-                var exist = $("#lnbManagerList .lnbManagerItem[data-value='"+manager.id+"']");
-                exist.find('span:not(.menu-collapsed)').data('color', color);
-                if(exist.find('input').prop('checked')){
-                  exist.find('span:not(.menu-collapsed)').css('backgroundColor', color).css('borderColor', color);
-                }
-                exist.find('span.menu-collapsed').text(name)
-                exist.show();
-                $("#lnbManagerForm").hide();
-                NMNS.socket.emit("update manager", { id: manager.id, color: color, name: name });
+              NMNS.calendar.setCalendar(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color, name: name }, true);
+              NMNS.calendar.setCalendarColor(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color }, true);
+              NMNS.history.push({ id: manager.id, color: manager.color, name: manager.name });
+              exist.find('span:not(.menu-collapsed)').data('color', color);
+              if(exist.find('input').prop('checked')){
+                exist.find('span:not(.menu-collapsed)').css('backgroundColor', color).css('borderColor', color);
+              }
+              exist.find('span.menu-collapsed').text(name)
+              NMNS.socket.emit("update manager", { id: manager.id, color: color, name: name });
             }
+            exist.show();
+            $("#lnbManagerForm").hide();
             return;
           }
         }
@@ -2828,7 +2318,7 @@
       })
       $("#lnbManagerFormName").on("keyup", function(e){
         if(e.which === 13){
-          $(this).next().trigger('click');
+          $("#lnbManagerFormSubmit").trigger('click');
         }else if(e.which === 27){
           $('.addManager').trigger('click');
         }
@@ -2847,7 +2337,7 @@
       }
       $("#lnbManagerForm").data('id', null).hide();
     }).one("touch click", initLnbManagerForm);
-    $("#copyEmail").on("touch click", function(e) {
+    /*$("#copyEmail").on("touch click", function(e) {
         e.preventDefault();
         var range = document.createRange();
         range.selectNodeContents($(this)[0]);
@@ -2888,7 +2378,7 @@
             // }, 25);
             window.open($(this).data("ios"), "_system");
         }
-    });
+    });*/
     $(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
@@ -2938,24 +2428,7 @@
             $("#customerManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
         });
     });
-    $(".calendarMenuLink").off("touch click").on("touch click", function() {
-        setSchedules();
-    });
-    $(".infoCenterLink").off("touch click").on("touch click", function(){
-      if($("#faq").children().length === 0){
-        var html = "";
-        var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 ���가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
-        faqs.forEach(function(item, index) {
-            html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
-                '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
-            if (index > 0 && index % 50 === 0) {
-                $("#faq").append(html);
-                html = "";
-            }
-        });
-        $("#faq").append(html);
-      }
-    })
+    
     function switchMenu(e){
       if(e && e.preventDefault){
         e.preventDefault();
@@ -2973,6 +2446,117 @@
       }
     }
     
-    $(".menuLink").on("touch click", switchMenu)
     //menu switch end
+    //set event listeners
+    (function() {
+        $('.moveDate').on('touch click', onClickNavi); //prev, next
+        $('.calendarType').on('touch click', onClickMenu); //calendar type
+        $("#calendarTypeMenu").next().children("a").on("touch click", function(e) { //calendar type on mobile
+            e.preventDefault();
+            var target = $(e.target);
+            if (!target.hasClass("dropdown-item")) {
+                target = target.parents(".dropdown-item");
+            }
+            $("#calendarTypeMenu").html(target.html());
+            $("#calendarTypeMenu").attr("data-action", target.data("action"));
+            $("#calendarTypeMenu").trigger("click");
+        });
+        $('#lnbManagerList').on('change', onChangeManagers);// toggle schedules of manager
+
+        $(".addNoShowLink").one("touch click", initNoShowModal);
+        window.addEventListener('resize', debounce(NMNS.calendar.render, 200));
+        flatpickr.localize("ko");
+        
+        $(".taskMenu").on("touch click", onClickTask);// toggle task column
+        $('#sidebarToggler').on('touch click', function(){// toggle side menu
+          if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
+            if($("#mainTask").hasClass("show")){
+              $("#mainAside").css('minWidth', '270px');
+            }
+          }else{// about to hide aside
+            $("#mainAside").css('minWidth', 'unset');
+          }
+          $('#mainAside').toggleClass('sidebar-toggled')
+        })
+        $(".announcementMenuLink").popover({
+          template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
+          html:true,
+          sanitize:false,
+          placement:'auto'
+        })
+        $("#mainMenu").popover({
+          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
+          html:true,
+          sanitize:false,
+          placement:'bottom'
+        })
+        $("#searchNoShow").on("keyup", function(e){
+          if(e.keyCode === 13 || e.which === 13){
+            if($(this).val().length === 11 || $(this).val().length === 10){
+              switchMenu.apply(this, e);
+              NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
+            }else{
+              showSnackBar("전화번호를 정확히 입력해주세요.");
+            }
+          }
+        })
+        $(".calendarMenuLink").off("touch click").on("touch click", setSchedules);
+        $("#searchNoShow").autocomplete({
+            serviceUrl: "get customer info",
+            paramName: "contact",
+            zIndex: 1060,
+            maxHeight: 150,
+            triggerSelectOnValidInput: false,
+            transformResult: function(response, originalQuery) {
+                response.forEach(function(item) {
+                    item.data = item.name;
+                    item.value = item.contact;
+                    delete item.contact;
+                    delete item.name;
+                });
+                return { suggestions: response };
+            },
+            onSearchComplete: function() {},
+            formatResult: function(suggestion, currentValue) {
+                return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+            },
+            onSearchError: function() {},
+            onSelect: function(suggestion) {}
+        }, NMNS.socket);
+        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)){//safari - datalist polyfill
+          if (!document.getElementById("datalistPolyfillScript")) {
+            var script = document.createElement("script");
+            script.src = "/lib/datalist-polyfill/datalist-polyfill.min.js";
+            script.id = "datalistPolyfillScript";
+            document.body.appendChild(script);
+          }
+        }
+        $(".infoCenterLink").one("touch click", function(){
+          if($("#faq").children().length === 0){
+            $("#submitFeedback").on("touch click", function() {
+              var text = $("#feedbackBody").val();
+              if (text && text.trim().length > 0) {
+                  NMNS.socket.emit("submit feedback", { data: text.trim() });
+                  showSnackBar("제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.");
+                  $("#feedbackBody").val("");
+              } else {
+                  showSnackBar("제안/문의하실 내용을 입력해주세요.");
+                  return;
+              }
+            });
+            var html = "";
+            var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
+            faqs.forEach(function(item, index) {
+                html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
+                    '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
+                if (index > 0 && index % 50 === 0) {
+                    $("#faq").append(html);
+                    html = "";
+                }
+            });
+            $("#faq").append(html);
+          }
+        })
+        $(".menuLink").on("touch click", switchMenu)
+    })();
 })(jQuery);
