@@ -465,6 +465,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
   font-size:11px;
   word-break:break-all;
   cursor:pointer;
+  margin-bottom: 10px;
+}
+.monthlyDetailPopupTitle:last-child{
+  margin-bottom:0;
 }
 #renderRange {
     font-size: 28px;

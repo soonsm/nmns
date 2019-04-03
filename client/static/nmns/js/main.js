@@ -339,9 +339,17 @@
           }
           html += "</div></div>"
         }else if(NMNS.calendar.getViewName() === 'day'){
-          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
+          var contents = null;
           if(schedule.raw.contents){
-            html += ("<div title='"+type+"내용:"+schedule.raw.contents+" class='tui-full-calendar-time-schedule-title'>" + schedule.raw.contents+"</div>");
+            try{
+              contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
+            }catch(error){
+              contents = schedule.raw.contents;
+            }
+          }
+          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
+          if(contents){
+            html += ("<div title='"+type+"내용:"+contents+" class='tui-full-calendar-time-schedule-title'>" + contents+"</div>");
           }
           switch (schedule.raw.status) {
               case "CANCELED":
@@ -1026,7 +1034,6 @@
           removeContent(this);
         });
         
-        //$('#scheduleContents').val(e.schedule? (e.schedule.raw? e.schedule.raw.contents : e.schedule.contents) : '');
         $('#scheduleContact').val(e.schedule? (e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact) : '');
         $('#scheduleEtc').val(e.schedule? (e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc) : '');
         $('#scheduleAllDay').attr('checked', e.schedule?e.schedule.isAllDay : e.isAllDay);
