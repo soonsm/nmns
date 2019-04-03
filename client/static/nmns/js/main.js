@@ -232,8 +232,11 @@
             NMNS.socket.emit("update reserv", { id: e.schedule.id, status: "DELETED" });
         },
         beforeChangeView: function(e){
-          console.log(e);
-          console.log('aaaaa')
+          NMNS.calendar.changeView(e.viewName);
+          NMNS.calendar.setDate(e.date);
+          setDropdownCalendarType();
+          setRenderRangeText();
+          setSchedules();
         }
     });
 
