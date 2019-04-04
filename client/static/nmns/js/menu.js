@@ -156,11 +156,7 @@
   function initMenuModal(){
     
   }
-  NMNS.socket.on("get menu list", socketResponse("메뉴 리스트 조회", function(e) {
-      NMNS.menuList = e.data;
-      currentMenuCount = 0;
-      drawMenuList(true);
-  }));
+  
   NMNS.socket.on("update menu list", socketResponse("메뉴 리스트 수정", undefined, function(e){
     NMNS.menuList = e.data;
     currentMenuCount = 0;
@@ -197,5 +193,5 @@
   
   //TODO : delete these rows for test
   NMNS.menuList = [{id: 1, name:'매니큐어', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 2, name:'매니큐어2', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 3, name:'매니큐어3', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 4, name:'매니큐어4', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id:5, name:'매니큐어5', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 6, name:'매니큐어6', cashPrice:10000, cardPrice:20000, memberPrice:10000}]
-  drawMenuList(true);
+  drawMenuList(true); // this line should be remained after deleting test above line.
 })();
