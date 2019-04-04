@@ -58,6 +58,7 @@ a.text-primary {
   &:active {
     background-color: $darkPrimary;
     border-color: $darkPrimary;
+    color: #fff;
   }
   box-shadow: 0 5px 6px 0 rgba(51, 65, 80, 0.25);
   color: #fff;
@@ -69,8 +70,9 @@ a.text-primary {
   &:hover,
   &:focus,
   &:active {
-    background-color: $darkPrimary;
-    border-color: $darkPrimary;
+    background-color: #e6e6e6;
+    border-color: #e6e6e6;
+    color: $primary;
   }
   color: $primary;
 }
@@ -89,8 +91,8 @@ a.text-primary {
   &:hover,
   &:focus,
   &:active {
-    background-color: $darkPrimary;
-    border-color: $darkPrimary;
+    background-color: $darkSecondary;
+    border-color: $darkSecondary;
   }
 }
 
@@ -100,8 +102,9 @@ a.text-primary {
   &:hover,
   &:focus,
   &:active {
-    background-color: $darkPrimary;
-    border-color: $darkPrimary;
+    background-color: $darkAccent;
+    border-color: $darkAccent;
+    color: #fff;
   }
   box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);
   color: #fff;

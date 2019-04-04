@@ -1,0 +1,30 @@
+.updatingMenu-collapsed{
+  display:none;
+}
+.menuRow .montserrat{
+  font-size:11px;
+}
+.menuRow{
+  display:flex;
+  padding:15px 20px;
+  background-color:#fff;
+  border-radius: 2px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  margin-bottom:5px;
+  align-items:center;
+}
+.menuRow:last-child{
+  margin-bottom:0;
+}
+.menuRow .close, .menuRow .close span{
+  line-height:12px;
+  height:12px;
+  font-size:12px;
+}
+.sortable-drag{
+  opacity:1;
+  box-shadow:0 10px 20px 0 rgba(0, 0, 0, 0.2);
+}
+.sortable-ghost{
+  opacity:0;
+}

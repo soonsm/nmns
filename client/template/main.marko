@@ -253,70 +253,7 @@
             <input type="search" class="border-0" placeholder="이름, 연락처, 담당자 이름으로 검색하세요." aria-label="고객 검색" id="searchCustomer">
             <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><i class="fas fa-plus" style="margin-right:8px"></i>고객 추가</button>
           </div>
-          <!--<div id="mainCustomerTools" class="col-12 text-center">
-            <div id="customerAddForm" class="row col-12 col-sm-10 mx-auto border py-2 px-3 mt-2">
-              <div class="text-left col-12 my-2">
-                <b>신규 고객등록</b>
-              </div>
-              <div class="form-group col-12 mb-0 d-sm-inline-flex d-inline-block">
-                <label for="customerAddName" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">이름</label>
-                <div class="col-12 col-sm-5 input-group input-group-sm px-0 mb-2 px-sm-2">
-                  <div class="d-inline-block input-group-prepend d-sm-none">
-                    <i id="customerAddNameIcon" class="input-group-text fas fa-user" title="고객 이름"></i>
-                  </div>
-                  <input type="text" class="form-control han" id="customerAddName" name="name" placeholder="고객 이름" aria-describedby="customerAddNameIcon">
-                </div>
-                <label for="customerAddContact" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm compactLabel">연락처</label>
-                <div class="col-12 col-sm-5 input-group input-group-sm px-0 mb-2 pl-sm-2">
-                  <div class="d-inline-block input-group-prepend d-sm-none">
-                    <i id="customerAddContactIcon" class="input-group-text fas fa-phone fa-rotate-90" title="고객 연락처"></i>
-                  </div>
-                  <input type="text" class="form-control" id="customerAddContact" name="contact" aria-describedby="customerAddContactIcon" placeholder="고객 연락처">
-                </div>
-              </div>
-              <div class="form-group col-12 mb-2 d-inline-block d-sm-inline-flex">
-                <label for="customerAddManager" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm compactLabel">담당자</label>
-                <div class="col-12 col-sm-3 input-group input-group-sm px-0 mb-2 mb-sm-0 pl-sm-2">
-                  <div class="d-inline-block input-group-prepend d-sm-none">
-                    <i id="customerAddManagerIcon" class="input-group-text fas fa-user-tie" title="담당자"></i>
-                  </div>
-                  <button id="customerAddManager" type="button" aria-describedby="customerAddManagerIcon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>
-                  <div class="dropdown-menu rounded-0 w-100" aria-labelledby="customerAddManager" role="menu">
-                  </div>
-                </div>
-                <label for="customerAddEtc" class="col-1 px-0 d-sm-inline-block d-none col-form-label col-form-label-sm">메모</label>
-                <div class="col-12 col-sm-7 input-group input-group-sm px-0">
-                  <div class="d-inline-block input-group-prepend d-sm-none">
-                    <i id="customerAddEtcIcon" class="input-group-text far fa-bookmark" title="고객 메모"></i>
-                  </div>
-                  <input type="text" class="form-control han" id="customerAddEtc" name="etc" aria-describedby="customerAddEtcIcon" placeholder="고객 메모">
-                  <button type="button" id="submitCustomerAdd" class="btn btn-sm btn-primary btn-flat ml-2">등록</button>
-                </div>
-              </div>
-            </div>
-            <div class="row col-12 col-sm-10 mx-auto mt-3 mb-2 px-0">
-              <div class="col-auto mr-auto px-0">
-                <div class="btn-group btn-group-sm d-none d-sm-inline-flex" role="group" aria-label="고객 정렬">
-                  <button type="button" class="btn btn-flat customerSortType active" data-action="sort-name" aria-label="이름순">이름순</button>
-                  <button type="button" class="btn btn-flat customerSortType" data-action="sort-date" aria-label="예약일순">예약일순</button>
-                  <button type="button" class="btn btn-flat customerSortType" data-action="sort-manager" aria-label="담당자순">담당자순</button>
-                </div>
-                <button type="button" id="customerSort" class="btn btn-sm btn-light btn-flat border d-inline-block d-sm-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="고객 정렬하기"><span>이름순</span>&nbsp;<i class="fas fa-sort"></i></button>
-                <div class="dropdown-menu text-center rounded-0" aria-labelledby="customerSort">
-                  <a class="dropdown-item px-0 customerSortType active" href="#" data-action="sort-name" aria-label="이름순">이름순</a>
-                  <a class="dropdown-item px-0 customerSortType" href="#" data-action="sort-date" aria-label="예약일순">예약일순</a>
-                  <a class="dropdown-item px-0 customerSortType" href="#" data-action="sort-manager" aria-label="담당자순">담당자순</a>
-                </div>
-              </div>
-              <div id="customerSearch" class="input-group input-group-sm col-md-5 col-lg-4 col-6 pr-0">
-                <input type="text" class="form-control form-control-sm rounded-0" id="customerSearchTarget" placeholder="이름, 연락처, 담당자이름" aria-describedby="customerSearchBtn">
-                <div id="customerSearchBtn" class="input-group-append rounded-0 btn btn-sm btn-flat btn-secondary d-inline-block">
-                  <i class="fas fa-search d-inline-flex d-sm-none"></i>
-                  <span class="d-none d-sm-inline-flex">검색</span>
-                </div>
-              </div>
-            </div>
-          </div>-->
+         
           <div id="mainCustomer" class="col-12 mb-5">
             <div id="mainCustomerTools" style="font-size:13px">
               <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:10px 7px;justify-content:center">
@@ -355,12 +292,6 @@
           </div>
         </div>
         
-        <div class="switchingMenu salesMenu">
-          <div class="d-flex menuTitle">
-            <span class="h4 mb-0 font-weight-bold">매출 관리</span>
-          </div>
-        </div>
-        
         <div class="switchingMenu infoCenter">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">고객센터</span>
@@ -375,16 +306,6 @@
             <span class="h4 mb-0 font-weight-bold">자주하는 질문</span>
           </div>
           <div id="faq"></div>
-        </div>
-        
-        <div class="switchingMenu menuMenu">
-          <div class="d-flex menuTitle">
-            <span class="h4 mb-0 font-weight-bold">메뉴 관리</span>
-            <span class="divider" style="display:inline-table">&nbsp;</span>
-            <span class="h6 mb-0" style="opacity:0.5">드래그해서 순서를 바꿀 수 있어요!</span>
-            <button class="btn btn-primary ml-auto" type="button">수정</button>
-            <button class="btn btn-accent ml-2" type="button"><i class="fas fa-plus" style="margin-right:8px"></i>메뉴 추가</button>
-          </div>
         </div>
         
         <div class="switchingMenu noShowSearchMenu h-100">
@@ -422,6 +343,43 @@
             <div class="row">
               <div id="noShowSearchList" class="col-12 text-center montserrat"></div>
             </div>
+          </div>
+        </div>
+        
+        <div class="switchingMenu menuMenu">
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">메뉴 관리</span>
+            <span class="divider updatingMenu-collapsed" style="display:none;">&nbsp;</span>
+            <span class="h6 mb-0 updatingMenu-collapsed" style="opacity:0.5;display:none">드래그해서 순서를 바꿀 수 있어요!</span>
+            <button class="btn btn-primary ml-auto" type="button" id="updateMenuLink">수정</button>
+            <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><i class="fas fa-plus" style="margin-right:8px"></i>메뉴 추가</button>
+          </div>
+          <div class="menuContents">
+            <div id="mainMenuTools" style="font-size:13px">
+              <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:15px 20px">
+                <div class="d-inline-flex col-3 menuHead" style="justify-content:center">메뉴 이름</div>
+                <div class="d-inline-flex col menuHead" style="justify-content:center">정가(카드가)</div>
+                <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">정가(현금가)</div>
+                <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">회원가</div>
+                <div class="col-1 updatingMenu-collapsed" style="justify-content:center">&nbsp;</div>
+              </div>
+            </div>
+            <div id="mainMenuList" class="col-12 px-0 mx-0 text-center flex-column">
+              <div class="flex-column" style="margin-top:50%">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>메뉴 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="switchingMenu salesMenu">
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">매출 관리</span>
           </div>
         </div>
         

@@ -2461,6 +2461,7 @@
           var style = document.createElement('link');
           style.rel="stylesheet";
           style.href="/nmns/css/customer.min.css"
+          style.id = 'customerStyle';
           document.head.appendChild(style);
         }
         if (!document.getElementById("customerScript")) {
@@ -2482,6 +2483,34 @@
         $("#customerManager").next().html("<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='' data-bgcolor='#b2dfdb'><span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color:#b2dfdb'></span><span class='tui-full-calendar-content'>(담당자 없음)</span></button>").append(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
             $("#customerManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
         });
+    });
+    $(".menuMenuLink").on("touch click", function(){
+      if(!document.getElementById('menuStyle')){
+        var style = document.createElement('link');
+        style.rel="stylesheet";
+        style.href="/nmns/css/menu.min.css";
+        style.id = 'menuStyle';
+        document.head.appendChild(style);
+      }
+      if (!document.getElementById("menuScript")) {
+        var script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js";
+        script.id = "menuScript";
+        document.body.appendChild(script);
+
+        script.onload = function() {
+          var script2 = document.createElement("script");
+          script2.src = "/nmns/js/menu.min.js";
+          document.body.appendChild(script2);
+          NMNS.socket.emit("get menu list", null);
+        };
+      } else {
+        $("#mainMenuTools .updatingMenu-collapsed").removeClass('d-inline-flex');
+        $(".updatingMenu-collapsed").hide();
+        $(".updatingMenu-expanded").show();
+        $("#updateMenuLink").text('수정');
+        NMNS.socket.emit("get menu list", null);
+      }
     });
     
     function switchMenu(e){
