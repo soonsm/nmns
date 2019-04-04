@@ -161,26 +161,41 @@
       currentMenuCount = 0;
       drawMenuList(true);
   }));
-  NMNS.socket.on("add menu", socketResponse("메뉴 추가", function(e) {
-      /*var index = NMNS.menuList.findIndex(function(item) {
-          return item.id === e.data.id;
-      });
-      if (Number.isInteger(index) && index > -1) {
-          NMNS.menuList[index].totalNoShow = e.data.totalNoShow || 0;
-          NMNS.menuList[index].myNoShow = 0;
-      }
-      $("#menuAddName").val('');
-      $("#menuAddContact").val('');
-      $("#menuAddEtc").val('');*/
-  }, function(e) {
-      /*var index = NMNS.menuList.findIndex(function(item) {
-          return item.id === e.data.id;
-      });
-      if (Number.isInteger(index) && index > -1) {
-          NMNS.menuList.splice(index, 1);
-          drawMenuList(true);
-      }*/
+  NMNS.socket.on("update menu list", socketResponse("메뉴 리스트 수정", undefined, function(e){
+    NMNS.menuList = e.data;
+    currentMenuCount = 0;
+    drawMenuList(true);
   }));
+  NMNS.socket.on("add menu", socketResponse("메뉴 추가", function(e) {
+    NMNS.history.remove(e.data.id, findById);
+  }, function(e) {
+    var index = NMNS.menuList.findIndex(function(item) {
+      return item.id === e.data.id;
+    });
+    if (Number.isInteger(index) && index > -1) {
+      NMNS.menuList.splice(index, 1);
+      drawMenuList(true);
+    }
+  }));
+  NMNS.socket.on("update menu", socketResponse("메뉴 항목 수정", function(e){
+    NMNS.history.remove(e.data.id, findById);
+  }, function(e){
+    var origin = NMNS.history.find(function(item){return item.id === e.data.id});
+    var index = NMNS.menuList.findIndex(function(item) {
+      return item.id === e.data.id;
+    });
+    if (Number.isInteger(index) && index > -1) {
+      NMNS.menuList[index].cardPrice = origin.cardPrice;
+      NMNS.menuList[index].cashPrice = origin.cashPrice;
+      NMNS.menuList[index].name = origin.name;
+      NMNS.menuList[index].memberPrice = origin.memberPrice;
+      
+      NMNS.history.remove(e.data.id, findById);
+      drawMenuList(true);
+    }
+  }))
+  
+  //TODO : delete these rows for test
   NMNS.menuList = [{id: 1, name:'매니큐어', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 2, name:'매니큐어2', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 3, name:'매니큐어3', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 4, name:'매니큐어4', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id:5, name:'매니큐어5', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 6, name:'매니큐어6', cashPrice:10000, cardPrice:20000, memberPrice:10000}]
   drawMenuList(true);
 })();
