@@ -70,9 +70,9 @@ a.text-primary {
   &:hover,
   &:focus,
   &:active {
-    background-color: #e6e6e6;
-    border-color: #e6e6e6;
-    color: $primary;
+    background-color: $primary;
+    border-color: $primary;
+    color: white;
   }
   color: $primary;
 }
@@ -224,4 +224,11 @@ select.form-control-sm{
   font-weight: bold;
   opacity:1;
   font-size:18px;
+}
+
+.input-group-append .input-group-text{
+  background-color:#fff;
+  border:1px solid #707070;
+  border-radius:2px;
+  color:$textPrimary;
 }
