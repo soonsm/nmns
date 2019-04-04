@@ -380,6 +380,105 @@
         <div class="switchingMenu salesMenu">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">매출 관리</span>
+            <span id="menuTitleSticky" style="display:none">
+              <span class="divider">&nbsp;</span>
+              <span class="h6 mb-0 montserrat" id="salesSearchPeriod" style="opacity:0.7;font-size:14px"></span>
+            </span>
+          </div>
+          <div class="menuContents">
+            <div id="mainSalesTools">
+              <div id="mainSalesSearch">
+                <div class="row mx-0 align-items-center mb-3">
+                  <div class="col-2 d-flex px-0">조회기간</div>
+                  <div class="col-5 d-flex pl-0">
+                    <div class="input-group">
+                      <input type="text" class="form-control form-control-sm pr-0 montserrat" id="salesSearchStartDate" placeholder="조회 시작 일자" style="border-right:none">
+                      <div class="input-group-append">
+                        <div class="input-group-text"><span class="far fa-calendar-alt"></span></div>
+                      </div>
+                    </div>
+                    <span class="mx-3 px-1" style="line-height:35px">-</span>
+                    <div class="input-group">
+                      <input type="text" class="form-control form-control-sm pr-0 montserrat" id="salesSearchEndDate" placeholder="조회 끝 일자" style="border-right:none">
+                      <div class="input-group-append">
+                        <div class="input-group-text"><span class="far fa-calendar-alt"></span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-5 d-flex px-0">
+                    <div class="px-3" style="margin-top:-5px">
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton activable mr-1" data-action="currentMonth"></button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton activable mr-1" data-action="previousMonth"></button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton activable" data-action="previous2Month"></button>
+                    </div>
+                    <div class="pl-3" style="margin-top:-5px">
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton mr-1" data-action="week">1주일</button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton mr-1" data-action="month">1개월</button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton mr-1" data-action="halfYear">6개월</button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton" data-action="year">1년</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mx-0 align-items-center mb-3 pt-1">
+                  <div class="col-2 px-0">고객 이름</div>
+                  <div class="col-2 px-0">
+                    <input type="text" autocomplete="off" id="salesSearchName" class="form-control form-control-sm" placeholder="선택사항">
+                  </div>
+                  <div class="col-2 pr-0" style="padding-left:30px">담당</div>
+                  <div class="col-2 px-0">
+                    <button id="salesSearchManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat bg-white form-control form-control-sm text-left" aria-label="담당자 선택">
+                      <span>선택</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="salesSearchManager" role="menu" id="salesSearchManagerList" style="right:0"></div>
+                  </div>
+                  <div class="col-2 pr-0" style="padding-left:30px">예약 내용</div>
+                  <div class="col-2 px-0">
+                    <input type="text" class="form-control form-control-sm han col" id="salesSearchContents" aria-label="예약 내용" placeholder="선택사항" autocomplete="off" list="scheduleTabContentList">
+                  </div>
+                </div>
+                <div class="row pt-3">
+                  <button type="button" class="btn btn-primary col-2 mx-auto disabled" id="salesSearchButton" style="height:42px;line-height:18px">조회</button>
+                </div>
+              </div>
+              <div id="salesToolsSticky" style="display:none">
+                <div class="d-flex col-12">
+                  <div class="row text-center" style="justify-center">
+                    <div class="col-2">총 건수</div>
+                    <div class="col-2"><span id="salesSummaryTotalRecord" class="montserrat"></span>건</div>
+                    <div class="col-2">카드(단건 결제)</div>
+                    <div class="col-2"><span id="salesSummaryCardNormal" class="montserrat"></span>건</div>
+                    <div class="col-2">현금(단건 결제)</div>
+                    <div class="col-2"><span id="salesSummaryCashNormal" class="montserrat"></span>건</div>
+                  </div>
+                  <div class="row text-center" style="justify-center">
+                    <div class="col-2">총 매출금액</div>
+                    <div class="col-2"><span id="salesSummaryTotalAmount" class="montserrat"></span>원</div>
+                    <div class="col-2">카드(정액권 결제)</div>
+                    <div class="col-2"><span id="salesSummaryCardMember" class="montserrat"></span>건</div>
+                    <div class="col-2">현금(정액권 결제)</div>
+                    <div class="col-2"><span id="salesSummaryCashMember" class="montserrat"></span>건</div>
+                  </div>
+                </div>
+                <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:15px 20px">
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType active" data-action="sort-date">매출날짜</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-name">이름</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-manager">담당</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSrotType" data-action="sort-contents">예약내용</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-sales">매출액</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead">결제수단</div>
+                </div>
+              </div>
+              <div id="mainSalesList" class="col-12 px-0 mx-0 text-center flex-column">
+                <div class="flex-column" style="margin-top:50%">
+                  <div class="bouncingLoader">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div> 
+                  <span>매출 정보를 불러오는 중입니다...</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -430,32 +529,7 @@
                 </div>
               </div>
                   
-                
-                
-                <!--<div id="passwordTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
-                  <form id="passwordForm" class="mb-1">
-                    <div class="form-group">
-                      <div>현재 비밀번호</div>
-                      <input id="currentPassword" type="password" placeholder="현재 비밀번호를 입력해주세요." class="form-control form-control-sm rounded-0 mt-3" autocomplete="off"/>
-                      <div style="margin-top:35px">새 비밀번호</div>
-                      <input id="newPassword" type="password" placeholder="새 비밀번호를 입력해주세요." class="form-control form-control-sm rounded-0 mt-3 mb-2" autocomplete="off"/>
-                      <input id="renewPassword" type="password" placeholder="한번 더 입력해주세요." class="form-control form-control-sm rounded-0" autocomplete="off"/>
-                    </div>
-                  </form>
-                  <div class="row mx-0 mt-5">
-                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-accent col ml-1" id="resetPasswordBtn">저장</button>
-                  </div>
-                </div>-->
             </div>
-            
-            <!--<div id="infoModalColorPicker" class="position-absolute bg-white border">
-              <div class="bg-light py-1 px-2">
-                색을 선택하세요
-                <span id="infoModalColorPickerClose" class="float-right mr-1">×</span>
-              </div>
-              <div id="infoModalColors" class="py-1 px-2 text-center"></div>
-            </div>-->
           </div>
         </div>
       </div>
@@ -639,9 +713,10 @@
           <div class="modal-content">
             <div class="modal-header p-0">
               <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
-                <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
-                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
-                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>
+                <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="height:47px;">
+                  <li class="nav-item d-inline-flex"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
+                  <li class="nav-item createScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>
+                  <li class="nav-item updateScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#salesTab" data-toggle="tab" aria-label="매출 입력">매출 입력</a></li>
                 </ul>
                 <button type="button" class="close p-0 ml-auto my-0 mr-0" data-dismiss="modal" aria-label="닫기">
                   <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>
@@ -653,6 +728,20 @@
                 
                 <div id="scheduleTab" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
                   <form id="scheduleForm" class="mb-1">
+                    <div class="updateScheduleElement row" style="margin-bottom:35px">
+                      <div>예약 상태</div>
+                      <div>
+                        <input type="radio" name="scheduleStatus" value="NORMAL" id="scheduleStatusNormal">
+                        <label for="scheduleStatusNormal"></label>
+                        <label for="scheduleStatusNormal">정상</label>
+                        <input type="radio" name="scheduleStatus" value="CANCELED" id="scheduleStatusCanceled">
+                        <label for="scheduleStatusCanceled"></label>
+                        <label for="scheduleStatusCanceled">취소</label>
+                        <input type="radio" name="scheduleStatus" value="NORMAL" id="scheduleStatusNoShow">
+                        <label for="scheduleStatusNoShow"></label>
+                        <label for="scheduleStatusNoShow">노쇼</label>
+                      </div>
+                    </div>
                     <div>고객 이름</div>
                     <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
                     <div style="margin-top:35px">고객 연락처</div>
@@ -694,12 +783,7 @@
                           <button id="scheduleManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자 선택">
                             <span>담당자 선택</span>
                           </button>
-                          <div class="dropdown-menu" aria-labelledby="scheduleManager" role="menu" id="scheduleManagerList">
-                              <!--<button type="button" class="dropdown-item {{CSS_PREFIX}}dropdown-item" data-calendar-id="{{id}}" aria-label="{{name}}">
-                                  <span class="{{CSS_PREFIX}}icon {{CSS_PREFIX}}calendar-dot" style="background-color: {{borderColor}}"></span>
-                                  <span class="{{CSS_PREFIX}}content">{{name}}</span>
-                              </button>-->
-                          </div>
+                          <div class="dropdown-menu" aria-labelledby="scheduleManager" role="menu" id="scheduleManagerList"></div>
                         </div>
                       </div>
                       <div class="col ml-1 px-0 flex-column">
@@ -710,6 +794,8 @@
                       
                   </form>
                   <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white updateScheduleElement col ml-1" id="deleteScheduleBtn">삭제</button>
+                    <button type="button" class="btn btn-primary updateScheduleElement col mx-1" id="resendAlrimscheduleBtn">알림톡 재전송</button>
                     <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">예약 추가 완료</button>
                   </div>
                 </div>
@@ -745,6 +831,44 @@
                       <span>담당자 선택</span>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>
+                    
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-accent col ml-1" id="taskBtn">일정 추가 완료</button>
+                  </div>
+                </div>
+                
+                <div id="salesTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <form id="salesForm" class="mb-1">
+                    <div>매출 등록!!</div>
+                    <!--<input class="form-control form-control-sm han mt-3" id="taskName" placeholder="일정 내용" aria-label="일정 내용" type="text">
+                    <div style="margin-top:35px">예약시간
+                      <span class="float-right">
+                        <input id="taskAllDay" name="isAllDay" type="checkbox"/>
+                        <label for="taskAllDay"></label>
+                        <label for="taskAllDay">하루종일</label>
+                      </span>
+                    </div>
+                    <div class="d-flex col-12 px-0 align-items-center mt-3">
+                      <div class="select mr-1">
+                        <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
+                      <span class="px-2 mx-3">~</span>
+                      <div class="select mr-1">
+                        <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
+                    </div>
+                    <div style="margin-top:35px">담당자</div>
+                    <button id="taskManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자 선택">
+                      <span>담당자 선택</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>-->
                     
                   </form>
                   <div class="row mx-0 mt-5">
