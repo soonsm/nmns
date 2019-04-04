@@ -1708,6 +1708,21 @@ button.form-control {
   overflow-y:auto;
 }
 
+#scheduleModal .updateScheduleElement{
+  display:none;
+}
+
+#scheduleModal.update .updateScheduleElement{
+  display:inline-flex;
+}
+#scheduleModal.update button.updateScheduleElement{
+  display:inline-block;
+}
+
+#scheduleModal.update .createScheduleElement{
+  display:none;
+}
+
 /* bouncing loader */
 @keyframes bouncing-loader {
     to {

@@ -59,7 +59,7 @@ section {
   border-color: $textPrimary;
 }
 
-input[type=checkbox]{
+input[type=checkbox], input[type=radio]{
   display:none;
 }
 input[type=checkbox]:not(.custom-control-input) + label:before{
@@ -70,7 +70,7 @@ input[type=checkbox]:not(.custom-control-input) + label:before{
   letter-spacing: 8px;
   color: $secondary;
 }
-input[type=checkbox]:not(:checked):hover + label:before{
+input[type=checkbox]:not(.custom-control-input):not(:checked):hover + label:before{
   font-weight: 900;
   color: $lightPrimary;
 }
@@ -80,8 +80,26 @@ input[type=checkbox]:not(.custom-control-input):checked + label:before{
   color: $primary;
 }
 input[type=checkbox] + label + label{
-  color: $secondary;
+  color: $primary;
 }
+
+input[type=radio]:not(.custom-control-input) + label{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  border:1px solid #393535;
+}
+
+input[type=radio]:not(.custom-control-input):not(:checked):hover + label{
+  border:none;
+  background-color:$lightAccent;
+}
+
+input[type=radio]:not(.custom-control-input):checked + label{
+  border:none;
+  background-color:$accent;
+}
+
 .base-font{
   @include body-font;
 }
