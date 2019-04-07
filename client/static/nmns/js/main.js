@@ -208,8 +208,7 @@
       beforeCreateSchedule: function(e) {
         NMNS.scheduleTarget = e;
         initScheduleTab(e);
-        $("#scheduleTabList a[data-target='#scheduleTab']").tab('show');
-        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가');
+        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').tab('show');
         $("#scheduleBtn").text('예약 추가 완료');
         $("#scheduleModal").removeClass('update').modal('show');
       },
@@ -873,7 +872,7 @@
 
           $("#noShowScheduleBtn").off("touch click").on("touch click", function(){
             if($("#noShowScheduleList input:checked").length === 0){
-              showSnackBar("<span>노쇼로 등록할 예약을 선택해주세���.</span>");
+              showSnackBar("<span>노쇼로 등록할 예약을 선택해주세요.</span>");
               return;
             }else if($("#noShowScheduleContent .noShowAddCase.bg-primary").length === 0 && $("#noShowScheduleCaseEtc").val().trim().length === 0){
               showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
@@ -1834,8 +1833,9 @@
         e.stopPropagation();
         var data = $(this).parent();
         initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
-        $("#scheduleTabList a[data-target='#taskTab']").tab('show');
-        $("#scheduleModal").modal('show')
+        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').next().tab('show');
+        $("#scheduleBtn").text('예약 추가 완료');
+        $("#scheduleModal").removeClass('update').modal('show');
       });
       
     }));
@@ -2266,38 +2266,49 @@
     $('#mainMenu').on('shown.bs.popover', function(){
       $(".mainMenuRow a[data-link]").off("touch click").on("touch click", function(e){
         $("#mainMenu").popover('hide')
-        $($(this).data('link')).modal("show")
+        $($(this).data('link')).modal("show");
       });
       $("#signoutLink").on("touch click", function(){
         NMNS.socket.close();
-      })
-    })
+      });
+    });
     $('html').on('click', function(e) {// click outside popover to close
       if ($('body').children('.popover.show').length > 0 && typeof $(e.target).data('original-title') == 'undefined' && !$(e.target).parents().is('.popover.show') && $(e.target).parents('[data-toggle="popover"]').length === 0) {
         $('body').children('.popover.show').popover('hide');
       }
     });
-    $("#alrimTabList a[data-target='#alrimTab']").on("show.bs.tab", refreshAlrimModal)
+    $("#alrimTabList a[data-target='#alrimTab']").on("show.bs.tab", refreshAlrimModal);
     $("#alrimTabList a[data-target='#alrimHistoryTab']").on("show.bs.tab", function(){
       $("#alrimHistorySearch").trigger('click');
-    })
+    });
     
     $("#scheduleTabList a[data-target='#scheduleTab']").on('touch click', function(){
       if(!$(this).hasClass('active')){
-        initScheduleTab("switch")
+        initScheduleTab("switch");
       }
     });
     $("#scheduleTabList a[data-target='#taskTab']").on('touch click', function(){
       if(!$(this).hasClass('active')){
-        initTaskTab('switch')
+        initTaskTab('switch');
+      }
+    });
+    $("#scheduleTabList a[data-target='#salesTab']").on('show.bs.tab', function(){
+      if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule){
+        $("#salesLoading").show();
+        $("#salesForm").hide();
+        NMNS.socket.emit('get sales template', {scheduleId: NMNS.scheduleTarget.schedule.id});
+        return true;
+      }else{
+        return false;
       }
     });
 
     $("#addScheduleBtn").on("touch click", function(){
-      $("#scheduleTabList a[data-target='#scheduleTab']").tab('show');
       initScheduleTab();
-      $("#scheduleModal").modal('show');
-    })
+      $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').tab('show');
+      $("#scheduleBtn").text('예약 추가 완료');
+      $("#scheduleModal").removeClass('update').modal('show');
+    });
     $("#userModal").one('show.bs.modal', function(){
       //passwordTab
       $("#resetPasswordBtn").on("touch click", function(){
@@ -2431,48 +2442,7 @@
       }
       $("#lnbManagerForm").data('id', null).hide();
     }).one("touch click", initLnbManagerForm);
-    /*$("#copyEmail").on("touch click", function(e) {
-        e.preventDefault();
-        var range = document.createRange();
-        range.selectNodeContents($(this)[0]);
-        var sel = window.getSelection ? window.getSelection() : document.selection;
-        sel.removeAllRanges();
-        sel.addRange(range);
-        var title = "";
-        if (document.execCommand('copy')) {
-            title = "메일주소가 복사되었습니다.";
-        } else {
-            title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사해 주세요.";
-        }
-        $(this).attr("title", title).tooltip({
-            trigger: "manual",
-            delay: { "hide": 1000 }
-        });
-        $(this).tooltip("show");
-        setTimeout(function() {
-            $("#copyEmail").attr("title", "메일주소 복사").tooltip("dispose");
-        }, 1500);
-        if (sel.empty) { // Chrome, IE
-            sel.empty();
-        } else if (sel.removeAllRanges) { // Firefox
-            sel.removeAllRanges();
-        }
-        return false;
-    });
-    $(".openAppLink").off("touch click").on("touch click", function(e) {
-        var ua = navigator.userAgent.toLocaleLowerCase();
-
-        if (ua.indexOf("android") > -1) {
-            // e.preventDefault();
-            // navigator.app.loadUrl($(this).data("android")); // Android only
-            // return false;
-        } else if (ua.indexOf("ipod") > -1 || ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1) {
-            // setTimeout(function(){
-            //   window.location = $(this).data("ios-install");
-            // }, 25);
-            window.open($(this).data("ios"), "_system");
-        }
-    });*/
+    
     $(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
