@@ -795,7 +795,7 @@
                   </form>
                   <div class="row mx-0 mt-5">
                     <button type="button" class="btn btn-white updateScheduleElement col mr-1" id="deleteScheduleBtn">삭제</button>
-                    <button type="button" class="btn btn-primary updateScheduleElement col mx-1" id="resendAlrimscheduleBtn">알림톡 재전송</button>
+                    <button type="button" class="btn btn-primary updateScheduleElement col mx-1" id="resendAlrimScheduleBtn">알림톡 재전송</button>
                     <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">예약 추가 완료</button>
                   </div>
                 </div>
@@ -839,40 +839,22 @@
                 </div>
                 
                 <div id="salesTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
-                  <form id="salesForm" class="mb-1">
-                    <div>매출 등록!!</div>
-                    <!--<input class="form-control form-control-sm han mt-3" id="taskName" placeholder="일정 내용" aria-label="일정 내용" type="text">
-                    <div style="margin-top:35px">예약시간
-                      <span class="float-right">
-                        <input id="taskAllDay" name="isAllDay" type="checkbox"/>
-                        <label for="taskAllDay"></label>
-                        <label for="taskAllDay">하루종일</label>
-                      </span>
+                  <form class="mb-1">
+                    <div class="flex-column" id="salesLoading">
+                      <div class="bouncingLoader">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div> 
+                      <span>매출 정보를 불러오는 중입니다...</span>
                     </div>
-                    <div class="d-flex col-12 px-0 align-items-center mt-3">
-                      <div class="select mr-1">
-                        <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
-                      </div>
-                      <div class="select ml-1">
-                        <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
-                      </div>
-                      <span class="px-2 mx-3">~</span>
-                      <div class="select mr-1">
-                        <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
-                      </div>
-                      <div class="select ml-1">
-                        <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
-                      </div>
+                    <div id="salesForm">
+                      
                     </div>
-                    <div style="margin-top:35px">담당자</div>
-                    <button id="taskManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자 선택">
-                      <span>담당자 선택</span>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>-->
-                    
                   </form>
                   <div class="row mx-0 mt-5">
-                    <button type="button" class="btn btn-accent col ml-1" id="taskBtn">일정 추가 완료</button>
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-accent col ml-1" id="salesBtn">저장</button>
                   </div>
                 </div>
                 

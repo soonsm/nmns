@@ -100,6 +100,9 @@ input[type=radio]:not(.custom-control-input):checked + label{
   background-color:$accent;
 }
 
+/*input[type=radio]:not(.custom-control-input), input[type=radio]:not(.custom-control-input) + label, input[type=radio]:not(.custom-control-input) + label + label{
+  opacity: 0.5;
+}*/
 .base-font{
   @include body-font;
 }

@@ -1029,15 +1029,6 @@
       
       $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
-        document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
-        document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule?e.schedule.end.toDate():e.end.toDate());
-        $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule?e.schedule.start.toDate():e.start.toDate())));
-        $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule?e.schedule.end.toDate():e.end.toDate())));
-  
-        $('#scheduleName').val(e.schedule?e.schedule.title : '');
-        $("#scheduleTabContents").append(generateContentsList(e.schedule && e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
-          removeContent(this);
-        });
         if(e.schedule){
           $("#scheduleStatus input[type='radio']").prop('checked', false);
           if($("#scheduleStatus input[value='"+e.schedule.raw.status+"']").length){
@@ -1047,15 +1038,45 @@
           }else{
             $("#scheduleStatus input[value='RESERVED']").prop('checked', true);
           }
+          
+          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule.start.toDate());
+          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule.end.toDate());
+          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule.start.toDate())));
+          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule.end.toDate())));
+    
+          $('#scheduleName').val(e.schedule.title);
+          $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
+            removeContent(this);
+          });
+          
+          $('#scheduleContact').val(e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact);
+          $('#scheduleEtc').val(e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc);
+          $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
+          
+          if(moment(e.schedule.start.toDate()).isBefore(moment())){
+            $("#resendAlrimScheduleBtn").addClass('d-none');
+          }else{
+            $("#resendAlrimScheduleBtn").removeClass('d-none');
+          }
+          calendar = findManager(e.schedule.calendarId);
+        }else{
+          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
+          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule?e.schedule.end.toDate():e.end.toDate());
+          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule?e.schedule.start.toDate():e.start.toDate())));
+          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule?e.schedule.end.toDate():e.end.toDate())));
+    
+          $('#scheduleName').val(e.schedule?e.schedule.title : '');
+          $("#scheduleTabContents").append(generateContentsList(e.schedule && e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
+            removeContent(this);
+          });
+          
+          $('#scheduleContact').val(e.schedule? (e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact) : '');
+          $('#scheduleEtc').val(e.schedule? (e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc) : '');
+          $('#scheduleAllDay').attr('checked', e.schedule?e.schedule.isAllDay : e.isAllDay);
+          
+          calendar = NMNS.calendar.getCalendars()[0];
         }
         
-        $('#scheduleContact').val(e.schedule? (e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact) : '');
-        $('#scheduleEtc').val(e.schedule? (e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc) : '');
-        $('#scheduleAllDay').attr('checked', e.schedule?e.schedule.isAllDay : e.isAllDay);
-        
-        calendar = e.schedule ? NMNS.calendar.getCalendars().find(function(item) {
-            return item.id === e.schedule.calendarId;
-        }) : NMNS.calendar.getCalendars()[0];
         if (!calendar) {
           $('#scheduleManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + e.schedule.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', e.schedule.calendarId).data('color', e.schedule.color);
         }else{
@@ -2020,9 +2041,10 @@
     }, undefined, true));
 
     NMNS.socket.on('resend alrimtalk', socketResponse('알림톡 다시 보내기', function(e){
+        $('#resendAlrimScheduleBtn').addClass('d-none');
         showSnackBar("<span>고객에게 알림톡을 다시 보냈습니다!</span>");
     }, function(e){
-        $('#detailPopupResendAlrim').addClass('d-none')
+        $('#resendAlrimScheduleBtn').addClass('d-none');
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){

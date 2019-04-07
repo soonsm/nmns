@@ -274,7 +274,7 @@ input[type=checkbox]+label{
     border:1px solid;
     background-color:transparent;
     left:1px;
-    top:3px;
+    top:4px;
 }
 #lnbManagerColor input:checked + span + span{
     display:inline-block;
@@ -1721,6 +1721,10 @@ button.form-control {
 
 #scheduleModal.update .createScheduleElement{
   display:none;
+}
+
+#salesLoading{
+  text-align:center;
 }
 
 /* bouncing loader */
