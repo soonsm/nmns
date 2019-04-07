@@ -14,8 +14,11 @@ const managerHandler = require('./managerHandler');
 const accountHandler = require('./accountHandler');
 const customerHandler = require('./customerHandler');
 const alrimTalkHandler = require('./alrimTalkHandler');
+const menuHandler = require('./menuHandler');
+const salesHandler = require('./salesHistHandler');
 
 const GetReservationList = 'get reserv',
+    GetTaskList = 'get task',
     GetReservationSummaryList = 'get summary',
     AddReservation = 'add reserv',
     ResendAlrimtalk = 'resend alrimtalk',
@@ -37,34 +40,46 @@ const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer',
 const SendNoti = 'message', GetNoti = 'get noti';
 const GetTips = 'get tips';
 const AadFeedback = "submit feedback";
+const GetMenuList = 'get menu list',
+    AddMenu = 'add menu',
+    UpdateMenu = 'update menu',
+    UpdateMenuList = 'update menu list';
+const GetSalesList = 'get sales list',
+    GetReservationSales = 'get reserv sales',
+    GetMembershipHistory = 'get membership history',
+    SaveSales = 'save sales',
+    AddMembership = 'add membership';
 
 const EVENT_LIST_NO_NEED_VERIFICATION = [GetTips, GetCustomerInfo, GetCustomerDetail, GetAlrimTalkInfo, GetManagerList, GetReservationSummaryList, GetReservationList, GetNoti, SendVerification, GetManagerList, AddManager, UpdateManager, DelManager, GetShop, UpdateShop, UpdatePwd];
 
 module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
 
-    //Socket-Io-Tester 사용 할 때 주석처리 해야 함
-    io.use(passportSocketIo.authorize({
-        key: 'connect.sid',
-        secret: 'rilahhuma',
-        store: sessionStore,
-        passport: passport,
-        cookieParser: cookieParser
-    }));
+    //Socket-Io-Tester 사용 할 때 주석처리 해야 함 Begin
+    // io.use(passportSocketIo.authorize({
+    //     key: 'connect.sid',
+    //     secret: 'rilahhuma',
+    //     store: sessionStore,
+    //     passport: passport,
+    //     cookieParser: cookieParser
+    // }));
+    //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
 
     io.on('connection', async function (socket) {
 
-        // var email = 'soonsm@gmail.com';
-        // var user = await db.getWebUser(email);
-        // user.authStatus = 'EMAIL_VERIFICATED';
+        //Socket-Io-Tester 사용 할 때 주석 풀어야 함 Begin
+        var email = 'soonsm@gmail.com';
+        var user = await db.getWebUser(email);
+        user.authStatus = 'EMAIL_VERIFICATED';
+        //Socket-Io-Tester 사용 할 때 주석 풀어야 함 End
 
         //Socket-Io-Tester 사용 할 때 주석처리 해야 함 Begin
-        const user = socket.request.user;
-        const email = user.email;
-        if (!email || !socket.request.user.logged_in) {
-            logger.log(`User ${email} is not logged in`);
-            return;
-        }
+        // const user = socket.request.user;
+        // const email = user.email;
+        // if (!email || !socket.request.user.logged_in) {
+        //     logger.log(`User ${email} is not logged in`);
+        //     return;
+        // }
         //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
 
 
@@ -99,7 +114,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                     }
                     catch (e) {
                         socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.'));
-                        logger.log(`email: ${email} eventName: ${eventName} data: ${data} error: ${e}`);
+                        logger.log(`email: ${email}, eventName: ${eventName}, data: ${util.format(data)}, error: ${e}`);
                     }
                 }
             });
@@ -192,7 +207,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             });
 
             //사용자가 확인한 마지막 공지사항의 아이디
-            let lastNoticeId = user.lastNoticeId || '0';
+            let redNoticeList = user.redNoticeList || [];
             /**
              * 마지막 공지사항 아이디보다 크면
              * -> 안읽음 & 마지막 공지사항 아이디 업데이트
@@ -208,16 +223,17 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
              */
             if(noticeList.length >= (page-1)*5+1){
                 let lastIndex = (page-1)*5+5 < noticeList.length ? (page-1)*5+5 : noticeList.length;
-                for(let i=(page-1)*5;i<lastIndex;i++){
+                noticeList = noticeList.slice((page-1)*5, lastIndex);
+                for(let i=0;i<noticeList.length;i++){
                     let notice = noticeList[i];
-                    if(lastNoticeId >= notice.id){
+                    if(redNoticeList.includes(notice.id)){
                         notice.isRead = true;
                     }else{
                         notice.isRead = false;
-                        lastNoticeId = notice.id;
+                        redNoticeList.push(notice.id);
                     }
                 }
-                await db.updateWebUser(email, {lastNoticeId: lastNoticeId});
+                await db.updateWebUser(email, {redNoticeList: redNoticeList});
             }else{
                 noticeList = [];
             }
@@ -259,6 +275,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Reservation
          */
         addEvent(GetReservationSummaryList, reservationHandler.getReservationSummaryList);
+        addEvent(GetTaskList, reservationHandler.getTaskList);
         addEvent(GetReservationList, reservationHandler.getReservationList);
         addEvent(UpdateReservation, reservationHandler.updateReservation);
         addEvent(AddReservation, reservationHandler.addReservation);
@@ -278,6 +295,23 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetNoShow, noShowHandler.getNoShow);
         addEvent(AddNoShow, noShowHandler.addNoShow);
         addEvent(DelNoShow, noShowHandler.delNoShow);
+
+        /**
+         * Menu
+         */
+        addEvent(GetMenuList, menuHandler.getMenuList);
+        addEvent(AddMenu, menuHandler.saveMenu);
+        addEvent(UpdateMenu, menuHandler.saveMenu);
+        addEvent(UpdateMenuList, menuHandler.updateMenuList);
+
+        /**
+         * 매출내역
+         */
+        addEvent(GetSalesList, salesHandler.getDaySalesHist);
+        addEvent(GetReservationSales, salesHandler.getSalesHistForReservation);
+        addEvent(GetMembershipHistory, salesHandler.getMembershipHistory);
+        addEvent(SaveSales, salesHandler.saveSales);
+        addEvent(AddMembership, salesHandler.addMembershipHistory);
     });
 };
 

@@ -170,7 +170,8 @@ exports.newWebUser = function (user) {
         isFirstVisit: true,
         feedback: [],
         kakaotalk: user.kakaotalk || null,
-        lastNoticeId: '0'
+        redNoticeList: [],
+        saleHistList: []
     };
 };
 
@@ -406,6 +407,7 @@ exports.newReservation = function (reservation) {
         end: reservation.end,
         isAllDay: reservation.isAllDay || false,
         contents: reservation.contents || null,
+        contentList: reservation.contentList || [],
         manager: reservation.manager || null,
         etc: reservation.etc || null,
         contact: reservation.contact || null,
@@ -506,9 +508,7 @@ exports.getReservationSummaryList = async function (email, data) {
                     filteredList.length -= 1;
                 }else if(data.end && reservation.end > data.end){
                     filteredList.length -= 1;
-                }else if(data.contact && reservation.contact !== data.contact){
-                    filteredList.length -= 1;
-                }else if(data.name && reservation.name !== data.name){
+                }else if(data.target && (reservation.contact !== data.target && reservation.name !== data.target)){
                     filteredList.length -= 1;
                 }else if(reservation.type == 'T'){
                     filteredList.length -= 1;
@@ -518,7 +518,7 @@ exports.getReservationSummaryList = async function (email, data) {
         return filteredList;
     }
 }
-exports.getReservationList = async function (email, start, end) {
+exports.getReservationList = async function (email, start, end, type) {
     let items = await query({
         TableName: process.nmns.TABLE.WebSecheduler,
         ProjectionExpression: "reservationList",
@@ -540,6 +540,13 @@ exports.getReservationList = async function (email, start, end) {
         list = list.filter(function(reservation){
             if(reservation.status === process.nmns.RESERVATION_STATUS.DELETED){
                 return false;
+            }
+            if(type){
+                if(type === reservation.type){
+                    return true;
+                }else{
+                    return false;
+                }
             }
             if (start && end) {
                 if(reservation.end <= end && reservation.end >= start){
@@ -816,7 +823,10 @@ exports.addCustomer = async function(email, id, name, contact, managerId, etc){
                     name: name,
                     contact: contact,
                     etc: etc,
-                    managerId: managerId
+                    managerId: managerId,
+                    pointMembership: 0,
+                    cardSales: 0,
+                    cashSales: 0
                 }]
             },
             ReturnValues: "NONE"

@@ -5,6 +5,12 @@ const util = require('./util');
 const hangul = require('hangul-js');
 const sha256 = require('js-sha256');
 
+/**
+ * 고객조회
+ * get customer
+ * @param data
+ * @returns {Promise<{status: boolean, message: *, data}>}
+ */
 exports.getCustomerDetail = async function(data){
     let email = this.email;
     let status = true, message, resultData = {};
@@ -37,9 +43,14 @@ exports.getCustomerDetail = async function(data){
                 if(reservationList.length > 0){
                     member.isAllDay = reservationList[0].isAllDay;
                     member.contents = reservationList[0].contents;
+                    member.contentList = reservationList[0].contentList;
                 }
                 member.contents = member.contents || '';
+                member.contentList = member.contentList || [];
                 member.etc = member.etc || '';
+                member.pointMembership = member.pointMembership || 0;
+                member.cardSales = member.cardSales || 0;
+                member.cashSales = member.cashSales || 0;
                 resultData = member;
             }
         }
@@ -51,6 +62,12 @@ exports.getCustomerDetail = async function(data){
     };
 };
 
+/**
+ * 고객정보 조회(자동완성용)
+ * get customer info
+ * @param data
+ * @returns {Promise<{status: boolean, data, message: string}>}
+ */
 exports.getCustomerInfo = async function (data) {
 
     let email = this.email;
@@ -58,10 +75,9 @@ exports.getCustomerInfo = async function (data) {
         message = '',
         resultData = {};
     let id = data.id;
-    let contact = data.contact;
-    let name = data.name;
+    let target = data.target;
 
-    if (!id || (!contact && !name)) {
+    if (!id || (!target)) {
         status = false;
         // message = 'id는 필수이고 contact와 name은 둘 중 하나는 있어야 합니다.';
         message = '연락처 혹은 고객 이름 둘 중 하나는 필수입니다.';
@@ -69,29 +85,25 @@ exports.getCustomerInfo = async function (data) {
 
     if (status) {
         resultData.id = id;
-        resultData.query = ((name === undefined || name === null || name === '') ? contact : name);
+        resultData.query = target;
         let user = await db.getWebUser(email);
         if (user) {
             let memberList = user.memberList;
             let returnMemberList = [];
             for (let i = 0; i < memberList.length; i++) {
                 let member = memberList[i];
-                if (contact) {
-                    if (member.contact && member.contact.includes(contact)) {
-                        returnMemberList.push(member);
-                    }
+                if (member.contact && member.contact.includes(target)) {
+                    returnMemberList.push(member);
                 }
                 else {
-                    if (member.name) {
-                        if (hangul.search(member.name, name) !== -1) {
+                    if (hangul.search(member.name, target) !== -1) {
+                        returnMemberList.push(member);
+                    }
+                    else {
+                        //초성검색
+                        let names = await hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
+                        if (names.includes(hangul.disassemble(target).join(''))) {
                             returnMemberList.push(member);
-                        }
-                        else {
-                            //초성검색
-                            let names = await hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
-                            if (names.includes(hangul.disassemble(name).join(''))) {
-                                returnMemberList.push(member);
-                            }
                         }
                     }
                 }
@@ -112,6 +124,12 @@ exports.getCustomerInfo = async function (data) {
     };
 };
 
+/**
+ * 고객목록 조회
+ * get customer list
+ * @param data
+ * @returns {Promise<{status: boolean, data: Array, message: string}>}
+ */
 exports.getCustomerList = async function(data){
     let email = this.email;
     let status = true,
@@ -192,6 +210,7 @@ exports.getCustomerList = async function(data){
                     member.history.push({
                         date: reservation.start,
                         contents: reservation.contents,
+                        contentList: reservation.contentList,
                         status: reservation.status,
                         managerName: manager.name,
                         managerColor: manager.color,
@@ -204,6 +223,10 @@ exports.getCustomerList = async function(data){
             await member.history.sort(function(r1,r2){
                 return r2.date - r1.date;
             });
+
+            member.pointMembership = member.pointMembership || 0;
+            member.cardSales = member.cardSales || 0;
+            member.cashSales = member.cashSales || 0;
         }
 
         memberList.sort(getSortFunc(sort));
@@ -312,6 +335,12 @@ function getDummy(){
     };
 }
 
+/**
+ * 고객 추가/고객 수정
+ * add customer/update customer
+ * @param data
+ * @returns {Promise<{status: boolean, data: {id}, message: string}>}
+ */
 let saveCustomer = async function(data){
     let email = this.email;
     let status = false,
@@ -382,6 +411,12 @@ exports.deleteCustomer = async function(data){
     };
 }
 
+/**
+ * 고객정보 병합
+ * merge customer
+ * @param data
+ * @returns {Promise<{status: boolean, data: {id}, message: string}>}
+ */
 exports.mergeCustomer = async function(data){
     let email = this.email;
     let status = false,
