@@ -1,12 +1,406 @@
-/*main contents*/
+/* commons */
+.cursor-pointer{
+    cursor:pointer;
+}
+.tab-pane{
+     font-size:13px;
+}
 
+.ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator{
+    display:none;
+}
+
+.modal-dialog.modal-lg{
+    max-width:624px;
+    width:100%;
+}
+
+.new {
+    font-size: .65rem;
+    padding: 0;
+    color: #dc3545;
+    vertical-align: text-top;
+}
+
+.modal-content {
+    border: 0;
+}
+
+.tooltip .arrow {
+    display: none;
+}
+
+.tooltip-inner {
+    max-width: 300px;
+    white-space: pre-wrap;
+    background-color: #232F34;
+    font-size: .8rem;
+    text-align: left;
+}
+
+*:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+input[name='name'],
+input[name='title'],
+input[name='contents'],
+input[name='etc'],
+.han{
+    ime-mode: active;
+}
+
+/*main contents*/
 html {
-    min-height: 100%;
+    min-height: 100vh;
+    height:100%;
     position: relative;
+    background-color:#f1f2f3;
+    font-size:15px;
+}
+
+input[type=checkbox]+label{
+    margin-bottom:0;
+}
+.hr-text {
+    line-height: 1em;
+    position: relative;
+    outline: 0;
+    border: 0;
+    height: 1.5em;
+}
+.hr-text:before {
+    content: '';
+    background-color:#393535;
+    opacity:0.35;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+}
+.hr-text:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    padding-right:.5em;
+    line-height: 1.5em;
+    background-color: #fff;
 }
 
 #mainNav {
     min-height: 4.05rem;
+}
+.topNav{
+    height:78px;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+}
+.sidebar-handler{
+    position:relative;
+}
+#mainAside{
+    width:270px;
+    transition:0.3s ease-in-out;
+    z-index:1;
+}
+#mainAside.sidebar-toggled{
+    width:74px;
+}
+
+#mainAside.sidebar-toggled .menu-collapsed{
+    display:none;
+}
+#mainRow {
+    transition:0.3s ease-in-out;
+    position:relative;
+}
+#mainRow.sidebar-toggled{
+    width:calc(100% - 50px);
+}
+@media(max-width:576px){
+    #mainAside{
+        width:0;
+    }
+    #mainAside.sidebar-toggled{
+        width:100%;
+    }
+    #mainRow{
+        width:100%;
+    }
+    #mainRow.sidebar-toggled{
+        width:0;
+    }
+}
+#mainAside .topNav{
+    border-bottom:0.5px solid rgba(255,255,255,0.5);
+}
+#mainRow .topNav{
+    border-bottom:0.5px solid rgba(57,53,53,0.35);
+}
+/* side bar */
+#sidebarContainer{
+    margin-top:79px;
+    padding-left:30px;
+    padding-right:30px;
+    padding-top:50px;
+}
+#sidebarContainer .list-group-item span{
+    color:#fff;
+}
+#sidebarContainer .far, #sidebarContainer .fas{
+    margin-right:15px;
+}
+#sidebarContainer input[type=checkbox].tui-full-calendar-checkbox-round+span{
+    margin-right:17px;
+}
+#sidebarContainer .list-group-item{
+    background-color:transparent;
+    padding:0 0 35px 0;
+}
+#sidebarContainer .sidebar-item{
+    opacity:.35;
+    cursor:pointer;
+}
+#sidebarContainer .sidebar-item.menuLinkActive{
+    opacity:1;
+}
+
+#sidebarContainer ul li {
+    list-style: none;
+}
+#lnbManagerList small, #lnbManagerList label{
+    color:#fff;
+}
+#lnbManagerList .lnbManagerItem{
+    margin-top: 30px;
+}
+#lnbManagerList .dropdown-menu{
+  border-radius: 2px;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
+  min-width:97px;
+  padding:10px 15px;
+  font-size:11px;
+}
+#lnbManagerList .dropdown-item{
+  padding:0;
+}
+#lnbManagerList .dropdown-item:not(:first-child){
+  margin-top:10px;
+}
+#lnbManagerList .lnbManagerItem .menu-collapsed{
+    vertical-align: middle;
+}
+
+#lnbManagerList .lnbManagerItem label {
+    margin-bottom: 0;
+    cursor:pointer;
+}
+#lnbManagerList .lnbManagerAction:after{
+    display:none;
+}
+#lnbManagerForm label, #lnbManagerForm label+span{
+    cursor: default;
+}
+
+#lnbManagerFormName{
+  font-size:15px;
+  color:#fff;
+  height:22px;
+}
+#lnbManagerFormSubmit{
+  height:22px;
+  font-size:11px;
+  border:none;
+  color:#fff;
+  padding: 0 0 0 10px;
+}
+
+#lnbManagerColor{
+    padding:8px;
+    border-radius: 2px;
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    display:flex;
+    flex-wrap:wrap;
+    width:136px;
+    max-width:136px;
+    margin-top:13px;
+}
+#lnbManagerColor label{
+    margin-bottom:0;
+    position:relative;
+    flex: 0 0 20%;
+    max-width:20%;
+    width:100%;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    height:29px;
+}
+#lnbManagerColor label input{
+    display:none;
+}
+#lnbManagerColor label span, #lnbManagerFormColor{
+    border:none;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    margin:1px;
+    cursor:pointer;
+    display:inline-block;
+}
+
+#lnbManagerFormColor{
+  margin: 0 17px 0 0;
+  cursor:default;
+}
+
+#lnbManagerColor input + span + span{
+    display:none;
+    position:absolute;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    border:1px solid;
+    background-color:transparent;
+    left:1px;
+    top:4px;
+}
+#lnbManagerColor input:checked + span + span{
+    display:inline-block;
+}
+
+#lnbManagerList .addManagerItem input[type="text"] {
+    padding-left: 0;
+    padding-right: 0;
+    height: 1.4rem;
+}
+
+#lnbManagerList .addManagerItem .addManagerColor {
+    cursor: default;
+}
+
+#lnbLastMenu a {
+    cursor: default;
+    border-bottom: 0;
+}
+
+#lnbLastMenu a div {
+    cursor: pointer;
+}
+
+.addManagerItem label {
+    width: calc(100% - 35px);
+}
+
+.addManagerItem input[type='text'] {
+    width: calc(100% - 23px);
+    font-size: .8rem;
+    display: inline-block;
+}
+
+.addManagerItem input[type='text']:focus {
+    border-color: #ced4da;
+    box-shadow: none;
+}
+
+.addManagerItem .submitAddManager,
+.addManagerItem .cancelAddManager,
+.infoManagerItem .deleteManager {
+    cursor: pointer;
+}
+
+.tui-full-calendar-weekday-schedule {
+    overflow-y: hidden;
+}
+
+#mainNav{
+    padding-left:30px;
+    padding-right:30px;
+    flex-wrap:nowrap;
+}
+
+#mainRow #mainNav #searchNoShow, #searchCustomer{
+    min-width:30px;
+    margin-left:15px;
+    background-color:transparent;
+    display:inline-flex;
+    flex-grow:1;
+}
+input[type=text]::placeholder, input[type=text]::-webkit-input-placeholder, input[type=text]:-ms-input-placeholder,
+input[type=password]::placeholder, input[type=password]::-webkit-input-placeholder, input[type=password]:-ms-input-placeholder,
+input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, input[type=email]:-ms-input-placeholder,
+.form-control::placeholder, .forn-control::-webkit-input-placeholder, .form-control:-ms-input-placeholder{
+    color:#393535;
+    opacity:0.5;
+}
+.divider{
+    border-left:1px solid #393535;
+    margin-left:30px;
+    margin-right:30px;
+    line-height:16px;
+    opacity:0.5;
+}
+
+#mainRow #mainNav #mainMenu{
+    font-size:13px;
+    white-space:nowrap;
+}
+
+#mainRow #mainNav #mainMenu #mainShopIcon{
+    width:32px;
+    height:32px;
+    margin-right:10px;
+}
+
+#mainRow #mainTask{
+    display:none;
+    position:absolute;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    transition: 0.3 left ease;
+    overflow:hidden;
+    left:-310px;
+    z-index:-1;
+}
+
+#mainRow #mainTask.show{
+    display:initial;
+    max-width:237px;
+    min-width:237px;
+    width:237px;
+    left:30px;
+    z-index:0;
+    margin-right:23px;
+}
+
+#mainRow #mainTask #mainTaskTip{
+    border-left: 12px solid transparent;
+    width: 0;
+    height: 0;
+    border-right: 12px solid transparent;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid #fff;
+    position: absolute;
+    top: -24px;
+    right: 32px;
+}
+
+#mainRow #mainTask #mainTaskContents{
+    margin-top:30px;
+}
+
+#mainRow #mainTask .task{
+    word-break: break-all;
 }
 
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
@@ -14,8 +408,18 @@ html {
     border-radius: 0;
 }
 
-#mainRow {
-    margin-top: 4.05rem;
+#mainRow .menuTitle{
+    margin-bottom:30px;
+    align-items:center;
+    min-height:45px;
+}
+
+#mainRow .menuTitle .menuTitleNumber{
+    font-family:'Montserrat';
+    font-size:18px;
+    font-weight:bold;
+    line-height:27px;
+    margin-left:15px;
 }
 
 #mainRow .tui-full-calendar-time-date:last-child {
@@ -42,10 +446,45 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     height: auto !important;
 }
 
-#renderRange {
-    font-size: 1.5rem;
+#detailPopup.tui-full-calendar-month-popup-detail{
+  box-shadow:0 10px 20px 0 rgba(0, 0, 0, 0.2);;
+}
+#detailPopup.tui-full-calendar-month-popup-detail .tui-full-calendar-popup-container{
+  padding:15px;
+  min-width:179px;
+  width:179px;
+  border:none;
 }
 
+.monthlyDetailPopupTime{
+  font-size:10px;
+  word-break:break-all;
+  cursor:pointer;
+}
+.monthlyDetailPopupTitle{
+  font-size:11px;
+  word-break:break-all;
+  cursor:pointer;
+  margin-bottom: 10px;
+}
+.monthlyDetailPopupTitle:last-child{
+  margin-bottom:0;
+}
+#renderRange {
+    font-size: 28px;
+    font-weight:bold;
+}
+
+#renderRange .render-range-text-holiday{
+    font-size:11px;
+    color:#fd5b77;
+    line-height:3;
+    height:13px;
+}
+
+#renderRange .render-range-text-holiday + span{
+    color:#fd5b77;
+}
 .calendarTypeGroup {
     right: 0.5rem;
     height: 50px;
@@ -54,10 +493,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarTools {
     min-height: 50px;
     line-height: 50px;
-    position: fixed;
-    top: 4.05rem;
-    z-index: 2;
     width: 100%;
+    margin-bottom:12px;
 }
 
 #mainCalendarTools .dropdown-menu {
@@ -72,60 +509,48 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: auto;
 }
 
-#mainCalendarTools #calendarTypeMenu .calendarTypeText {
-    display: none;
-}
-
 #mainCalendarTools #calendarTypeMenu.dropdown-toggle:after {
     margin-left: 0;
 }
 
 @media (min-width: 360px) {
-    #mainCalendarTools #calendarTypeMenu i.calendarTypeText {
-        display: inline-block;
-    }
     #mainCalendarTools #calendarTypeMenu.dropdown-toggle:after {
         margin-left: .255rem;
     }
 }
 
-@media(min-width:430px) {
-    #mainCalendarTools #calendarTypeMenu span.calendarTypeText {
-        display: inline;
-    }
-}
-
-#mainCalendar .tui-full-calendar-dayname-layout,
-#mainCalendar .tui-full-calendar-month div[data-panel-index='0'] {
-    position: fixed;
-    width: 100%;
-    top: 7.3rem;
-    z-index: 1;
-    background-color: white;
-    right: 0;
-}
-
 #mainRow #mainContents {
-    margin-bottom: 5.8rem;
+    margin-top:79px;
 }
 
-@media (min-width: 992px) {
-    #mainRow #mainContents {
-        margin-left: 230px;
+#mainArea{
+    display: inline-flex;
+    width:auto;
+    min-width:100%;
+}
+
+@media(min-width:1600px){
+    #mainArea{
+        flex-wrap:wrap;
     }
-    #mainCalendar .tui-full-calendar-dayname-layout,
-    #mainCalendar .tui-full-calendar-month div[data-panel-index='0'],
-    #mainCalendarTools {
-        width: calc(100% - 230px);
+}
+
+#mainCalendarArea{
+    width:auto;
+    display:inline-block;
+    min-width:100%;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    transition: 0.3s margin-left ease;
+}
+
+#mainTask.show+#mainCalendarArea {
+    margin-left: 260px;
+}
+
+@media(min-width:1600px){
+    #mainCalendarArea{
+        min-width:unset;
     }
-}
-
-.tui-full-calendar-week-container .tui-full-calendar-vlayout-area {
-    margin-top: 5.8rem;
-}
-
-#mainCalendar .tui-full-calendar-month div[data-panel-index='1'] {
-    margin-top: 5.2rem;
 }
 
 .tui-full-calendar-timegrid-right+div+.ps__rail-y {
@@ -141,7 +566,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     opacity: 0;
     background-color: black;
     transition: opacity 0.15s linear;
-    visibility: "hidden";
+    visibility: hidden;
     z-index: 3;
 }
 
@@ -150,22 +575,30 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     height: auto !important;
 }
 
-.tui-full-calendar-weekday-grid-line:not(.tui-full-calendar-today) .tui-full-calendar-weekday-grid-date {
+.tui-full-calendar-week-day .tui-full-calendar-dayname-layout{
+    display:none;
+}
+
+.tui-full-calendar-weekday-grid-line .tui-full-calendar-weekday-grid-date {
     width: auto;
     text-align: left;
-    padding-left: .25rem;
+    font-family:'montserrat';
 }
 
-.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today .tui-full-calendar-weekday-grid-date-decorator {
-    background-color: #009688;
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-tomorrow:not(:first-child){
+    border-left:1px solid #393535;
+}
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today{
+    border-left:1px solid #393535;
+    border-top:1px solid #393535;
+    border-bottom:1px solid #393535;
+}
+.tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-today:last-child{
+    border-right:1px solid #393535;
 }
 
-.tui-full-calendar-dayname-layout .tui-full-calendar-past,
-.tui-full-calendar-timegrid-timezone .tui-full-calendar-past,
-.tui-full-calendar-month .tui-full-calendar-past:not(.tui-full-calendar-extra-date) span,
-.tui-full-calendar-time-date-schedule-block.tui-full-calendar-past,
-.tui-full-calendar-daygrid-layout .tui-full-calendar-weekday-schedule-block.tui-full-calendar-past {
-    opacity: .8;
+.tui-full-calendar-timegrid-timezone .tui-full-calendar-past{
+    opacity: .5;
 }
 
 .tui-full-calendar-layout .tui-full-calendar-week-week .tui-full-calendar-dayname-name.weekViewDayName {
@@ -197,23 +630,37 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }
 
 .tui-full-calendar-time-schedule {
-    white-space: nowrap;
-    line-height: 15px;
+    word-break:break-all;
+    line-height: 1.2;
+}
+
+.tui-full-calendar-time-schedule-title{
+    font-size:14px;
+    font-weight:bold;
 }
 
 .tui-full-calendar-time-schedule .badge {
     vertical-align: top;
 }
 
+.tui-full-calendar-time-schedule-contact{
+    font-size:10px;
+}
+
 button.calendarType {
     border: 0;
+    opacity:0.5;
+    text-align:right;
+    padding:0 0 0 23px;
 }
 
 button.calendarType:active,
 button.calendarType:hover,
 button.calendarType:focus,
 button.calendarType.active {
-    background-color: #b2dfdb !important;
+    opacity:1;
+    background-color:#fff !important;
+    text-decoration:underline;
 }
 
 button.moveDate {
@@ -223,19 +670,10 @@ button.moveDate {
 button.moveDate:focus {
     box-shadow: none;
 }
-
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sat+span {
-    color: #304ffe;
+.flatpickr-months, .flatpickr-days{
+    font-family:'Montserrat', 'Spoqa Han Sans';
 }
-
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday-sun+span,
-.tui-full-calendar-month-more-title-day.tui-full-calendar-holiday+span {
-    color: #ff4040;
-}
-
+/*
 .flatpickr-input {
     background-color: white;
 }
@@ -285,152 +723,16 @@ button.moveDate:focus {
     background-color: #009688;
     border-color: #009688;
 }
-
-
-/* side bar */
-
-#sidebarContainer {
-    max-width: 230px;
-    position: fixed;
-    top: 4.05rem;
-    left: 0;
-    height: calc(100% - 4.05rem);
-    border-right: 15px solid #f8f9fa;
-}
-
-#sidebarContainer ul li {
-    list-style: none;
-}
-
-#lnbManagerList div:first-child {
-    margin-top: .7rem;
-}
-
-#lnbManagerList .lnbManagerItem,
-#lnbManagerList+.lnbManagerItem {
-    line-height: .8rem;
-    margin-left: .25rem;
-}
-
-#lnbManagerList .lnbManagerItem {
-    height: 1.5rem;
-    line-height: 1.5rem;
-}
-
-#lnbManagerList .lnbManagerItem:last-child {
-    margin-bottom: .5rem;
-}
-
-#lnbManagerList .lnbManagerItem label {
-    margin-bottom: 0;
-}
-
-#lnbManagerList .addManagerItem input[type="text"] {
-    padding-left: 0;
-    padding-right: 0;
-    height: 1.4rem;
-}
-
-#lnbManagerList .addManagerItem .addManagerColor {
-    cursor: default;
-}
-
-
-/*#lnbLastMenu{
-    position:absolute;
-    bottom:0;
-    width:100%;
-}*/
-
-#lnbLastMenu a {
-    cursor: default;
-    border-bottom: 0;
-}
-
-#lnbLastMenu a div {
-    cursor: pointer;
-}
-
-.addManagerItem label {
-    width: calc(100% - 35px);
-}
-
-.addManagerItem input[type='text'] {
-    width: calc(100% - 23px);
-    font-size: .8rem;
-    display: inline-block;
-}
-
-.addManagerItem input[type='text']:focus {
-    border-color: #ced4da;
-    box-shadow: none;
-}
-
-.addManagerItem .submitAddManager,
-.addManagerItem .cancelAddManager,
-.infoManagerItem .deleteManager {
-    cursor: pointer;
-}
-
-.tui-full-calendar-weekday-schedule {
-    overflow-y: hidden;
-}
-
-
+*/
 /* creation popup */
-
-#creationPopup {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-
-#creationPopup #tui-full-calendar-popup-arrow {
-    display: none;
-}
-
-.tui-full-calendar-button.tui-full-calendar-popup-close {
-    font-size: 1.2rem;
-    right: 16px;
-}
-
-.tui-full-calendar-popup {
-    font-size: 0.9rem;
-}
 
 #creationPopupAllDay,
 #creationPopupAllDay+label,
 #creationPopupAllDay+label+label {
-    font-size: 0.9rem;
+    font-size: 11px;
 }
 
-#creationPopupAllDay {
-    display: none;
-}
-
-#tui-full-calendar-schedule-start-date,
-#tui-full-calendar-schedule-end-date {
-    max-width: 140px;
-}
-
-.tui-full-calendar-popup .input-group-prepend i {
-    width: 31px;
-    background-color: white;
-    border-radius: 0 !important;
-    border-width: .06rem;
-}
-
-.tui-full-calendar-popup input.form-control {
-    border-radius: 0;
-}
-
-#creationPopup .tui-full-calendar-popup-container {
-    width: 300px;
-    min-width: 300px;
-}
-
-#creationPopup #creationPopupManager+.dropdown-menu,
+#scheduleForm #creationPopupManager+.dropdown-menu,
 #taskForm #taskManager+.dropdown-menu {
     margin-top: 0;
     padding: .25rem 0;
@@ -439,25 +741,20 @@ button.moveDate:focus {
     left: 2.8rem;
 }
 
-#creationPopup .dropdown-menu .dropdown-item {
+#scheduleForm .dropdown-menu .dropdown-item {
     padding-left: 0.5rem;
     font-size: .9rem;
 }
 
 @media (min-width: 576px) {
-    #creationPopup .tui-full-calendar-popup-container {
+    #scheduleForm .tui-full-calendar-popup-container {
         width: 535px;
     }
-    #creationPopup #creationPopupManager+div.dropdown-menu,
+    #scheduleForm #creationPopupManager+div.dropdown-menu,
     #taskForm #taskManager+.dropdown-menu {
         width: calc(100% - 30px);
         left: 1rem;
     }
-}
-
-#creationPopupForm {
-    border-radius: 0;
-    border: 0;
 }
 
 .tui-full-calendar-dash {
@@ -467,45 +764,10 @@ button.moveDate:focus {
     display: inline-flex;
 }
 
-#creationPopupManagerIcon {
-    padding-left: 8px;
-}
-
-#creationPopupStartDateIcon,
-#creationPopupEndDateIcon {
-    line-height: 1.7;
-}
-
-#creationPopupManager {
-    border-bottom: .05rem solid #ced4da;
-}
-
-#creationPopupManager:focus {
-    box-shadow: none;
-}
-
 #creationPopupManager.dropdown-toggle:after {
     position: absolute;
     right: 5%;
-    top: 45%;
-}
-
-.tui-full-calendar-section-allday {
-    line-height: 30px;
-    height: 31px;
-}
-
-.tui-full-calendar-section-allday #creationPopupAllDay+label {
-    width: 15px;
-    margin-bottom: 0;
-}
-
-.tui-full-calendar-section-allday #creationPopupAllDay+label+label {
-    margin-bottom: 0;
-}
-
-.compactLabel {
-    letter-spacing: -1px;
+    top: 60%;
 }
 
 #creationPopup .creationPopupEtcNotice {
@@ -644,15 +906,23 @@ button.moveDate:focus {
 /*alrim modal*/
 
 #alrimNotice {
-    height: 130px;
+    height: 150px;
+}
+
+#alrimModal .subText, #scheduleModal .subText{
+    opacity:0.5;
+    font-size:11px;
+    line-height:1.18;
+    margin-left:10px;
 }
 
 #alrimScreen {
     position: absolute;
     z-index: 1;
     left: 0;
+    top:0;
     width: 100%;
-    height: calc(100% - 55px);
+    height: 100%;
     background-color: white;
     opacity: .6;
     display: none;
@@ -661,52 +931,8 @@ button.moveDate:focus {
 
 /* noShow modal */
 
-.nav-pills a {
-    color: #212121;
-}
-
 #noShowModal {
-    font-size: .9rem;
-}
-
-#noShowModal .modal-content div {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#noShowTabList {
-    height: 37px;
-    overflow: hidden;
-}
-
-#noShowModal .input-group-append i,
-#noShowModal .input-group-append span {
-    border-width: .06rem;
-}
-
-#noShowModal .input-group-prepend i {
-    background-color: white;
-    border-width: .06rem;
-    line-height: 1.4rem;
-}
-
-#noShowModal #noShowSearchContact {
-    border-right: .05rem solid #ced4da;
-}
-
-#noShowModal #noShowSearchSummary {
-    height: 45px;
-    display: none;
-    overflow-y: hidden;
-}
-
-#noShowModal #noShowSearchList.summary {
-    height: 114px;
-}
-
-#noShowModal #noShowSearchList {
-    height: 159px;
-    padding-bottom: .4rem;
+    font-size: 13px;
 }
 
 #noShowModal #noShowScheduleList {
@@ -715,30 +941,10 @@ button.moveDate:focus {
     padding-bottom: .4rem;
 }
 
-@media(min-width:992px) {
-    #noShowModal #noShowSearchSummary {
-        height: 25px;
-        display: none;
-    }
-    #noShowModal #noShowSearchList.summary {
-        height: 134px;
-    }
-}
-
 @media(min-width:576px) {
     #noShowModal #noShowScheduleList {
         height: 171px;
     }
-}
-
-#noShowModal #noShowSearchList .bootstrap-datetimepicker-widget {
-    margin-left: .95rem;
-}
-
-#noShowModal .noShowSearchAdd div:last-child {
-    margin-left: -5px;
-    margin-right: 5px;
-    white-space: nowrap;
 }
 
 #noShowModal .noShowScheduleDate {
@@ -764,16 +970,7 @@ button.moveDate:focus {
 }
 
 #noShowModal #noShowAddBtn,
-#noShowModal #noShowSearchBtn,
-#noShowModal #noShowSearchList .noShowSearchDelete,
-#noShowModal .noShowSearchAddCancel,
-#noShowModal .noShowSearchAddSubmit,
 #noShowScheduleDropdown .noShowScheduleCheck {
-    cursor: pointer;
-}
-
-#noShowScheduleList .badge {
-    vertical-align: text-top;
     cursor: pointer;
 }
 
@@ -807,12 +1004,9 @@ button.moveDate:focus {
 }
 
 .autocomplete-suggestions {
-    border: .05rem solid #bdbdbd;
+    border-radius: 2px;
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
     background-color: white;
-    border-top: 0;
-    -webkit-box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
-    -moz-box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
-    box-shadow: 2px 2px 5px 0px rgba(189, 189, 189, 0.25);
 }
 
 .autocomplete-suggestion {
@@ -820,14 +1014,15 @@ button.moveDate:focus {
     overflow: hidden;
     white-space: nowrap;
     cursor: pointer;
-    padding-left: .5rem;
+    padding: 10px 15px;
+    font-size:13px;
 }
 
 .autocomplete-selected {
-    background-color: #b2dfdb;
+    background-color: rgba(0,0,0,0.07);
 }
 
-#noShowAdd {
+/*#noShowAdd {
     height: 278.8px;
     vertical-align: middle;
 }
@@ -838,30 +1033,30 @@ button.moveDate:focus {
 
 #noShowAdd .input-group {
     height: 65px;
-}
+}*/
 
 #noShowAddContent {
     line-height: 31px;
 }
 
-#noShowAddContent span {
-    margin-right: .5rem;
+#noShowAddContent span, #noShowScheduleContent span {
+    margin-right: 5px;
 }
 
-#noShowAddContent .noShowAddCase {
-    line-height: 1rem;
-    height: 1.5rem;
-    margin-top: .25rem;
+#noShowAddContent .noShowAddCase,#noShowScheduleContent .noShowAddCase {
+    line-height: 1;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid #707070;
+    border-radius: 2px;
+    cursor:pointer;
 }
 
-#noShowAddContent .noShowAddCase.badge-danger:hover {
-    background-color: #dc3545;
-    border-color: #f8f9fa;
+#noShowAddContent .noShowAddCase.bg-primary,#noShowScheduleContent .noShowAddCase.bg-primary,
+#noShowAddContent .noShowAddCase:hover,#noShowScheduleContent .noShowAddCase:hover{
+    background-color: #334150;
+    border-color: #334150;
     color: #fff;
-}
-
-#noShowAddContent .noShowAddCase:focus {
-    box-shadow: none;
 }
 
 #noShowAddContent input {
@@ -884,11 +1079,6 @@ button.moveDate:focus {
     margin-left: .4rem;
     border-radius: 0;
 }
-
-#noShowModal .modal-body {
-    height: 310px;
-}
-
 
 /* notification */
 
@@ -997,12 +1187,7 @@ button.moveDate:focus {
 }
 
 #taskForm #taskManager+.dropdown-menu {
-    margin-top: 0;
-    padding: .25rem 0;
-    border-radius: 0;
-    width: calc(100% - 61px);
-    font-size: .9rem;
-    min-width: 5rem;
+    width:100%;
 }
 
 #taskForm span.tui-full-calendar-content {
@@ -1010,102 +1195,9 @@ button.moveDate:focus {
 }
 
 #taskForm #taskManager+.dropdown-menu .dropdown-item {
-    padding-left: 0.5rem;
-    font-size: .9rem;
+    padding:10px 15px;
+    font-size: 13px;
     cursor: pointer;
-}
-
-@media (min-width: 576px) {
-    #taskForm #taskManager+.dropdown-menu {
-        width: calc(100% - 30px);
-    }
-}
-
-#taskModal .input-group-prepend i {
-    border-width: .06rem;
-    background-color: white;
-}
-
-@media(min-width:576px) {
-    #taskModal #taskStartDatePicker,
-    #taskModal #taskEndDatePicker {
-        width: calc(50% - 13px);
-    }
-}
-
-#taskModal #taskModalButtons {
-    text-align: right;
-}
-
-#taskModal #taskModalSave {
-    margin-left: .5rem;
-}
-
-
-/* footer */
-
-footer {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    position: absolute;
-}
-
-
-/* commons */
-
-.new {
-    font-size: .65rem;
-    padding: 0;
-    color: #dc3545;
-    vertical-align: text-top;
-}
-
-.modal-content {
-    border: 0;
-}
-
-.tooltip .arrow {
-    display: none;
-}
-
-.tooltip-inner {
-    max-width: 300px;
-    white-space: pre-wrap;
-    background-color: #232F34;
-    font-size: .8rem;
-    text-align: left;
-}
-
-*:focus,
-.btn:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.flatpickr-current-month span.cur-month {
-    font-weight: 400;
-}
-
-.flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
-    border-top: 0;
-}
-
-span.flatpickr-apply-btn.flatpickr-am-pm {
-    background-color: #009688;
-    color: white;
-}
-
-span.flatpickr-apply-btn.flatpickr-am-pm:hover,
-span.flatpickr-apply-btn.flatpickr-am-pm:focus {
-    background-color: #00796b;
-}
-
-input[name='name'],
-input[name='title'],
-input[name='contents'],
-input[name='etc'] {
-    ime-mode: active;
 }
 
 .float {
@@ -1126,16 +1218,35 @@ input[name='etc'] {
 .float:focus {
     background-color: #00796b;
 }
+.flatpickr-current-month span.cur-month {
+    font-weight: 400;
+}
+
+.flatpickr-calendar.noCalendar.hasTime .flatpickr-time {
+    border-top: 0;
+}
+
+span.flatpickr-apply-btn.flatpickr-am-pm {
+    background-color: #009688;
+    color: white;
+}
+
+span.flatpickr-apply-btn.flatpickr-am-pm:hover,
+span.flatpickr-apply-btn.flatpickr-am-pm:focus {
+    background-color: #00796b;
+}
 
 .flatpickr-mobile {
     white-space: nowrap;
     text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.customerMenu {
+.switchingMenu{
+    min-height:100%;
+}
+
+.switchingMenu:not(.calendarMenu){
     display: none;
 }
 
@@ -1147,7 +1258,7 @@ textarea.han {
 .dropdown-menu {
     font-size: .9rem;
 }
-
+/*
 input[type="text"]:not(.border):not(:disabled),
 input[type="password"]:not(.border),
 input.flatpickr-mobile,
@@ -1165,23 +1276,14 @@ button.form-control {
     border-left: 0;
     border-bottom: 0;
     border-right-width: .05rem;
-}
+}*/
 
 .form-control.flatpickr-input:disabled,
 .form-control.flatpickr-input[readonly] {
     background-color: #fff;
 }
 
-.ellipsis {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-
-/* tipsModal, announcementModal */
+/* tipsModal, announcementMenu */
 
 #tipsModal .modal-header #tipsTitle, #announcementModal .modal-header #announcementTitle {
     display: initial;
@@ -1211,22 +1313,137 @@ button.form-control {
     opacity: .5;
 }
 
-#announcementModal .modal-body #announcementBody{
-    overflow-y:scroll;
-    max-height:500px;
+#announcementBody{
+    overflow-y:auto;
+    max-height:543px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-#announcementModal .modal-body{
-    padding-top:0;
-    padding-bottom:0;
+#announcementBody .announcement{
+    padding: 25px 30px;
 }
-/* feedbackModal */
 
-#feedbackModal #feedbackBody {
-    height: 100px;
+#announcementBody .announcement:not(:last-child){
+    border-bottom:1px solid rgba(58, 54, 54, 0.35);
+}
+
+#announcementBody .announcement .announcementTitle{
+    font-weight: bold;
+}
+
+#announcementBody .announcement .announcementTime{
+    font-size:12px;
+    opacity:0.5;
+    font-weight:500;
+}
+
+/* alrim modal */
+
+#alrimModal #alrimHistoryList .alrimRow {
+    font-size: 13px;
+    padding:10px 15px;
+    position:relative;
+}
+#alrimModal #alrimHistoryList .alrimRow.show {
+    background-color:#f8f8f8;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+#alrimModal #alrimHistoryList .alrimRow .montserrat{
+    font-size:12px;
+}
+
+#alrimModal #alrimHistoryList .alrimRow:hover {
+    background-color: #f8f8f8;
+}
+
+#alrimModal #alrimHistoryList .row .alrimDetailLink {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
-    font-size: .9rem;
-    border: .05rem solid #ced4da;
+    bottom:0;
+    z-index: 1;
+}
+
+#alrimModal #alrimHistoryList .row .alrimDetailLink ~ div:last-child:after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    content: '\f078';
+    margin: 0 .25rem;
+    display: inline-block;
+    transition: 0.3s all ease;
+}
+
+#alrimModal #alrimHistoryList .row .alrimDetailLink[aria-expanded=true] ~ div:last-child:after {
+    transform: rotate(180deg);
+    filter: none;
+}
+
+#alrimModal #alrimHistoryList {
+    max-height: 740px;
+    display: block;
+}
+
+#alrimModal #alrimHistoryList .row.alrimDetailRow {
+    word-break:break-all;
+    font-size:11px;
+    opacity: 0.7;
+    line-height:1.82;
+    background-color:#f8f8f8;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    text-align:left;
+    padding-bottom:15px;
+}
+
+/* user modal */
+
+#naverBtn, #kakaoBtn{
+    font-size:13px;
+}
+#naverBtn.connected{
+    background-color:#ffeb00;
+    border-color:#ffeb00;
+    cursor:default;
+}
+
+#kakaoBtn.connected{
+    background-color:#1ec800;
+    border-color:#1ec800;
+    cursor:default;
+    color:#fff;
+}
+
+/* tutorial */
+
+.popover.tutorial {
+    max-width: 350px;
+}
+
+.popover.tutorial .clearfix button {
+    margin-left: .5rem;
+}
+
+/* announcement */
+.btn .announcementCount, .announcementCount{
+    vertical-align: super;
+    right:-8px;
+    top:8px;
+    border:2px solid #f1f2f3;
+    border-radius:1em
+}
+
+/* incoCenterMenu */
+
+#feedbackBody {
+    height: 186px;
+    font-size: 14px;
+    border:none;
+    border-radius: 2px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    padding:25px 30px;
 }
 
 #snackbar {
@@ -1246,7 +1463,6 @@ button.form-control {
 
 #snackbar.show {
     visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 4.5s;
     animation: fadein 0.5s, fadeout 0.5s 4.5s;
 }
 
@@ -1259,7 +1475,6 @@ button.form-control {
         min-width: 350px;
     }
     #snackbar.show {
-        -webkit-animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
         animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
     }
 }
@@ -1352,425 +1567,189 @@ button.form-control {
     }
 }
 
+/* faq in infoCenter */
 
-/* customer menu */
-
-#mainCustomerTools {
-    font-size: .9rem;
+#faq{
+    border-top:2px solid #393535;
+    font-size: 14px;
 }
 
-#mainCustomerTools #customerSearchManager {
-    display: none;
-}
-
-#mainCustomerTools #customerSearchType .badge {
-    vertical-align: text-top;
-}
-
-#mainCustomerTools #customerSearchType+.dropdown-menu {
-    font-size: 1rem;
-}
-
-#mainCustomerTools #customerSearchType+.dropdown-menu,
-#mainCustomerTools #customerSort+.dropdown-menu {
-    min-width: 5rem;
-}
-
-#mainCustomerTools .dropdown-item {
-    padding-left: .5rem;
-    padding-right: .5rem;
-}
-
-#mainCustomerTools .dropdown-item {
-    height: 30px;
-    line-height: 20px;
-}
-
-#mainCustomerTools #customerSort:after {
-    display: none;
-}
-
-#mainCustomerTools #customerSearch {
-    width: auto;
-}
-
-button.customerSortType {
-    border: 0;
-    background-color: #fff;
-}
-
-button.customerSortType:active,
-button.customerSortType:hover,
-button.customerSortType:focus,
-button.customerSortType.active {
-    background-color: #b2dfdb !important;
-}
-
-#mainCustomerList {
-    min-height: 800px;
-}
-
-#customerModal #customerHistory .ps__rail-y,
-#customerModal #customerAlrim .ps__rail-y {
-    display: none;
-    z-index: 3;
-}
-
-#customerModal #customerHistory .ps__rail-x,
-#customerModal #customerAlrim .ps__rail-x {
-    display: none;
-}
-
-#customerModal #customerHistory:hover .ps__rail-y,
-#customerModal #customerAlrim:hover .ps__rail-y {
-    display: block;
-}
-
-#mainCustomerList .card:hover {
-    background-color: #b2dfdb;
-    border-color: #b2dfdb;
-}
-
-#mainCustomerList .card,
-#customerModal #customerHistory .card {
-    border-left: 0;
-    margin-bottom: .8rem;
-    border-radius: 0;
-    padding-left: .5rem;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: .9rem;
-    flex-direction: row;
-    -ms-flex-direction: row;
-}
-
-#mainCustomerList .card .cardLeftBorder,
-#customerModal #customerHistory .card .cardLeftBorder {
-    position: absolute;
-    left: 0;
-    top: -1px;
-    height: calc(100% + 2px);
-    width: .5rem;
-}
-
-#mainCustomerList .card .customerSubInfo {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-
-#mainCustomerList .card .card-title {
-    margin-bottom: 0;
-    min-width: 170px;
-    width: calc(100% - 40px);
-}
-
-@media(min-width:576px) {
-    #mainCustomerList .card .card-title:not(.longTitle) {
-        width: calc(100% - 230px);
-    }
-}
-
-#mainCustomerList .card a.customerContactLink {
-    position: relative;
-    z-index: 1;
-}
-
-#mainCustomerList .card .customerModalLink {
-    left: 0;
-    top: 0;
-}
-
-#mainCustomerList .card .deleteCustomerLink {
-    position: relative;
-    z-index: 2;
-}
-
-#mainCustomerLoading {
-    display: none;
-    height: 3rem;
-    line-height: 2.5rem;
-    text-align: center;
-    width: 100%;
-}
-
-@media(min-width:576px) {
-    #customerAddForm label[for="customerAddEtc"]+div {
-        width: calc(81.333333% - 44.32px);
-    }
-}
-
-#customerAddForm label[for="customerAddContact"],
-#customerAddForm label[for="customerAddManager"] {
-    overflow: hidden;
-    white-space: nowrap;
-    letter-spacing: -2px;
-}
-
-#customerAddForm label[for="customerAddManager"] {
-    line-height: 1.5rem;
-}
-
-#customerAddForm .input-group-text,
-#customerAddForm input {
-    border-radius: 0;
-}
-
-#customerAddForm .input-group-text {
-    width: calc(2rem - 2px);
-    background-color: #fff;
-}
-
-#customerAddForm #customerAddManager,
-#customerModal #customerManager {
-    overflow: hidden;
-    border-bottom: .05rem solid #ced4da;
-}
-
-#customerAddForm #customerAddManager:after,
-#customerModal #customerManager:after {
-    position: absolute;
-    top: 50%;
-    right: 0;
-}
-
-.blink {
-    background-color: #b2dfdb !important;
-}
-
-
-/* customer modal */
-
-#customerModal .modal-dialog {
-    height: auto;
-}
-
-#customerModal #customerName {
-    font-size: 2rem;
-    font-family: Montserrat, 'Nanum Gothic';
-    font-weight: bold;
-    height: 3rem;
-}
-
-#customerModal #customerContact {
-    font-size: 1.5rem;
-    font-family: Montserrat, 'Nanum Gothic';
-}
-
-#customerModal #customerEtc {
-    font-size: .9rem;
-}
-
-#customerModal #customerNoShow {
-    overflow: hidden;
-    top: 50%;
-    position: absolute;
-    transform: translateY(-50%);
-    font-size: .9rem;
-}
-
-@media(min-width:992px) {
-    #customerModal label[for="customerNoShow"] {
-        line-height: 2.3rem;
-    }
-    #customerModal label[for="customerEtc"]+div,
-    #customerModal #customerEtc {
-        height: calc(100% - 31px);
-    }
-}
-
-#customerModal #customerHistory,
-#customerModal #customerAlrim {
-    height: 300px;
-}
-
-#customerModal #customerHistory .card {
-    margin-bottom: .6rem;
-}
-
-#customerModal #customerHistory .card .tui-full-calendar-calendar-dot {
-    vertical-align: sub;
-    margin-left: .25rem;
-}
-
-@media(min-width:992px) {
-    #customerModal #customerHistory .card .tui-full-calendar-calendar-dot {
-        margin-left: 1px;
-    }
-}
-
-#customerModal #customerTabs {
-    border-bottom: 0;
-}
-
-#customerModal #customerTabs li a {
-    border-radius: 0;
-    border: .05rem solid #ced4da;
-    color: #212121;
-}
-
-#customerModal #customerTabs li a:hover {
-    background-color: #b2dfdb;
-}
-
-#customerModal #customerTabs li:last-child a {
-    border-left: 0;
-}
-
-#customerModal #customerTabs li a.active {
-    background-color: #009688;
-    color: #fff;
-}
-
-#customerModal label[for="customerManager"] {
-    line-height: 2;
-}
-
-#customerModal #customerAlrim .card {
-    border-radius: 0;
-}
-
-#customerModal #customerAlrim .card .card-header {
-    border: 0;
-}
-
-#customerModal #customerAlrim .card .card-body {
-    font-size: .8rem;
-}
-
-#customerModal #customerAlrim .card button.card-header:before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: '\f054';
-    margin: 0 .25rem;
-    display: inline-block;
-    transition: 0.3s all ease;
-    -webkit-transition: 0.3s all ease;
-    -moz-transition: 0.3s all ease;
-    -ms-transition: 0.3s all ease;
-    -o-transition: 0.3s all ease;
-}
-
-#customerModal #customerAlrim .card button.card-header[aria-expanded=true]:before {
-    -ms-transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
-    transform: rotate(90deg);
-    filter: none;
-    -webkit-filter: none;
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
-}
-
-
-/* alrim modal */
-
-#alrimModal #alrimSwitchBtn {
-    line-height: 1rem;
-    margin-left: 1rem;
-}
-
-#alrimModal .alrimHistory {
-    display: none;
-}
-
-#alrimModal .alrimHistoryDate {
-    width: calc(50% - 16px);
-}
-
-#alrimModal #alrimHistoryName {
-    width: calc(50% - 37px);
-}
-
-@media(min-width:576px) {
-    #alrimModal #alrimHistoryName {
-        width: calc(50% - 51px);
-    }
-}
-
-#alrimModal #alrimHistoryContact {
-    width: calc(50% - 27px);
-}
-
-#alrimModal #alrimHistoryList .alrimRow {
-    margin-left: auto !important;
-    margin-right: auto !important;
+#faq .faqRow {
     width: 100%;
     cursor: pointer;
-    padding: .125rem 0;
-    font-size: .9rem;
+    padding: 17.5px 20px;
+    position:relative;
 }
 
-#alrimModal #alrimHistoryList .alrimRow:hover {
-    background-color: #b2dfdb;
+#faq .faqRow .ellipsis{
+    width:100%;
+    display:flex;
 }
 
-#alrimModal #alrimHistoryList .alrimRow .col-4 {
-    display: inline-flex;
-    font-size: .9rem;
-}
-
-#alrimModal #alrimHistoryList .row .alrimDetailLink {
+#faq .row .faqDetailLink {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    height: 1.5rem;
+    bottom:0;
     z-index: 1;
+    border-bottom: none;
 }
 
-#alrimModal #alrimHistoryList .row .alrimDetailLink+div:before {
+#faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
+    border-bottom: 1px solid rgba(58, 54, 54, 0.35);
+}
+
+#faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{
+    font-weight:bold;
+}
+
+#faq .row .faqDetailLink+div:after {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    content: '\f054';
-    margin: 0 .25rem;
+    content: '\f078';
+    margin-left:auto;
     display: inline-block;
     transition: 0.3s all ease;
-    -webkit-transition: 0.3s all ease;
-    -moz-transition: 0.3s all ease;
-    -ms-transition: 0.3s all ease;
-    -o-transition: 0.3s all ease;
 }
 
-#alrimModal #alrimHistoryList .row .alrimDetailLink[aria-expanded=true]+div:before {
-    -ms-transform: rotate(90deg);
-    -webkit-transform: rotate(90deg);
-    transform: rotate(90deg);
+#faq .row .faqDetailLink[aria-expanded=true]+div:after {
+    transform: rotate(180deg);
     filter: none;
-    -webkit-filter: none;
-    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
 }
 
-#alrimModal #alrimHistoryList {
-    height: 309px;
-    display: block;
-}
-
-#alrimModal #alrimHistoryList .row.alrimDetailRow {
-    color: #6c757d;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: .75rem;
-    padding-right: .75rem;
+#faq .faqDetailRow {
+    padding: 0 20px;
     flex: 0 0 100%;
-    -ms-flex: 0 0 100%;
     max-width: 100%;
+    word-break: break-all;
+    opacity:0.7;
 }
 
-#alrimModal .input-group-text {
-    background-color: #fff;
+/* mainMenu */
+
+.mainMenuRow{
+    display:flex;
+    padding:13px 0;
+}
+.mainMenuRow:hover{
+    font-weight:bold;
+}
+.mainMenuRow:first-child{
+    padding-top:0;
+}
+.mainMenuRow:last-child{
+    padding-bottom:0;
+}
+.mainMenuRow a:hover{
+    text-decoration: none;
 }
 
+/* noShow search menu */
 
-/* tutorial */
-
-.popover.tutorial {
-    max-width: 350px;
+#noShowSearchList .row{
+    padding:16px 25px;
 }
 
-.popover.tutorial .clearfix button {
-    margin-left: .5rem;
+#noShowSearchList .noShowRow{
+    margin: 5px 0;
+    border-radius: 2px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    font-size:12px;
+    font-family: 'Montserrat';
 }
 
-/* announcement */
-.announcementCount{
-    vertical-align: super;
+#noShowSearchList .noShowSearchDelete{
+    cursor:pointer;
 }
+
+/* commons on switching menu */
+.switchingMenu .container{
+    justify-content: center;
+}
+
+#noShowModal .modal-content{
+    max-width: 624px;
+    width:100%;
+    border-radius: 5px;
+    box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.07);
+}
+
+/* noShow menu */
+
+.nav-pills .nav-link{
+    font-size:18px;
+    opacity:0.35;
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: inherit;
+    background-color: inherit;
+    font-weight: bold;
+    border-bottom: 3px solid #393535;
+    opacity:1;
+}
+
+#scheduleModal #scheduleTabContents input:not(:last-child){
+    margin-bottom:10px;
+}
+
+/* schedule modal */
+#scheduleEtcNotice{
+    max-width:calc(100% - 70px);
+}
+
+#scheduleManagerList{
+    right:0;
+}
+
+#scheduleTabContents{
+  max-height:200px;
+  overflow-y:auto;
+}
+
+#scheduleModal .updateScheduleElement{
+  display:none;
+}
+
+#scheduleModal.update .updateScheduleElement{
+  display:inline-flex;
+}
+#scheduleModal.update button.updateScheduleElement{
+  display:inline-block;
+}
+
+#scheduleModal.update .createScheduleElement{
+  display:none;
+}
+
+#salesLoading{
+  text-align:center;
+}
+
+/* bouncing loader */
+@keyframes bouncing-loader {
+    to {
+        opacity: 0.1;
+        transform: translate3d(0, -16px, 0);
+    }
+}
+.bouncingLoader {
+    display: flex;
+    justify-content: center;
+}
+.bouncingLoader > div {
+    width: 12px;
+    height: 12px;
+    margin: 32px 3px;
+    background: #334150;
+    border-radius: 50%;
+    animation: bouncing-loader 0.6s infinite alternate;
+}
+.bouncingLoader > div:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.bouncingLoader > div:nth-child(3) {
+    animation-delay: 0.4s;
+}
+

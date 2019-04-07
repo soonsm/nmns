@@ -146,12 +146,12 @@
         var pattern = '(' + utils.escapeRegExChars(currentValue) + ')';
 
         return suggestion.value
-            .replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>')
+            //.replace(new RegExp(pattern, 'gi'), '<strong>$1<\/strong>')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
-            .replace(/&lt;(\/?strong)&gt;/g, '<$1>');
+            //.replace(/&lt;(\/?strong)&gt;/g, '<$1>');
     };
 
     function _formatGroup(suggestion, category) {

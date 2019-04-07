@@ -1,4 +1,4 @@
-/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getColorFromBackgroundColor, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification */
+/*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification, getBackgroundColor */
 (function($) {
     if ( /*@cc_on!@*/ false || !!document.documentMode) {
         var word;
@@ -14,24 +14,19 @@
         var reg = new RegExp(word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})");
 
         if (reg.exec(agent) !== null && parseFloat(RegExp.$1 + RegExp.$2) < 10) {
-            if (!confirm("오래된 IE" + parseFloat(RegExp.$1 + RegExp.$2) + " 브라우저를 사용하고 계십니다.\n 계속하시면 페이지가 정확히 표시되지 않을 수 있습니다. 그래도 계속하시겠습니까?\n *No More No Show는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")) {
+            if (!confirm("오래된 IE" + parseFloat(RegExp.$1 + RegExp.$2) + " 브라우저를 사용하고 계십니다.\n 계속하시면 페이지가 정확히 표시되지 않을 수 있습니다. 그래도 계속하시겠습니까?\n *WA:SHOW는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")) {
                 location.href = '/signout';
                 return;
             }
         }
     }
 
-    // Closes responsive menu when a scroll trigger link is clicked
-    $('.js-scroll-trigger').click(function() {
-        $('.navbar-collapse').collapse('hide');
-    });
-
     //calendars init
     NMNS.calendar = new tui.Calendar("#mainCalendar", {
-        taskView: ["task"],
+        taskView: [],
         defaultView: $(window).width() > 550 ? "week" : "day",
-        scheduleView: true,
-        useCreationPopup: true,
+        scheduleView: ['time'],
+        useCreationPopup: false,
         useDetailPopup: true,
         disableDblClick: true,
         template: {
@@ -95,18 +90,17 @@
                 var date = parseInt(model.date.split('-')[2], 10);
                 var classNames = ["tui-full-calendar-weekday-grid-date"];
 
-                if (model.isToday) {
-                    classNames.push('tui-full-calendar-weekday-grid-date-decorator');
-                }
-
                 var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.date }) : undefined;
                 if (holiday) {
                     classNames.push("tui-full-calendar-holiday");
                 }
                 return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
             },
-            monthGridHeaderExceed: function(hiddenSchedules) {
-                return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="숨겨진 항목 더보기">+' + hiddenSchedules + '</span>';
+            monthGridHeaderExceed: function(){
+              return ''
+            },
+            monthGridFooterExceed: function(hiddenSchedules) {
+                return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <i class="fa fa-chevron-right"></i></span>';
             },
             monthMoreTitleDate: function(date, dayname) {
                 var dateFormat = date.split(".").join("-");
@@ -114,6 +108,36 @@
                 var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일" ? " tui-full-calendar-holiday-sun" : "") + (holiday ? " tui-full-calendar-holiday" : "") + (dayname === "토" ? " tui-full-calendar-holiday-sat" : "");
 
                 return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
+            },
+            monthlyDetailPopup: function(schedules, date){
+              var html = "<div class='d-flex flex-column position-relative'><button type='button' class='tui-full-calendar-popup-close close p-0 ml-auto my-0 mr-0 position-absolute' aria-label='닫기' style='right:0'><span aria-hidden='true' style='vertical-align:top;font-size:12px'>&times;</span></button>", contents;
+              var basis = moment(date);
+              schedules.forEach(function(schedule, index){
+                if(index === 0){
+                  html += "<div class='d-flex'>";
+                }
+                html += "<div class='monthlyDetailPopupTime montserrat col px-0'>"+(moment(schedule.start.toDate()).isSame(basis, 'days')?moment(schedule.start.toDate()).format('HH:mm'):moment(schedule.start.toDate()).format('MM. DD HH:mm')) +
+                        (schedule.end?(moment(schedule.end.toDate()).isSame(basis, 'days')?moment(schedule.end.toDate()).format(' - HH:mm'):moment(schedule.end.toDate()).format(' - MM. DD HH:mm')):"") +"</div>";
+                if(index === 0){
+                  html += "<div class='d-inline-block' style='width:25px'></div></div>";
+                }
+                if(schedule.title && schedule.title !== ''){
+                  contents = schedule.title;
+                }else if(schedule.raw.contents && schedule.raw.contents !== ''){
+                  try{
+                    contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
+                  }catch(error){
+                    contents = schedule.raw.contents;
+                  }
+                }else if(schedule.raw.contact && schedule.raw.contact !== ''){
+                  contents = schedule.raw.contact;
+                }else{
+                  contents = '';
+                }
+                html += "<div class='monthlyDetailPopupTitle col-12 px-0'>"+contents+"</div>";
+              });
+              html += '</div>';
+              return html;
             }
         },
         month: {
@@ -123,88 +147,109 @@
         },
         week: {
             daynames: ["일", "월", "화", "수", "목", "금", "토"],
-            hourStart: NMNS.info ? parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10) : 9,
-            hourEnd: NMNS.info ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
+            hourStart: NMNS.info.bizBeginTime ? parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10) : 9,
+            hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            'week.currentTime.color': '#009688',
-            'week.currentTimeLinePast.border': '1px dashed #009688',
-            'week.currentTimeLineBullet.backgroundColor': '#009688',
-            'week.currentTimeLineToday.border': '1px solid #009688',
-            "common.border": ".07rem solid #e5e5e5",
-            "common.saturday.color": "#304ffe",
-            'common.dayname.color': '#212121',
+            "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
+            "common.saturday.color": "#1736ff",
+            'common.dayname.color': '#393535',
+            'common.holiday.color':'#fd5b77',
+            'common.creationGuide.backgroundColor': '#ffdbdb',
+            'common.creationGuide.border': '1px solid #ffdbdb',
+            'month.schedule.marginLeft': '0px',
+            'month.schedule.marginRight': '1px',
+            'month.schedule.marginTop':'5px',
+            'month.schedule.height': '12px',
+            'month.dayname.height':'52px',
+            'month.dayname.borderLeft':'none',
+            'month.dayname.borderTop':'none',
+            'month.dayname.textAlign':'center',
+            'month.dayname.fontWeight': 'normal',
+            'month.holidayExceptThisMonth.color': 'rgba(253, 91, 119, 0.35)',
+            'month.saturdayExceptThisMonth.color': 'rgba(23, 54, 255, 0.35)',
+            'month.dayExceptThisMonth.color': 'rgba(57, 53, 53, 0.35)',
+            'month.day.fontSize': '13px',
+            'week.currentTime.color': '#fd5b77',
+            'week.currentTimeLinePast.border': '1px solid #fd5b77',
+            'week.currentTimeLineBullet.backgroundColor': 'transparent',
+            'week.currentTimeLineToday.border': '1px solid #fd5b77',
+            'week.currentTimeLineFuture.border': '1px solid #fd5b77',
             "week.timegridOneHour.height": "68px",
             "week.timegridHalfHour.height": "34px",
             "week.vpanelSplitter.height": "5px",
-            "week.pastDay.color": "#212121",
-            "week.futureDay.color": "#212121",
-            "week.pastTime.color": "#212121",
-            "week.futureTime.color": "#212121",
-            'month.schedule.marginLeft': '0px',
-            'month.schedule.marginRight': '1px',
-            'month.schedule.height': '20px',
-            'common.creationGuide.backgroundColor': 'rgba(68, 138, 255, 0.05)',
-            'common.creationGuide.border': '1px solid #448aff',
-            'week.creationGuide.color': '#448aff',
+            "week.pastDay.color": "#393535",
+            "week.futureDay.color": "#393535",
+            "week.pastTime.color": "#393535",
+            "week.futureTime.color": "#393535",
+            'week.creationGuide.color': '#fd5b77',
             'week.timegrid.paddingRight': '1px',
-            'week.dayGridSchedule.marginRight': '1px'
+            'week.dayGridSchedule.marginRight': '1px',
+            'week.dayname.borderTop':'none',
+            'week.dayname.borderBottom':'none',
+            'week.dayname.borderLeft':'none',
+            'week.dayname.textAlign': 'center',
+            'week.dayname.height': '51px',
+            'week.dayGridSchedule.borderLeft': '2px solid',
+            'week.daygridLeft.width': '54px',
+            'week.timegridLeft.borderRight': 'none',
+            'week.timegridLeft.width': '54px'
         }
     });
 
     NMNS.calendar.on({
-        beforeCreateSchedule: function(e) {
-            saveNewSchedule(e);
-        },
-        beforeUpdateSchedule: function(e) {
-            var history = e.history || $.extend(true, {}, e.schedule);
-            NMNS.history.push(history);
-            e.schedule.start = e.start || e.schedule.start;
-            e.schedule.end = e.end || e.schedule.end;
-            e.schedule.raw.status = e.schedule.status || e.schedule.raw.status;
+      clickSchedule: function(e){
+        NMNS.scheduleTarget = e;
+        initScheduleTab(e);
+        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
+        $("#scheduleBtn").text('저장');
+        $("#scheduleModal").addClass('update').modal('show');
+      },
+      beforeCreateSchedule: function(e) {
+        NMNS.scheduleTarget = e;
+        initScheduleTab(e);
+        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').tab('show');
+        $("#scheduleBtn").text('예약 추가 완료');
+        $("#scheduleModal").removeClass('update').modal('show');
+      },
+      beforeUpdateSchedule: function(e) {
+        if(e.schedule && e.start && e.end){// move or resize schedule
+          var history = e.schedule || $.extend(true, {}, e.schedule);
+          NMNS.history.push(history);
+          e.schedule.start = e.start || e.schedule.start;
+          e.schedule.end = e.end || e.schedule.end;
 
-            if (e.history && e.history.selectedCal.id !== e.schedule.calendarId) { //manager changed
-                NMNS.calendar.deleteSchedule(e.schedule.id, e.history.selectedCal.id, true);
-                e.schedule.category = e.schedule.isAllDay ? 'allday' : 'time';
-                e.schedule.dueDateClass = '';
-                NMNS.calendar.createSchedules([e.schedule]);
-                e.history.newCalendarId = e.schedule.calendarId;
-            } else {
-                NMNS.calendar.updateSchedule(e.schedule.id, e.history ? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
-            }
+          NMNS.calendar.updateSchedule(e.schedule.id, e.history ? e.history.selectedCal.id : e.schedule.calendarId, e.schedule);
 
-            NMNS.socket.emit("update reserv", {
-                id: e.schedule.id,
-                start: moment(e.schedule.start.toDate ? e.schedule.start.toDate() : e.schedule.start).format("YYYYMMDDHHmm"),
-                end: moment(e.schedule.end.toDate ? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
-                manager: e.schedule.calendarId,
-                name: e.schedule.title,
-                contact: e.schedule.contact || e.schedule.raw.contact,
-                contents: e.schedule.contents || e.schedule.raw.contents,
-                etc: e.schedule.etc || e.schedule.raw.etc,
-                status: e.schedule.status || e.schedule.raw.status,
-                isAllDay: e.schedule.isAllDay
-            });
-        },
-        beforeDeleteSchedule: function(e) {
-            NMNS.history.push(e.schedule);
-            NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
-            NMNS.socket.emit("update reserv", { id: e.schedule.id, status: "DELETED" });
-        },
-        afterRenderSchedule: function(e) {
-            if (NMNS.calendar.getViewName() !== "month") {
-                //$("#mainCalendar").height(($(".tui-full-calendar-layout").height())+ "px");
-            }
+          NMNS.socket.emit("update reserv", {
+              id: e.schedule.id,
+              start: moment(e.schedule.start.toDate ? e.schedule.start.toDate() : e.schedule.start).format("YYYYMMDDHHmm"),
+              end: moment(e.schedule.end.toDate ? e.schedule.end.toDate() : e.schedule.end).format("YYYYMMDDHHmm"),
+          });
         }
+      },
+      beforeDeleteSchedule: function(e) {
+          NMNS.history.push(e.schedule);
+          NMNS.calendar.deleteSchedule(e.schedule.id, e.schedule.calendarId);
+          NMNS.socket.emit("update reserv", { id: e.schedule.id, status: "DELETED" });
+      },
+      beforeChangeView: function(e){
+        NMNS.calendar.changeView(e.viewName);
+        NMNS.calendar.setDate(e.date);
+        setDropdownCalendarType();
+        setRenderRangeText();
+        setSchedules();
+      }
     });
 
     NMNS.socket = io();
     NMNS.socket.emit("get info");
     NMNS.socket.emit("get manager");
+    NMNS.socket.emit("get task", {start:moment().format('YYYYMMDD'), end:moment().add(7, 'days').format('YYYYMMDD')})
 
     NMNS.socket.on("get reserv", socketResponse("예약 정보 받아오기", function(e) {
         drawSchedule(e.data);
-        NMNS.holiday = e.holiday;
+        NMNS.holiday = NMNS.holiday.concat(e.holiday.filter(function(day){return !NMNS.holiday.some(function(holiday){return holiday.date === day.date})}));
         refreshScheduleVisibility();
     }));
 
@@ -216,7 +261,7 @@
         NMNS.email = e.data.email || NMNS.email;
         NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
         $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-        if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {
+        if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {// TODO : 알림 처리
             showNotification({
                 title: "이메일을 인증해주세요!",
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
@@ -240,60 +285,97 @@
         //tutorial & tip end
         //announcement start
         if(NMNS.info.newAnnouncement){
-            $('.announcementCount').html(NMNS.info.newAnnouncement)
+            $('.announcementCount').html(NMNS.info.newAnnouncement > 99? '99+' : NMNS.info.newAnnouncement)
         }
         //announcement end
     }));
 
-    NMNS.socket.on("get manager", socketResponse("매니저 정보 받아오기", function(e) {
+    NMNS.socket.on("get manager", socketResponse("담당자 정보 받아오기", function(e) {
         e.data.forEach(function(item) {
             item.checked = true;
-            item.bgColor = item.color;
+            item.bgColor = getBackgroundColor(item.color);
             item.borderColor = item.color;
-            item.color = getColorFromBackgroundColor(item.bgColor);
+            item.color = item.color;
         });
 
-        $("#lnbManagerList").html(generateLnbManagerList(e.data));
+        $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
         NMNS.calendar.setCalendars(e.data);
         if (NMNS.needInit) {
             delete NMNS.needInit;
             setSchedules();
         }
+        $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
+        $("#mainTaskContents input").on('change', function(e){
+          e.stopPropagation();
+          var data = $(this).parent();
+          NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
+          NMNS.socket.emit('update reserv', {id:data.data('id'), type: 'T', isDone:$(this).prop('checked')});
+        })
+        $("#mainTaskContents .task").on('touch click', function(e){
+          e.stopPropagation();
+          var data = $(this).parent();
+          initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
+          $("#scheduleTabList a[data-target='#taskTab']").tab('show');
+          $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가');
+          $("#scheduleBtn").text('예약 추가 완료');
+          $("#scheduleModal").removeClass('update').modal('show')
+        });
+        refreshScheduleVisibility();
     }));
 
     //business specific functions about calendar start
-    function getTimeSchedule(schedule, isAllDay) {
+    function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
-        var html = "<div class='tui-full-calendar-schedule-cover'>";
-        if (schedule.title) {
-            html += "<span title='" + type + "이름:" + schedule.title + "'>";
-            if (schedule.category === 'task') {
-                html += "<span title='일정이름:" + schedule.title + "'><span class='calendar-font-icon'># </span>";
-            } else if (!isAllDay) {
-                html += "<strong class='calendar-font-icon'>" + moment(schedule.start.toDate()).format("HH:mm") + "</strong> ";
-            } else {
-                html += "<span class='calendar-font-icon far fa-clock'></span> ";
+        var html = "";
+        if(NMNS.calendar.getViewName() === 'week'){
+          html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center text-center'><div class='col-11 px-0'>"
+          if(!isAllDay){
+              html += "<div class='row mx-0'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
+          }
+          if (schedule.title) {
+              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>";
+              if (schedule.category === 'task') {
+                  html += "<span>#</span>";
+              } else if (isAllDay) {
+                  html += "<span class='far fa-clock'></span> ";
+              }
+              html += (schedule.title + "</div></div>");
+          }
+          html += "</div></div>"
+        }else if(NMNS.calendar.getViewName() === 'day'){
+          var contents = null;
+          if(schedule.raw.contents){
+            try{
+              contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
+            }catch(error){
+              contents = schedule.raw.contents;
             }
-
-            html += schedule.title + "</span><br/>";
+          }
+          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
+          if(contents){
+            html += ("<div title='"+type+"내용:"+contents+" class='tui-full-calendar-time-schedule-title'>" + contents+"</div>");
+          }
+          switch (schedule.raw.status) {
+              case "CANCELED":
+                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
+                  break;
+              case "NOSHOW":
+                  html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
+                  break;
+              case "CUSTOMERCANCELED":
+                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
+                  break;
+          }
+          html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
+          
+        }else{
+          html += "예약 " + schedule.count + "건</div>"
         }
-        switch (schedule.raw.status) {
-            case "CANCELED":
-                html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
-                break;
-            case "NOSHOW":
-                html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
-                break;
-            case "CUSTOMERCANCELED":
-                html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
-                break;
-        }
 
-        html += (schedule.raw.contents ? ((schedule.raw.status === "RESERVED" ? "<span title='" + type + "내용:" + schedule.raw.contents + "'><i class='fas fa-tasks calendar-font-icon'></i> " : " ") + schedule.raw.contents + "</span><br/>") : "") + (schedule.raw.contact ? "<span title='연락처:" + schedule.raw.contact + "'><i class='fas fa-phone fa-rotate-90 calendar-font-icon'></i> " + schedule.raw.contact + "</span>" : "") + "</div>";
         return html;
     }
 
-    function onClickMenu(e) {
+    function onClickMenu(e) { // changer calendar view
         var action = e.target.getAttribute('data-action');
         if (!action) {
             action = e.target.parentElement.getAttribute('data-action');
@@ -311,7 +393,7 @@
                 break;
             case 'toggle-monthly':
                 viewName = 'month';
-                $("#mainCalendar").css("height", "62rem");
+                $("#mainCalendar").css("height", "598px");
                 break;
             default:
                 break;
@@ -323,7 +405,24 @@
         setSchedules();
     }
 
-    function onClickNavi(e) {
+    function setDropdownCalendarType() {// change calendar view on small device
+        $(".calendarType").removeClass("active");
+
+        switch (NMNS.calendar.getViewName()) {
+            case "day":
+                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
+                break;
+            case "week":
+                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
+                break;
+            default:
+                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
+                break;
+        }
+
+    }
+
+    function onClickNavi(e) { // prev, next button event on calendar
         var action = e.target.getAttribute('data-action');
         if (!action) {
             action = e.target.parentElement.getAttribute('data-action');
@@ -343,7 +442,26 @@
         setSchedules();
     }
 
-    function onChangeNewScheduleCalendar(e) {
+    function onClickTask(e){ // handle event when click today's task text
+      if($(window).width() < 1600){
+        if($("#mainTask").hasClass("show")){// about to hide task
+          $("#mainCalendarArea").css('minWidth', '');
+          $("#mainContents").css("minWidth", '100%');
+          $("#mainAside").css('minWidth', 'unset');
+        }else{// about to show task
+          $("#mainCalendarArea").css('minWidth', $("#mainCalendarArea").width());
+          $("#mainContents").css("minWidth", '');
+          if($("#mainAside").hasClass("sidebar-toggled")){//hided
+            $("#mainAside").css('minWidth', 'unset');
+          }else{
+            $("#mainAside").css('minWidth', '270px');
+          }
+        }
+      }
+      $("#mainTask").toggleClass('show');
+    }
+    
+    /*function onChangeNewScheduleCalendar(e) {
         e.preventDefault();
         var target = $(e.target).closest('a[role="menuitem"]')[0];
         var calendarId = target.getAttribute('data-action');
@@ -360,9 +478,9 @@
 
         calendarNameElement.innerHTML = html.join('');
 
-    }
+    }*/
 
-    function createNewSchedule(e) {
+    /*function createNewSchedule(e) {
         e.preventDefault();
         var now = moment(new Date());
         if (now.hour() >= Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() + 1 == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
@@ -376,10 +494,9 @@
             start: now.toDate(),
             end: now.add(30, "m").toDate()
         });
-        $("#creationPopupName").focus();
-    }
+    }*/
 
-    function saveNewSchedule(scheduleData) {
+    /*function saveNewSchedule(scheduleData) {
         scheduleData.id = NMNS.email + generateRandom();
         NMNS.calendar.createSchedules([scheduleData]);
 
@@ -388,7 +505,7 @@
         serverSchedule.start = moment(serverSchedule.start.toDate()).format("YYYYMMDDHHmm");
         serverSchedule.end = moment(serverSchedule.end.toDate()).format("YYYYMMDDHHmm");
         NMNS.socket.emit("add reserv", serverSchedule);
-    }
+    }*/
 
     function findManager(managerId) {
         return NMNS.calendar.getCalendars().find(function(manager) {
@@ -397,44 +514,11 @@
     }
 
     function onChangeManagers(e) {
-        var checked = e.target.checked;
-        var viewAll = document.querySelector('.lnbManagerItem input');
-        var managerElements = Array.prototype.slice.call(document.querySelectorAll('#lnbManagerList input'));
-        var allCheckedCalendars = true;
-
-        if ($(e.target).is("#managerCheckAll")) {
-            allCheckedCalendars = checked;
-
-            managerElements.forEach(function(input) {
-                var span = input.parentNode;
-                input.checked = checked;
-                span.style.backgroundColor = checked ? span.style.borderColor : 'transparent';
-            });
-
-            NMNS.calendar.getCalendars().forEach(function(manager) {
-                manager.checked = checked;
-            });
-        } else {
-            var manager = $(e.target).parents(".lnbManagerItem");
-            if (manager.is(".addManagerItem")) {
-                return;
-            }
-            var managerId = manager.data("value");
-            if (managerId) {
-                findManager(managerId).checked = checked;
-                allCheckedCalendars = managerElements.every(function(input) {
-                    return input.checked;
-                });
-
-                if (allCheckedCalendars) {
-                    viewAll.checked = true;
-                } else {
-                    viewAll.checked = false;
-                }
-            }
-        }
-
+      var manager = findManager($(e.target).parents(".lnbManagerItem").data("value"))
+      if (manager && manager.checked !== e.target.checked) {
+        manager.checked = e.target.checked;
         refreshScheduleVisibility();
+      }
     }
 
     function refreshScheduleVisibility() {
@@ -448,42 +532,30 @@
 
         managerElements.forEach(function(input) {
             var span = input.nextElementSibling;
-            span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
+            span.style.backgroundColor = input.checked ? span.getAttribute('data-color') : 'transparent';
+            span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
-    }
-
-    function setDropdownCalendarType() {
-        $(".calendarType").removeClass("active");
-
-        switch (NMNS.calendar.getViewName()) {
-            case "day":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
-                break;
-            case "week":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
-                break;
-            default:
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
-                break;
-        }
-
+        
     }
 
     function setRenderRangeText() {
         var renderRange = document.getElementById('renderRange');
         var options = NMNS.calendar.getOptions();
         var viewName = NMNS.calendar.getViewName();
-        var html = [];
+        var html = "";
         if (viewName === 'day') {
-            html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM.DD'));
+            var today = moment(NMNS.calendar.getDate().getTime());
+            html += today.format('YYYY. MM. DD');
+            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
+            html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
-            html.push(moment(NMNS.calendar.getDate().getTime()).format('YYYY.MM'));
+            html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
         } else {
-            html.push(moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY.MM.DD'));
-            html.push(' – ');
-            html.push(moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM.DD'));
+            html += moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY. MM. DD');
+            html += ' - ';
+            html += moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM. DD');
         }
-        renderRange.innerHTML = html.join('');
+        renderRange.innerHTML = html;
     }
 
     function setSchedules() {
@@ -497,9 +569,8 @@
             case "BEFORE_EMAIL_VERIFICATION":
                 return "<span class='badge badge-danger' title='인증메일 보내기' style='cursor:pointer;'>이메일 미인증</span><span class='btn btn-sm btn-flat btn-secondary ml-2'>인증메일 보내기</span>";
             case "EMAIL_VERIFICATED":
-                return "<span class='badge badge-success'>인증</span>";
+                return "<span class='badge badge-primary badge-pill'><span class='fa fa-check mr-1'></span>인증완료</span>";
         }
-        $("#infoAccountStatus").removeClass("pl-2"); //no auth status badge
         return "";
     }
 
@@ -516,34 +587,68 @@
         return "";
     }
 
-    function generateManagerList(managerList) {
-        var html = "";
-        managerList.forEach(function(item) {
-            html += "<div class='infoManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' readonly='readonly' type='checkbox'/><span class='infoManagerColor' style='background-color:" + item.bgColor + "; border-color:" + item.bgColor + ";'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-id='" + item.id + "' data-color='" + item.bgColor + "' placeholder='담당자 이름' value='" + item.name + "' data-name='" + item.name + "'/></label><i class='fas fa-trash deleteManager pl-2' title='삭제'></i></div>";
-        });
-        return html;
-    }
-
     function generateLnbManagerList(managerList) {
         var html = "";
         managerList.forEach(function(item) {
-            html += "<div class='lnbManagerItem' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
-            html += "<span style='background-color:" + item.bgColor + "; border-color:" + item.borderColor + "' title='이 담당자의 예약 가리기/보이기'></span><small>" + item.name + "</small></label></div>";
+            html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
+            html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'"+ (item.checked?" style='background-color:"+item.color+";border-color:"+item.color+"'":"")+"></span><span class='menu-collapsed'>" + item.name + "</span></label>"+
+                  "<div class='dropdown menu-collapsed ml-auto'><button class='btn btn-flat dropdown-toggle lnbManagerAction text-white py-0 pr-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' data-offset='9,10'><i class='fa fa-ellipsis-v menu-collapsed'></i></button>"+
+                  "<div class='dropdown-menu dropdown-menu-right'><a class='dropdown-item updateManagerLink' href='#'>이름/컬러 변경</a><a class='dropdown-item removeManagerLink' href='#'>삭제</a></div></div></div>";
         });
         return html;
     }
+    
+    function updateManager(e){
+      if(e.stopPropagation){
+        e.stopPropagation();
+      }
+      if($("#lnbManagerForm").data('id')){
+        $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
+      }
+      initLnbManagerForm();
+      var manager = findManager($(this).parents(".lnbManagerItem").hide().data('value'));
+      $("#lnbManagerFormColor").data('value', manager.color).css('borderColor', manager.color).css('backgroundColor', manager.color);
+      $("#lnbManagerColor .lnbManagerColorTemplate").prop('checked', false).filter("[value='"+manager.color+"']").prop('checked', true);
+      $("#lnbManagerForm").data('id', manager.id).show();
+      $("#lnbManagerFormName").val(manager.name).focus();
+    }
+    
+    function removeManager(e){
+      if(e.stopPropagation){
+        e.stopPropagation();
+      }
+      if($("#lnbManagerList .lnbManagerItem").length <= 1){
+        alert('담당자는 최소 1명 이상이 있어야 합니다.');
+        return;
+      }
+      var manager = findManager($(this).parents(".lnbManagerItem").data('value'));
+      NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
+      NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
+      $("#lnbManagerList .lnbManagerItem[value='"+manager.id+"']").remove();
+      NMNS.socket.emit("delete manager", { id: manager.id });
+    }
+    
+    function generateTaskList(taskList) {
+      var html = "";
+      var today = moment().format('YYYYMMDD');
+      var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
+      taskList.forEach(function(day){
+        if(day.task.length > 0){
+          html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
+          day.task.forEach(function(task, index){
+            var manager = findManager(task.manager) || {};
+            html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+            moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
+            + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
+            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
+          })
+        }
+      })
+      return html;
+    }
 
     function changeMainShopName(shopName) {
-        if ($("#mainShopName").length) {
-            if (shopName !== "") {
-                $("#mainShopName").text(shopName);
-                git
-            } else {
-                $("#navbarResponsive").prev().children("span").html(NMNS.email);
-            }
-        } else if (shopName !== "") {
-            $("#navbarResponsive").prev().children("span").html("<span id='mainShopName'>" + shopName + "</span><small class='d-none d-md-inline-block'>(" + NMNS.email + ")</small>");
-        }
+      $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
     }
 
     function drawAlrimList(alrims) {
@@ -553,17 +658,21 @@
         }
         if (alrims && alrims.length > 0) {
             var html = "";
+            var base = $("#alrimHistoryList .alrimRow").length
             alrims.forEach(function(item, index) {
-                html += '<div class="row alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + index + '" class="alrimDetailLink" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + index + '"></a><div class="col-4 px-0 ellipsis">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY-MM-DD HH:mm') + '</div><div class="col-4 ellipsis">' + item.name + '</div><div class="col-4 px-0 ellipsis">' + dashContact(item.contact) + '</div></div>' +
-                    '<div class="row alrimDetailRow collapse" id="alrimDetail' + index + '"><small class="col px-0">' + item.contents + '</small></div>';
+                html += '<div class="row alrimRow col mx-0 px-0" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-2 pr-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 offset-2 ellipsis">' + item.name + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1"></div></div>' +
+                    '<div class="row alrimDetailRow collapse mx-0 col-12" id="alrimDetail' + (index+base) + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
                 if (index > 0 && index % 50 === 0) {
-                    list.append(html);
+                    $("#alrimHistoryList").append(html);
                     html = "";
                 }
             });
             list.append(html);
+            $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
+              $(this).parent().toggleClass('show');
+            })
         } else {
-            list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색 조건에 맞는 결과가 없습니다.</span></div>");
+            list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
         }
         list.data("scroll").update();
     }
@@ -581,9 +690,6 @@
         $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
         $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
         $("#noticeByteCount").text($("#alrimNotice").val().length);
-        if ($("#alrimModalTitle").text() !== "알림톡 정보") {
-            $("#alrimSwitchBtn").trigger("click");
-        }
     }
 
     function submitAlrimModal() {
@@ -594,11 +700,11 @@
         }
         if ($("#alrimUseYn").prop("checked")) {
             if ($("#alrimCallbackPhone").val() === "") {
-                alert("알림톡을 사용하시려면 반드시 휴대폰번호를 입력해주세요!");
+                alert("알림톡을 사용하시려면 예약취소 알림톡을 받을 휴대폰번호를 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
             } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val()))) {
-                alert("입력하신 휴대폰번호가 정확하지 않은 것 같습니다.\n휴대폰번호를 정확히 입력해주세요!");
+                alert("입력하신 휴대폰번호가 정확하지 않습니다.\n휴대폰번호를 정확히 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
             }
@@ -651,162 +757,25 @@
         }
     }
 
-    NMNS.initAlrimModal = function() {
-        if (!NMNS.initedAlrimModal) {
-            NMNS.initedAlrimModal = true;
-            $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
-                $("#noticeByteCount").text($(this).val().length);
-                $(this).height(0).height(this.scrollHeight > 150 ? 150 : (this.scrollHeight < 60 ? 60 : this.scrollHeight));
-            }).on("blur", function(){
-                $(this).val(removeNonCharacter($(this).val()));
-            });
-            $("#alrimUseYn").off("change").on("change", function() {
-                if ($(this).prop("checked")) {
-                    $("#alrimScreen").hide();
-                } else {
-                    $("#alrimScreen").show();
-                }
-            });
-            $("#alrimModalRefresh").off("touch click").on("touch click", refreshAlrimModal);
-            $("#alrimModalSave").off("touch click").on("touch click", submitAlrimModal);
-            $("#alrimCallbackPhone").off("blur").on("blur", function() {
-                filterNonNumericCharacter($(this));
-            });
-
-            $("#alrimHistorySearch").off("touch click").on("touch click", function() {
-                var parameters = {};
-                if ($("#alrimHistoryStartDate").val() !== "") {
-                    var start = moment($("#alrimHistoryStartDate").val(), "YYYY-MM-DD");
-                    if (!start.isValid()) {
-                        alert("검색 시작일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.start = start.format("YYYYMMDD");
-                }
-                if ($("#alrimHistoryEndDate").val() !== "") {
-                    var end = moment($("#alrimHistoryEndDate").val(), "YYYY-MM-DD");
-                    if (!end.isValid()) {
-                        alert("검색 끝일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.end = end.format("YYYYMMDD");
-                }
-                if ($("#alrimHistoryName").val() !== "") {
-                    parameters.name = $("#alrimHistoryName").val();
-                }
-                if ($("#alrimHistoryContact").val() !== "") {
-                    parameters.contact = $("#alrimHistoryContact").val();
-                }
-                $("#alrimHistoryList .row").remove(); //깜빡임 효과
-                NMNS.socket.emit("get alrim history", parameters);
-            });
-            $("#alrimHistoryContact").off("keyup").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#alrimHistorySearch").trigger("click");
-                }
-            }).on("blur", function() {
-                filterNonNumericCharacter($(this));
-            });
-            $("#alrimHistoryName").off("keyup").on("keyup", function(e) {
-                if (e.which === 13) {
-                    $("#alrimHistorySearch").trigger("click");
-                }
-            });
-
-            var datetimepickerOption = {
-                format: "Y-m-d",
-                defaultDate: new Date(),
-                appendTo: document.getElementById("alrimModal"),
-                locale: "ko",
-                closeOnSelect: true
-            };
-            flatpickr("#alrimHistoryStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
-            flatpickr("#alrimHistoryEndDate", datetimepickerOption).setDate(moment().toDate());
-            $("#alrimHistoryName").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "name",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.contact;
-                        item.value = item.name;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return suggestion.value + " (" + dashContact(suggestion.data) + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#alrimHistoryContact").val(suggestion.data);
-                }
-            }, NMNS.socket);
-            $("#alrimHistoryContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#alrimHistoryName").val(suggestion.data);
-                }
-            }, NMNS.socket);
-        }
-        refreshAlrimModal();
-    }
-
     function submitInfoModal() {
         //validation start
-        if ($(".infoManagerItem input[type='text']").length) { //추가하는것이 있을 경우 이름이 비어있는지 확인
-            var cont = true;
-            $(".infoManagerItem input[type='text']").each(function() {
-                if (!$(this).val().length) {
-                    cont = false;
-                    $(this).focus();
-                }
-            });
-            if (!cont) {
-                alert("담당자의 이름을 입력해주세요.");
-                return;
-            }
-        } else {
-            alert("담당자는 최소 1명 이상이 있어야 합니다.");
-            return;
-        }
-        var beginTime = moment($("#infoBizBeginTime").val(), "HH:mm");
+        var beginTime = moment($("#infoBizBeginTime").val(), 'HHmm');
         if (!beginTime.isValid()) {
             alert("매장 운영 시작시간이 올바르지 않습니다.");
             $("#infoBizBeginTime").focus();
             return;
         }
-        var endTime = moment($("#infoBizEndTime").val(), "HH:mm");
+        var endTime = moment($("#infoBizEndTime").val(), 'HHmm');
         if (!endTime.isValid()) {
             alert("매장 운영 종료시간이 올바르지 않습니다.");
             $("#infoBizEndTime").focus();
             return;
         }
-        if (beginTime.isAfter(endTime, 'hour')) {
+        if (beginTime.isAfter(endTime)) {
             beginTime = [endTime, endTime = beginTime][0];
+        } else if(beginTime.isSame(endTime)){
+          alert('매장 운영 시작시간과 종료시간이 같습니다.');
+          return;
         }
         if ($("#infoShopName").val() === "" && NMNS.info.alrimTalkInfo.useYn === "Y") {
             alert("알림톡을 사용하고 계실 때는 예약고객에게 보여드릴 매장이름이 반드시 있어야 합니다.\n매장이름을 삭제하고 싶으시다면 알림톡 사용을 먼저 해제해주세요.");
@@ -815,7 +784,7 @@
         }
         //validation end
         //update info start
-        var parameters = {},
+        var parameters = {}, diff = false,
             history = { id: "info" };
         if ((beginTime.format("HHmm") !== NMNS.info.bizBeginTime) || (endTime.format("HHmm") !== NMNS.info.bizEndTime)) {
             history.hourStart = NMNS.info.bizBeginTime || "0900";
@@ -825,639 +794,775 @@
             NMNS.info.bizBeginTime = parameters.bizBeginTime || "0900";
             NMNS.info.bizEndTime = parameters.bizEndTime || "2300";
             NMNS.calendar.setOptions({ week: { hourStart: (parameters.bizBeginTime ? parseInt(parameters.bizBeginTime.substring(0, 2), 10) : NMNS.calendar.getOptions().week.hourStart), hourEnd: (parameters.bizEndTime ? parseInt(parameters.bizEndTime.substring(0, 2), 10) : NMNS.calendar.getOptions().week.hourEnd) } });
+            diff = true;
         }
         if ($("#infoShopName").val() !== (NMNS.info.shopName || "")) {
             history.shopName = NMNS.info.shopName;
             parameters.shopName = $("#infoShopName").val();
             NMNS.info.shopName = parameters.shopName;
             changeMainShopName(parameters.shopName);
+            diff = true;
         }
         if ($("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             history.bizType = NMNS.info.bizType;
             parameters.bizType = $("#infoBizType").val();
             NMNS.info.bizType = parameters.bizType;
-        }
-        if (Object.keys(parameters).length) {
-            NMNS.history.push(history);
-            NMNS.socket.emit("update info", parameters);
-        }
-        var diff = false;
-        if ($("#infoPassword").val() !== "") {
-            NMNS.socket.emit("update password", { password: $("#infoPassword").val() });
-            $("#infoPassword").val("");
             diff = true;
         }
-        //update info end
-        //update manager start
-        $(".infoManagerItem").each(function() {
-            if ($(this).hasClass("addManagerItem")) { //추가
-                diff = true;
-                submitAddManager($(this).find("input[type='text']")[0]);
-            } else {
-                var input = $(this).find("input[type='text']");
-                var manager = findManager(input.data("id"));
-                if ($(this).data("delete") && manager) { //삭제
-                    diff = true;
-                    NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
-                    NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
-                    NMNS.socket.emit("delete manager", { id: manager.id });
-                } else if (manager) {
-                    if (input.data("color") !== manager.bgColor || input.val() !== manager.name) { //수정
-                        diff = true;
-                        var color = input.data("color");
-                        NMNS.calendar.setCalendar(manager.id, { color: getColorFromBackgroundColor(color), bgColor: color, borderColor: color, name: input.val() }, true);
-                        NMNS.calendar.setCalendarColor(manager.id, { color: getColorFromBackgroundColor(color), bgColor: color, borderColor: color }, true);
-                        NMNS.history.push({ id: manager.id, color: manager.bgColor, name: manager.name });
-                        NMNS.socket.emit("update manager", { id: manager.id, color: color, name: input.val() });
-                    }
-                }
-            }
-        });
+            
         if (diff) {
-            $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
-            refreshScheduleVisibility();
-        }
-        //update manager end
-        if (diff || Object.keys(parameters).length) {
-            $("#infoModal").modal("hide");
+            NMNS.history.push(history);
+            NMNS.socket.emit("update info", parameters);
         } else {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
-    }
-
-    function showColorPickerPopup(self) {
-        $("#infoModalColorPicker").css("left", ($("#infoManagerList").position().left + self.position().left) + "px")
-            .css("top", ($("#infoManagerList").position().top + self.position().top + 74) + "px")
-            .data("target", self.next().data("id"))
-            .show(300);
+        //update info end
     }
 
     function refreshInfoModal() {
-        $("#infoEmail").text(NMNS.email);
-        $("#infoPassword").val("");
-        $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
-            NMNS.socket.emit("send verification", {});
-            showSnackBar("<span>인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!</span>");
-        }) : generateAuthStatusBadge(NMNS.info.authStatus));
-        $("#infoShopName").val(NMNS.info.shopName);
-        $("#infoBizType").val(NMNS.info.bizType);
-        var list = $("#infoManagerList");
-        if (list.hasClass("ps")) {
-            list.children(":not(.ps__rail-x):not(.ps__rail-y)").remove();
-            $(generateManagerList(NMNS.calendar.getCalendars())).prependTo(list);
-        } else {
-            list.html(generateManagerList(NMNS.calendar.getCalendars()));
-            list.data("scroll", new PerfectScrollbar(list[0]));
-        }
-
-        $(".infoManagerItem .deleteManager").off("touch click").on("touch click", function() {
-            var item = $(this).parents(".infoManagerItem");
-            if (item.siblings(".infoManagerItem:visible").length == 0) {
-                alert("담당자는 반드시 1명 이상 있어야합니다!");
-                return;
-            }
-            item.hide();
-            $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
-            item.attr("data-delete", "true");
-            $("#infoManagerList").data("scroll").update();
-        });
-        $(".infoManagerItem input.form-control").off("keyup").on("keyup", function(e) {
-            if (e.which === 27) {
-                var item = $(this).parents(".infoManagerItem");
-                if (item.siblings(".infoManagerItem:visible").length == 0) {
-                    return;
-                }
-                item.hide();
-                $(item.siblings(".infoManagerItem:visible")[0]).find("input.form-control").focus();
-                item.attr("data-delete", "true");
-                $("#infoManagerList").data("scroll").update();
-            }
-        });
-        $(".infoManagerItem .infoManagerColor").off("touch click").on("touch click", function() {
-            showColorPickerPopup($(this));
-        });
-    }
-
-    NMNS.initInfoModal = function() {
-        if (!NMNS.initedInfoModal) { //first init
-            NMNS.initedInfoModal = true;
-
-            var html = "";
-            NMNS.colorTemplate.forEach(function(item, index) {
-                if (index < 21) {
-                    html += '<i class="fas fa-circle infoModalColor" data-color="' + item + '" style="color:' + item + '" aria-label="' + item + '"></i>';
-                } else {
-                    return;
-                }
-            });
-            $("#infoModalColors").html(html);
-            flatpickr("#infoBizBeginTime", {
-                dateFormat: "H:i",
-                time_24hr: true,
-                defaultHour: Number((NMNS.info.bizBeginTime || "0900").substring(0, 2)),
-                defaultMinute: Number((NMNS.info.bizBeginTime || "0900").substring(2, 4)),
-                minuteIncrement: 10,
-                noCalendar: true,
-                enableTime: true,
-                appendTo: document.getElementById("infoModal"),
-                applyBtn: true
-            }).setDate(moment((NMNS.info.bizBeginTime ? NMNS.info.bizBeginTime : "0900"), "HHmm").toDate());
-            flatpickr("#infoBizEndTime", {
-                dateFormat: "H:i",
-                time_24hr: true,
-                defaultHour: Number((NMNS.info.bizEndTime || "2300").substring(0, 2)),
-                defaultMinute: Number((NMNS.info.bizEndTime || "2300").substring(2, 4)),
-                minuteIncrement: 10,
-                noCalendar: true,
-                enableTime: true,
-                appendTo: document.getElementById("infoModal"),
-                applyBtn: true
-            }).setDate(moment((NMNS.info.bizEndTime ? NMNS.info.bizEndTime : "2300"), "HHmm").toDate());
-            if (!$("#infoManagerList").hasClass("ps")) {
-                $("#infoManagerList").data("scroll", new PerfectScrollbar("#infoManagerList"));
-            }
-
-            $("#infoModalSave").off("touch click").on("touch click", submitInfoModal);
-            $("#infoModalRefresh").off("touch click").on("touch click", refreshInfoModal);
-            $("#infoModalColorPickerClose").off("touch click").on("touch click", function() {
-                $("#infoModalColorPicker").hide(300);
-            });
-            $(".infoModalColor").off("touch click").on("touch click", function() {
-                var target = $(".infoManagerItem input[data-id='" + $("#infoModalColorPicker").data("target") + "']");
-                var color = $(this).attr("data-color");
-                if (target.length) {
-                    target.data("color", color);
-                    target.prev().css("background-color", color).css("border-color", color).data("color", color);
-                }
-            });
-        }
-        refreshInfoModal(); //setting data
-    }
-
-    function submitNoShowEtcReason(dropdownItem) {
-        var input = dropdownItem.children("input");
-        var dropdown = dropdownItem.parent();
-        NMNS.history.push({ id: dropdown.data("id"), calendarId: dropdown.data("manager"), status: "NOSHOW" });
-        NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), { raw: { status: "NOSHOW" } });
-        NMNS.socket.emit("update reserv", { id: dropdown.data("id"), status: "NOSHOW", noShowCase: input.val() });
-        var row = $("#noShowScheduleList .row[data-id='" + dropdown.data("id") + "']");
-        row.children("span:last-child").html($(generateScheduleStatusBadge("NOSHOW")));
-        row.find(".badge, .noShowScheduleNoShow").each(function() {
-            $(this).on("touch click", function(e) {
-                e.stopPropagation();
-                noShowScheduleBadge($(this));
-            });
-        });
-        row.find(".noShowScheduleNormal").on("touch click", function(e) {
-            e.stopPropagation();
-            noShowScheduleNormal($(this));
-        });
-        dropdown.hide(300);
+      $("#infoEmail").text(NMNS.email);
+      $("#infoAuthStatus").html(NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" ? $(generateAuthStatusBadge(NMNS.info.authStatus)).on("touch click", function() {
+          NMNS.socket.emit("send verification", {});
+          showSnackBar("<span>인증메일을 보냈습니다. 도착한 이메일을 확인해주세요!</span>");
+      }) : generateAuthStatusBadge(NMNS.info.authStatus));
+      $("#infoShopName").val(NMNS.info.shopName);
+      $("#infoBizType").val(NMNS.info.bizType);
+      $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
+      $("#infoBizEndTime").val(NMNS.info.bizEndTime);
     }
 
     function initNoShowModal() {
-        if (!NMNS.initedNoShowModal) {
-            NMNS.initedNoShowModal = true;
-            var datetimepickerOption = {
-                format: "Y-m-d",
-                defaultDate: new Date(),
-                appendTo: document.getElementById("noShowModal"),
-                locale: "ko",
-                closeOnSelect: true
-            };
-
-            if (!$("#noShowSearchList").hasClass("ps")) {
-                $("#noShowSearchList").data("scroll", new PerfectScrollbar("#noShowSearchList", { suppressScrollX: true }));
+        if (!$("#noShowScheduleList").hasClass("ps")) {
+          $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+        
+          $(".noShowAddCase").off("touch click").on("touch click", function() {
+            $(this).siblings().removeClass("bg-primary");
+            $(this).toggleClass('bg-primary');
+            if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
+              $(this).parent().next().children("span").css('opacity', 1)
+            } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && ($(this).parent().children('.bg-primary').length > 0 || $(this).siblings('input').val().trim().length > 0)){
+              $(this).parent().next().children("span").css('opacity', 1)
+            }else{
+              $(this).parent().next().children("span").css('opacity', 0.35)
             }
-            if (!$("#noShowScheduleList").hasClass("ps")) {
-                $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+          });
+          $("#noShowAddCaseEtc,#noShowScheduleCaseEtc").on("keyup", function(e){
+            $(this).siblings().removeClass('bg-primary')
+            if($(this).parent().is($("#noShowAddContent")) && $("#noShowAddContact").val().trim().length > 0 && $(this).val().trim().length > 0){
+              $(this).parent().next().children("span").css('opacity', 1)
+            } else if($(this).parent().is($("#noShowScheduleContent")) && $("#noShowScheduleList input:checked").length > 0 && $(this).val().trim().length > 0){
+              $(this).parent().next().children("span").css('opacity', 1)
+            }else{
+              $(this).parent().next().children("span").css('opacity', 0.35)
             }
+            if(e.which === 13){
+              $(this).parent().next().trigger("click");
+            }
+          })
+          $("#noShowAddBtn").off("touch click").on("touch click", function() {
+            if ($("#noShowAddContact").val() === "") {
+              showSnackBar("<span>저장할 전화번호를 입력해주세요!</span>");
+              return;
+            }else if($("#noShowAddContent .noShowAddCase.bg-primary").length === 0 && $("#noShowAddCaseEtc").val().trim().length === 0){
+              showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+              return;
+            }
+            NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: $("#noShowAddContent .bg-primary").length === 0 ? $("#noShowAddCaseEtc").val().trim() : $("#noShowAddContent .bg-primary").data("value") });
+          });
 
-            $(".noShowAddCase").off("touch click").on("touch click", function() {
-                $(".noShowAddCase").not($(this)).removeClass("badge-danger").addClass("badge-light");
-                if ($(this).removeClass("badge-light").addClass("badge-danger").is("#noShowAddCaseEtc")) {
-                    $(this).next().removeAttr("disabled").focus();
-                } else {
-                    $(this).siblings("input").attr("disabled", "disabled");
-                }
-            });
-            $("#noShowAddBtn").off("touch click").on("touch click", function() {
-                if ($("#noShowAddContact").val() === "") {
-                    alert("저장할 전화번호를 입력해주세요!");
-                    return;
-                }
-                var noShowCase = $("#noShowAddContent .badge-danger").is("#noShowAddCaseEtc") ? $("#noShowAddContent input").val() : $("#noShowAddContent .badge-danger").data("value");
-                NMNS.socket.emit("add noshow", { id: NMNS.email + generateRandom(), contact: $("#noShowAddContact").val(), noShowCase: noShowCase });
-            });
-            $("#noShowSearchBtn").off("touch click").on("touch click", function() {
-                if ($("#noShowSearchContact").val() === "") {
-                    alert("검색할 전화번호를 입력해주세요!");
-                    return;
-                }
-                NMNS.socket.emit("get noshow", { contact: $("#noShowSearchContact").val(), mine: false });
-            });
-            $("#noShowScheduleSearch").off("touch click").on("touch click", function() {
-                var parameters = {};
-                if ($("#noShowScheduleStartDate").val() !== "") {
-                    var start = moment($("#noShowScheduleStartDate").val(), "YYYY-MM-DD");
-                    if (!start.isValid()) {
-                        alert("검색 시작일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.start = start.format("YYYYMMDD");
-                }
-                if ($("#noShowScheduleEndDate").val() !== "") {
-                    var end = moment($("#noShowScheduleEndDate").val(), "YYYY-MM-DD");
-                    if (!end.isValid()) {
-                        alert("검색 끝일자가 올바르지 않습니다. 다시 입력해주세요!");
-                        return;
-                    }
-                    parameters.end = end.format("YYYYMMDD");
-                }
-                if ($("#noShowScheduleName").val() !== "") {
-                    parameters.name = $("#noShowScheduleName").val();
-                }
-                if ($("#noShowScheduleContact").val() !== "") {
-                    parameters.contact = $("#noShowScheduleContact").val();
-                }
-                $("#noShowScheduleList .row").remove(); //깜빡임 효과
-                NMNS.socket.emit("get summary", parameters);
-            });
-            $("#noShowSearchAdd").off("touch click").on("touch click", function() {
-                var id = generateRandom();
-                var newRow = $("<div class='row px-0 col-12 mt-1 noShowSearchAdd' data-id='" + id + "'><div class='col-4 pr-0'><input type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddContact' placeholder='고객 전화번호'></div><div id='noShowSearchAddDatePicker" + id + "' class='col-4 input-group input-group-sm pr-0'><div class='input-group-prepend'><i id='noShowSearchAddDateIcon" + id + "' class='input-group-text far fa-calendar rounded-0'></i></div><input id='noShowSearchAddDate" + id + "' type='text' class='form-control form-control-sm rounded-0' name='noShowSearchAddDate' aria-describedby='noShowSearchAddDateIcon" + id + "'></div><div class='col-3'><select class='form-control form-control-sm rounded-0' name='noShowType'><option value='지각'>지각</option><option value='잠수' selected='selected'>잠수</option><option value='직전취소'>직전취소</option><option value='기타'>기타</option></select></div><div class='col-1 px-0'><i class='fas fa-check noShowSearchAddSubmit align-middle' title='저장'></i>  <i class='fas fa-trash noShowSearchAddCancel align-middle ml-lg-2 ml-md-1' title='취소'></i></div></div>");
-                if ($("#noShowSearchList .empty").length) {
-                    $("#noShowSearchList").html(newRow);
-                } else {
-                    $("#noShowSearchList").append(newRow);
-                }
-                newRow.find(".noShowSearchAddSubmit").off("touch click").on("touch click", function() {
-                    submitAddNoShow($(this));
-                });
-                newRow.find(".noShowSearchAddCancel").off("touch click").on("touch click", function() {
-                    cancelAddNoShow($(this));
-                });
-                newRow.find("input[name='noShowSearchAddContact']").off("blur").on("blur", function() {
-                    filterNonNumericCharacter($(this));
-                }).val($("#noShowSearchContact").val()).select().focus();
-                newRow.data("datetimepicker", flatpickr("#noShowSearchAddDate" + id, datetimepickerOption));
-            });
-            $("#noShowSearchContact, #noShowAddContact, #noShowScheduleContact").off("blur").on("blur", function() {
-                filterNonNumericCharacter($(this));
-            });
-            $("#noShowSearchContact").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#noShowSearchBtn").trigger("click");
-                }
-            });
-            $("#noShowAddContact").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#noShowAddBtn").trigger("click");
-                }
-            });
-            $("#noShowScheduleContact").off("keyup").on("keyup", function(e) {
-                if (e.which === 13) {
-                    filterNonNumericCharacter($(this));
-                    $("#noShowScheduleSearch").trigger("click");
-                }
-            });
-            flatpickr("#noShowScheduleStartDate", datetimepickerOption).setDate(moment().subtract(1, "M").toDate());
-            flatpickr("#noShowScheduleEndDate", datetimepickerOption).setDate(moment().add(1, "M").toDate());
-            $("#noShowScheduleDropdown .dropdown-item:not(:last-child)").off("touch click").on("touch click", function(e) {
-                var dropdown = $(this).parent();
-                e.preventDefault();
-                NMNS.history.push({ id: dropdown.data("id"), calendarId: dropdown.data("manager"), raw: { status: dropdown.data("status") } });
-                NMNS.calendar.updateSchedule(dropdown.data("id"), dropdown.data("manager"), { raw: { status: $(this).data("status") } });
-                NMNS.socket.emit("update reserv", { id: dropdown.data("id"), status: $(this).data("status"), noShowCase: $(this).data("type") });
-                var row = $("#noShowScheduleList .row[data-id='" + dropdown.data("id") + "']");
-                row.children("span:last-child").html($(generateScheduleStatusBadge($(this).data("status"))));
-                row.find(".badge, .noShowScheduleNoShow").each(function() {
-                    $(this).on("touch click", function(e) {
-                        e.stopPropagation();
-                        noShowScheduleBadge($(this));
-                    });
-                });
-                row.find(".noShowScheduleNormal").on("touch click", function(e) {
-                    e.stopPropagation();
-                    noShowScheduleNormal($(this));
-                });
-                dropdown.hide(300);
-            });
-            $("#noShowScheduleDropdown .noShowScheduleCheck").off("touch click").on("touch click", function() {
-                submitNoShowEtcReason($(this).parent());
-            });
-            $("#noShowScheduleDropdown .dropdown-item-etc").off("touch click").on("touch click", function(e) {
-                e.preventDefault();
-            });
-            $("#noShowScheduleDropdown .dropdown-item-etc input").off("keyup").on("keyup", function(e) {
-                switch (e.which) {
-                    case 13:
-                        submitNoShowEtcReason($(this).parent());
-                        break;
-                    case 27:
-                        $(this).parent().parent().hide(300);
-                        break;
-                }
-            }).off("touch click").on("touch click", function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                $(this).focus();
-            });
+          $("#noShowScheduleBtn").off("touch click").on("touch click", function(){
+            if($("#noShowScheduleList input:checked").length === 0){
+              showSnackBar("<span>노쇼로 등록할 예약을 선택해주세요.</span>");
+              return;
+            }else if($("#noShowScheduleContent .noShowAddCase.bg-primary").length === 0 && $("#noShowScheduleCaseEtc").val().trim().length === 0){
+              showSnackBar("<span>노쇼 사유를 선택해주세요.</span>");
+              return;
+            }
+            var item = $("#noShowScheduleList input:checked").parent().parent();
+            NMNS.history.push({id:item.data('id'), status:item.data('status'), manager:item.data('manager'), contents:item.data('contents')})
+            NMNS.socket.emit("update reserv", {id:item.data("id"), status:"NOSHOW", noShowCase:($("#noShowScheduleContent .noShowAddCase.bg-primary").length > 0? $("#noShowScheduleContent .noShowAddCase.bg-primary").data('value') : $("#noShowScheduleCaseEtc").val().trim())})
+          })
+          $("#noShowScheduleSearch").off("touch click").on("touch click", function() {
+              var parameters = {};
+              if ($("#noShowScheduleTarget").val() !== "") {
+                  parameters.target = $("#noShowScheduleTarget").val();
+              }
+              $("#noShowScheduleList .row").remove(); //깜빡임 효과
+              NMNS.socket.emit("get summary", parameters);
+          });
+          $("#noShowAddContact").on("keyup", function(e) {
+              if (e.which === 13) {
+                  $("#noShowAddBtn").trigger("click");
+              }
+          })
 
-            $("#noShowAddContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {}
-            }, NMNS.socket);
+          $("#noShowTabList a[href='#noShowSchedule']").on("show.bs.tab", function(){
+            $("#noShowScheduleSearch").trigger('click');
+          });
+          $("#noShowAddContact").autocomplete({
+              serviceUrl: "get customer info",
+              paramName: "contact",
+              zIndex: 1060,
+              maxHeight: 150,
+              triggerSelectOnValidInput: false,
+              transformResult: function(response, originalQuery) {
+                  response.forEach(function(item) {
+                      item.data = item.name;
+                      item.value = item.contact;
+                      delete item.contact;
+                      delete item.name;
+                  });
+                  return { suggestions: response };
+              },
+              onSearchComplete: function() {},
+              formatResult: function(suggestion, currentValue) {
+                  return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+              },
+              onSearchError: function() {},
+              onSelect: function(suggestion) {}
+          }, NMNS.socket);
 
-            $("#noShowSearchContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {}
-            }, NMNS.socket);
-
-            $("#noShowScheduleName").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "name",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.contact;
-                        item.value = item.name;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return suggestion.value + " (" + dashContact(suggestion.data) + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#noShowScheduleContact").val(suggestion.data);
-                }
-            }, NMNS.socket);
-            $("#noShowScheduleContact").autocomplete({
-                serviceUrl: "get customer info",
-                paramName: "contact",
-                zIndex: 1060,
-                maxHeight: 150,
-                triggerSelectOnValidInput: false,
-                transformResult: function(response, originalQuery) {
-                    response.forEach(function(item) {
-                        item.data = item.name;
-                        item.value = item.contact;
-                        delete item.contact;
-                        delete item.name;
-                    });
-                    return { suggestions: response };
-                },
-                onSearchComplete: function() {},
-                formatResult: function(suggestion, currentValue) {
-                    return dashContact(suggestion.value) + " (" + suggestion.data + ")";
-                },
-                onSearchError: function() {},
-                onSelect: function(suggestion) {
-                    $("#noShowScheduleName").val(suggestion.data);
-                }
-            }, NMNS.socket);
+          $("#noShowScheduleTarget").on("keyup", function(e){
+            if (e.which === 13) {
+                $("#noShowScheduleSearch").trigger("click");
+            }
+          }).autocomplete({
+              serviceUrl: "get customer info",
+              paramName: "target",
+              zIndex: 1060,
+              maxHeight: 150,
+              triggerSelectOnValidInput: false,
+              transformResult: function(response, originalQuery) {
+                  response.forEach(function(item) {
+                      item.data = item.contact;
+                      item.value = item.name;
+                      delete item.contact;
+                      delete item.name;
+                  });
+                  return { suggestions: response };
+              },
+              onSearchComplete: function() {},
+              formatResult: function(suggestion, currentValue) {
+                  return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+              },
+              onSearchError: function() {},
+              onSelect: function(suggestion) {
+                  $("#noShowScheduleContact").val(suggestion.data);
+              }
+          }, NMNS.socket);
         } else {
-            $("#noShowAddContact").autocomplete().clearCache();
-            $("#noShowSearchContact").autocomplete().clearCache();
-            $("#noShowScheduleName").autocomplete().clearCache();
-            $("#noShowScheduleContact").autocomplete().clearCache();
+          $("#noShowAddContact").autocomplete().clearCache();
+          $("#noShowScheduleTarget").autocomplete().clearCache();
         }
     }
 
-    function generateTaskManagerList() {
-        var html = "";
+    function generateTaskManagerList(allowClear) {
+        var html = allowClear?"<button type='button' class='dropdown-item tui-full-calendar-dropdown-item'>선택</button>":"";
         NMNS.calendar.getCalendars().forEach(function(item) {
-            html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='" + item.id + "' data-bgcolor='" + item.bgColor + "'>" +
-                "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + item.bgColor + "'></span>" +
+            html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item ellipsis' data-calendar-id='" + item.id + "' data-color='" + item.color + "'>" +
+                "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot mr-3' style='background-color: " + item.color + "'></span>" +
                 "<span class='tui-full-calendar-content'>" + item.name + "</span>" +
                 "</button>";
         });
-
         return html;
     }
-
-    function initTaskModal(task) {
-        if (!NMNS.initedTaskModal) {
-            NMNS.initedTaskModal = true;
-            var datetimepickerOption = {
-                format: "Y-m-d H:i",
-                enableTime: true,
-                defaultDate: new Date(),
-                appendTo: document.getElementById("taskModal"),
-                locale: "ko",
-                minuteIncrement: 10,
-                time_24hr: true,
-                minTime: moment((NMNS.info.bizBeginTime || '0900'), 'HHmm').format('HH:mm'),
-                maxTime: moment((NMNS.info.bizEndTime || '2300'), 'HHmm').format('HH:mm'),
-                applyBtn: true
-            };
-            flatpickr("#taskStartDate", datetimepickerOption);
-            flatpickr("#taskEndDate", datetimepickerOption);
-            $("#taskModalSave").on("touch click", function() {
-                if ($("#taskName").val() === "") {
-                    alert("일정 이름을 입력해주세요!");
-                    $("#taskName").focus();
-                    return;
-                }
-                var id, start = $("#taskStartDate")[0]._flatpickr.selectedDates[0],
-                    end = $("#taskEndDate")[0]._flatpickr.selectedDates[0];
-                if (start.getTime() > end.getTime()) {
-                    start = [end, end = start][0];
-                }
-                if ($("#taskModal").data("edit")) {
-                    var origin = $("#taskModal").data("task");
-                    origin.manager = origin.calendarId;
-                    NMNS.history.push(origin);
-                    if (origin.calendarId !== $("#taskManager").data("calendar-id")) { //담당자 변경
-                        origin.newCalendarId = $("#taskManager").data("calendar-id");
-                        NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
-                        NMNS.calendar.createSchedules([{
-                            id: origin.id,
-                            calendarId: $("#taskManager").data("calendar-id"),
-                            title: $("#taskName").val(),
-                            start: start,
-                            end: end,
-                            isAllDay: false,
-                            category: "task",
-                            dueDateClass: "",
-                            color: getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
-                            bgColor: $("#taskManager").data("bgcolor"),
-                            borderColor: $("#taskManager").data("bgcolor"),
-                            raw: {
-                                contents: $("#taskContents").val(),
-                                status: "RESERVED"
-                            }
-                        }]);
-                    } else { //담당자 유지
-                        NMNS.calendar.updateSchedule(origin.id, origin.calendarId, {
-                            title: $("#taskName").val(),
-                            start: start,
-                            end: end,
-                            isAllDay: false,
-                            raw: {
-                                contents: $("#taskContents").val()
-                            }
-                        });
-                    }
-                    NMNS.socket.emit("update reserv", { //서버로 요청
-                        id: origin.id,
-                        manager: $("#taskManager").data("calendar-id"),
-                        name: $("#taskName").val(),
-                        start: moment(start).format("YYYYMMDDHHmm"),
-                        end: moment(end).format("YYYYMMDDHHmm"),
-                        isAllDay: false,
-                        contents: $("#taskContents").val()
-                    });
-                } else { //신규 일정 추가
-                    id = NMNS.email + generateRandom();
-                    NMNS.calendar.createSchedules([{
-                        id: id,
-                        calendarId: $("#taskManager").data("calendar-id"),
-                        title: $("#taskName").val(),
-                        start: start,
-                        end: end,
-                        isAllDay: false,
-                        category: "task",
-                        dueDateClass: "",
-                        color: getColorFromBackgroundColor($("#taskManager").data("bgcolor")),
-                        bgColor: $("#taskManager").data("bgcolor"),
-                        borderColor: $("#taskManager").data("bgcolor"),
-                        raw: {
-                            contents: $("#taskContents").val(),
-                            status: "RESERVED"
-                        }
-                    }]);
-                    NMNS.history.push({
-                        id: id,
-                        manager: $("#taskManager").data("calendar-id")
-                    });
-                    NMNS.socket.emit("add reserv", {
-                        id: id,
-                        manager: $("#taskManager").data("calendar-id"),
-                        name: $("#taskName").val(),
-                        start: moment(start).format("YYYYMMDDHHmm"),
-                        end: moment(end).format("YYYYMMDDHHmm"),
-                        isAllDay: false,
-                        type: "T",
-                        contents: $("#taskContents").val(),
-                        status: "RESERVED"
-                    });
-                }
-                $("#taskModal").modal("hide");
-            });
-            $("#taskModal .information").tooltip({
-                title: "일정에는 매장 운영에 필요한 사항 등을 자유롭게 등록할 수 있습니다.<br/>예)임대료 납기일 표기 등",
-                placement: "top",
-                trigger: "focus hover",
-                delay: { "hide": 1000 },
-                html: true
-            });
+    
+    function generateContentsList(contents){
+      var html = "";
+      if(contents === null || contents === undefined){
+        contents = [''];
+      }else if(typeof contents === 'string'){
+        try{
+          contents = JSON.parse(contents);
+        }catch(error){
+          contents = [contents];
         }
-        var selected;
-        if (task.start && task.end) {
-            $("#taskModal").data("edit", task.id ? true : false).data("task", task);
-            document.getElementById("taskStartDate")._flatpickr.setDate(task.start.toDate());
-            document.getElementById("taskEndDate")._flatpickr.setDate(task.end.toDate());
-            $("#taskName").val(task.title || "");
-            $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
-            selected = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
-                return item.id === task.calendarId;
-            }) : NMNS.calendar.getCalendars()[0];
-            if (!selected) {
-                selected = { id: task.calendarId, bgColor: task.bgColor, name: "삭제된 담당자" };
-            }
-        } else {
-            $("#taskModal").data("edit", false).removeData("task");
-            var now = moment(new Date());
-            if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-                now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-            } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-                now = moment(NMNS.info.bizBeginTime, "HHmm");
-            } else {
-                now.minute(Math.ceil(now.minute() / 10) * 10);
-            }
-            document.getElementById("taskStartDate")._flatpickr.setDate(now.toDate());
-            document.getElementById("taskEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
-            $("#taskName").val("");
-            $("#taskContents").val("");
-            selected = NMNS.calendar.getCalendars()[0];
+      }else if(!Array.isArray(contents)){
+        contents = [contents];
+      } 
+      var inputs = $('#scheduleTabContents input').toArray();
+      contents.filter(function(item){
+        return !inputs.find(function(input){return input.value === (item && item.value || item) && !(item === '' && input.value === '')});
+      }).forEach(function(item){
+        var temp = inputs.find(function(input){return (input.value === '' || !input.value) && item !== ''})
+        if(temp){
+          $(temp).data('menu-id', item?item.menuId:null).val(item && item.value || item);
+          return;
         }
-        $("#taskManager").next().html(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
-            $("#taskManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
-        });
-        $("#taskManager").html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + selected.bgColor + "'></span><span class='tui-full-calendar-content'>" + selected.name + "</span>").data("calendar-id", selected.id).data("bgcolor", selected.bgColor);
+        html += '<div class="row mx-0 col-12 px-0"><input type="text" class="form-control form-control-sm han col" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." autocomplete="off" list="scheduleTabContentList" value="'
+          +(item && item.value || item)+'" '+(item && item.menuId? ('data-menu-id="'+item.menuId+'"') : '')+'><button type="button" class="btn btn-sm btn-form ml-2 deleteScheduleContents">삭제</button></div>';
+      });
+      return html;
     }
 
-    NMNS.initTaskModal = initTaskModal;
-
-    function setEventListener() {
-        $('.moveDate').on('touch click', onClickNavi);
-        $('.calendarType').on('touch click', onClickMenu);
-        $("#calendarTypeMenu").next().children("a").on("touch click", function(e) {
-            e.preventDefault();
-            var target = $(e.target);
-            if (!target.hasClass("dropdown-item")) {
-                target = target.parents(".dropdown-item");
-            }
-            $("#calendarTypeMenu").html(target.html());
-            $("#calendarTypeMenu").attr("data-action", target.data("action"));
-            $("#calendarTypeMenu").trigger("click");
+    function removeContent(target){
+      if($("#scheduleTabContents .row").length === 1){
+        $(target).prev().data('menu-id', null).val('');
+      }else{
+        $(target).parent().remove();
+      }
+    }
+    
+    function generateMenuList(menuList){
+      var html = '';
+      menuList.forEach(function(item){
+        html += '<options value="'+item.id+'">'+item.name+'</option>';
+      });
+      return html;
+    }
+    
+    function refreshScheduleTab(e){
+      var calendar;
+      if(NMNS.refreshScheduleManager){
+        NMNS.refreshScheduleManager = false;
+        $("#scheduleManager").next().html(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
+          $("#scheduleManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
-        $('#managerElements').on('change', onChangeManagers);
+      }
+      if(NMNS.refreshMenu){
+        NMNS.refreshMenu = false;
+        NMNS.socket.emit('get menu list');//TODO : needed api alignment
+        $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
+      }
+      $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
+      
+      $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
+      if(typeof e === 'object'){// dragged calendar / update schedule
+        if(e.schedule){
+          $("#scheduleStatus input[type='radio']").prop('checked', false);
+          if($("#scheduleStatus input[value='"+e.schedule.raw.status+"']").length){
+            $("#scheduleStatus input[value='"+e.schedule.raw.status+"']").prop('checked', true);
+          }else if(e.schedule.raw.status === 'CUSTOMERCANCELED'){
+            $("#scheduleStatus input[value='CUSTOMERCANCELED']").prop('checked', true);
+          }else{
+            $("#scheduleStatus input[value='RESERVED']").prop('checked', true);
+          }
+          
+          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule.start.toDate());
+          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule.end.toDate());
+          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule.start.toDate())));
+          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule.end.toDate())));
+    
+          $('#scheduleName').val(e.schedule.title);
+          $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
+            removeContent(this);
+          });
+          
+          $('#scheduleContact').val(e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact);
+          $('#scheduleEtc').val(e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc);
+          $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
+          
+          if(moment(e.schedule.start.toDate()).isBefore(moment())){
+            $("#resendAlrimScheduleBtn").addClass('d-none');
+          }else{
+            $("#resendAlrimScheduleBtn").removeClass('d-none');
+          }
+          calendar = findManager(e.schedule.calendarId);
+        }else{
+          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
+          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule?e.schedule.end.toDate():e.end.toDate());
+          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule?e.schedule.start.toDate():e.start.toDate())));
+          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule?e.schedule.end.toDate():e.end.toDate())));
+    
+          $('#scheduleName').val(e.schedule?e.schedule.title : '');
+          $("#scheduleTabContents").append(generateContentsList(e.schedule && e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
+            removeContent(this);
+          });
+          
+          $('#scheduleContact').val(e.schedule? (e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact) : '');
+          $('#scheduleEtc').val(e.schedule? (e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc) : '');
+          $('#scheduleAllDay').attr('checked', e.schedule?e.schedule.isAllDay : e.isAllDay);
+          
+          calendar = NMNS.calendar.getCalendars()[0];
+        }
+        
+        if (!calendar) {
+          $('#scheduleManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + e.schedule.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', e.schedule.calendarId).data('color', e.schedule.color);
+        }else{
+          calendar = $('#scheduleManagerList').find("button[data-calendar-id='" + calendar.id + "']");
+          $('#scheduleManager').html(calendar.html()).data('calendar-id', calendar.data('calendarId')).data('color', calendar.data('color'));
+        }
+      }else if(typeof e === 'string'){//switching from task tab : copy data
+        document.getElementById("scheduleStartDate")._flatpickr.setDate(document.getElementById('taskStartDate')._flatpickr.selectedDates[0]);
+        $("#scheduleStartTime").val($("#taskStartTime").val());
+        document.getElementById("scheduleEndDate")._flatpickr.setDate(document.getElementById('taskEndDate')._flatpickr.selectedDates[0]);
+        $("#scheduleEndTime").val($("#taskEndTime").val());
+        $("#scheduleAllDay").prop('checked', $("#taskAllDay").prop('checked'));
+        calendar = $("#taskManager");
+        $("#scheduleManager").data("calendar-id", calendar.data("calendar-id")).data("color", calendar.data("color")).html(calendar.html());
+      }else{// creating...
+        var now = moment();
+        if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
+            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
+        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
+            now = moment(NMNS.info.bizBeginTime, "HHmm");
+        } else {
+            now.minute(Math.ceil(now.minute() / 10) * 10);
+        }
+        document.getElementById("scheduleStartDate")._flatpickr.setDate(now.toDate());
+        $("#scheduleStartTime").val(getTimeFormat(now));
+        document.getElementById("scheduleEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
+        $("#scheduleEndTime").val(getTimeFormat(now));
 
-        $('#dropdownMenu-calendars-list').on('touch click', onChangeNewScheduleCalendar);
-        $(".addReservLink").on("touch click", createNewSchedule);
-        $(".addTaskLink").on("touch click", initTaskModal);
+        $('#scheduleName').val('');
+        $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
+          removeContent(this);
+        });;
+        $('#scheduleContact').val('');
+        $('#scheduleAllDay').attr('checked', false);
+        
+        calendar = NMNS.calendar.getCalendars()[0].id;
+        $('#scheduleManager').html($('#scheduleManager').next().find("button[data-calendar-id='" + calendar + "']").html()).data('calendarid', calendar);
+      }
+    }
 
-        $("#infoLink").on("touch click", NMNS.initInfoModal);
-        $("#alrimLink").on("touch click", NMNS.initAlrimModal);
-        $(".addNoShowLink, .getNoShowLink").on("touch click", initNoShowModal);
-        window.addEventListener('resize', debounce(function(){NMNS.calendar.render();}, 200));
-        flatpickr.localize("ko");
+    function initScheduleTab(e){
+      if(!$("#scheduleStartDate")[0]._flatpickr){
+        var datetimepickerOption = {
+            dateFormat: "Y. m. d",
+            defaultDate: new Date(),
+            locale: "ko"
+        };
+        flatpickr("#scheduleStartDate", datetimepickerOption);
+        flatpickr("#scheduleEndDate", datetimepickerOption);
+        $("#scheduleAddContents").on("touch click", function(){
+          $("#scheduleTabContents").append($(generateContentsList('')).on('touch click', 'button', function(){
+            removeContent(this);
+          }));
+        });
+
+        var autoCompleteOption = {
+          lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
+          maxHeight:175,
+          triggerSelectOnValidInput: false,
+          zIndex:1060
+        };        
+        $('#scheduleStartTime').autocomplete(autoCompleteOption);
+        $("#scheduleEndTime").autocomplete(autoCompleteOption);
+        var timeout;
+        function onContactBlur() {
+            clearTimeout(timeout);
+            if ($('#scheduleContact').val().length > 9 || $('#scheduleName').val() !== '') {
+                NMNS.socket.emit('get customer', {
+                    name: $('#scheduleName').val(),
+                    contact: $('#scheduleContact').val()
+                });
+            }
+        }
+        $('#scheduleName').autocomplete({
+            serviceUrl: 'get customer info',
+            paramName: 'name',
+            zIndex: 1060,
+            maxHeight: 150,
+            triggerSelectOnValidInput: false,
+            transformResult: function(response) {
+                response.forEach(function(item) {
+                    item.data = item.contact;
+                    item.value = item.name;
+                    delete item.contact;
+                    delete item.name;
+                });
+
+                return { suggestions: response };
+            },
+            onSearchComplete: function() {},
+            formatResult: function(suggestion) {
+                return suggestion.value + ' (' + dashContact(suggestion.data) + ')';
+            },
+            onSearchError: function() {},
+            onSelect: function(suggestion) {
+                $('#scheduleContact').val(suggestion.data).trigger('blur');
+            }
+        }, NMNS.socket).on('blur', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                onContactBlur();
+            }, 300);
+        });
+
+        $('#scheduleContact').autocomplete({
+            serviceUrl: 'get customer info',
+            paramName: 'contact',
+            zIndex: 1060,
+            maxHeight: 150,
+            triggerSelectOnValidInput: false,
+            transformResult: function(response) {
+                response.forEach(function(item) {
+                    item.data = item.name;
+                    item.value = item.contact;
+                    delete item.contact;
+                    delete item.name;
+                });
+
+                return { suggestions: response };
+            },
+            onSearchComplete: function() {},
+            formatResult: function(suggestion) {
+                return suggestion.value + ' (' + dashContact(suggestion.data) + ')';
+            },
+            onSearchError: function() {},
+            onSelect: function(suggestion) {
+                $('#scheduleName').val(suggestion.data);
+                onContactBlur();
+            }
+        }, NMNS.socket).on('blur', function() {
+            filterNonNumericCharacter($('#scheduleContact'));
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                onContactBlur();
+            }, 300);
+        });
+        
+        $("#scheduleBtn").on("touch click", function(){
+          var title, isAllDay, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
+          try {
+            startDate = $('#scheduleStartDate')[0]._flatpickr.selectedDates[0];
+            endDate = $('#scheduleEndDate')[0]._flatpickr.selectedDates[0];
+            if(!moment(startDate).isValid()){
+              showSnackBar("시작 일자를 확인해주세요.");
+              return;
+            }else if(!moment(endDate).isValid()){
+              showSnackBar("종료 일자를 확인해주세요.");
+              return;
+            }
+          } catch (e) {
+              if (!startDate || !endDate) {
+                showSnackBar('시간을 입력해주세요!');
+                return;
+              }
+          }
+          startTime = parseTime($("#scheduleStartTime").val());
+          endTime = parseTime($("#scheduleEndTime").val());
+          if(!startTime){
+            showSnackBar("시작 시간을 확인해주세요.");
+            return;
+          }
+          if(!endTime){
+            showSnackBar("종료 시간을 확인해주세요.");
+            return;
+          }
+          startDate.setHours(startTime.substring(0,2)*1);
+          startDate.setMinutes(startTime.substring(2)*1);
+          endDate.setHours(endTime.substring(0,2)*1);
+          endDate.setMinutes(endTime.substring(2)*1);
+          
+          calendarId = $('#scheduleManager').data('calendar-id');
+          manager = NMNS.calendar.getCalendars().find(function(cal) {
+              return cal.id === calendarId;
+          });
+          if(!manager){
+            showSnackBar('담당자를 지정해주세요.');
+            return;
+          }
+      
+          if (startDate.getTime() > endDate.getTime()) { // swap two dates
+              startDate = [endDate, endDate = startDate][0];
+          }
+      
+          title = $('#scheduleName').val();
+          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {menuId:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): undefined), value:this.value}}).toArray());
+          contact = $('#scheduleContact').val();
+          etc = $('#scheduleEtc').val();
+          isAllDay = $('#scheduleAllDay').prop('checked');
+
+          if (NMNS.info.alrimTalkInfo.useYn === 'Y' && !(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test(contact))) {
+              if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등���하시겠어요?')) {
+                  return;
+              }
+          }
+      
+          if (NMNS.scheduleTarget && NMNS.scheduleTarget.schedule) {
+              var origin = NMNS.scheduleTarget.schedule;
+              origin.manager = origin.calendarId;
+              NMNS.history.push(origin);
+              if (origin.calendarId !== calendarId) { //담당자 변경
+                  origin.newCalendarId = calendarId
+                  NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
+                  
+                  NMNS.calendar.createSchedules([{
+                      id: origin.id,
+                      calendarId: calendarId,
+                      title: title,
+                      start: startDate,
+                      end: endDate,
+                      isAllDay: false,//하루종일 항목 없앰
+                      category: "time",
+                      attendees: [],
+                      recurrenceRule: false,
+                      isPending: false,
+                      dueDateClass: "",
+                      color: manager.color,
+                      isFocused: false,
+                      isVisible: true,
+                      isReadOnly: false,
+                      isPrivate: false,
+                      customStyle: "",
+                      location: "",
+                      bgColor: getBackgroundColor(manager.color),
+                      borderColor: manager.color,
+                      dragBgColor: manager.bgColor || "#334150",
+                      raw: {
+                        contact: contact,
+                        contents: contents,
+                        etc: etc,
+                        status: $("#scheduleStatus input:checked").val()
+                      }
+                  }]);
+              } else { //담당자 유지
+                  NMNS.calendar.updateSchedule(origin.id, origin.calendarId, {
+                      title: title,
+                      start: startDate,
+                      end: endDate,
+                      raw:{
+                        contents: contents,
+                        contact: contact,
+                        status:$("#scheduleStatus input:checked").val()
+                      }
+                  });
+              }
+              NMNS.socket.emit("update reserv", { //서버로 요청
+                  id: origin.id,
+                  manager: calendarId,
+                  name: title,
+                  start: moment(startDate).format("YYYYMMDDHHmm"),
+                  end: moment(endDate).format("YYYYMMDDHHmm"),
+                  contents: contents,
+                  contact: contact,
+                  isAllDay: isAllDay,
+                  status:$("#scheduleStatus input:checked").val()
+              });
+          } else { //신규 예약 추가
+              var id = NMNS.email + generateRandom();
+              NMNS.calendar.createSchedules([{
+                  id: id,
+                  calendarId: calendarId,
+                  title: title,
+                  start: startDate,
+                  end: endDate,
+                  isAllDay: false,//하루종일 항목 없앰
+                  category: "time",
+                  attendees: [],
+                  recurrenceRule: false,
+                  isPending: false,
+                  dueDateClass: "",
+                  color: manager.color,
+                  isFocused: false,
+                  isVisible: true,
+                  isReadOnly: false,
+                  isPrivate: false,
+                  customStyle: "",
+                  location: "",
+                  bgColor: getBackgroundColor(manager.color),
+                  borderColor: manager.color,
+                  dragBgColor: manager.bgColor || "#334150",
+                  raw: {
+                    contact: contact,
+                    contents: contents,
+                    etc: etc,
+                    status: "RESERVED"
+                  }
+              }]);
+              NMNS.history.push({
+                  id: id,
+                  manager: calendarId
+              });
+              NMNS.socket.emit("add reserv", {
+                  id: id,
+                  manager: calendarId,
+                  name: title,
+                  start: moment(startDate).format("YYYYMMDDHHmm"),
+                  end: moment(endDate).format("YYYYMMDDHHmm"),
+                  isAllDay: isAllDay,
+                  type: "R",
+                  bgColor: getBackgroundColor(manager.color),
+                  borderColor: manager.color,
+                  dragBgColor: manager.bgColor || "#334150",
+                  color: manager.color,
+                  contact: contact,
+                  contents: contents,
+                  etc: etc,
+                  status: "RESERVED"
+              });
+          }
+      
+          $("#scheduleModal").modal('hide');
+        })
+      }
+      refreshScheduleTab(e);
+    }
+  
+    function refreshTaskTab(task){
+      var calendar;
+      if(NMNS.refreshTaskManager){
+        NMNS.refreshTaskManager = false;
+        $("#taskManager").next().html(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
+            $("#taskManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
+        });
+      }
+      $("#taskBtn").text(task && task.id ? "일정 변경 완료" : "일정 추가 완료")
+      if (typeof task === 'object') { // update existing task
+      
+        $("#taskTab").data("edit", task.id ? true : false).data("task", task);
+        document.getElementById("taskStartDate")._flatpickr.setDate(moment(task.start, 'YYYYMMDDHHmm').toDate());
+        document.getElementById("taskEndDate")._flatpickr.setDate(moment(task.end, 'YYYYMMDDHHmm').toDate());
+        
+        var autoCompleteOption = {
+          lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
+          maxHeight:175,
+          triggerSelectOnValidInput: false,
+          zIndex:1060
+        };
+        $('#taskStartTime').autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
+        $("#taskEndTime").autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
+        
+        $("#taskName").val(task.title || "");
+        $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
+        calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
+            return item.id === task.calendarId;
+        }) : NMNS.calendar.getCalendars()[0];
+        if (!calendar) {
+          $('#taskManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + task.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', task.calendarId).data('color', task.color);
+        }else{
+          calendar = $('#taskManager').next().find("button[data-calendar-id='" + calendar.id + "']");
+          $('#taskManager').html(calendar.html()).data('calendar-id', calendar.data('calendar-id')).data('color', calendar.data('color'));
+        }
+
+      } else if(typeof task === 'string'){// switched from schedule tab : copy data
+
+        document.getElementById("taskStartDate")._flatpickr.setDate(document.getElementById('scheduleStartDate')._flatpickr.selectedDates[0]);
+        $("#taskStartTime").val($("#scheduleStartTime").val());
+        document.getElementById("scheduleEndDate")._flatpickr.setDate(document.getElementById('taskEndDate')._flatpickr.selectedDates[0]);
+        $("#taskEndTime").val($("#scheduleEndTime").val());
+        $("#taskAllDay").prop('checked', $("#scheduleAllDay").prop('checked'));
+        calendar = $("#scheduleManager");
+        $("#taskManager").data("calendar-id", calendar.data("calendar-id")).data("color", calendar.data("color")).html(calendar.html());
+
+      } else {
+
+        $("#taskTab").data("edit", false).removeData("task");
+        var now = moment();
+        if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
+            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
+        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
+            now = moment(NMNS.info.bizBeginTime, "HHmm");
+        } else {
+            now.minute(Math.ceil(now.minute() / 10) * 10);
+        }
+        document.getElementById("taskStartDate")._flatpickr.setDate(now.toDate());
+        $("#taskStartTime").val(getTimeFormat(now));
+        document.getElementById("taskEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
+        $("#taskEndTime").val(getTimeFormat(now));
+
+        $("#taskName").val("");
+        $("#taskContents").val("");
+        calendar = NMNS.calendar.getCalendars()[0].id;
+        calendar = $('#taskManager').next().find("button[data-calendar-id='" + calendar + "']");
+        $('#taskManager').html(calendar.html()).data('calendarid', calendar.data('calendarId')).data('color', calendar.data('color'));
+        
+      }
+    }
+
+    function initTaskTab(task) {
+      if (!$("#taskStartDate")[0]._flatpickr) {
+        var datetimepickerOption = {
+            dateFormat: "Y. m. d",
+            enableTime: false,
+            defaultDate: new Date(),
+            locale: "ko"
+        };
+        flatpickr("#taskStartDate", datetimepickerOption);
+        flatpickr("#taskEndDate", datetimepickerOption);
+        $("#taskBtn").on("touch click", function() {
+          if ($("#taskName").val() === "") {
+              alert("일정 이름을 입력해주세요!");
+              $("#taskName").focus();
+              return;
+          }
+          var id, start = $("#taskStartDate")[0]._flatpickr.selectedDates[0],
+              end = $("#taskEndDate")[0]._flatpickr.selectedDates[0];
+          if (start.getTime() > end.getTime()) {
+              start = [end, end = start][0];
+          }
+          if ($("#taskTab").data("edit")) {
+              var origin = $("#taskTab").data("task");
+              origin.manager = origin.calendarId;
+              NMNS.history.push(origin);
+              if (origin.calendarId !== $("#taskManager").data("calendar-id")) { //담당자 변경
+                  origin.newCalendarId = $("#taskManager").data("calendar-id");
+                  NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
+                  NMNS.calendar.createSchedules([{
+                      id: origin.id,
+                      calendarId: $("#taskManager").data("calendar-id"),
+                      title: $("#taskName").val(),
+                      start: start,
+                      end: end,
+                      isAllDay: false,//하루종일 항목 없앰
+                      category: "task",
+                      dueDateClass: "",
+                      color: $("#taskManager").data("bgcolor"),
+                      bgColor: getBackgroundColor($("#taskManager").data("bgcolor")),
+                      borderColor: $("#taskManager").data("bgcolor"),
+                      raw: {
+                          status: "RESERVED"
+                      }
+                  }]);
+              } else { //담당자 유지
+                  NMNS.calendar.updateSchedule(origin.id, origin.calendarId, {
+                      title: $("#taskName").val(),
+                      start: start,
+                      end: end,
+                      isAllDay: false,//하루종일 항목 없앰
+                  });
+              }
+              NMNS.socket.emit("update reserv", { //서버로 요청
+                  id: origin.id,
+                  manager: $("#taskManager").data("calendar-id"),
+                  name: $("#taskName").val(),
+                  start: moment(start).format("YYYYMMDDHHmm"),
+                  end: moment(end).format("YYYYMMDDHHmm"),
+                  type: 'T',
+                  isAllDay: $("#taskAllDay").prop('checked')
+              });
+          } else { //신규 일정 추가
+              if(typeof NMNS.scheduleTarget.clearGuideElement === 'function'){
+                NMNS.scheduleTarget.clearGuideElement();
+              }
+              id = NMNS.email + generateRandom();
+              NMNS.calendar.createSchedules([{
+                  id: id,
+                  calendarId: $("#taskManager").data("calendar-id"),
+                  title: $("#taskName").val(),
+                  start: start,
+                  end: end,
+                  isAllDay: false,//하루종일 항목 없앰
+                  category: "task",
+                  dueDateClass: "",
+                  color: $("#taskManager").data("bgcolor"),
+                  bgColor: getBackgroundColor($("#taskManager").data("bgcolor")),
+                  borderColor: $("#taskManager").data("bgcolor"),
+                  raw: {
+                      status: "RESERVED"
+                  }
+              }]);
+              NMNS.history.push({
+                  id: id,
+                  manager: $("#taskManager").data("calendar-id")
+              });
+              NMNS.socket.emit("add reserv", {
+                  id: id,
+                  manager: $("#taskManager").data("calendar-id"),
+                  name: $("#taskName").val(),
+                  start: moment(start).format("YYYYMMDDHHmm"),
+                  end: moment(end).format("YYYYMMDDHHmm"),
+                  isAllDay: $("#taskAllDay").prop('checked'),
+                  type: "T",
+                  status: "RESERVED"
+              });
+          }
+          $("#scheduleModal").modal("hide");
+        });
+      }
+      refreshTaskTab(task);
     }
 
     function getSchedule(start, end) {
@@ -1474,11 +1579,11 @@
             var manager = findManager(schedule.manager || schedule.calendarId) || {};
             return {
                 id: schedule.id,
-                calendarId: manager.id || "A1", //schedule.manager,
-                title: schedule.name || schedule.title, //?schedule.name:(schedule.contact?schedule.contact:schedule.content),
+                calendarId: manager.id || "A1",
+                title: schedule.name || schedule.title,
                 start: (typeof schedule.start === "string" ? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
                 end: (typeof schedule.end === "string" ? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
-                isAllDay: schedule.isAllDay,
+                isAllDay: false,//하루종일 항목 없앰
                 category: (schedule.type === "T" ? "task" : (schedule.isAllday ? "allday" : "time")),
                 dueDateClass: (schedule.type === "T" ? "dueDateClass" : ""),
                 attendees: [],
@@ -1490,10 +1595,10 @@
                 isPrivate: false,
                 customStyle: "",
                 location: "",
-                bgColor: manager.bgColor || "#b2dfdb",
-                borderColor: manager.borderColor || "#b2dfdb",
-                color: manager.color || getColorFromBackgroundColor("#b2dfdb"),
-                dragBgColor: manager.bgColor || "#b2dfdb",
+                bgColor: getBackgroundColor(manager.color || "#334150"),
+                borderColor: manager.borderColor || "#334150",
+                color: manager.color || "#334150",
+                dragBgColor: manager.bgColor || "#334150",
                 raw: {
                     contact: schedule.contact,
                     contents: schedule.contents,
@@ -1504,18 +1609,7 @@
         }), true);
     }
 
-    function noShowScheduleBadge(self) {
-        var row = self.parentsUntil("#noShowScheduleList", ".row");
-        $("#noShowScheduleDropdown")
-            .data("id", row.data("id"))
-            .data("manager", row.data("manager"))
-            .data("status", row.data("status"))
-            .css("top", (self[0].getBoundingClientRect().top - $("#noShowSchedule")[0].getBoundingClientRect().top + self.height() + 3) + "px")
-            .css("right", (self[0].getBoundingClientRect().right - $("#noShowSchedule")[0].getBoundingClientRect().right) < -20 ? "1rem" : (self[0].getBoundingClientRect().right - $("#noShowSchedule")[0].getBoundingClientRect().right) + "px")
-            .show();
-    }
-
-    function submitAddNoShow(self) {
+/*    function submitAddNoShow(self) {
         var row = self.parentsUntil("#noShowSearchList", ".row");
         if (row.find("input[name='noShowSearchAddContact']").val() === "") {
             alert("전화번호를 입력해주세요!");
@@ -1532,53 +1626,15 @@
         self.off("touch click").on("touch click", function() {
             alert("저장 요청중입니다..!");
         });
-    }
+    }*/
 
     function deleteNoShow(self) {
         var row = self.parentsUntil("#noShowSearchList", ".row");
-        NMNS.history.push({ id: row.data("id"), contact: row.data("contact"), date: row.data("date"), noShowCase: row.data("noshowcase") });
+        NMNS.history.push({ id: row.data("id"), contact: row.data("contact") + "", date: row.data("date") + "", noShowCase: row.data("noshowcase") });
         NMNS.socket.emit("delete noshow", { id: row.data("id") });
         row.remove();
     }
-
-    function cancelAddNoShow(self) {
-        var row = self.parentsUntil("#noShowSearchList", ".row");
-        row.data("datetimepicker").destroy();
-        row.remove();
-        if ($("#noShowSearchList").html() === "") {
-            $("#noShowSearchList").html("<div class='row col-12 px-0 mt-2 empty'><span class='col-12 text-center'>전화번호로 검색하거나 아래 버튼을 눌러<br/>노쇼를 직접 추가해보세요!</span></div>");
-        }
-    }
-
-    function submitAddManager(self) {
-        var lnbManagerItem = $(self).parents(".addManagerItem");
-        var name = lnbManagerItem.find("input[type='text']");
-        if (!name.val() || name.val().length < 1) {
-            alert("담당자 이름을 입력해주세요.");
-            return;
-        }
-
-        var id = name.data("id");
-        var color = lnbManagerItem.find(".addManagerColor").data("color");
-        lnbManagerItem.removeClass("addManagerItem");
-        lnbManagerItem.html("<label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'><span style='background-color:" + name.data("color") + "; border-color:" + name.data("color") + "'></span><small>" + name.val() + "</small></label>");
-        var calendars = NMNS.calendar.getCalendars();
-        calendars.push({
-            id: id,
-            name: name.val(),
-            checked: true,
-            bgColor: color,
-            borderColor: color,
-            color: getColorFromBackgroundColor(color)
-        });
-        NMNS.calendar.setCalendars(calendars);
-        NMNS.socket.emit("add manager", { id: id, name: name.val(), color: color });
-    }
-
-    function cancelAddManager(self) {
-        $(self).parents(".addManagerItem").remove();
-    }
-
+/*
     var noShowScheduleNormal = function(self) {
         var row = self.parentsUntil("#noShowScheduleList", ".row");
         NMNS.history.push({ id: row.data("id"), calendarId: row.data("manager"), raw: { status: row.data("status") } });
@@ -1587,7 +1643,7 @@
         row.children("span:last-child").html($(generateScheduleStatusBadge("RESERVED"))).on("touch click", function() {
             noShowScheduleBadge($(this));
         });
-    };
+    };*/
 
     $("#nextTips").one("touch click", function() {
         NMNS.socket.emit("get tips");
@@ -1625,23 +1681,25 @@
         });
     });
 
-    $("#submitFeedback").off("touch click").on("touch click", function(e) {
-        var text = $("#feedbackBody").val();
-        if (text && text.trim().length > 0) {
-            NMNS.socket.emit("submit feedback", { data: text.trim() });
-            $("#feedbackModal").modal("hide");
-            showSnackBar("제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.");
-            $("#feedbackBody").val("");
-        } else {
-            alert("제안/문의하실 내용을 입력해주세요!");
-            return;
-        }
-    });
+    
     
     function drawAnnouncementList(data){
       var list = "";
       data.forEach(function(item){
-        list += '<div class="announcement col-12 card px-0 border-0 rounded-0 shadow-sm mb-3"><div class="card-header"><h6 class="d-inline-block mb-0">'+item.title + (item.isRead?'':'<span class="badge badge-danger badge-pill ml-1">new</span>') +'</h6><small class="float-right">'+(item.registeredDate? moment(item.registeredDate, 'YYYYMMDD').format('Y년 M월 D일') : '')+'</small></div><div class="card-body"><p class="card-text">'+item.contents+'</p></div></div>'
+        list += '<div class="announcement">';
+        switch(item.type){
+          case 'SCHEDULE_ADDED':
+            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + (item.contents?'<br>예약내용 : '+item.contents : '') +'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">예약 등록</span></div>'
+            break;
+          case 'SCHEDULE_CANCELED':
+            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
+            break;
+          case 'ANNOUNCEMENT':
+          default:
+            list += '<div class="d-flex align-items-center" style="margin-bottom:15px"><span class="announcementTitle">' + item.title + '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+item.contents+'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">공지사항</span></div>'
+            break;
+        }
+        list += '</div>';
       })
       return list;
     }
@@ -1649,7 +1707,9 @@
     //after calendar initialization start
     setDropdownCalendarType();
     setRenderRangeText();
-    setEventListener();
+    if($(window).width() < 900){
+        $('#sidebarToggler').trigger('click')
+    }
     //after calendar initialization end
     //websocket response start
     NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e) {
@@ -1672,20 +1732,30 @@
             html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>";
         } else {
             e.data.forEach(function(item) {
-                html += "<div class='row col-12 px-0 mt-1' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + (item.contents ? (" title='" + item.contents + "'") : "") + "><span class='col-3 col-lg-2 pr-0'>" + (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY-MM-DD") : "") + "</span><span class='col-4 col-lg-3'>" + (item.name || "") + "</span><span class='col-3 col-lg-2 px-0'>" + dashContact(item.contact) + "</span><span class='col-3 d-none d-lg-inline-flex'>" + (item.contents || "") + "</span><span class='col-2 px-0'>" + generateScheduleStatusBadge(item.status) + "</span></div>";
+              var contents = "";
+              if(item.contents){
+                try{
+                  contents = JSON.parse(item.contents).map(function(item){return item.value}).join(', ');
+                }catch(error){
+                  contents = item.contents
+                }
+              }
+              html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + 
+              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
+              (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" + 
+              contents + "</div></div>";
             });
         }
         $("#noShowScheduleList").html(html);
-        $("#noShowScheduleList .badge, #noShowScheduleList .noShowScheduleNoShow").each(function() {
-            $(this).off("touch click").on("touch click", function(e) {
-                e.stopPropagation();
-                noShowScheduleBadge($(this));
-            });
-        });
-        $("#noShowScheduleList .noShowScheduleNormal").off("touch click").on("touch click", function(e) {
-            e.stopPropagation();
-            noShowScheduleNormal($(this));
-        });
+        $("#noShowScheduleList input[type=checkbox]").on("change", function(e){
+          $("#noShowScheduleList input[type=checkbox]").not(this).prop('checked', false);
+          if($(this).prop('checked') && ($('#noShowScheduleContent .bg-primary').length > 0 || $("#noShowScheduleCaseEtc").val().trim().length > 0)){
+            $("#noShowScheduleBtn span").css('opacity', 1)
+          }else{
+            $("#noShowScheduleBtn span").css('opacity', 0.35)
+          }
+        })
+        
         if ($("#noShowScheduleList").hasClass("ps")) {
             $("#noShowScheduleList").data("scroll").update();
         }
@@ -1701,17 +1771,32 @@
     }));
 
     NMNS.socket.on("update reserv", socketResponse("예약/일정 정보 변경하기", function(e) {
+        var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
+        if (origin.category === 'task'){
+          if(typeof origin.isDone !== 'boolean'){
+            NMNS.socket.emit('get task');
+          }
+        } else if ($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='" + e.data.id + "']").length) { //예약으로 추가 모달
+          showSnackBar('<span>노쇼로 등록하였습니다.</span>');
+          $("#noShowScheduleList .row[data-id='" + e.data.id + "']").remove();
+          $("#noShowScheduleBtn span").css('opacity', 0.35)
+        }
     }, function(e) {
         var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
-        if ((origin.status || origin.raw.status) === "DELETED") {
-            drawSchedule([origin]);
-            refreshScheduleVisibility();
-        } else {
+        if(origin.category === 'task'){
+          if(typeof origin.isDone === 'boolean'){
+            $("#mainTaskContents .task[data-id='"+origin.id+"'] input").prop('checked', origin.isDone);
+          }
+        }else{
+          if ((origin.status || origin.raw.status) === "DELETED") {
+              drawSchedule([origin]);
+              refreshScheduleVisibility();
+          } else {
             if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
                 NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
-                origin.category = origin.category === 'task' ? 'task' : (origin.isAllDay ? 'allday' : 'time');
+                origin.category = origin.category === 'task' ? 'task' : 'time';
                 origin.dueDateClass = '';
                 origin.calendarId = origin.selectedCal ? origin.selectedCal.id : origin.calendarId;
                 origin.start = (typeof origin.start === "string" ? moment(origin.start, "YYYYMMDDHHmm").toDate() : origin.start);
@@ -1725,23 +1810,36 @@
                 if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
                 NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
             }
-        }
-        if ($("#noShowScheduleList").is(":visible") && $("#noShowScheduleList .row[data-id='" + e.data.id + "']").length) { //예약으로 추가 모달
-            var row = $("#noShowScheduleList .row[data-id='" + e.data.id + "']");
-            row.children("span:last-child").html($(generateScheduleStatusBadge(origin.status || origin.raw.status)));
-            row.find(".badge, .noShowScheduleNoShow").each(function() {
-                $(this).on("touch click", function(e) {
-                    e.stopPropagation();
-                    noShowScheduleBadge($(this));
-                });
-            });
-            row.find(".noShowScheduleNormal").on("touch click", function(e) {
-                e.stopPropagation();
-                noShowScheduleNormal($(this));
-            });
+          }
         }
     }));
 
+    NMNS.socket.on("get task", socketResponse("일정 가져오기", function(e){
+      if(e.data.some(function(date){
+        return date.date === moment().format('YYYYMMDD')
+      })){
+        $('#todayTask').text(
+          e.data.find(function(date){return date.date === moment().format('YYYYMMDD')}).task.length
+        )
+      }
+      $('#mainTaskContents').html(generateTaskList(e.data))
+      $("#mainTaskContents input").on('change', function(e){
+        e.stopPropagation();
+        var data = $(this).parent();
+        NMNS.history.push({id:data.data('id'), category:'task', isDone:!$(this).prop('checked')});
+        NMNS.socket.emit('update reserv', {id:data.data('id'), type: 'T', isDone:$(this).prop('checked')});
+      })
+      $("#mainTaskContents .task").on('touch click', function(e){
+        e.stopPropagation();
+        var data = $(this).parent();
+        initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
+        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').next().tab('show');
+        $("#scheduleBtn").text('예약 추가 완료');
+        $("#scheduleModal").removeClass('update').modal('show');
+      });
+      
+    }));
+    
     NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e) {
         NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().filter(function(item) {
             return item.id !== e.data.id;
@@ -1756,8 +1854,8 @@
         if (manager) {
             var calendars = NMNS.calendar.getCalendars();
             calendars.push(manager);
-            NMNS.calendar.setCalendars(NMNS.calendar.getCalendars());
-            $("#lnbManagerList").html(generateLnbManagerList(calendars));
+            NMNS.calendar.setCalendars(calendars);
+            $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -1768,10 +1866,15 @@
     }, function(e) {
         var manager = NMNS.history.find(function(item) { return item.id === e.data.id });
         if (manager) {
-            NMNS.calendar.setCalendar(e.data.id, manager);
-            $("#lnbManagerList").html(generateLnbManagerList(NMNS.calendar.getCalendars()));
-            refreshScheduleVisibility();
-            NMNS.history.remove(e.data.id, findById);
+          var exist = $("#lnbManagerList .lnbManagerItem[value='"+e.data.id+"']");
+          exist.find('span:not(.menu-collapsed)').data('color', manager.color);
+          if(exist.find('input').prop('checked')){
+            exist.find('span:not(.menu-collapsed)').css('backgroundColor', manager.color).css('borderColor', manager.color);
+          }
+          exist.find('.menu-collapsed').text(manager.name)
+          exist.hide();
+          $("#lnbManagerForm").show();
+          NMNS.history.remove(e.data.id, findById);
         }
     }));
 
@@ -1805,57 +1908,49 @@
     }));
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
-        var html = "";
         if (e.data.summary.noShowCount > 0) {
-            $("#noShowSearchSummary").html(dashContact(e.data.summary.contact) + " 고객은 " + (e.data.detail.length > 0 ? (e.data.detail.length == e.data.summary.noShowCount ? "우리매장에서만 " : "다른 매장 포함 ") : "다른 매장에서만 ") + (e.data.summary.noShowCount > 1 ? "총 " : "") + e.data.summary.noShowCount + "번 노쇼하셨어요. <br class='d-inline-block d-lg-none'/> 가장 마지막은 " + ((moment().year() + "") === e.data.summary.lastNoShowDate.substring(0, 4) ? "올해 " : (((moment().year() - 1) + "") === e.data.summary.lastNoShowDate.substring(0, 4) ? "작년 " : e.data.summary.lastNoShowDate.substring(0, 4) + "년 ")) + parseInt(e.data.summary.lastNoShowDate.substring(4, 6), 10) + "월 " + parseInt(e.data.summary.lastNoShowDate.substring(6), 10) + "일이었어요.").show();
-            if (e.data.detail.length > 0) {
-                e.data.detail.forEach(function(item) {
-                    html += "<div class='row col-12 px-0 mt-1' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><span class='col-4 pr-0'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</span><span class='col-4'>" + (item.date ? (item.date.substring(0, 4) + "-" + item.date.substring(4, 6) + "-" + item.date.substring(6)) : "") + "</span><span class='col-3'>" + (item.noShowCase ? ("<span class='badge badge-danger'>" + item.noShowCase + "</span>") : "") + "</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>";
-                });
-            } else {
-                html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>우리 매장에서 추가한 노쇼는 아직 없네요!<br/>이분이 노쇼를 하셨다면 아래 추가 버튼을 눌러 다른 매장에도 공유해주세요.</span></div>";
-            }
+          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});
+          $("#noShowClean").removeClass('d-flex').addClass('d-none');
+          if(!$("#noShowDirtyImage").attr('src')){
+            $("#noShowDirtyImage").attr('src', '/nmns/img/sub_img.svg');
+          }
+          $("#myNoShowCount").text(e.data.detail.length);
+          $("#otherNoShowCount").text(Math.max(e.data.summary.noShowCount - e.data.detail.length, 0));
+          if(e.data.summary.lastNoShowDate){
+            $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
+          }
+          if (e.data.detail.length > 0) {
+            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
+            e.data.detail.forEach(function(item) {
+                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
+            });
+            $("#noShowSearchList").html(html);
+            $("#noShowSearchList .noShowSearchDelete").on("touch click", function(){
+              deleteNoShow($(this));
+            })
+          }
+          $("#noShowDirty").removeClass('d-none').addClass('d-flex');
         } else {
-            $("#noShowSearchSummary").html("전화번호 " + dashContact(e.data.summary.contact) + " 고객에 대해 등록된 노쇼 전적이 없습니다.").show();
-            html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>이분은 노쇼를 한 적이 없으시네요! 안심하세요 :)</span></div>";
-        }
-        var list = $("#noShowSearchList");
-        list.addClass("summary").html(html);
-        list.find(".noShowSearchDelete").off("touch click").on("touch click", function() {
-            deleteNoShow($(this));
-        });
-        if (list.hasClass("ps")) {
-            list.data("scroll").update();
+          $("#noShowDirty").removeClass('d-flex').addClass('d-none');
+          $("#noShowClean").removeClass('d-none').addClass('d-flex');
+          if(!$("#noShowImage").attr('src')){
+            $("#noShowImage").attr('src', '/nmns/img/sub_img.svg');
+          }
+          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 이력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
         }
     }));
 
     NMNS.socket.on("add noshow", socketResponse("노쇼 추가하기", function(e) {
-        var html, badge = "";
-        if ($("#noShowSearch").is(":visible")) {
-            badge = (e.data.noShowCase ? ("<span class='badge badge-light'>" + e.data.noShowCase + "</span>") : "");
-            html = $("<div class='row col-12 px-0 mt-1' data-id='" + e.data.id + "' data-contact='" + e.data.contact + "' data-date='" + e.data.date + "' data-noshowcase='" + e.data.noShowCase + "'><span class='col-4'>" + (e.data.contact || $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] input[name='noShowSearchAddContact']").val()) + "</span><span class='col-4'>" + (e.data.date ? e.data.date.substring(0, 4) + "-" + e.data.date.substring(4, 6) + "-" + e.data.date.substring(6) : "") + "</span><span class='col-3'>" + badge + "</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
-            html.insertBefore($("#noShowSearchList").children(".noShowSearchAdd:eq(0)"));
-            html.find(".noShowSearchDelete").on("touch click", function() {
-                deleteNoShow($(this));
-            });
-            var row = $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "']");
-            row.data("datetimepicker").destroy();
-            row.remove();
-        }
         showSnackBar("<span>추가되었습니다! 다른 분들에게 많은 도움이 될거에요 :)</span>");
-    }, function(e) {
-        $("#noShowSearchList div.noShowSearchAdd[data-id='" + e.data.id + "'] .noShowSearchAddSubmit").off("touch click").on("touch click", function() {
-            submitAddNoShow($(this));
-        });
     }));
 
     NMNS.socket.on("delete noshow", socketResponse("노쇼 삭제하기", function(e) {
         NMNS.history.remove(e.data.id, findById);
     }, function(e) {
-        if (e && e.data) {
+        if (e && e.data) { 
             var origin = NMNS.history.find(function(item) { return item.id === e.data.id });
             if (origin) {
-                var newRow = $("<div class='row col-12 px-0 mt-1' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" (origin.noShowCase || "") + "'><span class='col-4'>" + (origin.contact ? dashContact(origin.contact) : "") + "</span><span class='col-4'>" + (origin.date ? (origin.date.substring(0, 4) + "-" + origin.date.substring(4, 6) + "-" + origin.date.substring(6)) : "") + "</span><span class='col-3'>" + (origin.noShowCase ? ("<span class='badge badge-light'>" + origin.noShowCase + "</span>") : "") + "</span><span class='col-1 px-0'><i class='fas fa-trash noShowSearchDelete' title='삭제'></i></span></div>");
+                var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col col-3'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col col-3'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + origin.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>");
                 newRow.find(".noShowSearchDelete").off("touch click").on("touch click", function() {
                     deleteNoShow($(this));
                 });
@@ -1886,46 +1981,48 @@
     }, true));
 
     NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e) {
-        var popup = $("#creationPopup");
-        if ((e.data.contact === popup.find("#creationPopupContact").val() && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#creationPopupName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
-            if (e.data.etc) {
-                popup.find("#creationPopupEtc").val(e.data.etc);
-            }
-            if (e.data.manager) {//변경된 경우에만 덮어쓰기
-                var manager = findManager(e.data.manager);
-                if (manager) {
-                    popup.find("#creationPopupManager").html(popup.find("#creationPopupManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendarid", manager.id);
-                }
-            }
-            if (e.data.contents) {
-                popup.find("#creationPopupContents").val(e.data.contents);
-            }
-            if (e.data.isAllDay !== undefined) {
-                popup.find("#creationPopupAllDay").attr("checked", e.data.isAllDay);
-            }
-            if (e.data.name && popup.find("#creationPopupName").val() === "") {//빈칸일 경우에만 덮어쓰기
-                popup.find("#creationPopupName").val(e.data.name);
-            }
-            if (e.data.contact && popup.find("#creationPopupContact").val() === "") {//빈칸일 경우에만 덮어쓰기
-                popup.find("#creationPopupContact").val(e.data.contact);
-            }
-            popup.find('#creationPopupEtc').prop('readonly', true);
-            popup.find('.creationPopupEtcNotice').show();
-        }
-        if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0 && popup.find("#creationPopupContact").is(":visible")) {
-            popup.find("#creationPopupContact").tooltip({
-                title: "이 번호에는 총 " + e.data.totalNoShow + "건의 노쇼가 등록되어 있습니다." + (e.data.myNoShow && e.data.myNoShow > 0 ? "<br/>우리 매장에서는 " + e.data.myNoShow + "건 등록되었습니다." : ""),
-                placement: ($(window).width() > 576 ? "right" : "top"),
-                trigger: "click hover focus",
-                delay: { "hide": 1000 },
-                html: true
-            }).tooltip("show");
-            setTimeout(function() {
-                popup.find("#creationPopupContact").tooltip("hide");
-            }, 3000);
-            popup.find("#creationPopupContact").one("keyup change", function() {
-                $(this).tooltip('dispose');
-            });
+        var popup = $("#scheduleTab");
+        if(popup.is(":visible")){
+          if ((e.data.contact === popup.find("#scheduleContact").val() && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#scheduleName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
+              if (e.data.etc) {
+                  popup.find("#scheduleEtc").val(e.data.etc);
+              }
+              if (e.data.manager) {//변경된 경우에만 덮어쓰기
+                  var manager = findManager(e.data.manager);
+                  if (manager) {
+                      popup.find("#scheduleManager").html(popup.find("#scheduleManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendar-id", manager.id);
+                  }
+              }
+              if (e.data.contents) {
+                popup.find("#scheduleTabContents").append(generateContentsList(e.data.contents)).find('button').off('touch click').on('touch click', function(){
+                  removeContent(this);
+                });
+              }
+              if (e.data.isAllDay !== undefined) {
+                  popup.find("#scheduleAllDay").attr("checked", e.data.isAllDay);
+              }
+              if (e.data.name && popup.find("#scheduleName").val() === "") {//빈칸일 경우에만 덮어쓰기
+                  popup.find("#scheduleName").val(e.data.name);
+              }
+              if (e.data.contact && popup.find("#scheduleContact").val() === "") {//빈칸일 경우에만 덮어쓰기
+                  popup.find("#scheduleContact").val(e.data.contact);
+              }
+          }
+          if (e.data.totalNoShow !== undefined && e.data.totalNoShow > 0 && popup.find("#scheduleContact").is(":visible")) {
+              popup.find("#scheduleContact").tooltip({
+                  title: "이 번호에는 총 " + e.data.totalNoShow + "건의 노쇼가 등록되어 있습니다." + (e.data.myNoShow && e.data.myNoShow > 0 ? "<br/>우리 매장에서는 " + e.data.myNoShow + "건 등록되었습니다." : ""),
+                  placement: "bottom",
+                  trigger: "click hover focus",
+                  delay: { "hide": 1000 },
+                  html: true
+              }).tooltip("show");
+              setTimeout(function() {
+                  popup.find("#scheduleContact").tooltip("hide");
+              }, 3000);
+              popup.find("#scheduleContact").one("keyup change", function() {
+                  $(this).tooltip('dispose');
+              });
+          }
         }
     }, undefined, true));
 
@@ -1944,23 +2041,31 @@
     }, undefined, true));
 
     NMNS.socket.on('resend alrimtalk', socketResponse('알림톡 다시 보내기', function(e){
+        $('#resendAlrimScheduleBtn').addClass('d-none');
         showSnackBar("<span>고객에게 알림톡을 다시 보냈습니다!</span>");
     }, function(e){
-        $('#detailPopupResendAlrim').addClass('d-none')
+        $('#resendAlrimScheduleBtn').addClass('d-none');
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
+      if($('#announcementBody').children().length === 0){
+        $('#announcementBody').html('');//대기문구 삭제
+      }
+      e.data.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
+      e.data.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
       $('#announcementBody').append(drawAnnouncementList(e.data));
-      var count = ($('.announcementCount').text() * 1);
+      var count = NMNS.info.newAnnouncement;
       if(count && count > 0){
         var unread = 0;
         e.data.forEach(function(item){
           if(!item.isRead) unread++;
         })
         if(count > unread){
-          $('.announcementCount').text(count - unread);
+          $('.announcementCount').text(count - unread > 99? '99+' : count - unread);
+          NMNS.info.newAnnouncement = count - unread;
         }else if(count === unread){
           $('.announcementCount').text('');
+          NMNS.info.newAnnouncement = 0;
         }
       }
       $('#announcementBody').parent().removeClass('wait');
@@ -1972,65 +2077,46 @@
     }, function(e){
       $('#announcementBody').parent().removeClass('wait');
     }))
+    
+    NMNS.socket.on("get menu list", socketResponse('메뉴 목록 조회', function(e){
+      if($("#scheduleTabContentList").is(":visible")){
+        $("#scheduleTabContentList").html(generateMenuList(e.data));
+        NMNS.menuList = e.data;
+      }
+    }, undefined, true))
     //websocket response end
     //Modal events start  
+    $(".modal").on("shown.bs.modal", function(){
+      $(".modal-backdrop").one("touch click", function(e){//click on menubar
+        $(".modal.show").modal('hide');
+      })
+    });
+    
     $("#infoModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
         }
         var changed = false;
 
-        if (moment($("#infoBizBeginTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizBeginTime)) {
+        if ($("#infoBizBeginTime").val() !== (NMNS.info.bizBeginTime)) {
             changed = true;
         }
-        if (!changed && moment($("#infoBizEndTime").val(), "HH:mm").format("HHmm") !== (NMNS.info.bizEndTime)) {
+        if (!changed && $("#infoBizEndTime").val() !== (NMNS.info.bizEndTime)) {
             changed = true;
         }
         if (!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")) {
             changed = true;
         }
-        if (!changed && $("#infoPassword").val() !== "") {
-            changed = true;
-        }
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
-        }
-        if (!changed) {
-            $(".infoManagerItem").each(function() {
-                if (!changed) {
-                    if ($(this).hasClass("addManagerItem")) { //추가
-                        changed = true;
-                    } else {
-                        var input = $(this).find("input[type='text']");
-                        var manager = findManager(input.data("id"));
-                        if ($(this).data("delete") && manager) { //삭제
-                            changed = true;
-                        } else if (manager) {
-                            if (input.data("color") !== manager.bgColor || input.val() !== manager.name) { //수정
-                                changed = true;
-                            }
-                        }
-                    }
-                }
-            });
         }
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
-    }).on("touch click", function(e) {
-        if ($("#infoModalColorPicker").is(":visible")) {
-            var target = $(e.target);
-            if (!target.parents("#infoModalColorPicker").length && !target.hasClass("infoManagerColor") && !target.hasClass("tui-full-calendar-checkbox-round") && !target.parents(".infoManagerColor").length && !target.parents(".tui-full-calendar-checkbox-round").length && !target.hasClass("addManagerColor") && !target.parents(".addManagerColor").length && !target.parents(".addManagerColor").length) {
-                $("#infoModalColorPicker").hide(300);
-            }
-        }
-    }).on("shown.bs.modal", function() {
-        $("#infoManagerList").data("scroll").update();
-        $("#infoManagerList")[0].scrollTop = 0;
-        if ($("body .popover").length) {
-            $("body .popover").popover("update");
-        }
-    });
+    }).one('show.bs.modal', function(){
+      $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
+    }).on('show.bs.modal', refreshInfoModal);
+    
     $("#alrimModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2060,15 +2146,44 @@
         if ($("body .popover").length) {
             $("body .popover").popover("update");
         }
-    });
-    $("#noShowModal").on("touch click", function(e) {
-        if ($("#noShowScheduleDropdown").is(":visible")) {
-            var target = $(e.target);
-            if (!target.parents("#noShowScheduleDropdown").length && !target.hasClass("badge") && !target.parents(".noShowScheduleNoShow").length) {
-                $("#noShowScheduleDropdown").hide(300);
-            }
+    }).one('show.bs.modal', function(){
+      $("#labelAlrimUseYn").on("touch click", function(){
+        $(this).next().children('label').trigger('click');
+      })
+      $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
+          $("#noticeByteCount").text($(this).val().length);
+      }).on("blur", function(){
+          $(this).val(removeNonCharacter($(this).val()));
+      });
+      $("#alrimUseYn").off("change").on("change", function() {
+        if ($(this).prop("checked")) {
+          $("#alrimScreen").hide();
+        } else {
+          $("#alrimScreen").show();
         }
-    }).on("hide.bs.modal", function() {
+      });
+      $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
+      
+      $("#alrimHistorySearch").off("touch click").on("touch click", function() {
+        var parameters = {};
+        if ($("#alrimHistoryTarget").val() !== "") {
+          parameters.target = $("#alrimHistoryTarget").val();
+        }
+        $("#alrimHistoryList .row").remove(); //깜빡임 효과
+        NMNS.socket.emit("get alrim history", parameters);
+      });
+      $("#alrimHistoryTarget").off("keyup").on("keyup", function(e) {
+        if (e.which === 13) {
+          $("#alrimHistorySearch").trigger("click");
+        }
+      });
+    }).on("show.bs.modal", function(){
+      $("#alrimTabList a[data-target='#alrimTab']").tab('show');
+    }).on("hidden.bs.modal", function(){
+      refreshAlrimModal();
+    });
+    
+    $("#noShowModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
         }
@@ -2079,18 +2194,21 @@
             $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
         }
     });
-    $("#taskModal").on("hide.bs.modal", function(e) {
-        var task = $(this).data("task");
-        if (task && task.guide) {
-            task.guide.clearGuideElement();
-            task.guide = null;
-        }
+    
+    $("#scheduleModal").on("hide.bs.modal", function() {
+      if(NMNS.scheduleTarget && NMNS.scheduleTarget.guide){
+        NMNS.scheduleTarget.guide.clearGuideElement();
+      }
+      delete NMNS.scheduleTarget;
+    }).on('hidden.bs.modal', function(){
+      //reset form
+      $('#scheduleName').val('');
+      $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
+        removeContent(this);
+      });
+      $('#scheduleContact').val('');
     });
-    $("#mainRow").on("touch click", function() {
-        if ($("#navbarResponsive").hasClass("show")) {
-            $("#navbarResponsive").collapse("hide");
-        }
-    });
+
     $("#noMoreTips").on("touch click", function() {
         document.cookie = "showTips=false";
     });
@@ -2102,23 +2220,7 @@
     $("#lnbLastMenu a").on("touch click", function(e) {
         e.preventDefault();
     });
-    $("#alrimSwitchBtn").on("touch click", function(e) {
-        e.preventDefault();
-        if ($("#alrimForm").is(":visible")) {
-            $("#alrimModalTitle").text("알림톡 사용내역");
-            $(this).text("알림톡 정보");
-        } else {
-            $("#alrimModalTitle").text("알림톡 정보");
-            $(this).text("알림톡 사용내역");
-        }
-        $("#alrimModal .alrimData").toggle();
-        $(this).blur();
-    });
-    $("#navbarResponsive").on("show.bs.collapse", function(){
-        $("#mainNav").addClass("shadow"); 
-    }).on("hidden.bs.collapse", function(){
-        $("#mainNav").removeClass("shadow");
-    });
+    
     $("#showTutorial").on("touch click", function(){
        if (!document.getElementById("tutorialScript")) {
             var script = document.createElement("script");
@@ -2133,13 +2235,13 @@
             $("#tutorialModal").modal();
         }
     });
-    $('#announcementModal').on('show.bs.modal', function(){
+    $('.announcementMenuLink').on('show.bs.popover', function(){
       if($('#annoumcementBody').children().length === 0){
         NMNS.announcementPage = 1
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
         //for test
-        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
+        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 ���목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
         var count = ($('.announcementCount').text() * 1);
         if(count && count > 0){
           var unread = 0;
@@ -2156,40 +2258,106 @@
         NMNS.expectMoreAnnouncement = true;*/
         //for test
       }
+    }).on('shown.bs.popover', function(){
+      $('#announcementBody').parents('.popover').find('.close-button').on('touch click', function(){
+        $(this).parents('.popover').popover('hide')
+      })
+    })
+    $('#mainMenu').on('shown.bs.popover', function(){
+      $(".mainMenuRow a[data-link]").off("touch click").on("touch click", function(e){
+        $("#mainMenu").popover('hide')
+        $($(this).data('link')).modal("show");
+      });
+      $("#signoutLink").on("touch click", function(){
+        NMNS.socket.close();
+      });
+    });
+    $('html').on('click', function(e) {// click outside popover to close
+      if ($('body').children('.popover.show').length > 0 && typeof $(e.target).data('original-title') == 'undefined' && !$(e.target).parents().is('.popover.show') && $(e.target).parents('[data-toggle="popover"]').length === 0) {
+        $('body').children('.popover.show').popover('hide');
+      }
+    });
+    $("#alrimTabList a[data-target='#alrimTab']").on("show.bs.tab", refreshAlrimModal);
+    $("#alrimTabList a[data-target='#alrimHistoryTab']").on("show.bs.tab", function(){
+      $("#alrimHistorySearch").trigger('click');
+    });
+    
+    $("#scheduleTabList a[data-target='#scheduleTab']").on('touch click', function(){
+      if(!$(this).hasClass('active')){
+        initScheduleTab("switch");
+      }
+    });
+    $("#scheduleTabList a[data-target='#taskTab']").on('touch click', function(){
+      if(!$(this).hasClass('active')){
+        initTaskTab('switch');
+      }
+    });
+    $("#scheduleTabList a[data-target='#salesTab']").on('show.bs.tab', function(){
+      if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule){
+        $("#salesLoading").show();
+        $("#salesForm").hide();
+        NMNS.socket.emit('get sales template', {scheduleId: NMNS.scheduleTarget.schedule.id});
+        return true;
+      }else{
+        return false;
+      }
+    });
+
+    $("#addScheduleBtn").on("touch click", function(){
+      initScheduleTab();
+      $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').tab('show');
+      $("#scheduleBtn").text('예약 추가 완료');
+      $("#scheduleModal").removeClass('update').modal('show');
+    });
+    $("#userModal").one('show.bs.modal', function(){
+      //passwordTab
+      $("#resetPasswordBtn").on("touch click", function(){
+        if($("#currentPassword").val().length === 0){
+          showSnackBar("현재 비밀번호를 입력해주세요.");
+          return;
+        }else if($("#newPassword").val().length === 0){
+          showSnackBar("새 비밀번호를 입력해주세요.");
+          return;
+        }else if($("#renewPassword").val().length === 0){
+          showSnackBar("새 비밀번호를 한 번 더 입력해주세요.");
+          return;
+        }else if($("#newPassword").val() !== $("#renewPassword").val()){
+          showSnackBar("새 비밀번호가 일치하지 않습니다.");
+          return;
+        }
+        NMNS.socket.emit("update password", { currentPassword: $("#currentPassword").val(), newPassword: $("#newPassword").val() });
+        $("#currentPassword").val("");
+        $("#newPassword").val("");
+        $("#renewPassword").val("");
+        $("#infoModal").modal('hide');
+      })
+      $("#kakaoBtn").on("touch click", function(){
+        if($(this).hasClass('connected')){
+          return;
+        }
+        alert('카카오톡 계정 연동!');
+      })
+      $("#naverBtn").on("touch click", function(){
+        if($(this).hasClass('connected')){
+          return;
+        }
+        alert('네이버 계정 연동!');
+      });
+    }).on('shown.bs.modal', function(){
+      if(NMNS.info.kakaotalk){
+        $("#kakaoBtn").addClass('connected').find('span').text('카카오 계정 연동 완료')
+      }
+      if(NMNS.info.naver){
+        $("#naverBtn").addClass('connected').find('span').text('네이버 계정 연동 완료')
+      }
+    }).on("hidden.bs.modal", function(){
+      $("#currentPassword").val("");
+      $("#newPassword").val("");
+      $("#renewPassword").val("");
     })
     //Modal events end
     //mobile horizontal scroll handling
-    // credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
-    function swipedetect(el, callback) {
-        var touchsurface = el,
-            swipedir, startX, distX,
-            threshold = 100, //required min distance traveled to be considered swipe
-            allowedTime = 300, // maximum time allowed to travel that distance
-            elapsedTime,
-            startTime,
-            handleswipe = callback || function(swipedir) {};
-
-        touchsurface.addEventListener('touchstart', function(e) {
-            var touchobj = e.changedTouches[0];
-            swipedir = 'none';
-            //dist = 0;
-            startX = touchobj.pageX;
-            startTime = new Date().getTime(); // record time when finger first makes contact with surface
-        }, false);
-
-        touchsurface.addEventListener('touchend', function(e) {
-            var touchobj = e.changedTouches[0];
-            distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
-            elapsedTime = new Date().getTime() - startTime; // get time elapsed
-            if (elapsedTime <= allowedTime) { // first condition for awipe met
-                if (Math.abs(distX) >= threshold) { // 2nd condition for horizontal swipe met
-                    swipedir = (distX < 0) ? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
-                    handleswipe(swipedir);
-                }
-            }
-        }, false);
-    }
-    swipedetect(document.getElementById('mainRow'), function(swipedir) {
+    swipedetect(document.getElementById('mainCalendar'), function(swipedir) {
         if (swipedir === "left") {
             $("#renderRange").next().trigger("click");
         } else if (swipedir === "right") {
@@ -2198,97 +2366,83 @@
     });
 
     //mobile horizontal scroll handling end
-    $(".addManager").on("touch click", function() {
-        var color = NMNS.colorTemplate[Math.floor(Math.random() * NMNS.colorTemplate.length)];
-        var list = $(this).prev();
-        var clazz = list.attr("id") === "lnbManagerList" ? "lnbManagerItem" : "infoManagerItem";
-        var row = $("<div class='" + clazz + " addManagerItem'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'/><span class='addManagerColor' style='background-color:" + color + "; border-color:" + color + ";' data-color='" + color + "'></span><input type='text' name='name' class='align-middle form-control form-control-sm rounded-0' data-color='" + color + "' data-id='" + NMNS.email + generateRandom() + "' placeholder='담당자 이름'/></label>" + (clazz === "lnbManagerItem" ? "<i class='fas fa-check submitAddManager pl-1' title='추가'></i><i class='fas fa-times cancelAddManager pl-1' title='취소'></i>" : "<i class='fas fa-trash cancelAddManager pl-2 title='삭제'></i>") + "</div>");
-        list.append(row);
-        if (clazz === "lnbManagerItem") {
-            row.find(".submitAddManager").off("touch click").on("touch click", function() {
-                submitAddManager(this);
-            });
-            row.find("input[type='text']").off("keyup").on("keyup", function(e) {
-                if (e.which === 27) {
-                    cancelAddManager(this);
-                    list.find("div:last-child input[type='text']").focus();
-                } else if (e.which === 13) {
-                    submitAddManager(this);
-                }
-            });
-            row.find(".cancelAddManager").off("touch click").on("touch click", function() {
-                cancelAddManager(this);
-                list.find("div:last-child input[type='text']").focus();
-            });
-            row.find(".addManagerColor").attr("title", "담당자 색상은 저장 후 내 매장 정보 메뉴에서 바꾸실 수 있습니다.");
-        } else {
-            row.find("input[type='text']").off("keyup").on("keyup", function(e) {
-                if (e.which === 27) {
-                    if (list.children(".infoManagerItem:visible").length == 1) {
-                        return;
-                    }
-                    cancelAddManager(this);
-                    list.find("div:last-child input[type='text']").focus();
-                    list.data("scroll").update();
-                }
-            });
-            row.find(".addManagerColor").off("touch click").on("touch click", function() {
-                showColorPickerPopup($(this));
-            });
-            row.find(".cancelAddManager").off("touch click").on("touch click", function() {
-                if (list.children(".infoManagerItem:visible").length == 1) {
-                    alert("담당자는 반드시 1명 이상 있어야합니다!");
-                    return;
-                }
-                cancelAddManager(this);
-                list.find("div:last-child input[type='text']").focus();
-                list.data("scroll").update();
-            });
+    function initLnbManagerForm(){
+      if(NMNS.initedLnbManagerForm){
+        return;
+      }
+      NMNS.initedLnbManagerForm = true;
+      $("#lnbManagerColor").on('change', function(e){
+        e.stopPropagation();
+        var color = $(this).find('input:checked').val();
+        $("#lnbManagerFormColor").css('borderColor', color).css('background-color', color).data('value', color);
+      });
+      $("#lnbManagerFormSubmit").on("touch click", function(e){
+        var name = $("#lnbManagerFormName").val();
+        if (!name || name.length < 1) {
+            showSnackBar("담당자 이름을 입력해주세요.");
+            return;
         }
-        list.find("div:last-child input[type='text']").focus();
-    });
-    $("#copyEmail").on("touch click", function(e) {
-        e.preventDefault();
-        var range = document.createRange();
-        range.selectNodeContents($(this)[0]);
-        var sel = window.getSelection ? window.getSelection() : document.selection;
-        sel.removeAllRanges();
-        sel.addRange(range);
-        var title = "";
-        if (document.execCommand('copy')) {
-            title = "메일주소가 복사되었습니다.";
-        } else {
-            title = "메일주소를 복사하지 못했습니다. 직접 선택하여 복사해주세요.";
+        var color = $("#lnbManagerFormColor").data("value");
+        
+        var id = $("#lnbManagerForm").data("id");
+        if(id){
+          var manager = findManager(id);
+          if(manager){//update
+            var exist = $("#lnbManagerList .lnbManagerItem[data-value='"+manager.id+"']");
+            if (color !== manager.color || name !== manager.name) { //수정
+              NMNS.calendar.setCalendar(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color, name: name }, true);
+              NMNS.calendar.setCalendarColor(manager.id, { color: color, bgColor: getBackgroundColor(color), borderColor: color }, true);
+              NMNS.history.push({ id: manager.id, color: manager.color, name: manager.name });
+              exist.find('span:not(.menu-collapsed)').data('color', color);
+              if(exist.find('input').prop('checked')){
+                exist.find('span:not(.menu-collapsed)').css('backgroundColor', color).css('borderColor', color);
+              }
+              exist.find('span.menu-collapsed').text(name)
+              NMNS.socket.emit("update manager", { id: manager.id, color: color, name: name });
+            }
+            exist.show();
+            $("#lnbManagerForm").hide();
+            return;
+          }
         }
-        $(this).attr("title", title).tooltip({
-            trigger: "manual",
-            delay: { "hide": 1000 }
+        //create
+        id = NMNS.email + generateRandom();
+        $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
+        var calendars = NMNS.calendar.getCalendars();
+        calendars.push({
+            id: id,
+            name: name,
+            checked: true,
+            bgColor: getBackgroundColor(color),
+            borderColor: color,
+            color: color
         });
-        $(this).tooltip("show");
-        setTimeout(function() {
-            $("#copyEmail").attr("title", "메일주소 복사").tooltip("dispose");
-        }, 1500);
-        if (sel.empty) { // Chrome, IE
-            sel.empty();
-        } else if (sel.removeAllRanges) { // Firefox
-            sel.removeAllRanges();
+        NMNS.calendar.setCalendars(calendars);
+        NMNS.socket.emit("add manager", { id: id, name: name, color: color });
+        $("#lnbManagerForm").hide();
+      })
+      $("#lnbManagerFormName").on("keyup", function(e){
+        if(e.which === 13){
+          $("#lnbManagerFormSubmit").trigger('click');
+        }else if(e.which === 27){
+          $('.addManager').trigger('click');
         }
-        return false;
-    });
-    $(".openAppLink").off("touch click").on("touch click", function(e) {
-        var ua = navigator.userAgent.toLocaleLowerCase();
-
-        if (ua.indexOf("android") > -1) {
-            // e.preventDefault();
-            // navigator.app.loadUrl($(this).data("android")); // Android only
-            // return false;
-        } else if (ua.indexOf("ipod") > -1 || ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1) {
-            // setTimeout(function(){
-            //   window.location = $(this).data("ios-install");
-            // }, 25);
-            window.open($(this).data("ios"), "_system");
-        }
-    });
+      });
+    }
+    $(".addManager").on("touch click", function() {
+      if($("#lnbManagerForm").data('id')){//was updating
+        $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
+      }
+      if(!$("#lnbManagerForm").is(":visible")){
+        var color = $("#lnbManagerColor label:nth-child("+Math.floor(Math.random() * $("#lnbManagerColor label").length)+") input").prop('checked', true).val();
+        $("#lnbManagerFormColor").css('border-color', color).css('background-color', color).data('value', color);
+        $("#lnbManagerForm").data('id', null).show();
+        $("#lnbManagerFormName").val('').focus();
+        return;
+      }
+      $("#lnbManagerForm").data('id', null).hide();
+    }).one("touch click", initLnbManagerForm);
+    
     $(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
@@ -2309,10 +2463,16 @@
         });
     }));
     //notification handling end
-    //customer management menu switch start
-    $(".customerMenuLink").off("touch click").on("touch click", function(e) {
-        e.preventDefault();
+    //menu switch start
+    $(".customerMenuLink").off("touch click").on("touch click", function() {
         var action = $($(".customerSortType.active")[0]).data("action");
+        if(!document.getElementById('customerStyle')){
+          var style = document.createElement('link');
+          style.rel="stylesheet";
+          style.href="/nmns/css/customer.min.css"
+          style.id = 'customerStyle';
+          document.head.appendChild(style);
+        }
         if (!document.getElementById("customerScript")) {
             var script = document.createElement("script");
             script.src = "/nmns/js/customer.min.js";
@@ -2321,13 +2481,9 @@
 
             script.onload = function() {
                 NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
-                $(".calendarMenu").addClass("d-none");
-                $(".customerMenu").css("display", "block");
             };
         } else {
             NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
-            $(".calendarMenu").addClass("d-none");
-            $(".customerMenu").css("display", "block");
         }
         $("#customerAddManager").next().html("<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='' data-bgcolor='#b2dfdb'><span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color:#b2dfdb'></span><span class='tui-full-calendar-content'>(담당자 없음)</span></button>").append(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
             $("#customerAddManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
@@ -2337,11 +2493,236 @@
             $("#customerManager").data("calendar-id", $(this).data("calendar-id")).data("bgcolor", $(this).data("bgcolor")).html($(this).html());
         });
     });
-    $(".calendarMenuLink").off("touch click").on("touch click", function(e) {
-        e.preventDefault();
-        $(".customerMenu").css("display", "none");
-        $(".calendarMenu").removeClass("d-none");
-        setSchedules();
+    $(".menuMenuLink").one("touch click", function(){
+      if(!document.getElementById('menuStyle')){
+        var style = document.createElement('link');
+        style.rel="stylesheet";
+        style.href="/nmns/css/menu.min.css";
+        style.id = 'menuStyle';
+        document.head.appendChild(style);
+      }
+      if (!document.getElementById("menuScript")) {
+        var script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js";
+        script.id = "menuScript";
+        document.body.appendChild(script);
+
+        script.onload = function() {
+          var script2 = document.createElement("script");
+          script2.src = "/nmns/js/menu.min.js";
+          document.body.appendChild(script2);
+          NMNS.socket.emit("get menu list", null);
+        };
+      }
+      $(this).on("touch click", function(){//메뉴 초기화
+        $("#mainMenuTools .updatingMenu-collapsed").removeClass('d-inline-flex');
+        $(".updatingMenu-collapsed").hide();
+        $(".updatingMenu-expanded").show();
+        $("#updateMenuLink").text('수정');
+        NMNS.socket.emit("get menu list", null);
+      });
     });
-    //customer management menu switch end
+    $(".salesMenuLink").one("touch click", function(){
+      if(!document.getElementById('salesStyle')){
+        var style = document.createElement('link');
+        style.rel="stylesheet";
+        style.href="/nmns/css/sales.min.css";
+        style.id = 'salesStyle';
+        document.head.appendChild(style);
+      }
+      if (!document.getElementById("salesScript")) {//최초 접속
+        var script = document.createElement("script");
+        script.src = "/nmns/js/sales.min.js";
+        script.id = "salesScript";
+        document.body.appendChild(script);
+
+        script.onload = function() {
+          NMNS.socket.emit("get menu list", null);
+        };
+        
+        $("#salesSearchName").autocomplete({
+            serviceUrl: 'get customer info',
+            paramName: 'name',
+            zIndex: 1060,
+            maxHeight: 150,
+            triggerSelectOnValidInput: false,
+            transformResult: function(response) {
+                response.forEach(function(item) {
+                    item.data = item.contact;
+                    item.value = item.name;
+                    delete item.contact;
+                    delete item.name;
+                });
+
+                return { suggestions: response };
+            },
+            onSearchComplete: function() {},
+            formatResult: function(suggestion) {
+                return suggestion.value + ' (' + dashContact(suggestion.data) + ')';
+            },
+            onSearchError: function() {},
+            onSelect: function(suggestion) {
+                $('#scheduleContact').val(suggestion.data).trigger('blur');
+            }
+        }, NMNS.socket);
+        
+        flatpickr("#salesSearchStartDate", {
+            dateFormat: "Y. m. d",
+            defaultDate: moment().startOf('month').toDate(),
+            locale: "ko"
+        });
+        flatpickr("#salesSearchEndDate", {
+            dateFormat: "Y. m. d",
+            defaultDate: new Date(),
+            locale: "ko"
+        });
+        if(!NMNS.menuList || NMNS.menuList.length === 0){
+          NMNS.socket.emit('get menu list');
+        }
+        var now = moment();
+        $("#mainSalesSearch .activable").each(function(index, button){
+          button.innerText = now.format('M월');
+          now.add(-1, 'month');
+        })
+        $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
+          $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
+        });
+      }
+      $(this).on("touch click", function(){
+        $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
+          $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
+        });
+      })
+    });
+    
+    function switchMenu(e){
+      if(e && e.preventDefault){
+        e.preventDefault();
+      }
+      if(!$(this).hasClass("menuLinkActive")){
+        $(".switchingMenu:not(."+$(this).data('link')+")").hide();
+        $("."+$(this).data('link')).show();
+        $(".menuLinkActive").removeClass("menuLinkActive");
+        $(this).addClass("menuLinkActive");
+        // hide mainTask field
+        $("#mainCalendarArea").css('minWidth', '');
+        $("#mainContents").css("minWidth", '100%');
+        $("#mainAside").css('minWidth', 'unset');
+        $("#mainTask").removeClass("show");
+      }
+    }
+    
+    //menu switch end
+    //set event listeners
+    (function() {
+        $('.moveDate').on('touch click', onClickNavi); //prev, next
+        $('.calendarType').on('touch click', onClickMenu); //calendar type
+        $("#calendarTypeMenu").next().children("a").on("touch click", function(e) { //calendar type on mobile
+            e.preventDefault();
+            var target = $(e.target);
+            if (!target.hasClass("dropdown-item")) {
+                target = target.parents(".dropdown-item");
+            }
+            $("#calendarTypeMenu").html(target.html());
+            $("#calendarTypeMenu").attr("data-action", target.data("action"));
+            $("#calendarTypeMenu").trigger("click");
+        });
+        $('#lnbManagerList').on('change', onChangeManagers);// toggle schedules of manager
+
+        $(".addNoShowLink").one("touch click", initNoShowModal);
+        window.addEventListener('resize', debounce(NMNS.calendar.render, 200));
+        flatpickr.localize("ko");
+        
+        $(".taskMenu").on("touch click", onClickTask);// toggle task column
+        $('#sidebarToggler').on('touch click', function(){// toggle side menu
+          if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
+            if($("#mainTask").hasClass("show")){
+              $("#mainAside").css('minWidth', '270px');
+            }
+          }else{// about to hide aside
+            $("#mainAside").css('minWidth', 'unset');
+          }
+          $('#mainAside').toggleClass('sidebar-toggled')
+        })
+        $(".announcementMenuLink").popover({
+          template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
+          html:true,
+          sanitize:false,
+          placement:'auto'
+        })
+        $("#mainMenu").popover({
+          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
+          html:true,
+          sanitize:false,
+          placement:'bottom'
+        })
+        $("#searchNoShow").on("keyup", function(e){
+          if(e.keyCode === 13 || e.which === 13){
+            if($(this).val().length === 11 || $(this).val().length === 10){
+              switchMenu.apply(this, e);
+              NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
+            }else{
+              showSnackBar("전화번호를 정확히 입력해주세요.");
+            }
+          }
+        })
+        $(".calendarMenuLink").off("touch click").on("touch click", setSchedules);
+        $("#searchNoShow").autocomplete({
+            serviceUrl: "get customer info",
+            paramName: "contact",
+            zIndex: 1060,
+            maxHeight: 150,
+            triggerSelectOnValidInput: false,
+            transformResult: function(response, originalQuery) {
+                response.forEach(function(item) {
+                    item.data = item.name;
+                    item.value = item.contact;
+                    delete item.contact;
+                    delete item.name;
+                });
+                return { suggestions: response };
+            },
+            onSearchComplete: function() {},
+            formatResult: function(suggestion, currentValue) {
+                return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+            },
+            onSearchError: function() {},
+            onSelect: function(suggestion) {}
+        }, NMNS.socket);
+        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)){//safari - datalist polyfill
+          if (!document.getElementById("datalistPolyfillScript")) {
+            var script = document.createElement("script");
+            script.src = "/lib/datalist-polyfill/datalist-polyfill.min.js";
+            script.id = "datalistPolyfillScript";
+            document.body.appendChild(script);
+          }
+        }
+        $(".infoCenterLink").one("touch click", function(){
+          if($("#faq").children().length === 0){
+            $("#submitFeedback").on("touch click", function() {
+              var text = $("#feedbackBody").val();
+              if (text && text.trim().length > 0) {
+                  NMNS.socket.emit("submit feedback", { data: text.trim() });
+                  showSnackBar("제안/문의해주신 내용이 잘 전달되었습니다.<br/> 소중한 의견에 감사드립니다.");
+                  $("#feedbackBody").val("");
+              } else {
+                  showSnackBar("제안/문의하실 내용을 입력해주세요.");
+                  return;
+              }
+            });
+            var html = "";
+            var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
+            faqs.forEach(function(item, index) {
+                html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
+                    '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
+                if (index > 0 && index % 50 === 0) {
+                    $("#faq").append(html);
+                    html = "";
+                }
+            });
+            $("#faq").append(html);
+          }
+        })
+        $(".menuLink").on("touch click", switchMenu)
+    })();
 })(jQuery);

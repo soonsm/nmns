@@ -14,6 +14,7 @@ const logger = global.nmns.LOGGER;
 
 const mainView = require('../client/template/main');
 const indexView = require('../client/template/index');
+const signinView = require('../client/template/signin');
 const signupView = require('../client/template/signup');
 const cancelView = require('../client/template/reservationCancel');
 
@@ -79,9 +80,28 @@ module.exports = function(passport) {
         }
     });
 
-    // router.get('/amp', async function(req, res){
-    //    res.render('test.amp.html', {'world': 'ksm'});
-    // });
+
+    router.get('/signin', async function(req, res) {
+        if (req.user) {
+            let user = await db.getWebUser(req.user.email);
+            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
+                //로그인 되있으면 main으로 이동
+                res.redirect("/");
+            } else {
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
+            }
+        } else {
+            render(res, signinView, {
+                email: req.cookies.email,
+                message: req.session.errorMessage,
+                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
+            });
+        }
+    });
+>>>>>>> e04c7b43a455a3cc8cc4e851fb5824a012b68407
 
     router.get('/index.amp', async function(req, res) {
         if (req.user) {

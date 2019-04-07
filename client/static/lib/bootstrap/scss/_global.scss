@@ -1,6 +1,8 @@
 // Typography
 body {
   @include body-font;
+  height:100%;
+  background-color:#f1f2f3;
 }
 
 h1,
@@ -25,22 +27,6 @@ section {
       line-height: 2.5rem;
     }
   }
-}
-
-// Scroll to Top Button
-.floatingButton {
-  z-index: 1042;
-  right: 1rem;
-  bottom: 1rem;
-  font-size: 1.3rem;
-}
-
-.bg-primary {
-  background-color: $primary !important;
-}
-
-.bg-secondary {
-  background-color: $secondary !important;
 }
 
 .text-primary {
@@ -73,10 +59,10 @@ section {
   border-color: $textPrimary;
 }
 
-input[type=checkbox]{
+input[type=checkbox], input[type=radio]{
   display:none;
 }
-input[type=checkbox] + label:before{
+input[type=checkbox]:not(.custom-control-input) + label:before{
   font-family: "Font Awesome 5 Free";
   font-weight: 400;
   display: inline-block;
@@ -84,15 +70,106 @@ input[type=checkbox] + label:before{
   letter-spacing: 8px;
   color: $secondary;
 }
-input[type=checkbox]:not(:checked):hover + label:before{
+input[type=checkbox]:not(.custom-control-input):not(:checked):hover + label:before{
   font-weight: 900;
   color: $lightPrimary;
 }
-input[type=checkbox]:checked + label:before{
+input[type=checkbox]:not(.custom-control-input):checked + label:before{
   content: "\f14a";
   font-weight: 900;
   color: $primary;
 }
 input[type=checkbox] + label + label{
-  color: $secondary;
+  color: $primary;
+}
+
+input[type=radio]:not(.custom-control-input) + label{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  border:1px solid #393535;
+}
+
+input[type=radio]:not(.custom-control-input):not(:checked):hover + label{
+  border:none;
+  background-color:$lightAccent;
+}
+
+input[type=radio]:not(.custom-control-input):checked + label{
+  border:none;
+  background-color:$accent;
+}
+
+/*input[type=radio]:not(.custom-control-input), input[type=radio]:not(.custom-control-input) + label, input[type=radio]:not(.custom-control-input) + label + label{
+  opacity: 0.5;
+}*/
+.base-font{
+  @include body-font;
+}
+
+.custom-switch .custom-control-label::before {
+    left: -2.25rem;
+    width: 22px;
+    pointer-events: all;
+    border-radius: .5rem;
+    height: 14px;
+    border: 1px solid #393535;
+}
+
+.custom-control-input:checked~.custom-control-label::before{
+  background-color:$accent;
+  border-color:$accent;
+}
+
+.custom-switch .custom-control-label::after {
+  top: calc(.25rem + 4px);
+  left: calc(-2.25rem + 4px);
+  width: calc(1rem - 9px);
+  height: calc(1rem - 9px);
+  background-color: #fff;
+  border: 1px solid #393535;
+}
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(8px);
+  border-color: #fff;
+}
+
+.select{
+  position:relative;
+}
+.select select, .select input, .select input:hover, .select input[list], .select input[list]:hover{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  padding-right:25px;
+}
+.select select::-ms-expand, .select input::-ms-expand, .select input:hover::-ms-expand, .select input[list]::-ms-expand, .select input[list]:hover::-ms-expand, input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.select::after {
+  display: inline-block;
+  margin-left: .255em;
+  vertical-align: .255em;
+  content: "";
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-bottom: 0;
+  border-left: 4px solid transparent;
+  position: absolute;
+  top: calc(50% - 2px);
+  right: 12px;
+  bottom: 0;
+  pointer-events: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
 }

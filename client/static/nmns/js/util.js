@@ -117,14 +117,38 @@ function filterNonNumericCharacter(obj) {
     obj.val(obj.val().replace(/\D/g, ''));
 }
 
+function setInputFilter(textbox, inputFilter) {
+  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+    textbox.addEventListener(event, function() {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      }
+    });
+  });
+}
+
+function setNumericInput(textbox){
+    setInputFilter(textbox, function(value){
+        return /^\d*\.?\d*$/.test(value);
+    })
+}
+
 var nonCharacter = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
 
 function removeNonCharacter(string) {
     return string.replace(nonCharacter, '');
 }
 
-function dashContact(contact) {
-    return (contact ? (contact.length === 11 ? (contact.substring(0, 3) + "-" + contact.substring(3, 7) + "-" + contact.substring(7)) : (contact.length === 10 ? (contact.substring(0, 3) + "-" + contact.substring(3, 6) + "-" + contact.substring(6)) : contact)) : "");
+function dashContact(contact, delimiter) {
+    if(!delimiter){
+        delimiter = '-'
+    }
+    return (contact ? (contact.length === 11 ? (contact.substring(0, 3) + delimiter + contact.substring(3, 7) + delimiter + contact.substring(7)) : (contact.length === 10 ? (contact.substring(0, 3) + delimiter + contact.substring(3, 6) + delimiter + contact.substring(6)) : contact)) : "");
 }
 
 function findById(item, target) {
@@ -380,4 +404,75 @@ function debounce(func, wait, immediate) {
         }, wait);
         if (immediate && !timeout) func.apply(context, args);
     };
+}
+
+function getBackgroundColor(color){
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+    var temp = [Math.floor((parseInt(result[1], 16) + 255)/2).toString(16), Math.floor((parseInt(result[2], 16) + 255)/2).toString(16), Math.floor((parseInt(result[3], 16) + 255)/2).toString(16)]
+    return result ? "#" + (temp[0].length === 1? '0' + temp[0] : temp[0] + '') + (temp[1].length === 1? '0' + temp[1] : temp[1] + '') + (temp[2].length === 1? '0' + temp[2] : temp[2] + '') : null;
+}
+
+function getTimeFormat(time){
+    var hour = time.hour();
+    var format = "";
+    if(hour > 11){
+        format += '오후 ';
+    }else{
+        format += '오전 ';
+    }
+    format += time.format("hh:mm");
+    return format;
+}
+
+function parseTime(input){
+    if(typeof input !== 'string'){
+        return null;
+    }
+    var result = /(오전|오후)\s?([\d]{2}):([\d]{2})/.exec(input);
+    if(result){
+        var res;
+        if(result[1] === '오후' && result[2] !== '12'){
+            res += '' + ((result[2]*1) + 12)
+        }else{
+            res += result[2];
+        }
+        res += result[3];
+        if(moment(res, 'HHmm').isValid()){
+            return res;
+        }else{
+            return null;
+        }
+    }
+    return null;
+}
+
+// credit: http://www.javascriptkit.com/javatutors/touchevents2.shtml
+function swipedetect(el, callback) {
+    var touchsurface = el,
+        swipedir, startX, distX,
+        threshold = 100, //required min distance traveled to be considered swipe
+        allowedTime = 300, // maximum time allowed to travel that distance
+        elapsedTime,
+        startTime,
+        handleswipe = callback || function(swipedir) {};
+
+    touchsurface.addEventListener('touchstart', function(e) {
+        var touchobj = e.changedTouches[0];
+        swipedir = 'none';
+        //dist = 0;
+        startX = touchobj.pageX;
+        startTime = new Date().getTime(); // record time when finger first makes contact with surface
+    }, false);
+
+    touchsurface.addEventListener('touchend', function(e) {
+        var touchobj = e.changedTouches[0];
+        distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
+        elapsedTime = new Date().getTime() - startTime; // get time elapsed
+        if (elapsedTime <= allowedTime) { // first condition for awipe met
+            if (Math.abs(distX) >= threshold) { // 2nd condition for horizontal swipe met
+                swipedir = (distX < 0) ? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
+                handleswipe(swipedir);
+            }
+        }
+    }, false);
 }
