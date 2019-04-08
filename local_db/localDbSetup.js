@@ -29,6 +29,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 //         console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
 //     }
 // });
+/*
 (async function(){
     var params = {
         TableName : "Notice",
@@ -48,55 +49,55 @@ var docClient = new AWS.DynamoDB.DocumentClient();
             console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
         } else {
             console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
-            docClient.put({
-                TableName: 'Notice',
-                Item: {
-                    "id": "1",
-                    "title": "첫번째 공지사항",
-                    "registeredDate": "20190218",
-                    "contents": "이것은 첫번째 공지사항입니다."
-                }
-            }, function (err, data) {
-                if (err) {
-                    console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("Added item:", JSON.stringify(data));
-                }
-            });
-            docClient.put({
-                TableName: 'Notice',
-                Item: {
-                    "id": "2",
-                    "title": "두번째 공지사항",
-                    "registeredDate": "20190219",
-                    "contents": "이것은 두번째 공지사항입니다."
-                }
-            }, function (err, data) {
-                if (err) {
-                    console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("Added item:", JSON.stringify(data));
-                }
-            });
-            docClient.put({
-                TableName: 'Notice',
-                Item: {
-                    "id": "3",
-                    "title": "3번째 공지사항",
-                    "registeredDate": "20190219",
-                    "contents": "이것은 3번째 공지사항입니다."
-                }
-            }, function (err, data) {
-                if (err) {
-                    console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-                } else {
-                    console.log("Added item:", JSON.stringify(data));
-                }
-            });
         }
     });
 })();
-
+*/
+// docClient.put({
+//     TableName: 'Notice',
+//     Item: {
+//         "id": "4",
+//         "title": "4째 공지사항",
+//         "registeredDate": "20190220",
+//         "contents": "이것은 첫번째 공지사항입니다."
+//     }
+// }, function (err, data) {
+//     if (err) {
+//         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+//     } else {
+//         console.log("Added item:", JSON.stringify(data));
+//     }
+// });
+// docClient.put({
+//     TableName: 'Notice',
+//     Item: {
+//         "id": "5",
+//         "title": "5번째 공지사항",
+//         "registeredDate": "20190221",
+//         "contents": "이것은 5번째 공지사항입니다."
+//     }
+// }, function (err, data) {
+//     if (err) {
+//         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+//     } else {
+//         console.log("Added item:", JSON.stringify(data));
+//     }
+// });
+// docClient.put({
+//     TableName: 'Notice',
+//     Item: {
+//         "id": "6",
+//         "title": "6번째 공지사항",
+//         "registeredDate": "201902121",
+//         "contents": "이것은 6번째 공지사항입니다."
+//     }
+// }, function (err, data) {
+//     if (err) {
+//         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+//     } else {
+//         console.log("Added item:", JSON.stringify(data));
+//     }
+// });
 // params = {
 //     TableName : "AlrimTalk",
 //     KeySchema: [
@@ -176,16 +177,17 @@ docClient.put(params, function(err, data) {
     }
 });
 */
-/*
+
 var params = {
     TableName: "WebSecheduler",
     Key: {
-        'email': 'ksm@test.com'
+        'email': 'soonsm@gmail.com'
     },
-    UpdateExpression: "set password = :reservation, authStatus = :authStatus",
+    UpdateExpression: "set redNoticeList = :redNoticeList, password = :password, accountStatus = :accountStatus",
     ExpressionAttributeValues:{
-        ":reservation":'rlatmdals1#',
-        ":authStatus":'BEFORE_EMAIL_VERIFICATION'
+        ":redNoticeList":[],
+        ":password":'bc4a25d03e9c585ae8b360974c117bc0df87a30ae65eec780627cf0ae84cb49238033e35368279b84f7a64d86b593aef8d1084199b4001c3c669d20c40f41a28',
+        ":accountStatus":0
     },
     ReturnValues:"UPDATED_NEW"
 };
@@ -197,7 +199,7 @@ docClient.update(params, function(err, data) {
         console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
     }
 });
-*/
+
 /*
 //예약정보 Insert
 var reservation = db.newReservation({

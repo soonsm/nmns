@@ -7,24 +7,35 @@ const util = require('./util');
 exports.updatePwd = async function (data) {
     let status = true,
         message = null;
-    let pwd = data.password;
-    if (!pwd) {
+    let currentPassword = data.currentPassword;
+    let newPassword = data.newPassword;
+    if (!currentPassword || !newPassword) {
         status = false;
-        // message = '비밀번호 변경에 필요한 데이터가 없습니다.({"password":${변경할 패스워드, string}})';
-        message = '새 비밀번호를 입력하세요.';
+        message = '기존 비밀번호와 새 비밀번호를 입력하세요.';
     }
     else {
-        let strengthCheck = util.passwordStrengthCheck(pwd);
-        if (strengthCheck.result === false) {
+        if(newPassword === currentPassword){
             status = false;
-            message = strengthCheck.message;
+            message = '기존 비밀번호와 새 비밀번호가 같습니다.';
         }
 
-        if (status) {
-            if (!await db.updateWebUser(this.email, {password: util.sha512(pwd)})) {
+        let user = await db.getWebUser(this.email);
+        if(util.sha512(currentPassword) === user.password){
+            let strengthCheck = util.passwordStrengthCheck(newPassword);
+            if (strengthCheck.result === false) {
                 status = false;
-                message = '시스템 오류입니다.(DB Update Error)';
+                message = strengthCheck.message;
             }
+
+            if (status) {
+                if (!await db.updateWebUser(this.email, {password: util.sha512(newPassword)})) {
+                    status = false;
+                    message = '시스템 오류입니다.(DB Update Error)';
+                }
+            }
+        }else{
+            status = false;
+            message = '기존 비밀번호가 일치하지 않습니다.';
         }
     }
 
@@ -49,10 +60,11 @@ exports.getShop = async function () {
         }
         let noticeList = await db.getNoticeList() || [];
         let user = await db.getWebUser(this.email);
-        let lastNoticeId = user.lastNoticeId || '0';
+
+        let redNoticeList = user.redNoticeList || [];
         let newNoticeCnt = 0;
         for(let i=0;i<noticeList.length; i++){
-            if(noticeList[i].id > lastNoticeId){
+            if(!redNoticeList.includes(noticeList[i].id)){
                 newNoticeCnt++;
             }
         }

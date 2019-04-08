@@ -103,9 +103,9 @@
           item = NMNS.menuList[index];
           html += '<div class="menuRow col-12" data-index="'+index+'">'+
               '<div class="col-3 px-0 font-weight-bold" style="font-size:14px">'+(!item.name || item.name === '' ? '(이름없음)' : item.name) + '</div>' + 
-              '<div class="col px-0 montserrat">'+(item.priceCard == 0 || !item.priceCard ? '-' : (item.priceCard+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")) + '</div>' +
-              '<div class="col-3 px-0 montserrat">'+(item.priceCash == 0 || !item.priceCash ? '-' : (item.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))+'</div>' +
-              '<div class="col-3 px-0 montserrat">'+(item.priceMembership == 0 || !item.priceMembership ? '-' : (item.priceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")) + '</div>' +
+              '<div class="col px-0 montserrat">'+(item.cardPrice == 0 || !item.cardPrice ? '-' : (item.cardPrice+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")) + '</div>' +
+              '<div class="col-3 px-0 montserrat">'+(item.cashPrice == 0 || !item.cashPrice ? '-' : (item.cashPrice+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"))+'</div>' +
+              '<div class="col-3 px-0 montserrat">'+(item.memberPrice == 0 || !item.memberPrice ? '-' : (item.memberPrice+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")) + '</div>' +
               '<div class="col-1 updatingMenu-collapsed"><button type="button" class="deleteMenuLink close p-0 m-0" aria-label="삭제"><span aria-hidden="true">&times;</span></button></div>'+
               '<a class="menuModalLink" href="#" data-toggle="modal" data-target="#menuModal" title="상세보기"></a>'+
               '</div>'
@@ -181,10 +181,10 @@
       return item.id === e.data.id;
     });
     if (Number.isInteger(index) && index > -1) {
-      NMNS.menuList[index].priceCard = origin.priceCard;
-      NMNS.menuList[index].priceCash = origin.priceCash;
+      NMNS.menuList[index].cardPrice = origin.cardPrice;
+      NMNS.menuList[index].cashPrice = origin.cashPrice;
       NMNS.menuList[index].name = origin.name;
-      NMNS.menuList[index].priceMembership = origin.priceMembership;
+      NMNS.menuList[index].memberPrice = origin.memberPrice;
       
       NMNS.history.remove(e.data.id, findById);
       drawMenuList(true);
@@ -192,6 +192,6 @@
   }))
   
   //TODO : delete these rows for test
-  NMNS.menuList = [{id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 2, name:'매니큐어2', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 3, name:'매니큐어3', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 4, name:'매니큐어4', priceCash:10000, priceCard:20000, priceMembership:10000}, {id:5, name:'매니큐어5', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 6, name:'매니큐어6', priceCash:10000, priceCard:20000, priceMembership:10000}]
+  NMNS.menuList = [{id: 1, name:'매니큐어', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 2, name:'매니큐어2', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 3, name:'매니큐어3', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 4, name:'매니큐어4', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id:5, name:'매니큐어5', cashPrice:10000, cardPrice:20000, memberPrice:10000}, {id: 6, name:'매니큐어6', cashPrice:10000, cardPrice:20000, memberPrice:10000}]
   drawMenuList(true); // this line should be remained after deleting test above line.
 })();

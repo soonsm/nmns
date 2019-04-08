@@ -80,6 +80,7 @@ module.exports = function(passport) {
         }
     });
 
+
     router.get('/signin', async function(req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);

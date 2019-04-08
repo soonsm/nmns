@@ -1011,50 +1011,6 @@
       return html;
     }
     
-    function generateSalesContents(sales){
-      var html = "";
-      if(Array.isArray(sales)){
-        sales.forEach(function(sale, index){//draw selective form area
-          html += '<div class="scheduleSalesItem">'+sale.item+'</div>';
-          if(!(sale.priceCash || sale.priceCard || sale.priceMembership)){//non-registered menu
-            html += '<input type="text" pattern="[0-9]*" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'">';
-          }
-          html += '<div class="scheduleSalesPayments">';
-          html += '<input type="radio" name="scheduleSalesPayment" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? 'checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'">카드' 
-            + (sale.priceCard ? ' <span class="montserrat">'+(sale.priceCard+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span>원' : '') + '</label>';
-          html += '<input type="radio" name="scheduleSalesPayment" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" ? 'checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'">현금' 
-            + (sale.priceCash ? ' <span class="montserrat">'+(sale.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span>원' : '') + '</label>';
-          html += '<input type="radio" name="scheduleSalesPayment" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" ? 'checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십' 
-            + (sale.priceMembership ? ' <span class="montserrat">'+(sale.priceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span>원' : '') + '</label>';
-          html += '</div>';
-        });
-        html += '<div class="scheduleSalesSummary">';
-        if(sales[0] && Number.isInteger(sales[0].balanceMembership)){
-          html += '<div class="scheduleSalesSummaryItem" data-index="0">멤버십 잔액<span class="ml-auto montserrat">'+(sales[0].balanceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' 원</span></div>';
-        }
-        var membershipUsage = 0, priceTotal = 0;
-        sales.forEach(function(sale, index){//draw summary area
-          html += '<div class="scheduleSalesSummaryItem" data-index="'+index+'">'+sale.item+'<span class="ml-auto montserrat"> - '
-            + (sale.type === 'CARD' || !sale.type? ((sale.priceCard || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : (sale.type === 'CASH'? ((sale.priceCash || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : ((sale.priceMembership || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")))
-            + ' </span>원</div>';
-          if(sale.type === 'MEMBERSHIP'){
-            membershipUsage += sale.priceMembership;
-            priceTotal += sale.priceMembership;
-          }else if(sale.type === 'CASH'){
-            priceTotal += sale.priceCash;
-          }else{
-            priceTotal += sale.priceCard;
-          }
-        });
-        html += '<hr/><div class="scheduleSalesSummaryItem">총 결제금액<span class="ml-auto montserrat">'+(priceTotal+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' 원</span></div>';
-        if(sales[0] && Number.isInteger(sales[0].balanceMembership)){
-          html += '<div class="scheduleSalesSummaryItem">차감 후 멤버십 잔액<span class="ml-auto montserrat">'+((sales[0].balanceMembership - membershipUsage)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' 원</span></div>';
-        }
-        html += '</div>';
-      }
-      return html;
-    }
-    
     function refreshScheduleTab(e){
       var calendar;
       if(NMNS.refreshScheduleManager){
@@ -1285,12 +1241,11 @@
             showSnackBar("종료 시간을 확인해주세요.");
             return;
           }
-
           startDate.setHours(startTime.substring(0,2)*1);
           startDate.setMinutes(startTime.substring(2)*1);
           endDate.setHours(endTime.substring(0,2)*1);
           endDate.setMinutes(endTime.substring(2)*1);
-
+          
           calendarId = $('#scheduleManager').data('calendar-id');
           manager = NMNS.calendar.getCalendars().find(function(cal) {
               return cal.id === calendarId;
@@ -1310,8 +1265,8 @@
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
 
-          if (NMNS.info.alrimTalkInfo.useYn === 'Y' && contact !== '' && !(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test(contact))) {
-              if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등록하시겠어요?')) {
+          if (NMNS.info.alrimTalkInfo.useYn === 'Y' && !(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test(contact))) {
+              if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등���하시겠어요?')) {
                   return;
               }
           }
@@ -1654,12 +1609,41 @@
         }), true);
     }
 
+/*    function submitAddNoShow(self) {
+        var row = self.parentsUntil("#noShowSearchList", ".row");
+        if (row.find("input[name='noShowSearchAddContact']").val() === "") {
+            alert("전화번호를 입력해주세요!");
+            row.find("input[name='noShowSearchAddContact']").focus();
+            return;
+        }
+        if (!moment(row.find("input[name='noShowSearchAddDate']").val(), "YYYY-MM-DD").isValid()) {
+            alert("노쇼 날짜를 알맞게 입력해주세요!");
+            row.find("input[name='noShowSearchAddDate']").focus();
+            return;
+        }
+        var parameters = { id: row.data("id"), contact: row.find("input[name='noShowSearchAddContact']").val(), date: moment(row.find("input[name='noShowSearchAddDate']").val(), "YYYY-MM-DD").format("YYYYMMDD"), noShowCase: row.find("select").val() };
+        NMNS.socket.emit("add noshow", parameters);
+        self.off("touch click").on("touch click", function() {
+            alert("저장 요청중입니다..!");
+        });
+    }*/
+
     function deleteNoShow(self) {
         var row = self.parentsUntil("#noShowSearchList", ".row");
         NMNS.history.push({ id: row.data("id"), contact: row.data("contact") + "", date: row.data("date") + "", noShowCase: row.data("noshowcase") });
         NMNS.socket.emit("delete noshow", { id: row.data("id") });
         row.remove();
     }
+/*
+    var noShowScheduleNormal = function(self) {
+        var row = self.parentsUntil("#noShowScheduleList", ".row");
+        NMNS.history.push({ id: row.data("id"), calendarId: row.data("manager"), raw: { status: row.data("status") } });
+        NMNS.calendar.updateSchedule(row.data("id"), row.data("manager"), { raw: { status: "RESERVED" } });
+        NMNS.socket.emit("update reserv", { id: row.data("id"), status: "RESERVED" });
+        row.children("span:last-child").html($(generateScheduleStatusBadge("RESERVED"))).on("touch click", function() {
+            noShowScheduleBadge($(this));
+        });
+    };*/
 
     $("#nextTips").one("touch click", function() {
         NMNS.socket.emit("get tips");
@@ -1708,7 +1692,7 @@
             list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + (item.contents?'<br>예약내용 : '+item.contents : '') +'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">예약 등록</span></div>'
             break;
           case 'SCHEDULE_CANCELED':
-            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예��� 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
+            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
             break;
           case 'ANNOUNCEMENT':
           default:
@@ -2099,14 +2083,7 @@
         $("#scheduleTabContentList").html(generateMenuList(e.data));
         NMNS.menuList = e.data;
       }
-    }, undefined, true));
-    
-    NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
-      $("#salesForm").html(generateSalesContents(e.data));
-      $("#salesBtn").removeClass('disabled');
-      $("#salesLoading").hide();
-      $("#salesForm").show();
-    }))
+    }, undefined, true))
     //websocket response end
     //Modal events start  
     $(".modal").on("shown.bs.modal", function(){
@@ -2319,8 +2296,7 @@
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule){
         $("#salesLoading").show();
         $("#salesForm").hide();
-        $("#salesBtn").addClass('disabled');
-        NMNS.socket.emit('get reserv sales', {scheduleId: NMNS.scheduleTarget.schedule.id});
+        NMNS.socket.emit('get sales template', {scheduleId: NMNS.scheduleTarget.schedule.id});
         return true;
       }else{
         return false;
