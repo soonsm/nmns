@@ -76,6 +76,9 @@ exports.getCustomerInfo = async function (data) {
         resultData = {};
     let id = data.id;
     let target = data.target;
+    if(!target){
+        target = data.contact || data.name;
+    }
 
     if (!id || (!target)) {
         status = false;

@@ -542,9 +542,7 @@ exports.getReservationList = async function (email, start, end, type) {
                 return false;
             }
             if(type){
-                if(type === reservation.type){
-                    return true;
-                }else{
+                if(type !== reservation.type){
                     return false;
                 }
             }

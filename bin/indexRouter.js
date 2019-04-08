@@ -101,7 +101,6 @@ module.exports = function(passport) {
             });
         }
     });
->>>>>>> e04c7b43a455a3cc8cc4e851fb5824a012b68407
 
     router.get('/index.amp', async function(req, res) {
         if (req.user) {
