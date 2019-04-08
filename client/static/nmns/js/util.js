@@ -430,7 +430,7 @@ function parseTime(input){
     }
     var result = /(오전|오후)\s?([\d]{2}):([\d]{2})/.exec(input);
     if(result){
-        var res;
+        var res = '';
         if(result[1] === '오후' && result[2] !== '12'){
             res += '' + ((result[2]*1) + 12)
         }else{
