@@ -41,12 +41,15 @@ exports.getCustomerDetail = async function(data){
                 let reservationList = user.reservationList.filter(reservation => reservation.memberId === member.id);
                 reservationList.sort((a, b) =>  b.start - a.start );
                 if(reservationList.length > 0){
-                    member.isAllDay = reservationList[0].isAllDay;
-                    member.contents = reservationList[0].contents;
-                    member.contentList = reservationList[0].contentList;
+                    let reservation = reservationList[0];
+                    member.isAllDay = reservation.isAllDay;
+                    if(reservation.type === 'R' && reservation.contentList){
+                        member.contents = JSON.stringify(reservation.contentList);
+                    }else{
+                        member.contents = reservation.contents;
+                    }
                 }
                 member.contents = member.contents || '';
-                member.contentList = member.contentList || [];
                 member.etc = member.etc || '';
                 member.pointMembership = member.pointMembership || 0;
                 member.cardSales = member.cardSales || 0;
@@ -212,8 +215,7 @@ exports.getCustomerList = async function(data){
 
                     member.history.push({
                         date: reservation.start,
-                        contents: reservation.contents,
-                        contentList: reservation.contentList,
+                        contents: (reservation.type === 'R' && reservation.contentList) ? JSON.stringify(reservation.contentList) : reservation.contents,
                         status: reservation.status,
                         managerName: manager.name,
                         managerColor: manager.color,
