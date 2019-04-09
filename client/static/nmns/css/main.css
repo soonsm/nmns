@@ -1750,6 +1750,7 @@ button.form-control {
 }
 .scheduleSalesSummaryItem .scheduleSalesSummaryMembershipSign{
   display:none;
+  margin-right:3px;
 }
 .scheduleSalesSummaryItem.membershipSummary .scheduleSalesSummaryMembershipSign{
   display:inline-flex;

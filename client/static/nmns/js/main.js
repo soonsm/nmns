@@ -1781,7 +1781,7 @@
             list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + (item.contents?'<br>예약내용 : '+item.contents : '') +'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">예약 등록</span></div>'
             break;
           case 'SCHEDULE_CANCELED':
-            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예��� 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
+            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
             break;
           case 'ANNOUNCEMENT':
           default:
@@ -2009,7 +2009,7 @@
             $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
           }
           if (e.data.detail.length > 0) {
-            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화���호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
+            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
             e.data.detail.forEach(function(item) {
                 html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
             });
@@ -2025,7 +2025,7 @@
           if(!$("#noShowImage").attr('src')){
             $("#noShowImage").attr('src', '/nmns/img/sub_img.svg');
           }
-          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 ���력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
+          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 이력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
         }
     }));
 
@@ -2345,7 +2345,7 @@
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
         //for test
-        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내���2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 ���목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
+        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
         var count = ($('.announcementCount').text() * 1);
         if(count && count > 0){
           var unread = 0;
