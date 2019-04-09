@@ -88,6 +88,7 @@ input[type=radio]:not(.custom-control-input) + label{
   height:12px;
   border-radius:50%;
   border:1px solid #393535;
+  margin-right:6px;
 }
 
 input[type=radio]:not(.custom-control-input):not(:checked):hover + label{
