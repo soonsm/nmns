@@ -290,7 +290,7 @@ let changeMemberSalesStatistic = function(member, isRefund, saleHist){
  * @param data
  * @returns {Promise<void>}
  */
-let saveSalesHist = async function(user, data){
+let saveSalesHist = function(user, data){
     if(!user){
         throw '사용자 정보가 없습니다.';
     }
@@ -332,8 +332,8 @@ let saveSalesHist = async function(user, data){
     };
 
     let commonValidationForReservation = function(data){
-        if(!data.scheduleId){
-            throw '매출내역 추가에 예약 아이디가 필요합니다.';
+        if(!user.reservationList.find(reservation => reservation.id === data.scheduleId)){
+            throw `예약아아디가 없거나 예약아이디로 예약이 조회되지 않습니다.(${data.scheduleId})`;
         }else if(!data.managerId){
             throw '매출내역 추가에 매니저 아이디가 필요합니다.';
         }else if(isNaN(data.price) || data.price <= 0){
