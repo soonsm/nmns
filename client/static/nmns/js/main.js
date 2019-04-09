@@ -1014,32 +1014,37 @@
     function generateSalesContents(sales){
       var html = "";
       if(Array.isArray(sales) && sales.length > 0){
-        var membership = sales[0] && sales[0].balanceMembership > 0;
+        var membership = sales[0] && sales[0].balanceMembership > 0, isRegistered;
         sales.forEach(function(sale, index){//draw selective form area
-          html += '<div class="scheduleSalesItem">'+sale.item+'</div>';
-          if(!(sale.priceCash || sale.priceCard || sale.priceMembership)){//non-registered menu
-            html += '<input type="text" pattern="[0-9]*" class="form-control form-control-sm scheduleSalesPaymentPrice" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'" placeholder="금액을 숫자로 입력하세요.">';
+          isRegistered = Number.isInteger(sale.priceCard) || Number.isInteger(sale.priceCash) || Number.isInteger(sale.priceMembership);
+          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'"'+(sale.id?' data-id="'+(sale.id || '')+'"':'') 
+          + (sale.customerId?(' data-customer-id="'+(sale.customerId || '')+'"'):'') + (sale.managerId?(' data-manager-id="'+(sale.managerId || '')+'"'):'')+ ' data-type="'+(sale.type || 'CARD')+'" data-is-registered="'+isRegistered+'">';
+          if(!isRegistered){
+            html += '<input type="text" pattern="[0-9]*" class="form-control form-control-sm scheduleSalesPaymentPrice" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'" data-old-value="'+(sale.price || '')+'" placeholder="금액을 숫자로 입력하세요.">';
           }
-          html += '<div class="scheduleSalesPayments">';
-          html += '<input type="radio" name="scheduleSalesPayment'+index+'" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'" style="margin-right:30px">카드' 
-            + (sale.priceCard ? ' <span class="montserrat">'+(sale.priceCard+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
-          html += '<input type="radio" name="scheduleSalesPayment'+index+'" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'" style="margin-right:30px">현금' 
-            + (sale.priceCash ? ' <span class="montserrat">'+(sale.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
-          if(membership && (sale.priceMembership || sale.priceCash || sale.priceCard)){
-            html += '<input type="radio" name="scheduleSalesPayment'+index+'" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" ? ' checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십' 
+          if(!isRegistered || Number.isInteger(sale.priceCard)){
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'" style="margin-right:30px">카드' 
+              + (sale.priceCard ? ' <span class="montserrat">'+(sale.priceCard+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
+          }
+          if(!isRegistered || Number.isInteger(sale.priceCard)){
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" || (isRegistered && !Number.isInteger(sale.priceCard))? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'" style="margin-right:30px">현금' 
+              + (sale.priceCash ? ' <span class="montserrat">'+(sale.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
+          }
+          if((isRegistered && Number.isInteger(sale.priceMembership)) || (!isRegistered && membership)){//등록된 메뉴이고 멤버십 가격이 있거나, 등록되지 않은 메뉴이고 멤버십 내역이 있는 경우
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"'+(!membership || sales[0].balanceMembership < sale.priceMembership ? ' disabled="disabled"' : '')+'><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" || (isRegistered && !Number.isInteger(sale.priceMembership))? ' checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십' 
               + (sale.priceMembership ? ' <span class="montserrat">'+(sale.priceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           html += '</div>';
         });
         html += '<div class="scheduleSalesSummary">';
         if(membership){
-          html += '<div class="scheduleSalesSummaryItem" data-index="0">멤버십 잔액<span class="ml-auto montserrat">'+(sales[0].balanceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' 원</span></div>';
+          html += '<div id="scheduleSalesBalanceMembership" class="scheduleSalesSummaryItem" data-index="0" data-balance-membership="'+sales[0].balanceMembership+'">멤버십 잔액<span class="ml-auto montserrat">'+(sales[0].balanceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' </span> 원</div>';
         }
         var membershipUsage = 0, priceTotal = 0;
         sales.forEach(function(sale, index){//draw summary area
-          html += '<div class="scheduleSalesSummaryItem" data-index="'+index+'">'+sale.item+'<span class="ml-auto montserrat">'+(sale.type === 'MEMBERSHIP'?' - ':'')
-            + (sale.type === 'CARD' || !sale.type? ((sale.priceCard || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : (sale.type === 'CASH'? ((sale.priceCash || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : ((sale.priceMembership || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")))
-            + ' </span> 원</div>';
+          html += '<div class="scheduleSalesSummaryItem" data-index="'+index+'">'+sale.item+'<span class="ml-auto montserrat'+(sale.type === 'MEMBERSHIP'?' membershipSummary':'')+'"><span class="scheduleSalesSummaryMembershipSign">- </span><span class="scheduleSalesSummaryPrice">'
+            + ((sale.type === 'CARD' || !sale.type)? ((sale.priceCard || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : (sale.type === 'CASH'? ((sale.priceCash || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : ((sale.priceMembership || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")))
+            + ' </span></span> 원</div>';
           if(sale.type === 'MEMBERSHIP'){
             membershipUsage += Number.isInteger(sale.price || sale.priceMembership) ? sale.price || sale.priceMembership : 0;
             priceTotal += Number.isInteger(sale.price || sale.priceMembership) ? sale.price || sale.priceMembership : 0;
@@ -1049,11 +1054,74 @@
             priceTotal += Number.isInteger(sale.price || sale.priceCard) ? sale.price || sale.priceCard : 0;
           }
         });
-        html += '<hr/><div class="scheduleSalesSummaryItem">총 결제금액<span class="ml-auto montserrat">'+(priceTotal+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' 원</span></div>';
+        html += '<hr/><div id="scheduleSalesPriceTotal" class="scheduleSalesSummaryItem" data-price-total="'+priceTotal+'">총 결제금액<span class="ml-auto montserrat">'+(priceTotal+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원</div>';
         if(membership){
-          html += '<div class="scheduleSalesSummaryItem">차감 후 멤버십 잔액<span class="ml-auto montserrat">'+((sales[0].balanceMembership - membershipUsage)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+' 원</span></div>';
+          html += '<div id="scheduleSalesRemainingMembership" class="scheduleSalesSummaryItem" data-remaining-balance="'+(sales[0].balanceMembership - membershipUsage)+'">차감 후 멤버십 잔액<span class="ml-auto montserrat">'+((sales[0].balanceMembership - membershipUsage)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원</div>';
         }
         html += '</div>';
+        html = $(html).on('change', '.scheduleSalesPayment', function(e){
+          var remainingMembership = $("#scheduleSalesRemainingMembership").data('remaining-balance') * 1;
+          var isRegistered = $(this).parent().data('is-registered') === true;
+          var price, previousPrice;
+          if($(this).val() === 'MEMBERSHIP'){//cash, card -> membership; 1. refresh other contents un-disabled membership radio button to disabled which has more amount then after balance.
+            price = isRegistered ? $(this).data('price') * 1 : $(this).siblings('.scheduleSalesPaymentPrice').val() * 1;
+            if(remainingMembership < price){
+              alert('멤버십 잔액이 부족합니다.');
+              $("#salesBtn").addClass('disabled');
+              $("#scheduleSalesRemainingMembership span").addClass('text-accent');
+            }
+            remainingMembership -= price;
+            $("#scheduleSalesRemainingMembership").data('remaining-balance', remainingMembership).find('span').text((remainingMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+            previousPrice = isRegistered ? $(this).siblings('[value="'+$(this).parent().data('type')+'"]').data('price')*1 : $(this).siblings('.scheduleSalesPaymentPrice').val() * 1;
+            $("#salesTab .scheduleSalesPayment[value='MEMBERSHIP']").each(function(index, radio){
+              $(radio).prop('disabled', $(radio).data('price')*1 > remainingMembership);
+            });
+            $(".scheduleSalesSummaryItem[data-index='"+$(this).parent().data('index')+"']").addClass('membershipSummary');
+          }else if($(this).parent().data('type') === 'MEMBERSHIP'){// membership -> cash, card; 1. refresh other contents disabled membership due to lack of balance.
+            previousPrice = isRegistered ? $(this).siblings('[value="MEMBERSHIP"]').data('price')*1 : $(this).siblings('.scheduleSalesPaymentPrice').val() * 1;
+            if(remainingMembership < 0 && remainingMembership + previousPrice > 0){
+              $("#salesBtn").removeClass('disabled');
+              $("#scheduleSalesRemainingMembership span").removeClass('text-accent');
+            }
+            remainingMembership += previousPrice;
+            $("#scheduleSalesRemainingMembership").data('remaining-balance', remainingMembership).find('span').text((remainingMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+            price = isRegistered ? $(this).data('price') * 1 : $(this).siblings('.scheduleSalesPaymentPrice').val() * 1;
+            $("#salesTab .scheduleSalesPayment[value='MEMBERSHIP']").each(function(index, radio){
+              $(radio).prop('disabled', $(radio).data('price')*1 > remainingMembership);
+            });
+            $(".scheduleSalesSummaryItem[data-index='"+$(this).parent().data('index')+"']").removeClass('membershipSummary');
+          }else{// cash <-> card
+            previousPrice = isRegistered ? $(this).siblings('[value="'+$(this).parent().data('type')+'"]').data('price')*1 : $(this).siblings('.scheduleSalesPaymentPrice').val() * 1;
+            price = isRegistered ? $(this).data('price') * 1 : $(this).siblings('.scheduleSalesPaymentPrice').val() * 1;
+          }
+          //common. 1. refresh total price of sales. 2. set type of payment data
+          $("#scheduleSalesPriceTotal").data('price-total', ($("#scheduleSalesPriceTotal").data('price-total') * 1) - previousPrice + price).find('span').text(($("#scheduleSalesPriceTotal").data('price-total') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+          $(".scheduleSalesSummaryItem[data-index='"+$(this).parent().data('index')+"'] .scheduleSalesSummaryPrice").text((price + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+          $(this).parent().data('type', $(this).val());
+        }).on('keyup', '.scheduleSalesPaymentPrice', debounce(function(e){
+          var previousPrice = $(this).data('old-value') * 1;
+          var price = $(this).val().replace(/[^\d]/g, '');
+          $(this).val(price);
+          price *= 1;
+          if(previousPrice !== price){
+            $(this).data('old-value', price);
+            if($(this).parent().data('type') === 'MEMBERSHIP'){
+              var remainingMembership = $("#scheduleSalesRemainingMembership").data('remaining-balance') * 1;
+              if(remainingMembership + previousPrice - price < 0){
+                alert('멤버십 잔액이 부족합니다.');
+                $("#salesBtn").addClass('disabled');
+                $("#scheduleSalesRemainingMembership span").addClass('text-accent');
+              }else{
+                $("#salesBtn").removeClass('disabled');
+                $("#scheduleSalesRemainingMembership span").removeClass('text-accent');
+              }
+              remainingMembership = remainingMembership + previousPrice - price;
+              $("#scheduleSalesRemainingMembership").data('remaining-balance', remainingMembership).find('span').text((remainingMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+            }
+            $(".scheduleSalesSummaryItem[data-index='"+$(this).parent().data('index')+"'] .scheduleSalesSummaryPrice").text((price + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+            $("#scheduleSalesPriceTotal").data('price-total', ($("#scheduleSalesPriceTotal").data('price-total') * 1) - previousPrice + price).find('span').text(($("#scheduleSalesPriceTotal").data('price-total') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+          }
+        }, 300));
       }else{
         html += '<div style="height:300px;align-items:center;width:100%;display:flex;justify-content:center;font-size:15px">메뉴를 입력하면 매출내역을 기록할 수 있어요!</div>';
       }
@@ -1614,7 +1682,7 @@
       }
       refreshTaskTab(task);
     }
-
+    
     function getSchedule(start, end) {
         NMNS.socket.emit("get reserv", { start: toYYYYMMDD(start._date) + "0000", end: toYYYYMMDD(end._date) + "2359" });
     }
@@ -1941,7 +2009,7 @@
             $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
           }
           if (e.data.detail.length > 0) {
-            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
+            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화���호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
             e.data.detail.forEach(function(item) {
                 html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
             });
@@ -1957,7 +2025,7 @@
           if(!$("#noShowImage").attr('src')){
             $("#noShowImage").attr('src', '/nmns/img/sub_img.svg');
           }
-          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 이력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
+          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 ���력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
         }
     }));
 
@@ -2112,7 +2180,14 @@
       $("#salesBtn").removeClass('disabled');
       $("#salesLoading").hide();
       $("#salesForm").show();
-    }))
+    }));
+    
+    NMNS.socket.on("save sales", socketResponse('매출 내역 저장', function(e){
+      showSnackBar('매출 내역을 저장하였습니다.')
+      if($("#salesTab").is(":visible")){
+        $("#scheduleModal").modal('hide');
+      }
+    }));
     //websocket response end
     //Modal events start  
     $(".modal").on("shown.bs.modal", function(){
@@ -2270,7 +2345,7 @@
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
         //for test
-        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 ���목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
+        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내���2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 ���목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
         var count = ($('.announcementCount').text() * 1);
         if(count && count > 0){
           var unread = 0;
@@ -2321,7 +2396,41 @@
         initTaskTab('switch');
       }
     });
-    $("#scheduleTabList a[data-target='#salesTab']").on('show.bs.tab', function(){
+    $("#scheduleTabList a[data-target='#salesTab']").one('show.bs.tab', function(){
+      $("#salesBtn").on('touch click', function(e){
+        e.preventDefault();
+        if($(this).hasClass('disabled')){
+          alert('입력한 금액을 확인해주세요.');
+          return;
+        }
+        var array = [], errorIndex;
+        $("#salesTab .scheduleSalesPayments").each(function(index, payment){
+          var object = {};
+          var pay = $(payment);
+          object.id = pay.data('id');
+          object.customerId = pay.data('customer-id');
+          object.managerId = pay.data('manager-id');
+          object.scheduleId = pay.data('schedule-id');
+          object.type = pay.data('type');
+          object.item = pay.data('item');
+          object.price = pay.data('is-registered')?pay.find('.scheduleSalesPayment:checked').data('price') : pay.find('.scheduleSalesPaymentPrice').val();
+          if(!pay.data('is-registered') && object.price === ''){
+            errorIndex = index;
+          }else{
+            object.price *= 1;
+          }
+          if(!Number.isInteger(object.price)){
+            errorIndex = index;
+          }
+          array.push(object);
+        });
+        if(errorIndex >= 0){
+          alert((errorIndex + 1) + '번째 매출('+array[errorIndex].item+')의 매출액을 입력해주세요.');
+          return;
+        }
+        NMNS.socket.emit('save sales', array);
+      });
+    }).on('show.bs.tab', function(){
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule){
         $("#salesLoading").show();
         $("#salesForm").hide();

@@ -1742,10 +1742,20 @@ button.form-control {
 .scheduleSalesSummaryItem{
   display:flex;
   margin-bottom:16px;
+  align-items:baseline;
 }
 .scheduleSalesSummary hr{
   border-color:#393535;
   margin: 20px 0;
+}
+.scheduleSalesSummaryItem .scheduleSalesSummaryMembershipSign{
+  display:none;
+}
+.scheduleSalesSummaryItem.membershipSummary .scheduleSalesSummaryMembershipSign{
+  display:inline-flex;
+}
+.scheduleSalesSummaryItem .montserrat{
+  margin-right:3px;
 }
 /* bouncing loader */
 @keyframes bouncing-loader {
