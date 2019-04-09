@@ -6,6 +6,7 @@ const db = require('./webDb');
 const moment = require('moment');
 const util = require('./util');
 const alrimTalk = require('./alrimTalkSender');
+const salesHistHandler = require('./salesHistHandler');
 
 let alertSendAlrimTalk = function(socket, success){
     let message = '고객님께 예약알림을 전송하였습니다.';
@@ -282,6 +283,32 @@ exports.updateReservation = async function(newReservation){
             needAlirmTalk = true;
         }
 
+        //매출 관련 수정
+        if(newReservation.manager || newReservation.memberId || newReservation.contentList || newReservation.status === process.nmns.RESERVATION_STATUS.DELETED){
+            let salesHistList = user.saleHistList || [];
+
+            salesHistList.forEach(salesHist => {
+                if(salesHist.scheduleId === newReservation.id){
+                    salesHist.customerId = newReservation.memberId || salesHist.customerId;
+                    salesHist.managerId = newReservation.manager || salesHist.managerId;
+
+                    if(newReservation.status === process.nmns.RESERVATION_STATUS.DELETED){
+                        salesHist.action = 'delete';
+                        salesHistHandler.updateSalesHist(user, salesHist);
+                    }
+                }
+            });
+
+            if(newReservation.contentList){
+                newReservation.contentList.forEach(content => {
+                    let salesHist = salesHistList.find(salesHist => salesHist.id === content.id);
+                    if(salesHist){
+                        salesHist.item = content.value || salesHist.item;
+                    }
+                });
+            }
+        }
+
         //프로퍼티 복사
         for (let x in reservation) {
             if (newReservation.hasOwnProperty(x)) {
@@ -448,6 +475,12 @@ const reservationValidationForUdate = function (email, newReservation, reservati
                 if(!Array.isArray(array)){
                     throw `type이 R(예약) 일 때는 contents는 Array형 json string이어야 합니다.(${newReservation.contents})`;
                 }
+                for(let i=0; i< array.length;i++){
+                    let item = array[i];
+                    if(!item.id || !item.value){
+                        throw `예약 내용이 올바르지 않습니다.(type: 'R', contents: '${newReservation.contents}')`;
+                    }
+                }
                 newReservation.contentList = array;
             }catch(e){
                 throw `예약 내용이 올바르지 않습니다.(type: 'R', contents: '${newReservation.contents}')`;
@@ -498,6 +531,12 @@ const reservationValidationForAdd = function (email, data) {
                 let array = JSON.parse(data.contents);
                 if(!Array.isArray(array)){
                     throw `type이 R(예약) 일 때는 contents는 Array형 json string이어야 합니다.(${data.contents})`;
+                }
+                for(let i=0; i< array.length;i++){
+                    let item = array[i];
+                    if(!item.id || !item.value){
+                        throw `예약 내용이 올바르지 않습니다.(type: 'R', contents: '${data.contents}')`;
+                    }
                 }
                 data.contentList = array;
             }catch(e){
