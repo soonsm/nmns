@@ -186,7 +186,7 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
         let salesTemplateList = [];
 
         for(let i=0; i<contentList.length; i++){
-            let content = contentList[i];
+            let content = contentList[i].value;
             let template = {
                 item: content,
                 customerId: reservation.memberId,
@@ -329,6 +329,8 @@ let saveSalesHist = async function(user, data){
             throw '매출내역 추가에 매니저 아이디가 필요합니다.';
         }else if(isNaN(data.price) || data.price <= 0){
             throw `매출내역 추가에 양수 정수인 금액 값이 필요합니다.(${data.price})`;
+        }else if(!data.itemId){
+            throw '매출내역에 시술 아이디가 필요합니다.';
         }
         data.payment = data.type;
     }
@@ -506,6 +508,8 @@ let modifySalesHist = async function(user, data){
 
     return data;
 }
+
+exports.updateSalesHist = modifySalesHist;
 
 /**
  * 매출내역 변경 외부 API
