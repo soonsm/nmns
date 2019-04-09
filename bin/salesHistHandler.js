@@ -97,7 +97,14 @@ let getSalesHistList = async function(user, data){
             return false;
         }else if(data.priceEnd && data.priceEnd < saleHist.price){
             return false;
-        }else if(data.managerId && data.managerId !== saleHist.managerId){
+        }else if(data.managerId && data.managerId !== saleHist.managerId) {
+            return false;
+        }else if(data.customerName){
+            let memberList = user.memberList || [];
+            let ids = memberList.filter(member => member.name && member.name.includes(data.customerName)).map(member => member.id);
+            if(ids.includes(saleHist.customerId)){
+                return true;
+            }
             return false;
         }
         return true;
@@ -205,9 +212,11 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
         for(let i=0; i<list.length; i++){
             let menu = menuList.find(menu => menu.name === list[i].item);
             list[i].balanceMembership = balanceMembership;
-            list[i].priceCash =  menu.priceCash;
-            list[i].priceCard = menu.priceCard;
-            list[i].priceMembership = menu.priceMembership;
+            if(menu){
+                list[i].priceCash =  menu.priceCash;
+                list[i].priceCard = menu.priceCard;
+                list[i].priceMembership = menu.priceMembership;
+            }
         }
     }
 
