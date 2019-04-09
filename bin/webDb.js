@@ -502,6 +502,7 @@ exports.getReservationSummaryList = async function (email, data) {
                         reservation.contact = member.contact;
                         reservation.name = member.name;
                     }
+                    reservation.contents = JSON.stringify(reservation.contentList);
                 }
                 filteredList.push(reservation);
                 if(data.start && reservation.start < data.start){
@@ -542,9 +543,7 @@ exports.getReservationList = async function (email, start, end, type) {
                 return false;
             }
             if(type){
-                if(type === reservation.type){
-                    return true;
-                }else{
+                if(type !== reservation.type){
                     return false;
                 }
             }
@@ -567,6 +566,8 @@ exports.getReservationList = async function (email, start, end, type) {
                 reservation.etc = member.etc;
                 reservation.name = member.name;
                 reservation.contact = member.contact;
+
+                reservation.contents = JSON.stringify(reservation.contentList);
             }
            return reservation;
         }).sort((r1,r2) => r1.start - r2.start);

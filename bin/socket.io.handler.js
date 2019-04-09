@@ -56,30 +56,30 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
     var io = require('socket.io')(server);
 
     //Socket-Io-Tester 사용 할 때 주석처리 해야 함 Begin
-    // io.use(passportSocketIo.authorize({
-    //     key: 'connect.sid',
-    //     secret: 'rilahhuma',
-    //     store: sessionStore,
-    //     passport: passport,
-    //     cookieParser: cookieParser
-    // }));
+    io.use(passportSocketIo.authorize({
+        key: 'connect.sid',
+        secret: 'rilahhuma',
+        store: sessionStore,
+        passport: passport,
+        cookieParser: cookieParser
+    }));
     //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
 
     io.on('connection', async function (socket) {
 
         //Socket-Io-Tester 사용 할 때 주석 풀어야 함 Begin
-        var email = 'soonsm@gmail.com';
-        var user = await db.getWebUser(email);
-        user.authStatus = 'EMAIL_VERIFICATED';
+        // var email = 'soonsm@gmail.com';
+        // var user = await db.getWebUser(email);
+        // user.authStatus = 'EMAIL_VERIFICATED';
         //Socket-Io-Tester 사용 할 때 주석 풀어야 함 End
 
         //Socket-Io-Tester 사용 할 때 주석처리 해야 함 Begin
-        // const user = socket.request.user;
-        // const email = user.email;
-        // if (!email || !socket.request.user.logged_in) {
-        //     logger.log(`User ${email} is not logged in`);
-        //     return;
-        // }
+        const user = socket.request.user;
+        const email = user.email;
+        if (!email || !socket.request.user.logged_in) {
+            logger.log(`User ${email} is not logged in`);
+            return;
+        }
         //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
 
 

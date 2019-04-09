@@ -37,7 +37,7 @@ function scan(params) {
             let lastVisit = visitLog[visitLog.length - 1];
             let rLength = user.reservationList.length;
 
-            if(lastVisit > '20190301' && rLength > 0){
+            if(lastVisit > '20190401' && rLength > 0){
                 console.log(`${user.email} ${lastVisit} ${rLength}`);
             }
 

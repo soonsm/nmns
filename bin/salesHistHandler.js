@@ -180,22 +180,17 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
     let list = await getSalesHistList(user, data);
     let reservation = user.reservationList.find(reservation => reservation.id === data.scheduleId);
 
-    if(!list || list.length === 0){
+    if((!list || list.length === 0) && reservation.type === 'R'){
         let contentList = reservation.contentList || [];
-        let menuList = user.menuList || [];
 
         let salesTemplateList = [];
 
         for(let i=0; i<contentList.length; i++){
             let content = contentList[i];
-            let menu = menuList.find(menu => menu.name === content);
             let template = {
                 item: content,
                 customerId: reservation.memberId,
-                managerId: reservation.manager,
-                priceCash: menu.priceCash,
-                priceCard: menu.priceCard,
-                priceMembership: menu.priceMembership
+                managerId: reservation.manager
             };
 
             salesTemplateList.push(template);
@@ -204,11 +199,17 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
         list = salesTemplateList;
     }
 
-    let balanceMembership = user.memberList.find(member => member.id === reservation.memberId).pointMembership || 0;
-    for(let i=0; i<list.length; i++){
-        list[i].balanceMembership = balanceMembership;
+    if(list && list.length > 0){
+        let balanceMembership = user.memberList.find(member => member.id === reservation.memberId).pointMembership || 0;
+        let menuList = user.menuList || [];
+        for(let i=0; i<list.length; i++){
+            let menu = menuList.find(menu => menu.name === list[i].item);
+            list[i].balanceMembership = balanceMembership;
+            list[i].priceCash =  menu.priceCash;
+            list[i].priceCard = menu.priceCard;
+            list[i].priceMembership = menu.priceMembership;
+        }
     }
-
 
     return list;
 });
