@@ -16,6 +16,47 @@
     $("#salesSearchButton").removeClass('disabled');
   }));
   
+  $(".salesSearchPeriodButton").on("touch click", function(){
+    $(".salesSearchPeriodButton").removeClass('active');
+    var start, end;
+    switch($(this).data('action')){
+      case 'week':
+        end = moment();
+        start = moment().add(-7, 'day');
+        break;
+      case 'month':
+        end = moment();
+        start = moment().add(-1, 'month');
+        break;
+      case 'halfYear':
+        end = moment();
+        start = moment().add(-6, 'month');
+        break;
+      case 'year':
+        end = moment();
+        start = moment().add(-1, 'year');
+        break;
+      case 'currentMonth':
+        $(this).addClass('active');
+        end = moment().endOf('month');
+        start = moment().startOf('month');
+        break;
+      case 'previousMonth':
+        $(this).addClass('active');
+        end = moment().add(-1, 'month').endOf('month');
+        start = moment().add(-1, 'month').startOf('month');
+        break;
+      case 'previous2Month':
+        $(this).addClass('active');
+        end = moment().add(-2, 'month').endOf('month');
+        start = moment().add(-2, 'month').startOf('month');
+        break;
+    }
+    if(start && end){
+      document.getElementById('salesSearchStartDate')._flatpickr.setDate(start.toDate());
+      document.getElementById('salesSearchEndDate')._flatpickr.setDate(end.toDate());
+    }
+  })
   function generateSalesRow(init, goal){
       var managers = NMNS.calendar.getCalendars();
       var manager, item;
@@ -190,13 +231,16 @@
     }
     var isLoading = false;
     $(document).on("scroll", debounce(function(){
+      if($("#mainSalesList").is(":visible")){
+        console.log(document.scrollingElement.scrollTop);
         var distance = getDistFromBottom();
-        if($("#mainSalesList").is(":visible") && !isLoading && NMNS.salesList && currentSalesCount < NMNS.salesList.length && distance < Math.max(100, window.innerHeight * 0.2)){
+        if(!isLoading && NMNS.salesList && currentSalesCount < NMNS.salesList.length && distance < Math.max(100, window.innerHeight * 0.2)){
             isLoading = true;
             $("#mainSalesLoading").show();
             drawSalesList();
             $("#mainSalesLoading").hide();
             isLoading = false;
         }
+      }
     }, 100));
 })();

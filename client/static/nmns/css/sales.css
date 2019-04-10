@@ -1,3 +1,9 @@
+#mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(:focus):not(:hover):not(:active){
+  background-color:transparent;
+}
+#mainSalesSearch .input-group-text{
+  border-left:none;
+}
 #mainSalesList{
   min-height: calc(100vh - 400px);
 }
