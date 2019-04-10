@@ -460,52 +460,6 @@
       }
       $("#mainTask").toggleClass('show');
     }
-    
-    /*function onChangeNewScheduleCalendar(e) {
-        e.preventDefault();
-        var target = $(e.target).closest('a[role="menuitem"]')[0];
-        var calendarId = target.getAttribute('data-action');
-        changeNewScheduleCalendar(calendarId);
-    }
-
-    function changeNewScheduleCalendar(calendarId) {
-        var calendarNameElement = document.getElementById('calendarName');
-        var manager = NMNS.manager;
-        var html = [];
-
-        html.push('<span class="calendar-bar" style="background-color: ' + manager.bgColor + '; border-color:' + manager.borderColor + ';"></span>');
-        html.push('<span class="calendar-name">' + manager.name + '</span>');
-
-        calendarNameElement.innerHTML = html.join('');
-
-    }*/
-
-    /*function createNewSchedule(e) {
-        e.preventDefault();
-        var now = moment(new Date());
-        if (now.hour() >= Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() + 1 == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-            now = moment(NMNS.info.bizBeginTime, "HHmm");
-        } else {
-            now.minute(Math.ceil(now.minute() / 10) * 10);
-        }
-        NMNS.calendar.openCreationPopup({
-            start: now.toDate(),
-            end: now.add(30, "m").toDate()
-        });
-    }*/
-
-    /*function saveNewSchedule(scheduleData) {
-        scheduleData.id = NMNS.email + generateRandom();
-        NMNS.calendar.createSchedules([scheduleData]);
-
-        NMNS.history.push(scheduleData);
-        var serverSchedule = $.extend({}, scheduleData);
-        serverSchedule.start = moment(serverSchedule.start.toDate()).format("YYYYMMDDHHmm");
-        serverSchedule.end = moment(serverSchedule.end.toDate()).format("YYYYMMDDHHmm");
-        NMNS.socket.emit("add reserv", serverSchedule);
-    }*/
 
     function findManager(managerId) {
         return NMNS.calendar.getCalendars().find(function(manager) {
@@ -2676,7 +2630,13 @@
         document.body.appendChild(script);
 
         script.onload = function() {
-          NMNS.socket.emit("get menu list", null);
+          NMNS.socket.emit("get sales list", {
+            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
+            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
+            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
+          });
         };
         
         $("#salesSearchName").autocomplete({
@@ -2715,8 +2675,14 @@
             defaultDate: new Date(),
             locale: "ko"
         });
-        if(!NMNS.menuList || NMNS.menuList.length === 0){
-          NMNS.socket.emit('get menu list');
+        if(!NMNS.salesList || NMNS.salesList.length === 0){
+          NMNS.socket.emit('get sales list', {
+            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
+            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
+            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
+          });
         }
         var now = moment();
         $("#mainSalesSearch .activable").each(function(index, button){

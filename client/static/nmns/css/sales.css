@@ -1,0 +1,75 @@
+#mainSalesList{
+  min-height: calc(100vh - 400px);
+}
+.salesRow .montserrat{
+  font-size:11px;
+}
+.salesRow{
+  display:flex;
+  padding:15px 20px;
+  background-color:#fff;
+  border-radius: 2px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  margin-bottom:5px;
+  align-items:center;
+}
+#salesToolsSticky .salesHead{
+    justify-content: center;
+    font-size:13px;
+}
+
+#salesToolsSticky .salesSortType{
+    cursor:pointer;
+}
+
+#salesToolsSticky .salesSortType:active,
+#salesToolsSticky .salesSortType:hover,
+#salesToolsSticky .salesSortType:focus,
+#salesToolsSticky .salesSortType.active {
+    font-weight:bold;
+}
+
+#salesToolsSticky .salesSortType:after{
+    font-family:'Font Awesome 5 Free';
+    font-weight:700;
+    margin-left:3px;
+    content:'\f0dc';
+    opacity: 1;
+}
+
+#salesToolsSticky .salesSortType:not(.active):after{
+    opacity:0.5;
+}
+
+#salesSummary{
+  background-color:#fff;
+  border-radius: 2px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  padding:30px 50px;
+  margin:50px 0 35px 0;
+}
+#salesSummary .salesSummaryTitle{
+  opacity:0.7;
+}
+
+#salesSummary .montserrat{
+  font-weight:bold;
+}
+
+#mainSalesList .salesRow div{
+  font-size:11px;
+}
+#mainSalesList .salesRow .salesName{
+  font-size:14px;
+  font-weight:bold;
+}
+#mainSalesList .salesRow .montserrat{
+  font-size:12px;
+}
+
+#mainSalesList .salesRow .tui-full-calendar-weekday-schedule-bullet{
+  position:relative;
+  display: inline-block;
+  top:unset;
+  left:unset;
+}
