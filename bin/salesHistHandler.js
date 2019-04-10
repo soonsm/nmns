@@ -40,7 +40,7 @@ let fnTemplate = function(preFn, mainFn, postFn){
             resultData = await mainFn(user, data);
 
             if(postFn){
-                await postFn(user, data);
+                resultData = await postFn(user, resultData);
             }
             status = true;
         }catch(e){
@@ -97,7 +97,14 @@ let getSalesHistList = async function(user, data){
             return false;
         }else if(data.priceEnd && data.priceEnd < saleHist.price){
             return false;
-        }else if(data.managerId && data.managerId !== saleHist.managerId){
+        }else if(data.managerId && data.managerId !== saleHist.managerId) {
+            return false;
+        }else if(data.customerName){
+            let memberList = user.memberList || [];
+            let ids = memberList.filter(member => member.name && member.name.includes(data.customerName)).map(member => member.id);
+            if(ids.includes(saleHist.customerId)){
+                return true;
+            }
             return false;
         }
         return true;
@@ -121,36 +128,62 @@ exports.getDaySalesHist = fnTemplate((user, data) => {
         throw `올바른 매출 날짜가 아닙니다.(${data.end})`;
     }
 
-    data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.SALES_CASH];
+    data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH];
 
     delete data.id;
 
     return data;
-}, getSalesHistList);
+}, getSalesHistList, async function(user, list){
+    let totalSalesCount = list.length, totalSalesAmount =0;
+    let totalSalesCard=0, totalSalesCash=0,totalSalesMembership=0;
+    let salesList = [];
+
+    list.forEach(sales => {
+        totalSalesAmount += sales.price;
+        if(sales.type === process.nmns.PAYMENT_METHOD.CARD){
+            totalSalesCard += sales.price;
+        }else if(sales.type === process.nmns.PAYMENT_METHOD.CASH){
+            totalSalesCash += sales.price;
+        }else if(sales.type === process.nmns.PAYMENT_METHOD.MEMBERSHIP){
+            totalSalesMembership += sales.price;
+        }
+        sales.customerName = user.memberList.find(member => member.id === sales.customerId);
+        salesList.push(sales);
+    });
+    salesList.sort((s1,s2) => s2.date - s1.date);
+    return {
+        totalSalesCount: totalSalesCount,
+        totalSalesAmount: totalSalesAmount,
+        totalSalesCard: totalSalesCard,
+        totalSalesCash: totalSalesCash,
+        totalSalesMembership: totalSalesMembership,
+        sales: salesList
+    };
+});
 
 /**
  * 월별 매출내역 조회(카드 매출, 현금 매출, 멤버십 충전)
  * @param data
  * @returns {Promise<{status: boolean, data: *, message: *}>}
  */
-exports.getMonthSalesHist = fnTemplate((user, data) => {
-    if(!data.start || !moment(data.start, 'YYYYMM').isValid()){
-        throw `올바른 날짜가 아닙니다.(${data.start})`;
-    }
-
-    if(!data.end || !moment(data.end, 'YYYYMM').isValid()){
-        throw `올바른 매출 날짜가 아닙니다.(${data.end})`;
-    }
-
-    data.start = data.start + '01';
-    data.end = data.end + '31';
-
-    data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.SALES_CASH];
-
-    delete data.id;
-
-    return data;
-}, getSalesHistList);
+// exports.getMonthSalesHist = fnTemplate((user, data) => {
+//     if(!data.start || !moment(data.start, 'YYYYMM').isValid()){
+//         throw `올바른 날짜가 아닙니다.(${data.start})`;
+//     }
+//
+//     if(!data.end || !moment(data.end, 'YYYYMM').isValid()){
+//         throw `올바른 매출 날짜가 아닙니다.(${data.end})`;
+//     }
+//
+//     data.start = data.start + '01';
+//     data.end = data.end + '31';
+//
+//     data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.SALES_CASH];
+//
+//     delete data.id;
+//
+//     return data;
+// }, getSalesHistList);
 
 /**
  * 예약 아이디로 매출내역 조회하기(카드 매출, 현금 매출, 멤버십 충전)
@@ -171,7 +204,7 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
         throw `예약아이디 ${scheduleId}로 조회되는 예약이 없습니다.`;
     }
 
-    data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.SALES_CASH];
+    data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH];
 
     delete data.id;
 
@@ -205,9 +238,11 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
         for(let i=0; i<list.length; i++){
             let menu = menuList.find(menu => menu.name === list[i].item);
             list[i].balanceMembership = balanceMembership;
-            list[i].priceCash =  menu.priceCash;
-            list[i].priceCard = menu.priceCard;
-            list[i].priceMembership = menu.priceMembership;
+            if(menu){
+                list[i].priceCash =  menu.priceCash;
+                list[i].priceCard = menu.priceCard;
+                list[i].priceMembership = menu.priceMembership;
+            }
         }
     }
 
@@ -281,7 +316,7 @@ let changeMemberSalesStatistic = function(member, isRefund, saleHist){
  * @param data
  * @returns {Promise<void>}
  */
-let saveSalesHist = async function(user, data){
+let saveSalesHist = function(user, data){
     if(!user){
         throw '사용자 정보가 없습니다.';
     }
@@ -323,8 +358,8 @@ let saveSalesHist = async function(user, data){
     };
 
     let commonValidationForReservation = function(data){
-        if(!data.scheduleId){
-            throw '매출내역 추가에 예약 아이디가 필요합니다.';
+        if(!user.reservationList.find(reservation => reservation.id === data.scheduleId)){
+            throw `예약아아디가 없거나 예약아이디로 예약이 조회되지 않습니다.(${data.scheduleId})`;
         }else if(!data.managerId){
             throw '매출내역 추가에 매니저 아이디가 필요합니다.';
         }else if(isNaN(data.price) || data.price <= 0){
@@ -406,8 +441,9 @@ let saveSalesHistList = async function(user, list){
  * @param data
  * @returns {Promise<void>}
  */
-exports.saveSales = fnTemplate(null, saveSalesHistList, async function(user){
+exports.saveSales = fnTemplate(null, saveSalesHistList, async function(user, data){
     await db.setWebUser(user);
+    return data;
 });
 
 /**
@@ -425,8 +461,9 @@ exports.addMembershipHistory = fnTemplate((user, data) => {
     data.time = moment().format('hhmmss');
 
     return data;
-}, saveSalesHist, async function(user){
+}, saveSalesHist, async function(user, data){
     await db.setWebUser(user);
+    return data;
 });
 
 /**
@@ -517,6 +554,7 @@ exports.updateSalesHist = modifySalesHist;
  * @param data
  * @returns {Promise<void>}
  */
-exports.modifySalesHistApi = fnTemplate((user, data)=>{}, modifySalesHist, async function(user){
+exports.modifySalesHistApi = fnTemplate((user, data)=>{}, modifySalesHist, async function(user, data){
     await db.setWebUser(user);
+    return data;
 });
