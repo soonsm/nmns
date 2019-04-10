@@ -14,6 +14,7 @@
     $("#salesSummaryTotalAmount").text((e.data.totalSalesAmount || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesToolsSticky").show();
     $("#salesSearchButton").removeClass('disabled');
+    $("#salesSearchPeriod").text(moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYY. MM. DD - ') + moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYY. MM. DD'));
   }));
   
   $(".salesSearchPeriodButton").on("touch click", function(){
@@ -232,7 +233,6 @@
     var isLoading = false;
     $(document).on("scroll", debounce(function(){
       if($("#mainSalesList").is(":visible")){
-        console.log(document.scrollingElement.scrollTop);
         var distance = getDistFromBottom();
         if(!isLoading && NMNS.salesList && currentSalesCount < NMNS.salesList.length && distance < Math.max(100, window.innerHeight * 0.2)){
             isLoading = true;
@@ -242,5 +242,21 @@
             isLoading = false;
         }
       }
-    }, 100));
+    }, 100)).on("scroll", function(){
+      if($("#mainSalesList").is(":visible")){
+        console.log(document.scrollingElement.scrollTop);
+        if(document.scrollingElement.scrollTop > 0){
+          $(".salesMenu .menuTitle").addClass('fixedScroll');
+          $("#menuTitleSticky").removeClass('d-none');
+          if(document.scrollingElement.scrollTop > 220){
+            $("#mainSalesTools").addClass('fixedScroll');
+          }else{
+            $("#mainSalesTools").removeClass('fixedScroll');
+          }
+        }else{
+          $(".salesMenu .menuTitle").removeClass('fixedScroll');
+          $("#menuTitleSticky").addClass('d-none');
+        }
+      }
+    });
 })();

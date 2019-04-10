@@ -2706,7 +2706,11 @@
       }
       if(!$(this).hasClass("menuLinkActive")){
         $(".switchingMenu:not(."+$(this).data('link')+")").hide();
-        $("."+$(this).data('link')).show();
+        if($("."+$(this).data('link')).show().hasClass('salesMenu')){
+            $("#mainRow").addClass('fixedScroll');
+        }else{
+            $("#mainRow").removeClass('fixedScroll');
+        }
         $(".menuLinkActive").removeClass("menuLinkActive");
         $(this).addClass("menuLinkActive");
         // hide mainTask field
