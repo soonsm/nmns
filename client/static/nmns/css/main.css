@@ -62,7 +62,7 @@ html {
     min-height: 100vh;
     height:100%;
     position: relative;
-    background-color:#f1f2f3;
+    background-color:#f8f8f8;
     font-size:15px;
 }
 
@@ -112,6 +112,10 @@ input[type=checkbox]+label{
     width:270px;
     transition:0.3s ease-in-out;
     z-index:1;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
 }
 #mainAside.sidebar-toggled{
     width:74px;
@@ -123,6 +127,8 @@ input[type=checkbox]+label{
 #mainRow {
     transition:0.3s ease-in-out;
     position:relative;
+    margin-left:270px;
+    margin-right:0;
 }
 #mainRow.sidebar-toggled{
     width:calc(100% - 50px);
@@ -146,6 +152,19 @@ input[type=checkbox]+label{
 }
 #mainRow .topNav{
     border-bottom:0.5px solid rgba(57,53,53,0.35);
+}
+#mainRow.fixedScroll .topNav{
+  position:fixed;
+  left:270px;
+  background-color:#f8f8f8;
+  z-index:1;
+}
+#mainAside.sidebar-toggled + #mainRow.fixedScroll .topNav{
+  transition:0.3s left ease-in-out;
+  left:74px;
+}
+#mainAside.sidebar-toggled + #mainRow{
+  margin-left:74px;
 }
 /* side bar */
 #sidebarContainer{
@@ -1430,8 +1449,8 @@ button.form-control {
     vertical-align: super;
     right:-8px;
     top:8px;
-    border:2px solid #f1f2f3;
-    border-radius:1em
+    border:2px solid #f8f8f8;
+    border-radius:1em;
 }
 
 /* incoCenterMenu */
@@ -1750,6 +1769,7 @@ button.form-control {
 }
 .scheduleSalesSummaryItem .scheduleSalesSummaryMembershipSign{
   display:none;
+  margin-right:3px;
 }
 .scheduleSalesSummaryItem.membershipSummary .scheduleSalesSummaryMembershipSign{
   display:inline-flex;

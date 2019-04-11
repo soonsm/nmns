@@ -299,6 +299,9 @@
         });
 
         $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
+        if($("#sidebarContainer").data('scroll')){
+          $("#sidebarContainer").data('scroll').update();
+        }
         NMNS.calendar.setCalendars(e.data);
         if (NMNS.needInit) {
             delete NMNS.needInit;
@@ -460,52 +463,6 @@
       }
       $("#mainTask").toggleClass('show');
     }
-    
-    /*function onChangeNewScheduleCalendar(e) {
-        e.preventDefault();
-        var target = $(e.target).closest('a[role="menuitem"]')[0];
-        var calendarId = target.getAttribute('data-action');
-        changeNewScheduleCalendar(calendarId);
-    }
-
-    function changeNewScheduleCalendar(calendarId) {
-        var calendarNameElement = document.getElementById('calendarName');
-        var manager = NMNS.manager;
-        var html = [];
-
-        html.push('<span class="calendar-bar" style="background-color: ' + manager.bgColor + '; border-color:' + manager.borderColor + ';"></span>');
-        html.push('<span class="calendar-name">' + manager.name + '</span>');
-
-        calendarNameElement.innerHTML = html.join('');
-
-    }*/
-
-    /*function createNewSchedule(e) {
-        e.preventDefault();
-        var now = moment(new Date());
-        if (now.hour() >= Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() + 1 == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-            now = moment(NMNS.info.bizBeginTime, "HHmm");
-        } else {
-            now.minute(Math.ceil(now.minute() / 10) * 10);
-        }
-        NMNS.calendar.openCreationPopup({
-            start: now.toDate(),
-            end: now.add(30, "m").toDate()
-        });
-    }*/
-
-    /*function saveNewSchedule(scheduleData) {
-        scheduleData.id = NMNS.email + generateRandom();
-        NMNS.calendar.createSchedules([scheduleData]);
-
-        NMNS.history.push(scheduleData);
-        var serverSchedule = $.extend({}, scheduleData);
-        serverSchedule.start = moment(serverSchedule.start.toDate()).format("YYYYMMDDHHmm");
-        serverSchedule.end = moment(serverSchedule.end.toDate()).format("YYYYMMDDHHmm");
-        NMNS.socket.emit("add reserv", serverSchedule);
-    }*/
 
     function findManager(managerId) {
         return NMNS.calendar.getCalendars().find(function(manager) {
@@ -1770,8 +1727,6 @@
         });
     });
 
-    
-    
     function drawAnnouncementList(data){
       var list = "";
       data.forEach(function(item){
@@ -1781,7 +1736,7 @@
             list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + (item.contents?'<br>예약내용 : '+item.contents : '') +'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">예약 등록</span></div>'
             break;
           case 'SCHEDULE_CANCELED':
-            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예��� 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
+            list += '<div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat announcementTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div>'
             break;
           case 'ANNOUNCEMENT':
           default:
@@ -1945,6 +1900,9 @@
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
+            if($("#sidebarContainer").data('scroll')){
+              $("#sidebarContainer").data('scroll').update();
+            }
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -2009,7 +1967,7 @@
             $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
           }
           if (e.data.detail.length > 0) {
-            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화���호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
+            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
             e.data.detail.forEach(function(item) {
                 html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
             });
@@ -2025,7 +1983,7 @@
           if(!$("#noShowImage").attr('src')){
             $("#noShowImage").attr('src', '/nmns/img/sub_img.svg');
           }
-          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 ���력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
+          $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 이력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
         }
     }));
 
@@ -2345,7 +2303,7 @@
         $('#announcementBody').parent().addClass('wait');
         NMNS.socket.emit('get announcement', {page:1})
         //for test
-        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내���2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 ���목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
+        /*$('#announcementBody').append(drawAnnouncementList([{title:'테스트 제목', contents:'테스트 내용!!!!', registeredDate:'20190217', isRead:false},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true},{title:'테스트 제목2', contents:'테스트 내용2!!!!', registeredDate:'20190215', isRead:true}]));
         var count = ($('.announcementCount').text() * 1);
         if(count && count > 0){
           var unread = 0;
@@ -2547,6 +2505,9 @@
         //create
         id = NMNS.email + generateRandom();
         $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
+        if($("#sidebarContainer").data('scroll')){
+          $("#sidebarContainer").data('scroll').update();
+        }
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2676,7 +2637,13 @@
         document.body.appendChild(script);
 
         script.onload = function() {
-          NMNS.socket.emit("get menu list", null);
+          NMNS.socket.emit("get sales list", {
+            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
+            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
+            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
+          });
         };
         
         $("#salesSearchName").autocomplete({
@@ -2715,8 +2682,14 @@
             defaultDate: new Date(),
             locale: "ko"
         });
-        if(!NMNS.menuList || NMNS.menuList.length === 0){
-          NMNS.socket.emit('get menu list');
+        if(!NMNS.salesList || NMNS.salesList.length === 0){
+          NMNS.socket.emit('get sales list', {
+            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
+            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
+            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
+          });
         }
         var now = moment();
         $("#mainSalesSearch .activable").each(function(index, button){
@@ -2740,7 +2713,11 @@
       }
       if(!$(this).hasClass("menuLinkActive")){
         $(".switchingMenu:not(."+$(this).data('link')+")").hide();
-        $("."+$(this).data('link')).show();
+        if($("."+$(this).data('link')).show().hasClass('salesMenu')){
+            $("#mainRow").addClass('fixedScroll');
+        }else{
+            $("#mainRow").removeClass('fixedScroll');
+        }
         $(".menuLinkActive").removeClass("menuLinkActive");
         $(this).addClass("menuLinkActive");
         // hide mainTask field
@@ -2861,7 +2838,8 @@
             });
             $("#faq").append(html);
           }
-        })
-        $(".menuLink").on("touch click", switchMenu)
+        });
+        $(".menuLink").on("touch click", switchMenu);
+        $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
     })();
 })(jQuery);
