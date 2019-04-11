@@ -92,7 +92,7 @@ let setMenu = function(menuList, data){
  * @returns {Promise<void>}
  */
 exports.saveMenu = async function(data){
-    let status = false, message = null, resultData = null;
+    let status = false, message = null;
     let user = await db.getWebUser(this.email);
 
     try{
@@ -108,7 +108,7 @@ exports.saveMenu = async function(data){
     return {
         status: status,
         message: message,
-        data: data.id
+        data: {id: data.id}
     };
 }
 
