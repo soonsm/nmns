@@ -244,7 +244,6 @@
       }
     }, 100)).on("scroll", function(){
       if($("#mainSalesList").is(":visible")){
-        console.log(document.scrollingElement.scrollTop);
         if(document.scrollingElement.scrollTop > 0){
           $(".salesMenu .menuTitle").addClass('fixedScroll');
           $("#menuTitleSticky").removeClass('d-none');

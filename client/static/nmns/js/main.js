@@ -299,6 +299,9 @@
         });
 
         $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
+        if($("#sidebarContainer").data('scroll')){
+          $("#sidebarContainer").data('scroll').update();
+        }
         NMNS.calendar.setCalendars(e.data);
         if (NMNS.needInit) {
             delete NMNS.needInit;
@@ -1899,6 +1902,9 @@
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
+            if($("#sidebarContainer").data('scroll')){
+              $("#sidebarContainer").data('scroll').update();
+            }
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -2501,6 +2507,9 @@
         //create
         id = NMNS.email + generateRandom();
         $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
+        if($("#sidebarContainer").data('scroll')){
+          $("#sidebarContainer").data('scroll').update();
+        }
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2831,7 +2840,8 @@
             });
             $("#faq").append(html);
           }
-        })
-        $(".menuLink").on("touch click", switchMenu)
+        });
+        $(".menuLink").on("touch click", switchMenu);
+        $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
     })();
 })(jQuery);

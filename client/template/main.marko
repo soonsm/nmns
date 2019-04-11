@@ -52,45 +52,14 @@
 
 <body>
   <div class="d-flex" style="min-height:100vh">
-    <aside id="mainAside" class="sidebar-handler position-relative bg-primary text-white container px-0 d-flex">
+    <div id="notifications"></div>
+    <aside id="mainAside" class="sidebar-handler bg-primary text-white container px-0 d-flex">
       <div class="topNav" style="padding:30px">
         <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:auto;vertical-align:initial"/></a>
         <i id="sidebarToggler" class="fa fa-bars float-right cursor-pointer text-white" aria-label="메뉴"></i>
       </div>
       <div id="sidebarContainer" class="row mx-0 col-12">
         <ul class="list-group w-100">
-          <!--<li>
-            <a href="#" class="addNoShowLink list-group-item list-group-item-action border-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 추가">
-              <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-plus fa-fw mr-2"></span>
-                <span class="menu-collapsed">노쇼 추가</span>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="getNoShowLink list-group-item list-group-item-action border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#noShowModal" aria-label="노쇼 찾기">
-              <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-search fa-fw mr-2"></span>
-                <span class="menu-collapsed">노쇼 찾기</span>
-              </div>
-            </a>
-          </li>
-          <li class="calendarMenu">
-            <a href="#" class="addReservLink list-group-item list-group-item-action border-left-0 border-right-0 border-bottom-0" aria-label="예약 추가">
-              <div class="d-flex w-100 align-items-center">
-                <span class="far fa-calendar-plus fa-fw mr-2"></span>
-                <span class="menu-collapsed">예약 추가</span>
-              </div>
-            </a>
-          </li>
-          <li class="calendarMenu">
-            <a href="#" class="addTaskLink list-group-item list-group-item-action border-left-0 border-right-0 border-bottom-0" data-toggle="modal" data-target="#taskModal" aria-label="일정 추가">
-              <div class="d-flex w-100 align-items-center">
-                <span class="far fa-calendar-check fa-fw mr-2"></span>
-                <span class="menu-collapsed">일정 추가</span>
-              </div>
-            </a>
-          </li>-->
           <li>
             <a class="list-group-item list-group-item-action menuLink calendarMenuLink menuLinkActive sidebar-item rounded-0 border-0" data-link="calendarMenu" aria-label="예약/일정 관리">
               <div class="d-flex w-100 align-items-center">
@@ -134,7 +103,7 @@
               </div>
             </a>
           </li>
-          <li class="mt-3">
+          <li class="mt-3 mb-5">
             <a href="#" class="list-group-item list-group-item-action rounded-0 border-0 pb-1 addManager" aria-label="담당자 추가하기">
               <div class="lnbManagerItem">
                 <div class="d-flex w-100 align-items-center">
@@ -179,9 +148,7 @@
       </div>
     </aside>
     
-    <div id="notifications"></div>
-    
-    <div id="mainRow" class="row col px-0 mx-auto sidebar-handler">
+    <div id="mainRow" class="row col px-0 sidebar-handler">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
         <label class="fa fa-search mb-0" style="font-size:24px;opacity:0.5" for="searchNoShow"></label>
@@ -380,7 +347,7 @@
         <div class="switchingMenu salesMenu">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">매출 관리</span>
-            <span id="menuTitleSticky d-none">
+            <span id="menuTitleSticky" class="d-none">
               <span class="divider">&nbsp;</span>
               <span class="h6 mb-0 montserrat" id="salesSearchPeriod" style="opacity:0.7;font-size:14px;font-weight:500"></span>
             </span>
