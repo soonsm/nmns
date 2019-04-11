@@ -12,6 +12,7 @@
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
   margin-bottom:5px;
   align-items:center;
+  position:relative;
 }
 .menuRow:last-child{
   margin-bottom:0;
@@ -27,4 +28,14 @@
 }
 .sortable-ghost{
   opacity:0;
+}
+.menuModalLink{
+  position: absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+}
+.menuRow .updatingMenu-collapsed.d-block + .menuModalLink{
+  display:none;
 }

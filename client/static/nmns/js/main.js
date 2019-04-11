@@ -1727,8 +1727,6 @@
         });
     });
 
-    
-    
     function drawAnnouncementList(data){
       var list = "";
       data.forEach(function(item){
