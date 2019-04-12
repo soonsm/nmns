@@ -224,17 +224,12 @@
     });
     
     function getDistFromBottom () {
-      var scrollPosition = window.pageYOffset;
-      var windowSize     = window.innerHeight;
-      var bodyHeight     = document.body.offsetHeight;
-    
-      return Math.max(bodyHeight - (scrollPosition + windowSize), 0);
+      return Math.max(document.body.scrollHeight - window.innerHeight - window.scrollY, 0);
     }
     var isLoading = false;
     $(document).on("scroll", debounce(function(){
       if($("#mainSalesList").is(":visible")){
-        var distance = getDistFromBottom();
-        if(!isLoading && NMNS.salesList && currentSalesCount < NMNS.salesList.length && distance < Math.max(100, window.innerHeight * 0.2)){
+        if(!isLoading && NMNS.salesList && currentSalesCount < NMNS.salesList.length && getDistFromBottom() < Math.max(100, window.innerHeight * 0.2)){
             isLoading = true;
             $("#mainSalesLoading").show();
             drawSalesList();
