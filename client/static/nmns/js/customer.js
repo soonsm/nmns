@@ -54,16 +54,16 @@
               <div id="customerSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">\
                 <div id="customerScheduleNotEmpty" class="row mx-0 flex-column">\
                   <div class="row mx-0 col-12 px-1 pb-3 customerScheduleHead text-center" style="border-bottom:1px solid #707070">\
-                    <div class="col-4 px-0 customerScheduleSortType active" data-action="sort-date">날짜</div><div class="col-1 px-0 customerScheduleSortType" data-action="sort-manager">담당</div>\
-                    <div class="col-4 px-0">예약내용</div><div class="col-3 px-0 d-flex"><div class="col-6 px-0 customerScheduleSortType" data-action="sort-sales">매출액</div><div class="col-6 px-0 customerScheduleSortType" data-action="sort-status">예약상태</div></div>\
+                    <div class="col-4 px-0 customerScheduleSortType active" data-action="sort-date">날짜</div><div class="col-5 px-0 d-flex"><div class="col-4 px-0 customerScheduleSortType" data-action="sort-manager">담당</div>\
+                    <div class="col-8 px-0">예약내용</div></div><div class="col-3 px-0 d-flex"><div class="col-6 px-0 customerScheduleSortType" data-action="sort-sales">매출액</div><div class="col-6 px-0 customerScheduleSortType" data-action="sort-status">예약상태</div></div>\
                   </div>\
                   <div class="row mx-0" id="customerScheduleList"></div>\
-                  <div class="d-flex col-12 px-0" style="margin-top:50px">\
-                    <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
-                    <button type="button" dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
-                  </div>\
                 </div>\
                 <div id="customerScheduleEmpty" style="display:none">예약 내역이 없어요.</div>\
+                <div class="d-flex col-12 px-0" style="margin-top:50px">\
+                  <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
+                  <button type="button" dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
+                </div>\
               </div>\
               \
               <div id="customerAlrim" class="tab-pane col-12 px-0 fade" role="tabpanel">\
@@ -141,8 +141,8 @@
         }
         html += '<div class="customerSchedule col-12" data-index="'+index+'">'+
           '<div class="col col-4 px-0 montserrat">' + moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + (item.end?moment(item.end, 'YYYYMMDDHHmm').format(moment(item.start, 'YYYYMMDDHHmm').isSame(moment(item.end, 'YYYYMMDDHHmm'), 'day')?' - HH:mm':' - YYYY. MM. DD HH:mm'):'') + '</div>' +
-          '<div class="col col-1 px-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div>'+
-          '<div class="col col-4">'+(contents || '') + '</div><div class="col-3 px-0 d-flex">' +
+          '<div class="col col-5 px-0 d-flex"><div class="col col-4 px-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div>'+
+          '<div class="col col-8">'+(contents || '') + '</div></div><div class="col-3 px-0 d-flex">' +
           '<div class="col col-6 px-0 montserrat">'+(item.sales ? (item.sales+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div>' +
           '<div class="col col-6 px-0">'+(item.status == 'NOSHOW'? '노쇼' : (item.status === 'CANCELED' || item.status === 'CUSTOMERCANCELED' ? '취소' : '정상')) + '</div></div>' +
           '</div></div>';
@@ -244,8 +244,8 @@
               '<div class="col col-2 montserrat">'+(!item.contact || item.contact === '' ? '' : dashContact(item.contact)) + '</div>' +
               '<div class="col col-1" style="font-size:10px">'+(!item.history? '0회' : item.history.length + '회')+'</div><div class="col-4">' +
               '<div class="col col-4 px-0 montserrat">'+(item.history && item.history.length > 0 ? moment(item.history[0].date, "YYYYMMDDHHmm").format("YYYY. MM. DD") : '-') + '</div>' +
-              '<div class="col col-4 px-0 montserrat">'+((item.cardSales + item.cashSales) == 0 ? '-' : ((item.cardSales + item.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")) + '</div>' +
-              '<div class="col col-4 px-0 montserrat">'+(item.pointMembership == 0? '-' : (item.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")) + '</div></div>' +
+              '<div class="col col-4 px-0 montserrat">'+((item.cardSales + item.cashSales) ? ((item.cardSales + item.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"): '-') + '</div>' +
+              '<div class="col col-4 px-0 montserrat">'+(item.pointMembership ? (item.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
               '<div class="col" style="font-size:10px">'+(item.etc || '-')+'</div>'+
               '<a class="customerModalLink" href="#" data-toggle="modal" data-target="#customerModal" title="상세보기"></a>'+
               '</div>'
@@ -441,6 +441,7 @@
           NMNS.customerList.splice(0, 0, customer);
           drawCustomerList(true);
         }
+        $("#customerModal").modal('hide');
     });
     $("#customerTabList a[href='#customerAlrim']").on("show.bs.tab", function(){
       NMNS.socket.emit('get customer alrim', {id:$("#customerModal").data('customer').id});

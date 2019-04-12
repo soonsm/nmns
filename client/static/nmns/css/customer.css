@@ -125,3 +125,10 @@
     left:unset;
     margin-right:3px;
 }
+
+#customerScheduleEmpty{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 255px;
+}
