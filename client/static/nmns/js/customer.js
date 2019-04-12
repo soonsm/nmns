@@ -1,69 +1,98 @@
 /*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
 (function() {
-    $("#mainRow").append('<div id="customerModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">\
+    $("#mainRow").append('<div id="customerModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="고객 정보" aria-hidden="true">\
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">\
           <div class="modal-content">\
-            <div class="modal-header">\
-              <span>\
-                <h5 class="modal-title" id="customerTitle">고객 상세정보</h5>\
-              </span>\
-              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">\
-                <span aria-hidden="true">&times;</span>\
-              </button>\
+            <div class="modal-header p-0 mx-0">\
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">\
+                <ul id="customerTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">\
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#customerInfo" data-toggle="tab" aria-selected="true" aria-label="고객 정보">고객 정보</a></li>\
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerSchedule" data-toggle="tab" aria-label="예약 내역">예약 내역</a></li>\
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerAlrim" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>\
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerMembership" data-toggle="tab" aria-label="멤버십 금액 내역">멤버십 금액 내역</a></li>\
+                </ul>\
+                <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">\
+                  <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>\
+                </button>\
+              </div>\
             </div>\
             <div class="modal-body">\
-              <div class="form-group">\
-                <div class="row mb-2">\
-                  <div class="col-lg-6 col-12 text-center">\
-                    <input id="customerName" type="text" placeholder="이름" class="form-control col-12 border-0 text-center my-3"/>\
-                    <input id="customerContact" type="text" placeholder="연락처" class="form-control col-12 border-0 text-center my-3"/>\
+              <div class="row mx-0 col-12 tab-content p-0">\
+                      \
+                <div id="customerInfo" class="tab-pane col-12 px-0 fade show active" role="tabpanel">\
+                  <div class="row mx-0">\
+                    <div id="customerNoShow">총 <span id="customerNoShowCount">0</span>건의 노쇼 이력이 있는 고객님이에요.</div>\
+                    <div>고객 이름</div>\
+                    <input type="text" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 이름을 입력해주세요." style="margin-bottom:35px">\
+                    <div>고객 연락처</div>\
+                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
+                    <div class="col-6 px-0">담당자</div><div class="col-6 px-0">고객메모</div>\
                   </div>\
-                  <div class="col-lg-6 col-12">\
-                    <label for="customerEtc" class="col-12 px-0 col-form-label col-form-label-sm">메모</label>\
-                    <div class="col-12 px-0">\
-                      <textarea id="customerEtc" type="text" placeholder="이 고객에 대한 메모를 적어주세요." class="form-control han"></textarea>\
+                  <div class="d-flex">\
+                    <div class="col mr-1">\
+                      <button id="customerManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자">\
+                        <span>선택</span>\
+                      </button>\
+                      <div class="dropdown-menu" aria-labelledby="customerManager" role="menu" id="salesSearchManagerList" style="right:0"></div></div>\
+                    <div class="col ml-1"></div>\
+                  </div>\
+                  <div class="d-flex updatingCustomer">\
+                    <div class="customerTitle">멤버십 잔액</div>\
+                    <div class="ml-auto"><span id="customerBalanceMembership">0</span>원</div>\
+                  </div>\
+                  <div class="d-flex updatingCustomer">\
+                    <div class="customerTitle">총 매출액</div>\
+                    <div class="ml-auto"><span id="customerTotalSales">0</span>원</div>\
+                  </div>\
+                  <div class="d-flex">\
+                    <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
+                    <button id="customerBtn" type="button" class="btn btn-accent col ml-1">저장</button>\
+                  </div>\
+                </div>\
+                \
+                <div id="customerSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">\
+                  <div id="customerScheduleNotEmpty" class="row mx-0">\
+                    <div class="row mx-0 col-12 px-0 customerScheduleHead">\
+                      <div class="col-5 justify-center customerScheduleSortType active" data-action="sort-date">날짜</div><div class="col-1 justify-center customerScheduleSortType" data-action="sort-manager">담당</div>\
+                      <div class="col-4 px-0">예약내용</div><div class="col-1 px-0 customerScheduleSortType" data-action="sort-sales">매출액</div><div class="col-1 px-0 customerScheduleSortType" data-action="sort-status">예약상태</div>\
+                    </div>\
+                    <div class="row" id="customerScheduleList"></div>\
+                    <div class="d-flex">\
+                      <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
+                      <button type="button" dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
                     </div>\
                   </div>\
+                  <div id="customerScheduleEmpty" style="display:none">예약 내역이 없어요.</div>\
                 </div>\
-                <div class="row mb-2 px-3">\
-                  <label for="customerManager" class="col-2 col-lg-1 p-0 col-form-label col-form-label-sm">담당자</label>\
-                  <div class="col-lg-10 col-sm-8 col-7 px-0 mr-auto">\
-                    <button id="customerManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left"></button>\
-                    <div class="dropdown-menu rounded-0" aria-labelledby="customerManager" role="menu">\
-                    </div>\
-                  </div>\
-                  <button type="button" id="submitCustomer" class="btn btn-primary btn-flat col-auto" aria-label="수정">수정</button>\
-                </div>\
-                <div class="form-group d-flex">\
-                  <label for="customerNoShow" class="col-2 col-lg-1 p-0 col-form-label col-form-label-sm">노쇼내역</label>\
-                  <div class="col-10 col-lg-11 pl-sm-0 mr-auto">\
-                    <span id="customerNoShow"></span>\
+                \
+                <div id="customerAlrim" class="tab-pane col-12 px-0 fade" role="tabpanel">\
+                  <div class="d-flex">\
+                    <div id="customerAlrimList" class="row"></div>\
                   </div>\
                 </div>\
-                <div class="form-group border-top">\
-                  <ul id="customerTabs" class="nav nav-tabs mt-3" role="tablist">\
-                    <li class="nav-item active" style="display:flex;">\
-                      <a class="nav-link active" id="customerHistoryTab" data-toggle="tab" href="#customerHistory" role="tab" aria-controls="customerHistory" aria-selected="true">예약내역</a>\
-                    </li>\
-                    <li class="nav-item" style="display:flex;">\
-                      <a class="nav-link" id="customerAlrimTab" data-toggle="tab" href="#customerAlrim" role="tab" aria-controls="customerAlrim" aria-selected="false">알림톡 내역</a>\
-                    </li>\
-                  </ul>\
-                  <div class="tab-content">\
-                    <div id="customerHistory" class="col-12 my-3 tab-pane fade show active px-0" role="tabpanel" aria-labelledby="customerHistoryTab"></div>\
-                    <div id="customerAlrim" class="col-12 my-3 tab-pane fade accordion px-0" role="tabpanel" aria-labelledby="customerAlrimTab"></div>\
+                \
+                <div id="customerMembership" class="tab-pane col-12 px-0 fade" role="tabpanel">\
+                  <div class="d-flex">\
+                    <div>멤버십 추가 적립</div>\
+                    <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm han col" aria-label="멤버십 추가 적립" placeholder="금액을 숫자로 입력하세요." >\
+                    <button type="button" class="btn btn-sm btn-form ml-2 addCustomerMembership">추가</button></div>\
                   </div>\
-                  <div class="ml-3 px-0 btn addHistory">\
-                    <p class="text-secondary align-top mb-0">\
-                      <i class="fas fa-plus" aria-label="예약 추가하기"></i> 예약 추가하기\
-                    </p>\
+                  <div class="d-flex">\
+                    <div>멤버십 금액 조절</div>\
+                    <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm han col" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
+                    <button type="button" class="btn btn-sm btn-form ml-2 addCustomerMembershipAdjust">추가</button></div>\
                   </div>\
+                  <div class="row mx-0 col-12 px-0 customerMembershipHead">\
+                    <div class="col-3 justify-center">날짜</div><div class="col-4 justify-center">내용</div><div class="col-5 px-0"><div class="col-6 justify-center">증/감</div><div class="col-6 justify-center">잔액</div></div>\
+                  </div>\
+                  <div class="row" id="customerMembershipList"></div>\
                 </div>\
+                \
               </div>\
             </div>\
           </div>\
         </div>\
-      </div>')
+      </div>');
     
     function drawCustomerAlrimList(alrims) {
         var list = $("#customerAlrim");
@@ -504,22 +533,17 @@
     });
     
     function getDistFromBottom () {
-      var scrollPosition = window.pageYOffset;
-      var windowSize     = window.innerHeight;
-      var bodyHeight     = document.body.offsetHeight;
-    
-      return Math.max(bodyHeight - (scrollPosition + windowSize), 0);
+      return Math.max(document.body.scrollHeight - window.innerHeight - window.scrollY, 0);
     }
     var isLoading = false;
     $(document).on("scroll", debounce(function(){
-        var distance = getDistFromBottom();
-        if($("#mainCustomerList").is(":visible") && !isLoading && NMNS.customerList && currentCustomerCount < NMNS.customerList.length && distance < Math.max(100, window.innerHeight * 0.2)){
-            isLoading = true;
-            $("#mainCustomerLoading").show();
-            drawCustomerList();
-            $("#mainCustomerLoading").hide();
-            isLoading = false;
-        }
+      if($("#mainCustomerList").is(":visible") && !isLoading && NMNS.customerList && currentCustomerCount < NMNS.customerList.length && getDistFromBottom() < Math.max(100, window.innerHeight * 0.2)){
+        isLoading = true;
+        $("#mainCustomerLoading").show();
+        drawCustomerList();
+        $("#mainCustomerLoading").hide();
+        isLoading = false;
+      }
     }, 100));
     
 })();
