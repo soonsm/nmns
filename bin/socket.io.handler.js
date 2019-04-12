@@ -193,6 +193,9 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * 공지사항
          */
         addEvent(GetAnnouncement, async function(data){
+            if(data.page < 1){
+                data.page = 1;
+            }
             let page = data.page || 1;
             let user = await db.getWebUser(email);
 
@@ -208,6 +211,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
             //사용자가 확인한 마지막 공지사항의 아이디
             let redNoticeList = user.redNoticeList || [];
+
             /**
              * 마지막 공지사항 아이디보다 크면
              * -> 안읽음 & 마지막 공지사항 아이디 업데이트
@@ -233,15 +237,43 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         redNoticeList.push(notice.id);
                     }
                 }
-                await db.updateWebUser(email, {redNoticeList: redNoticeList});
-            }else{
-                noticeList = [];
+                user.redNoticeList = redNoticeList;
             }
+
+            let pushList = user.pushList || [];
+            let length = pushList.length;
+            let returnPushList = [];
+            if(length >= (page-1)*5+1){
+                let an = (page - 1) * 5 + 5; //1 page = 5, 2 page = 10 ..
+                let firstIndex = an < length ? length - an : 0;
+                let lastIndex = an < length ? an + 5 : length - (an - 5);
+                pushList = pushList.slice(firstIndex, lastIndex);
+                pushList.forEach(push => {
+                    let returnPush = {};
+                    if (push.confirmed === false) {
+                        push.confirmed = true;
+                        returnPush.isRead = false;
+                    }else{
+                        returnPush.isRead = true;
+                    }
+                    returnPush.contents = push.body;
+                    returnPush.registeredDate = push.id.substring(0, 14);
+                    returnPush.type = 'SCHEDULE_CANCELED';
+                    returnPush.id = push.id;
+                    returnPushList.push(returnPush);
+
+                })
+            }
+
+            await db.setWebUser(user);
 
             return{
                 status: true,
                 message: '',
-                data: noticeList
+                data: {
+                    announcement: noticeList,
+                    schedule: returnPushList.reverse()
+                }
             }
         });
 
