@@ -221,11 +221,11 @@
             <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><i class="fas fa-plus" style="margin-right:8px"></i>고객 추가</button>
           </div>
          
-          <div id="mainCustomer" class="col-12 mb-5">
+          <div id="mainCustomer" class="col-12 px-0 mb-5">
             <div id="mainCustomerTools" style="font-size:13px">
               <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:10px 7px;justify-content:center">
                 <div class="d-inline-flex customerHead customerSortType" data-action="sort-manager">담당</div>
-                <div class="d-inline-flex col-1 customerHead customerSortType active" data-action="sort-name">이름</div>
+                <div class="d-inline-flex col-1 px-0 customerHead customerSortType active" data-action="sort-name">이름</div>
                 <div class="d-inline-flex col-2 customerHead">연락처</div>
                 <div class="d-inline-flex col-1 px-0 customerHead customerSortType" data-action="sort-visit">방문횟수</div>
                 <div class="col-4">
@@ -236,7 +236,7 @@
                 <div class="d-inline-flex col customerHead">메모</div>
               </div>
             </div>
-            <div id="mainCustomerList" class="col-12 px-0 mx-0 text-center flex-column">
+            <div id="mainCustomerList" class="col-12 px-0 mx-0 text-center flex-column d-flex" style="min-height: calc(100vh - 315px)">
               <div class="flex-column m-auto">
                 <div class="bouncingLoader">
                   <div></div>
@@ -331,7 +331,7 @@
                 <div class="col-1 updatingMenu-collapsed" style="justify-content:center">&nbsp;</div>
               </div>
             </div>
-            <div id="mainMenuList" class="col-12 px-0 mx-0 text-center flex-column">
+            <div id="mainMenuList" class="col-12 px-0 mx-0 text-center flex-column d-flex" style="min-height:calc(100vh - 280px)">
               <div class="flex-column m-auto">
                 <div class="bouncingLoader">
                   <div></div>

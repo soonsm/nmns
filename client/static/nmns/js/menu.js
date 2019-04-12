@@ -145,7 +145,7 @@
       }
       var origin = $("#menuForm").data('origin')
       if(origin){// update
-        NMNS.history.push(origin);
+        NMNS.history.push({id:origin.id, name:origin.name, priceCash: origin.priceCash, priceCard: origin.priceCard, priceMembership: origin.priceMembership});
         var after = {
           id:origin.id,
           name:$("#menuFormName").val(),

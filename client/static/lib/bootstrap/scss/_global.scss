@@ -58,7 +58,9 @@ section {
   background-color: $textPrimary;
   border-color: $textPrimary;
 }
-
+input:invalid{
+  border-color:$accent;
+}
 input[type=checkbox], input[type=radio]{
   display:none;
 }
@@ -173,4 +175,7 @@ input::-webkit-inner-spin-button {
 
 input[type=number] {
     -moz-appearance:textfield; /* Firefox */
+}
+.justify-center{
+  justify-content:center;
 }
