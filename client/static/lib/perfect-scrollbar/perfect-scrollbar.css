@@ -91,7 +91,7 @@
 .ps__rail-x:hover > .ps__thumb-x,
 .ps__rail-x:focus > .ps__thumb-x,
 .ps__rail-x.ps--clicking .ps__thumb-x {
-  background-color: #999;
+  background-color: #3e4d5d;
   height: 11px;
 }
 
@@ -102,10 +102,10 @@
   width: 11px;
 }
 .ps--active-y:hover .ps__thumb-y{
-  background-color: #aaa;
+  background-color: #3e4d5d;
 }
 .ps--active-x:hover .ps__thumb-x{
-  background-color: #aaa;
+  background-color: #3e4d5d;
 }
 /* MS supports */
 @supports (-ms-overflow-style: none) {

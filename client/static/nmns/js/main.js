@@ -2746,7 +2746,7 @@
         $('#lnbManagerList').on('change', onChangeManagers);// toggle schedules of manager
 
         $(".addNoShowLink").one("touch click", initNoShowModal);
-        window.addEventListener('resize', debounce(NMNS.calendar.render, 200));
+        window.addEventListener('resize', debounce(function(){NMNS.calendar.render()}, 200));
         flatpickr.localize("ko");
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
@@ -2758,8 +2758,8 @@
           }else{// about to hide aside
             $("#mainAside").css('minWidth', 'unset');
           }
-          $('#mainAside').toggleClass('sidebar-toggled')
-        })
+          $('#mainAside').toggleClass('sidebar-toggled');
+        });
         $(".announcementMenuLink").popover({
           template:'<div class="popover" role="tooltip" style="width:375px"><div class="arrow"></div><div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)"><span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div><div id="announcementBody">알림을 불러오는 중입니다...</div></div>',
           html:true,
