@@ -90,10 +90,6 @@
     font-size:13px;
     font-weight:500;
 }
-#customerModal #customerHistory,
-#customerModal #customerAlrim {
-    height: 300px;
-}
 
 #customerModal .customerTitle, #customerModal .customerTitle + div{
     font-size:15px;
@@ -107,6 +103,10 @@
     display:none;
 }
 
+#customerScheduleList{
+    max-height: calc(100vh - 310px);
+    overflow:auto;
+}
 #customerScheduleList .customerSchedule{
     display:flex;
     text-align:center;
@@ -126,9 +126,49 @@
     margin-right:3px;
 }
 
-#customerScheduleEmpty{
+#customerScheduleEmpty, #customerAlrimEmpty{
     display: flex;
     align-items: center;
     justify-content: center;
     height: 255px;
+}
+#customerAlrimList{
+    max-height:calc(100vh - 290px);
+    overflow:auto;
+}
+#customerAlrimList .customerAlrim{
+    padding:10px 15px;
+    font-size:12px;
+}
+#customerAlrimList .customerAlrimDetailLink{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+}
+#customerAlrimList .customerAlrimDetail{
+    font-size:11px;
+    background-color:#f8f8f8;
+    opacity:0.7;
+    padding:0 15px 15px 15px;
+    line-height:1.82;
+}
+
+#customerAlrimList .customerAlrim.active{
+    background-color:#f8f8f8;
+}
+
+#customerAlrimList .customerAlrim:after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: '\f078';
+    float:right;
+    display: block;
+    transition: 0.3s all ease;
+}
+
+#customerAlrimList .customerAlrim.active:after {
+    transform: rotate(180deg);
+    filter: none;
 }

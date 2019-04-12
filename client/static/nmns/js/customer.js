@@ -67,8 +67,15 @@
               </div>\
               \
               <div id="customerAlrim" class="tab-pane col-12 px-0 fade" role="tabpanel">\
+                <div id="customerAlrimNotEmpty" class="row mx-0 flex-column">\
+                  <div id="customerAlrimList" class="row mx-0"></div>\
+                </div>\
+                <div id="customerAlrimEmpty" style="display:none">알림톡 내역이 없어요.</div>\
+                <div class="d-flex col-12 px-0" style="margin-top:50px">\
+                  <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
+                  <button type="button" dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
+                </div>\
                 <div class="d-flex">\
-                  <div id="customerAlrimList" class="row"></div>\
                 </div>\
               </div>\
               \
@@ -95,29 +102,49 @@
       </div>\
     </div>');
   
-  function drawCustomerAlrimList(alrims) {
-      var list = $("#customerAlrim");
-      list.children(".card, span").remove();
-      if (!list.hasClass("ps")) {
-          list.data("scroll", new PerfectScrollbar("#customerAlrim", { suppressScrollX: true }));
-      }
-      if (!alrims || alrims.length === 0) {
-          list.append("<span class='text-center'>이 고객에게 전송된 알림톡 내역이 없습니다!<br/>" + (NMNS.info.alrimTalkInfo.useYn !== 'Y' ? '알림톡을 사용하도록 설정하고 ' : '') + "새로운 예약을 등록하여 알림톡을 보내보세요.</span>");
-      } else {
-          var html = "";
-          alrims.forEach(function(alrim, index) {
-              html += '<div class="card shadow-sm">' +
-                  '<button class="card-header btn btn-sm text-left" id="customerAlrimCardHeader' + index + '" type="button" data-toggle="collapse" data-target="#customerAlrimCardBody' + index + '" aria-expanded="false" aria-controls="customerAlrimCardBody' + index + '" title="눌러서 전송된 알림톡 내용 보기">' + moment(alrim.date, "YYYYMMDDHHmm").format("YYYY년 M월 D일 HH시 mm분") +
-                  '</button><div id="customerAlrimCardBody' + index + '" class="collapse" aria-labelledby="customerAlrimCardHeader' + index + '" parent="#customerAlrimList">' +
-                  '<div class="card-body">' + (alrim.contents || '(내용 없음)') + '</div></div></div>';
-              if (index > 0 && index % 50 === 0) {
-                  list.append(html).data("scroll").update();
-                  html = "";
-              }
-          });
-          list.append(html);
-      }
-      list.data("scroll").update();
+  function generateCustomerAlrimRow(init, goal){
+    var alrims = $("#customerAlrimList").data('item');
+    var item;
+    var html = "";
+    for(var index=init; index<goal; index++){
+        item = alrims[index];
+        html += '<div class="customerAlrim col-12 montserrat" title="눌러서 전송된 알림톡 내용 보기"><a href="#customerAlrimDetail' + index + '" class="customerAlrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="customerAlrimDetail' + (index) 
+              + '"></a>' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + '</div>'+
+              '<div class="row customerAlrimDetail collapse mx-0 col-12" id="customerAlrimDetail' + index + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
+    }
+    return html;
+  }
+
+  function drawCustomerAlrimList(refresh) {
+    var list = $("#customerAlrimList"), alrims = list.data('item'), current = list.data('index');
+    var html = "";
+    var goalIndex;
+    if(alrims && refresh){//from 0 to current customer count
+        list.children().remove();
+        if (alrims.length > 0) {
+            goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerAlrim").length)) : current, alrims.length);
+            html = generateCustomerAlrimRow(0, goalIndex);
+        } else {
+            $("#customerAlrimNotEmpty").hide();
+            $("#customerAlrimEmpty").show();
+            return;
+        }
+    }else if(alrims){//additional loading
+        goalIndex = Math.min(current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerAlrim").length)), alrims.length);//최대 20개씩 신규로 로딩
+        html = generateCustomerAlrimRow(current, goalIndex);
+    }else{
+      $("#customerAlrimNotEmpty").hide();
+      $("#customerAlrimEmpty").show();
+      return;
+    }
+    list.data('index', goalIndex);
+    list.append(html).on("touch click", ".customerAlrimDetailLink", function(){
+      $(this).parent().toggleClass('active');
+      $("#customerAlrimList").data('scroll').update();
+    });
+    
+    $("#customerAlrimEmpty").hide();
+    $("#customerAlrimNotEmpty").show();
   }
 
   function generateCustomerScheduleRow(init, goal){
@@ -151,36 +178,32 @@
   }
 
   function drawCustomerScheduleList(refresh) {
-      var list = $("#customerScheduleList"), schedules = list.data('item'), current = list.data('index');
-      var html = "";
-      var goalIndex;
-      if(schedules && refresh){//from 0 to current customer count
-          list.children(":not(.ps)").remove();
-          if (schedules.length > 0) {
-              goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerSchedule").length)) : current, schedules.length);
-              html = generateCustomerScheduleRow(0, goalIndex);
-          } else {
-              $("#customerScheduleNotEmpty").hide();
-              $("#customerScheduleEmpty").show();
-              return;
-          }
-      }else if(schedules){//additional loading
-          goalIndex = Math.min(current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerSchedule").length)), schedules.length);//최대 20개씩 신규로 로딩
-          html = generateCustomerScheduleRow(current, goalIndex);
-      }else{
-        $("#customerScheduleNotEmpty").hide();
-        $("#customerScheduleEmpty").show();
-        return;
-      }
-      console.log(html);
-      list.data('index', goalIndex);
-      list.append(html);
-      
-      if(list.data('scroll')){
-        list.data('scroll').update();
-      }else{
-        list.data('scroll', new PerfectScrollbar('#customerScheduleList'));
-      }
+    var list = $("#customerScheduleList"), schedules = list.data('item'), current = list.data('index');
+    var html = "";
+    var goalIndex;
+    if(schedules && refresh){//from 0 to current customer count
+        list.children().remove();
+        if (schedules.length > 0) {
+            goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerSchedule").length)) : current, schedules.length);
+            html = generateCustomerScheduleRow(0, goalIndex);
+        } else {
+            $("#customerScheduleNotEmpty").hide();
+            $("#customerScheduleEmpty").show();
+            return;
+        }
+    }else if(schedules){//additional loading
+        goalIndex = Math.min(current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerSchedule").length)), schedules.length);//최대 20개씩 신규로 로딩
+        html = generateCustomerScheduleRow(current, goalIndex);
+    }else{
+      $("#customerScheduleNotEmpty").hide();
+      $("#customerScheduleEmpty").show();
+      return;
+    }
+    list.data('index', goalIndex);
+    list.append(html);
+    
+    $("#customerScheduleEmpty").hide();
+    $("#customerScheduleNotEmpty").show();
   }
 
   function refreshCustomerModal(self) {
@@ -363,7 +386,8 @@
       }
   }, true));
   NMNS.socket.on("get customer alrim", socketResponse("알림톡 내역 조회", function(e) {
-      drawCustomerAlrimList(e.data);
+    $("#customerAlrimList").data('index', 0).data('item', e.data);
+    drawCustomerAlrimList(true);
   }));
   NMNS.socket.on("delete customer", socketResponse("고객 삭제", function(e) {
       NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
@@ -444,7 +468,10 @@
         $("#customerModal").modal('hide');
     });
     $("#customerTabList a[href='#customerAlrim']").on("show.bs.tab", function(){
-      NMNS.socket.emit('get customer alrim', {id:$("#customerModal").data('customer').id});
+      if($(this).data('id') !== $("#customerModal").data('customer').id){
+        $(this).data('id', $("#customerModal").data('customer').id);
+        NMNS.socket.emit('get customer alrim', {id:$("#customerModal").data('customer').id});
+      }
     });
     $("#customerTabList a[href='#customerSchedule']").on("show.bs.tab", function(){
       if($(this).data('id') !== $("#customerModal").data('customer').id){
@@ -460,7 +487,7 @@
         }
       }
     }).one('show.bs.tab', function(){
-      $(".customerSortType").off("touch click").on("touch click", function(e) {
+      $(".customerScheduleSortType").off("touch click").on("touch click", function(e) {
           if ($(this).hasClass("active")){
             $("#customerScheduleList").data('item').reverse();
           }else{
