@@ -279,9 +279,10 @@
                     $("#tutorialModal").modal();
                 };
             }
-        } else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
-            $("#tipsModal").modal("show");
         }
+        /*else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
+            $("#tipsModal").modal("show");
+        }*/
         //tutorial & tip end
         //announcement start
         if(NMNS.info.newAnnouncement){
@@ -1102,7 +1103,7 @@
       
       $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
-        if(e.schedule){
+        if(e.schedule){// update schedule
           $("#scheduleStatus input[type='radio']").prop('checked', false);
           if($("#scheduleStatus input[value='"+e.schedule.raw.status+"']").length){
             $("#scheduleStatus input[value='"+e.schedule.raw.status+"']").prop('checked', true);
@@ -1132,20 +1133,36 @@
             $("#resendAlrimScheduleBtn").removeClass('d-none');
           }
           calendar = findManager(e.schedule.calendarId);
-        }else{
-          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule?e.schedule.start.toDate():e.start.toDate());
-          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule?e.schedule.end.toDate():e.end.toDate());
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule?e.schedule.start.toDate():e.start.toDate())));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule?e.schedule.end.toDate():e.end.toDate())));
+        }else if(e.customer){// customer modal trigger
+          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start);
+          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end);
+          $("#scheduleStartTime").val(getTimeFormat(moment(e.start)));
+          $("#scheduleEndTime").val(getTimeFormat(moment(e.end)));
     
-          $('#scheduleName').val(e.schedule?e.schedule.title : '');
-          $("#scheduleTabContents").append(generateContentsList(e.schedule && e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
+          $('#scheduleName').val(e.customer.name);
+          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
           
-          $('#scheduleContact').val(e.schedule? (e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact) : '');
-          $('#scheduleEtc').val(e.schedule? (e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc) : '');
-          $('#scheduleAllDay').attr('checked', e.schedule?e.schedule.isAllDay : e.isAllDay);
+          $('#scheduleContact').val(e.customer.contact);
+          $('#scheduleEtc').val(e.customer.etc);
+          $('#scheduleAllDay').attr('checked', false);
+          
+          calendar = findManager(e.customer.managerId) || NMNS.calendar.getCalendars()[0];
+        }else{// dragged calendar
+          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start.toDate());
+          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end.toDate());
+          $("#scheduleStartTime").val(getTimeFormat(moment(e.start.toDate())));
+          $("#scheduleEndTime").val(getTimeFormat(moment(e.end.toDate())));
+    
+          $('#scheduleName').val('');
+          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
+            removeContent(this);
+          });
+          
+          $('#scheduleContact').val('');
+          $('#scheduleEtc').val('');
+          $('#scheduleAllDay').attr('checked', e.isAllDay);
           
           calendar = NMNS.calendar.getCalendars()[0];
         }
@@ -1690,7 +1707,7 @@
         NMNS.socket.emit("delete noshow", { id: row.data("id") });
         row.remove();
     }
-
+/*
     $("#nextTips").one("touch click", function() {
         NMNS.socket.emit("get tips");
         $("#waitTips").parent().addClass("wait");
@@ -1725,7 +1742,7 @@
                 }
             }
         });
-    });
+    });*/
 
     function drawAnnouncementList(data){
       var list = "";
@@ -1756,7 +1773,7 @@
     }
     //after calendar initialization end
     //websocket response start
-    NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e) {
+    /*NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e) {
         if (e.data && e.data.length > 0) {
             NMNS.tips = NMNS.tips.concat(e.data);
             $("#tipsModal").data("index", 1);
@@ -1770,7 +1787,8 @@
             $("#nextTips").add("disabled");
         }
         $("#waitTips").parent().removeClass("wait");
-    })).on("get summary", socketResponse("예약정보 가져오기", function(e) {
+    }))*/
+    NMNS.socket.on("get summary", socketResponse("예약정보 가져오기", function(e) {
         var html = "";
         if (e.data.length === 0) {
             html = "<div class='row col-12 px-0 mt-1 empty'><span class='col-12 text-center'>검색된 내용이 없습니다. 검색조건을 바꿔서 검색해보세요 :)</span></div>";
@@ -2074,13 +2092,16 @@
     }, undefined, true));
 
     NMNS.socket.on("message", socketResponse("서버 메시지 받기", function(e) {
-        if (e.type === "push") {
-            e.data.forEach(function(item) {
-                showNotification(item);
-            });
-        } else if (e.type === "alert") {
-            showSnackBar(e.data.body);
+      if (e.type === "push") {
+        e.data.forEach(function(item) {
+            showNotification(item);
+        });
+      } else if (e.type === "alert") {
+        showSnackBar(e.data.body);
+        if(e.data.body.indexOf("새로운 고객이 추가되었습니다")>0){
+          NMNS.customerList = null;
         }
+      }
     }, undefined, true));
 
     NMNS.socket.on("get alrim history", socketResponse("알림톡 내역 조회", function(e) {
@@ -2270,7 +2291,7 @@
       });
       $('#scheduleContact').val('');
     });
-
+/*
     $("#noMoreTips").on("touch click", function() {
         document.cookie = "showTips=false";
     });
@@ -2278,7 +2299,7 @@
         e.preventDefault();
         $("#noMoreTips").remove();
         $("#tipsModal").modal("show");
-    });
+    });*/
     $("#lnbLastMenu a").on("touch click", function(e) {
         e.preventDefault();
     });
@@ -2574,15 +2595,18 @@
           document.head.appendChild(style);
         }
         if (!document.getElementById("customerScript")) {
-            var script = document.createElement("script");
-            script.src = "/nmns/js/customer.min.js";
-            script.id = "customerScript";
-            document.body.appendChild(script);
+          var script = document.createElement("script");
+          script.src = "/nmns/js/customer.min.js";
+          script.id = "customerScript";
+          document.body.appendChild(script);
 
-            script.onload = function() {
-                NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
-            };
-        } else {
+          script.onload = function() {
+            NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
+            $("#customerManagerList").html(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
+              $("#customerManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
+            });
+          };
+        } else if(!NMNS.customerList || NMNS.customerList === []){
             NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": action });
         }
         $("#customerAddManager").next().html("<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id='' data-bgcolor='#b2dfdb'><span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color:#b2dfdb'></span><span class='tui-full-calendar-content'>(담당자 없음)</span></button>").append(generateTaskManagerList()).off("touch click", "button").on("touch click", "button", function() {
@@ -2695,16 +2719,11 @@
         $("#mainSalesSearch .activable").each(function(index, button){
           button.innerText = now.format('M월');
           now.add(-1, 'month');
-        })
+        });
         $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
           $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
       }
-      $(this).on("touch click", function(){
-        $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
-          $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
-        });
-      })
     });
     
     function switchMenu(e){

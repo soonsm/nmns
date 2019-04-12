@@ -58,7 +58,9 @@ section {
   background-color: $textPrimary;
   border-color: $textPrimary;
 }
-
+input:invalid{
+  border-color:$accent;
+}
 input[type=checkbox], input[type=radio]{
   display:none;
 }
