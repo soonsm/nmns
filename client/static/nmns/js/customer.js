@@ -215,7 +215,7 @@
     var managers = NMNS.calendar.getCalendars();
     var manager, item;
     var schedules = $("#customerScheduleList").data('item');
-    var html = "", contents;
+    var html = "", contents, date;
     for(var index=init; index<goal; index++){
         item = schedules[index];
         manager = managers.find(function(itema) { return itema.id === item.managerId; });
@@ -230,8 +230,9 @@
         }catch(error){
           contents = item.contents;
         }
+        date = moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + (item.end?moment(item.end, 'YYYYMMDDHHmm').format(moment(item.start, 'YYYYMMDDHHmm').isSame(moment(item.end, 'YYYYMMDDHHmm'), 'day')?' - HH:mm':' - YYYY. MM. DD HH:mm'):'');
         html += '<div class="customerSchedule col-12" data-index="'+index+'">'+
-          '<div class="col col-4 px-0 montserrat">' + moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + (item.end?moment(item.end, 'YYYYMMDDHHmm').format(moment(item.start, 'YYYYMMDDHHmm').isSame(moment(item.end, 'YYYYMMDDHHmm'), 'day')?' - HH:mm':' - YYYY. MM. DD HH:mm'):'') + '</div>' +
+          '<div class="col col-4 px-0 montserrat" title="'+date+'">' + date + '</div>' +
           '<div class="col col-5 px-0 d-flex"><div class="col col-4 px-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div>'+
           '<div class="col col-8">'+(contents || '') + '</div></div><div class="col-3 px-0 d-flex">' +
           '<div class="col col-6 px-0 montserrat">'+(item.sales ? (item.sales+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div>' +
@@ -329,7 +330,7 @@
               '<div class="col col-1 px-0 font-weight-bold" style="font-size:14px">'+(!item.name || item.name === '' ? '(이름없음)' : item.name) + '</div>' + 
               '<div class="col col-2 montserrat">'+(!item.contact || item.contact === '' ? '' : dashContact(item.contact)) + '</div>' +
               '<div class="col col-1" style="font-size:10px">'+(!item.history? '0회' : item.history.length + '회')+'</div><div class="col-4">' +
-              '<div class="col col-4 px-0 montserrat">'+(item.history && item.history.length > 0 ? moment(item.history[0].date, "YYYYMMDDHHmm").format("YYYY. MM. DD") : '-') + '</div>' +
+              '<div class="col col-4 px-0 montserrat">'+(item.history && item.history.length > 0 ? moment(item.history[0].start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : '-') + '</div>' +
               '<div class="col col-4 px-0 montserrat">'+((item.cardSales + item.cashSales) ? ((item.cardSales + item.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"): '-') + '</div>' +
               '<div class="col col-4 px-0 montserrat">'+(item.pointMembership ? (item.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
               '<div class="col" style="font-size:10px">'+(item.etc || '-')+'</div>'+
@@ -687,7 +688,7 @@
                   } else if (!b.history || b.history.length === 0) {
                       return -1;
                   }
-                  return (a.history[0].date < b.history[0].date ? 1 : (a.history[0].date > b.history[0].date ? -1 : getSortFunc("sort-name")(a, b)));
+                  return (a.history[0].start < b.history[0].start ? 1 : (a.history[0].start > b.history[0].start ? -1 : getSortFunc("sort-name")(a, b)));
               };
           case 'sort-manager':
               return function(a, b) {
