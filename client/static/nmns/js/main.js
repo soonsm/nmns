@@ -100,7 +100,7 @@
               return ''
             },
             monthGridFooterExceed: function(hiddenSchedules) {
-                return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <i class="fa fa-chevron-right"></i></span>';
+                return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <span class="icon-arrow icon-arrow-right"></span></span>';
             },
             monthMoreTitleDate: function(date, dayname) {
                 var dateFormat = date.split(".").join("-");
@@ -286,7 +286,10 @@
         //tutorial & tip end
         //announcement start
         if(NMNS.info.newAnnouncement){
-            $('.announcementCount').html(NMNS.info.newAnnouncement > 99? '99+' : NMNS.info.newAnnouncement)
+          $("#announcementIcon").addClass('icon-announcement-count');
+          $('.announcementCount').html(NMNS.info.newAnnouncement > 99? '99+' : NMNS.info.newAnnouncement)
+        }else{
+          $("#announcementIcon").removeClass('icon-announcement-count');
         }
         //announcement end
     }));
@@ -337,13 +340,7 @@
               html += "<div class='row mx-0'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
           }
           if (schedule.title) {
-              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>";
-              if (schedule.category === 'task') {
-                  html += "<span>#</span>";
-              } else if (isAllDay) {
-                  html += "<span class='far fa-clock'></span> ";
-              }
-              html += (schedule.title + "</div></div>");
+              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>" + schedule.title + "</div></div>";
           }
           html += "</div></div>"
         }else if(NMNS.calendar.getViewName() === 'day'){
@@ -356,10 +353,8 @@
             }
           }
           html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
-          if(contents){
-            html += ("<div title='"+type+"내용:"+contents+" class='tui-full-calendar-time-schedule-title'>" + contents+"</div>");
-          }
-          switch (schedule.raw.status) {
+          html += ("<div title='"+type+"내용:"+(contents||'')+" class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
+          /*switch (schedule.raw.status) {
               case "CANCELED":
                   html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
                   break;
@@ -369,7 +364,7 @@
               case "CUSTOMERCANCELED":
                   html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
                   break;
-          }
+          }*/
           html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
           
         }else{
@@ -527,20 +522,7 @@
             case "BEFORE_EMAIL_VERIFICATION":
                 return "<span class='badge badge-danger' title='인증메일 보내기' style='cursor:pointer;'>이메일 미인증</span><span class='btn btn-sm btn-flat btn-secondary ml-2'>인증메일 보내기</span>";
             case "EMAIL_VERIFICATED":
-                return "<span class='badge badge-primary badge-pill'><span class='fa fa-check mr-1'></span>인증완료</span>";
-        }
-        return "";
-    }
-
-    function generateScheduleStatusBadge(scheduleStatus) {
-        switch (scheduleStatus) {
-            case "RESERVED":
-                return "<span class='badge badge-success' title='바꾸기'>정상 </span><span class='btn btn-sm btn-light noShowScheduleNoShow' title='노쇼처리'><i class='fas fa-exclamation-triangle'></i><span class='d-none d-lg-inline-block'> 노쇼처리</span></span>";
-            case "CANCELED":
-            case "CUSTOMERCANCELED":
-                return "<span class='badge badge-secondary' title='바꾸기'>취소 </span><span class='btn btn-sm btn-light noShowScheduleNoShow' title='노쇼처리'><i class='fas fa-exclamation-triangle'></i><span class='d-none d-lg-inline-block'> 노쇼처리</span></span>";
-            case "NOSHOW":
-                return "<span class='badge badge-danger' title='바꾸기'>노쇼 </span><span class='btn btn-sm btn-light noShowScheduleNormal' title='되돌리기'><i class='fas fa-undo'></i><span class='d-none d-lg-inline-block'> 되돌리기</span></span>";
+                return "<span class='badge badge-primary badge-pill'><span class='icon-email-ok mr-1'></span>인증완료</span>";
         }
         return "";
     }
@@ -550,7 +532,7 @@
         managerList.forEach(function(item) {
             html += "<div class='lnbManagerItem row mx-0' data-value='" + item.id + "'><label><input class='tui-full-calendar-checkbox-round' checked='checked' type='checkbox'>";
             html += "<span title='이 담당자의 예약 가리기/보이기' data-color='" + item.color + "'"+ (item.checked?" style='background-color:"+item.color+";border-color:"+item.color+"'":"")+"></span><span class='menu-collapsed'>" + item.name + "</span></label>"+
-                  "<div class='dropdown menu-collapsed ml-auto'><button class='btn btn-flat dropdown-toggle lnbManagerAction text-white py-0 pr-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' data-offset='9,10'><i class='fa fa-ellipsis-v menu-collapsed'></i></button>"+
+                  "<div class='dropdown menu-collapsed ml-auto'><button class='btn btn-flat dropdown-toggle lnbManagerAction text-white py-0 pr-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' data-offset='9,10'><span class='contextual menu-collapsed'></span></button>"+
                   "<div class='dropdown-menu dropdown-menu-right'><a class='dropdown-item updateManagerLink' href='#'>이름/컬러 변경</a><a class='dropdown-item removeManagerLink' href='#'>삭제</a></div></div></div>";
         });
         return html;
@@ -1977,7 +1959,7 @@
           e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
           if(!$("#noShowDirtyImage").attr('src')){
-            $("#noShowDirtyImage").attr('src', '/nmns/img/sub_img.svg');
+            $("#noShowDirtyImage").attr('src', '/nmns/img/badperson.png');
           }
           $("#myNoShowCount").text(e.data.detail.length);
           $("#otherNoShowCount").text(Math.max(e.data.summary.noShowCount - e.data.detail.length, 0));
@@ -1999,7 +1981,7 @@
           $("#noShowDirty").removeClass('d-flex').addClass('d-none');
           $("#noShowClean").removeClass('d-none').addClass('d-flex');
           if(!$("#noShowImage").attr('src')){
-            $("#noShowImage").attr('src', '/nmns/img/sub_img.svg');
+            $("#noShowImage").attr('src', '/nmns/img/goodperson.png');
           }
           $("#noShowSentense").text(['안심하세요. 노쇼를 하신 적이 없어요!', '이분 최소 배우신분!! 노쇼 이력이 없어요.', '노쇼를 하신 적이 없어요! 격하게 환영해주세요~~'][Math.floor(Math.random()*3)]);
         }
@@ -2131,9 +2113,11 @@
         if(count > unread){
           $('.announcementCount').text(count - unread > 99? '99+' : count - unread);
           NMNS.info.newAnnouncement = count - unread;
+          $("#announcementIcon").addClass('icon-announcement-count');
         }else if(count === unread){
           $('.announcementCount').text('');
           NMNS.info.newAnnouncement = 0;
+          $("#announcementIcon").removeClass('icon-announcement-count');
         }
       }
       $('#announcementBody').parent().removeClass('wait');

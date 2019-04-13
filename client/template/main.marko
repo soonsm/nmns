@@ -26,8 +26,6 @@
   <meta name="format-detection" content="telephone=no">
   <title>WA:SHOW - 노쇼 말고 왓쇼!</title>
   <!-- Bootstrap core CSS -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/v4-shims.css">
   
   <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
@@ -56,14 +54,26 @@
     <aside id="mainAside" class="sidebar-handler bg-primary text-white container px-0 d-flex">
       <div class="topNav" style="padding:30px">
         <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:auto;vertical-align:initial"/></a>
-        <i id="sidebarToggler" class="fa fa-bars float-right cursor-pointer text-white" aria-label="메뉴"></i>
+        <span id="sidebarToggler" class="float-right cursor-pointer" style="line-height:15px">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11"><g id="menu" transform="translate(-232.5 -40)"><line data-name="선 2" x2="14" transform="translate(232.5 40.5)" fill="none" stroke="#fff" stroke-width="1"/><line data-name="선 3" x2="14" transform="translate(232.5 45.5)" fill="none" stroke="#fff" stroke-width="1"/><line data-name="선 4" x2="14" transform="translate(232.5 50.5)" fill="none" stroke="#fff" stroke-width="1"/></g></svg>
+        </span>
       </div>
       <div id="sidebarContainer" class="row mx-0 col-12">
         <ul class="list-group w-100">
           <li>
             <a class="list-group-item list-group-item-action menuLink calendarMenuLink menuLinkActive sidebar-item rounded-0 border-0" data-link="calendarMenu" aria-label="예약/일정 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="far fa-calendar-check fa-fw"></span>
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18.778" viewBox="0 0 17 18.778">
+                    <g id="menu_calendar" transform="translate(0.5 0.5)">
+                      <rect width="16" height="15.778" rx="2" stroke-width="1" transform="translate(0 2)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                      <path d="M13,0V4" transform="translate(-1.444)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <path data-name="Path" stroke="#fff" d="M5,0V4" fill="none" transform="translate(-0.556)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <path data-name="Path" stroke="#fff" d="M0,8H16" fill="none" transform="translate(0 -0.889)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <path d="M5.95,12.138l1.685,1.728,3.315-3.125" transform="translate(-0.7)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                    </g>
+                  </svg>
+                </span>
                 <span class="menu-collapsed">예약/일정 관리</span>
               </div>
             </a>
@@ -71,7 +81,14 @@
           <li>
             <a class="list-group-item list-group-item-action menuLink customerMenuLink sidebar-item rounded-0 border-0" data-link="customerMenu" aria-label="고객 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-user fa-fw"></span>
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18">
+                    <g id="menu_customer" transform="translate(0.5 0.5)">
+                      <path d="M16,18V16a4,4,0,0,0-4-4H4a4,4,0,0,0-4,4v2" transform="translate(0 -1)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <circle cx="4" cy="4" r="4" stroke-width="1" transform="translate(4)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </g>
+                  </svg>
+                </span>
                 <span class="menu-collapsed">고객 관리</span>
               </div>
             </a>
@@ -79,7 +96,13 @@
           <li>
             <a class="list-group-item list-group-item-action menuLink salesMenuLink sidebar-item rounded-0 border-0" data-link="salesMenu" aria-label="매출 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="fas fa-calculator fa-fw"></span>
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18.6" viewBox="0 0 17 18.6">
+                    <g id="menu_sales" transform="translate(-308.954 -0.959)">
+                      <path d="M5.026,10.027A1.143,1.143,0,1,1,3.883,8.874,1.147,1.147,0,0,1,5.026,10.027Zm4.571,0A1.143,1.143,0,1,1,8.454,8.874,1.147,1.147,0,0,1,9.6,10.027Zm4.571,0a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,14.169,10.027Zm-9.143,4.61a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,5.026,14.636Zm4.571,0a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,9.6,14.636Zm4.571,0a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,14.169,14.636Zm.692,3.422H2.048A1.6,1.6,0,0,1,.454,16.452V2.065A1.6,1.6,0,0,1,2.048.458H14.861a1.6,1.6,0,0,1,1.593,1.606V16.452A1.6,1.6,0,0,1,14.861,18.058ZM13.407,6.569H3.5A.765.765,0,0,1,2.74,5.8V3.5A.765.765,0,0,1,3.5,2.728h9.9a.765.765,0,0,1,.762.768V5.8A.765.765,0,0,1,13.407,6.569Z" transform="translate(309 1)" fill="none" stroke="#fff" stroke-width="1" fill-rule="evenodd"/>
+                    </g>
+                  </svg>
+                </span>
                 <span class="menu-collapsed">매출 관리</span>
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
@@ -88,7 +111,14 @@
           <li>
             <a class="list-group-item list-group-item-action menuLink menuMenuLink sidebar-item rounded-0 border-0" data-link="menuMenu" aria-label="메뉴 관리">
               <div class="d-flex w-100 align-items-center">
-                <span class="far fa-clipboard fa-fw"></span>
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="19" viewBox="0 0 17 19">
+                    <g id="menu_menu" transform="translate(0.5 0.5)">
+                      <path d="M12,2h2a2,2,0,0,1,2,2V16a2,2,0,0,1-2,2H2a2,2,0,0,1-2-2V4A2,2,0,0,1,2,2H4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <rect width="8" height="4" rx="1" stroke-width="1" transform="translate(4)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </g>
+                  </svg>
+                </span>
                 <span class="menu-collapsed">메뉴 관리</span>
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
@@ -97,7 +127,14 @@
           <li>
             <a class="list-group-item list-group-item-action menuLink infoCenterLink sidebar-item rounded-0 border-0" data-link="infoCenter" aria-label="고객센터">
               <div class="d-flex w-100 align-items-center">
-                <span class="far fa-question-circle fa-fw"></span>
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
+                    <g id="menu_help" transform="translate(0.5 0.5)">
+                      <circle cx="8" cy="8" r="8" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                      <path data-name="패스 633" d="M.688-8.2a2.874,2.874,0,0,1,.942-1.989,3.07,3.07,0,0,1,2.111-.736,3.23,3.23,0,0,1,2.192.723,2.328,2.328,0,0,1,.836,1.841,2.461,2.461,0,0,1-.286,1.17,4.313,4.313,0,0,1-1.077,1.2,3.686,3.686,0,0,0-.97,1.044,3.341,3.341,0,0,0-.18,1.3H3.124A4.151,4.151,0,0,1,3.4-5.4,3.989,3.989,0,0,1,4.419-6.589a4.161,4.161,0,0,0,.922-.967,1.5,1.5,0,0,0,.18-.717A1.633,1.633,0,0,0,5.033-9.49a1.749,1.749,0,0,0-1.279-.479q-1.542,0-1.812,1.774Zm3.7,6.858H3.073V-2.655H4.39Z" transform="translate(4.312 13.92)" fill="#fff"/>
+                    </g>
+                  </svg>
+                </span>
                 <span class="menu-collapsed">고객센터</span>
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
@@ -107,7 +144,7 @@
             <a href="#" class="list-group-item list-group-item-action rounded-0 border-0 pb-1 addManager" aria-label="담당자 추가하기">
               <div class="lnbManagerItem">
                 <div class="d-flex w-100 align-items-center">
-                  <span class="fas fa-plus fa-fw"></span>
+                  <span class="icon-plus mr-3" style="padding:0 1px">+</span>
                   <span class="menu-collapsed">담당자 추가</span>
                 </div>
               </div>
@@ -151,11 +188,24 @@
     <div id="mainRow" class="row col px-0 sidebar-handler">
       <!-- Navigation -->
       <nav class="navbar topNav" id="mainNav">
-        <label class="fa fa-search mb-0" style="font-size:24px;opacity:0.5" for="searchNoShow"></label>
+        <label class="mb-0" style="opacity:0.5" for="searchNoShow">
+          <span><svg xmlns="http://www.w3.org/2000/svg" width="24.207" height="26.207" viewBox="0 0 24.207 26.207">
+            <g id="top_search" transform="translate(-965 -23)">
+              <g data-name="타원 470" transform="translate(965 23)" fill="none" stroke="#393535" stroke-width="2">
+                <circle cx="11" cy="11" r="11" stroke="none"/>
+                <circle cx="11" cy="11" r="10" fill="none"/>
+              </g>
+              <line data-name="선 96" x2="6" y2="6" transform="translate(982.5 42.5)" fill="none" stroke="#393535" stroke-width="2"/>
+            </g>
+          </svg></span>
+        </label>
         <input type="text" pattern="[0-9]*" class="border-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" id="searchNoShow">
-        <button class="btn btn-primary ml-auto addNoShowLink" data-toggle="modal" data-target="#noShowModal" type="button" title="노쇼 추가" style="white-space:nowrap"><i class="fas fa-plus" style="margin-right:8px"></i>노쇼 추가</button>
+        <button class="btn btn-primary ml-auto addNoShowLink" data-toggle="modal" data-target="#noShowModal" type="button" title="노쇼 추가" style="white-space:nowrap"><span class="icon-plus">+</span>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
-        <button class="btn btn-flat px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom"><i class="far fa-bell" aria-label="알림" style="font-size:28px"></i><span class="badge badge-danger announcementCount position-absolute"></span></button>
+        <button class="btn btn-flat px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom">
+          <span id="announcementIcon" class="icon-announcement" aria-label="알림"></span>
+          <span class="badge bg-accent announcementCount position-absolute"></span>
+        </button>
         <span class="divider">&nbsp;</span>
         <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" title="메뉴" data-toggle="popover" data-placement="bottom" aria-label="메뉴 열기/닫기">
           <div>
@@ -177,7 +227,7 @@
               <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
               <span class="text-accent menuTitleNumber" id="todayTask">0</span>
             </span>
-            <button class="btn btn-accent ml-auto" type="button" id="addScheduleBtn"><i class="fas fa-plus" style="margin-right:8px"></i>예약/일정 추가</button>
+            <button class="btn btn-accent ml-auto" type="button" id="addScheduleBtn"><span class="icon-plus" style="margin-right:8px">+</span>예약/일정 추가</button>
           </div>
           <div style="display:inline-block;width:auto;min-width:100%">
             <div id="mainArea">
@@ -188,9 +238,9 @@
               </div>
               <div id="mainCalendarArea" class="bg-white col" style="padding:30px 34px 30px 26px">
                 <div id="mainCalendarTools" class="text-center align-items-center d-flex">
-                  <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding-left:0;padding-right:30px"><i class="fas fa-chevron-left"></i></button>
+                  <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding-left:0;padding-right:30px"><span class="icon-arrow icon-arrow-left"></span></button>
                   <span id="renderRange" class="montserrat"></span>
-                  <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding-left:30px"><i class="fas fa-chevron-right"></i></button>
+                  <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding-left:30px"><span class="icon-arrow icon-arrow-right"></span></button>
                   <div class="d-none d-md-inline-flex calendarTypeGroup ml-auto" role="group" aria-label="캘린더 종류">
                     <button type="button" class="btn btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></button>
                     <button type="button" class="btn btn-flat calendarType" data-action="toggle-weekly" aria-label="1주"><span class="calendarTypeText">1주</span></button>
@@ -216,9 +266,19 @@
             <span class="h4 mb-0 font-weight-bold">고객 관리</span>
             <span id="customerCount" class="text-accent menuTitleNumber">0</span>
             <span class="divider" style="display:inline-table">&nbsp;</span>
-            <span class="fa fa-search" style="font-size:24px;opacity:0.5"></span>
+            <label for="searchCustomer" style="opacity:0.5;margin-bottom:0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24.207" height="26.207" viewBox="0 0 24.207 26.207">
+                <g id="customer_search" transform="translate(-965 -23)">
+                  <g data-name="타원 470" transform="translate(965 23)" fill="none" stroke="#393535" stroke-width="2">
+                    <circle cx="11" cy="11" r="11" stroke="none"/>
+                    <circle cx="11" cy="11" r="10" fill="none"/>
+                  </g>
+                  <line data-name="선 96" x2="6" y2="6" transform="translate(982.5 42.5)" fill="none" stroke="#393535" stroke-width="2"/>
+                </g>
+              </svg>
+            </label>
             <input type="search" class="border-0" placeholder="이름, 연락처, 담당자 이름으로 검색하세요." aria-label="고객 검색" id="searchCustomer">
-            <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><i class="fas fa-plus" style="margin-right:8px"></i>고객 추가</button>
+            <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><span class="icon-plus">+</span>고객 추가</button>
           </div>
          
           <div id="mainCustomer" class="col-12 px-0 mb-5">
@@ -319,7 +379,7 @@
             <span class="divider updatingMenu-collapsed" style="display:none;">&nbsp;</span>
             <span class="h6 mb-0 updatingMenu-collapsed" style="opacity:0.5;display:none">드래그해서 순서를 바꿀 수 있어요!</span>
             <button class="btn btn-primary ml-auto" type="button" id="updateMenuLink">수정</button>
-            <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><i class="fas fa-plus" style="margin-right:8px"></i>메뉴 추가</button>
+            <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><span class="icon-plus">+</span>메뉴 추가</button>
           </div>
           <div class="menuContents">
             <div id="mainMenuTools" style="font-size:13px">
@@ -361,14 +421,14 @@
                     <div class="input-group">
                       <input type="text" class="form-control form-control-sm pr-0 montserrat" id="salesSearchStartDate" placeholder="조회 시작 일자" style="border-right:none">
                       <div class="input-group-append">
-                        <div class="input-group-text"><span class="far fa-calendar-alt"></span></div>
+                        <div class="input-group-text"><label class="icon-calendar mb-0" for="salesSearchStartDate"></label></div>
                       </div>
                     </div>
                     <span class="mx-3 px-1" style="line-height:35px">-</span>
                     <div class="input-group">
                       <input type="text" class="form-control form-control-sm pr-0 montserrat" id="salesSearchEndDate" placeholder="조회 끝 일자" style="border-right:none">
                       <div class="input-group-append">
-                        <div class="input-group-text"><span class="far fa-calendar-alt"></span></div>
+                        <div class="input-group-text"><label class="icon-calendar mb-0" for="salesSearchEndDate"></label></div>
                       </div>
                     </div>
                   </div>
@@ -532,8 +592,8 @@
                     <input id="renewPassword" type="password" placeholder="한번 더 입력해주세요." class="form-control form-control-sm" autocomplete="off"/>
                     <div style="margin-top:35px">계정 연동</div>
                     <div class="row mx-0 col-12 px-0 mt-3">
-                      <button type="button" class="btn btn-sm btn-form col mr-1" id="kakaoBtn"><span>카카오 계정 연결하기</span></button>
-                      <button type="button" class="btn btn-sm btn-form col ml-1" id="naverBtn"><span>네이버 계정 연결하기</span></button>
+                      <button type="button" class="btn btn-sm btn-form col mr-1" id="kakaoBtn"><img style="height:15px;margin-right:3px" src="/nmns/img/kakaolink_btn_medium.png"><span>카카오 계정 연결하기</span></button>
+                      <button type="button" class="btn btn-sm btn-form col ml-1" id="naverBtn"><img style="height:15px;margin-right:3px" src="/nmns/img/naver.svg"><span>네이버 계정 연결하기</span></button>
                     </div>
                   </div>
                 </form>
@@ -748,7 +808,7 @@
                     <div class="flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
                     <div class="col-12 text-center">
                       <button type="button" class="btn btn-sm btn-flat" id="scheduleAddContents">
-                        <span class="fa fa-plus"></span> 내용 추가
+                        <span class="icon-plus">+</span> 내용 추가
                       </button>
                     </div>
                     <datalist id="scheduleTabContentList"></datalist>
@@ -875,70 +935,35 @@
               </button>
             </div>
             <div class="modal-body">
-              <i id="waitTips" class="waiting fas fa-spinner fa-spin"></i>
+              <div id="waitTips" class="waiting flex-column">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>매출 정보를 불러오는 중입니다...</span>
+              </div>
               <p id="tipsBody"><if(input.tips)>$!{input.tips.body}</if><else>오른쪽 상단의 버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
             </div>
             <div class="modal-footer">
               <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 <span class="d-none d-sm-inline">Tip</span> 보지않기</button>
-              <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><i class="fas fa-chevron-left d-inline-block d-sm-none"></i></button>
-              <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><i class="fas fa-chevron-right d-inline-block d-sm-none"></i></button>
+              <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><span class="icon-arrow icon-arrow-left d-inline-block d-sm-none"></span></button>
+              <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><span class="icon-arrow icon-arrow-right d-inline-block d-sm-none"></span></button>
               <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
             </div>
           </div>
         </div>
       </div>
-    
-      <!--<div id="feedbackModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <span>
-                <h5 class="modal-title" id="feedbackTitle">제안/문의하기</h5>
-              </span>
-              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              
-              <p class="mb-0"><small>No More No Show를 이용하시다가 불편하시거나 바라는 점이 있으신가요?<br/>원하시는 점을 적어주시면 최대한 빨리 확인하여 이메일로 답변드리겠습니다!</small></p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="취소">취소</button>
-              <button type="button" id="submitFeedback" class="btn btn-primary btn-flat" aria-label="등록">등록</button>
-            </div>
-          </div>
-        </div>
-      </div>-->
-    <!--
-      <div id="announcementModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <span>
-                <h5 class="modal-title" id="announcementTitle">공지사항</h5>
-              </span>
-              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body wait">
-              <div id="announcementBody" class="row p-3"></div>
-              <i id="waitAnnouncement" class="waiting fas fa-spinner fa-spin"></i>
-            </div>
-          </div>
-        </div>
-      </div>-->
       
     </div>
   </div>
-  
+  <!--
   <ul id="floatingButton" class="mfb-component--br mfb-slidein d-sm-none" data-mfb-toggle="hover" data-mfb-state="closed">
     <li class="mfb-component__wrap">
       <a class="mfb-component__button--main">
-        <i class="mfb-component__main-icon--resting fas fa-times"></i>
-        <i class="mfb-component__main-icon--active fas fa-times"></i>
-        <!--<small class="badge float-right mr-1 new calendarMenu">&#9679;</small>-->
+        <span class="mfb-component__main-icon--resting">&times;</span>
+        <span class="mfb-component__main-icon--active">&times;</span>
+        <small class="badge float-right mr-1 new calendarMenu">&#9679;</small>
       </a>
       <ul class="mfb-component__list calendarMenu">
         <li>
@@ -959,7 +984,7 @@
         <li>
           <a href="#" data-mfb-label="고객관리" class="mfb-component__button--child" aria-label="고객관리">
             <i class="mfb-component__child-icon fas fa-user-cog customerMenuLink"></i>
-            <!--<small class="badge float-right new">&#9679;</small>-->
+            <small class="badge float-right new">&#9679;</small>
           </a>
         </li>
         <li>
@@ -991,7 +1016,7 @@
         </li>
       </ul>
     </li>
-  </ul>
+  </ul>-->
 
 <!--[if lte IE 8]>
 <script type="text/jscript">

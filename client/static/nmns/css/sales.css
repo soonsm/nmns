@@ -63,11 +63,9 @@
 }
 
 #salesToolsSticky .salesSortType:after{
-    font-family:'Font Awesome 5 Free';
-    font-weight:700;
-    margin-left:3px;
-    content:'\f0dc';
-    opacity: 1;
+  content: url('/nmns/img/sort_on.svg');
+  opacity:1;
+  margin-left:3px;
 }
 
 #salesToolsSticky .salesSortType:not(.active):after{
