@@ -129,11 +129,13 @@
       $("#menuFormPriceCard").val(menu.priceCard);
       $("#menuFormPriceCash").val(menu.priceCash);
       $("#menuFormPriceMembership").val(menu.priceMembership);
+      $("#menuTitle").text('메뉴 상세');
     }else{
       $("#menuFormName").val('');
       $("#menuFormPriceCard").val('');
       $("#menuFormPriceCash").val('');
       $("#menuFormPriceMembership").val('');
+      $("#menuTitle").text('메뉴 추가');
     }
   }
 

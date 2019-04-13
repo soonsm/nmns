@@ -542,6 +542,9 @@
       if(e.stopPropagation){
         e.stopPropagation();
       }
+      if(e.preventDefault){
+        e.preventDefault();
+      }
       if($("#lnbManagerForm").data('id')){
         $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
       }
@@ -556,6 +559,9 @@
     function removeManager(e){
       if(e.stopPropagation){
         e.stopPropagation();
+      }
+      if(e.preventDefault){
+        e.preventDefault();
       }
       if($("#lnbManagerList .lnbManagerItem").length <= 1){
         alert('담당자는 최소 1명 이상이 있어야 합니다.');
