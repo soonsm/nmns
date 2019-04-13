@@ -83,25 +83,37 @@
                   <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
                   <button type="button" data-dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
                 </div>\
-                <div class="d-flex">\
-                </div>\
               </div>\
               \
               <div id="customerMembership" class="tab-pane col-12 px-0 fade" role="tabpanel">\
-                <div class="d-flex">\
-                  <div>멤버십 추가 적립</div>\
-                  <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm han col" aria-label="멤버십 추가 적립" placeholder="금액을 숫자로 입력하세요." >\
-                  <button type="button" class="btn btn-sm btn-form ml-2 addCustomerMembership">추가</button></div>\
+                <div>멤버십 추가 적립</div>\
+                <div class="d-flex my-3">\
+                  <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm montserrat col" aria-label="멤버십 추가 적립" placeholder="금액을 숫자로 입력하세요." >\
+                  <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipSales">추가</button></div>\
                 </div>\
-                <div class="d-flex">\
-                  <div>멤버십 금액 조절</div>\
-                  <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm han col" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
-                  <button type="button" class="btn btn-sm btn-form ml-2 addCustomerMembershipAdjust">추가</button></div>\
+                <div><input type="radio" name="customerMembershipSalesType" value="CARD" id="customerMembershipCard" checked="checked"><label for="customerMembershipCard"></label><label for="customerMembershipCard" style="margin-right:30px">카드</label><input type="radio" name="customerMembershipSalesType" value="CASH" id="customerMembershipCash"><label for="customerMembershipCash"></label><label for="customerMembershipCash">현금</label></div>\
+                <div style="margin-top:30px">멤버십 금액 조절</div>\
+                <div class="d-flex my-3">\
+                  <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm montserrat col" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
+                  <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipAdjust">추가</button></div>\
                 </div>\
-                <div class="row mx-0 col-12 px-0 pb-3 customerMembershipHead" style="border-bottom:1px solid #707070">\
-                  <div class="col-3 justify-center">날짜</div><div class="col-4 justify-center">내용</div><div class="col-5 px-0"><div class="col-6 justify-center">증/감</div><div class="col-6 justify-center">잔액</div></div>\
+                <div class="row mx-0 col-12 py-3 px-1 text-center customerMembershipHead" style="border-bottom:1px solid #707070">\
+                  <div class="col-3">날짜</div><div class="col-4">내용</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0">증/감</div><div class="col-6 px-0">잔액</div></div>\
                 </div>\
-                <div class="row" id="customerMembershipList"></div>\
+                <div class="row mx-0" id="customerMembershipList"></div>\
+                <div id="customerMembershipEmpty" style="text-align:center;padding:30px;display:none">멤버십 내역이 없어요.</div>\
+                <div id="customerMembershipLoading" class="flex-column text-center">\
+                  <div class="bouncingLoader">\
+                    <div></div>\
+                    <div></div>\
+                    <div></div>\
+                  </div> \
+                  <span>멤버십 내역을 불러오는 중입니다...</span>\
+                </div>\
+                <div class="d-flex col-12 px-0" style="margin-top:50px">\
+                  <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
+                  <button type="button" data-dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
+                </div>\
               </div>\
               \
             </div>\
@@ -110,6 +122,51 @@
       </div>\
     </div>');
   
+  function generateCustomerMembershipRow(init, goal){
+    var memberships = $("#customerMembershipList").data('item');
+    var item;
+    var html = "";
+    for(var index=init; index<goal; index++){
+        item = memberships[index];
+        html += '<div class="customerMembership col-12" data-id="'+item.id+'">'
+          + '<div class="col-3 montserrat">' + moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')
+          + '</div><div class="col-4">' + item.item
+          + '</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0 montserrat">' + ((item.type === 'MEMBERSHIP_INCREMENT' || item.type === 'MEMBERSHIP_ADD')? '+ ' : '- ') + ((item.membershipChange || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+          + '</div><div class="col-6 px-0 montserrat">' + ((item.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+          + '</div></div></div>';
+    }
+    return html;
+  }
+
+  function drawCustomerMembershipList(refresh) {
+    var list = $("#customerMembershipList"), memberships = list.data('item'), current = list.data('index');
+    var html = "";
+    var goalIndex;
+    if(memberships && refresh){//from 0 to current customer count
+      $("#customerMembershipLoading").hide();
+      list.children().remove();
+      if (memberships.length > 0) {
+          goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerMembership").length)) : current, memberships.length);
+          html = generateCustomerMembershipRow(0, goalIndex);
+      } else {
+          $("#customerMembershipList").hide();
+          $("#customerMembershipEmpty").show();
+          return;
+      }
+    }else if(memberships){//additional loading
+      goalIndex = Math.min(current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerMembership").length)), memberships.length);//최대 20개씩 신규로 로딩
+      html = generateCustomerMembershipRow(current, goalIndex);
+    }else{
+      $("#customerMembershipList").hide();
+      $("#customerMembershipEmpty").show();
+      return;
+    }
+    list.data('index', goalIndex).append(html);
+    
+    $("#customerMembershipEmpty").hide();
+    $("#customerMembershipList").show();
+  }
+
   function generateCustomerAlrimRow(init, goal){
     var alrims = $("#customerAlrimList").data('item');
     var item;
@@ -146,8 +203,7 @@
       $("#customerAlrimEmpty").show();
       return;
     }
-    list.data('index', goalIndex);
-    list.append(html).on("touch click", ".customerAlrimDetailLink", function(){
+    list.data('index', goalIndex).append(html).on("touch click", ".customerAlrimDetailLink", function(){
       $(this).parent().toggleClass('active');
     });
     
@@ -207,8 +263,7 @@
       $("#customerScheduleEmpty").show();
       return;
     }
-    list.data('index', goalIndex);
-    list.append(html);
+    list.data('index', goalIndex).append(html);
     
     $("#customerScheduleEmpty").hide();
     $("#customerScheduleNotEmpty").show();
@@ -413,6 +468,19 @@
       NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
       $("#customerModal").modal("hide");
   }));
+  NMNS.socket.on("get membership history", socketResponse('멤버십 내역 조회', function(e){
+    $("#customerMembershipList").data('index', 0).data('item', [{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123',  date:'20190103',item:'키asdfasdfasdfasdfasdfasdfㅁㄴㅇ라ㅣ먼이럼닝ㅋ루맨댜얼민다ㅟ키키', membershipChange:123123123, balanceMembership: 123123123}].concat(e.data));
+    drawCustomerMembershipList(true);
+  })).on("add membership", socketResponse("멤버십 내역 변경", function(e){
+    $("#customerMembershipList .customerMembership[data-id='"+e.data.id+"'] .balanceMembership").text(((e.data.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+  }, function(e){
+    var list = $("#customerMembershipList").data('item')
+    list.splice(list.findIndex(function(item){
+      return item.id === e.data.id
+    }), 1);
+    drawCustomerMembershipList(true);
+  }));
+  
   $("#customerModal").on("hidden.bs.modal", function() {
     if ($(this).data("trigger")) {
       $(this).removeData("trigger");
@@ -531,8 +599,72 @@
         }
       }, 200));
     });
+    $("#customerTabList a[href='#customerMembership']").on("show.bs.tab", function(){
+      if($(this).data('id') !== $("#customerModal").data('customer').id){
+        var id = $("#customerModal").data('customer').id;
+        $(this).data('id', id);
+        $("#customerMembershipList").hide();
+        $("#customerMembershipEmpty").hide();
+        $("#customerMembershipLoading").show();
+        NMNS.socket.emit('get membership history', {customerId:id});
+      }
+    }).one("show.bs.tab", function(){
+      setNumericInput($("#customerMembershipSales").on("keyup", function(e){
+        if(e.which === 13){
+          $(this).next().trigger('click');
+        }
+      })[0]);
+      $("#customerMembershipAdjust").on("keyup", function(e){
+        if(e.which === 13){
+          $(this).next().trigger('click');
+        }
+      });
+      $("#addCustomerMembershipAdjust").on("touch click", function(){
+        var change = $("#customerMembershipAdjust").val().match(/^\s*(\+|\-)?\s*([\d]*)\s*$/);
+        if(!change){
+          showSnackBar('조절할 금액을 정확히 입력해주세요.');
+          return;
+        }
+        var input = {
+          id: NMNS.email + generateRandom(),
+          type: change[1] === '-'? 'MEMBERSHIP_DECREMENT' : 'MEMBERSHIP_INCREMENT',
+          item: '멤버십 금액 조절',
+          customerId: $("#customerModal").data('customer').id,
+          membershipChange: change[2]*1,
+          date: moment().format('YYYYMMDD')
+        }
+        if(input.membershipChange === 0){
+          showSnackBar('조절할 금액을 0보다 크게 입력해주세요.');
+          return;
+        }
+        NMNS.socket.emit('add membership', input);
+        $("#customerMembershipList").data('item').splice(0, 0, input);
+        drawCustomerMembershipList(true);
+      });
+      $("#addCustomerMembershipSales").on("touch click", function(){
+        if($("#customerMembershipSales").val() === '' || !($("#customerMembershipSales").val() * 1)){
+          showSnackBar('적립할 금액을 입력해주세요.');
+          return;
+        }
+        var input = {
+          id: NMNS.email + generateRandom(),
+          type: 'MEMBERSHIP_ADD',
+          item: '멤버십 적립',
+          customerId: $("#customerModal").data('customer').id,
+          payment: $("#customerMembershipCard").prop('checked')? 'CARD' : ($("#customerMembershipCash").prop('checked') ? 'CASH' : null),
+          membershipChange: $("#customerMembershipSales").val() * 1,
+          date: moment().format('YYYYMMDD')
+        }
+        if(!input.payment){
+          showSnackBar('적립 결제수단을 선택해주세요.');
+          return;
+        }
+        NMNS.socket.emit('add membership', input);
+        $("#customerMembershipList").data('item').splice(0, 0, input);
+        drawCustomerMembershipList(true);
+      });
+    });
     setNumericInput(document.getElementById("customerContact"));
-    setNumericInput(document.getElementById("customerMembershipSales"));
     $(".addCustomerScheduleBtn").on("touch click", function(){
       $("#customerModal").data("trigger", true).modal("hide");
       $($("#sidebarContainer .calendarMenuLink")[0]).trigger("click");
