@@ -32,15 +32,23 @@ function scan(params) {
     for (; i < users.length; i++) {
         let user = users[i];
 
-        if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
-            let visitLog = user.visitLog;
-            let lastVisit = visitLog[visitLog.length - 1];
-            let rLength = user.reservationList.length;
+        // if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
+        //     let visitLog = user.visitLog;
+        //     let lastVisit = visitLog[visitLog.length - 1];
+        //     let rLength = user.reservationList.length;
+        //
+        //     if(lastVisit > '20190401' && rLength > 0){
+        //         console.log(`${user.email} ${lastVisit} ${rLength}`);
+        //     }
+        //
+        // }
 
-            if(lastVisit > '20190401' && rLength > 0){
-                console.log(`${user.email} ${lastVisit} ${rLength}`);
-            }
-
+        if(user.memberList){
+            user.memberList.forEach(member => {
+                if(member.etc){
+                    console.log(member.etc);
+                }
+            });
         }
 
     }
