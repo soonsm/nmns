@@ -173,6 +173,9 @@
       $("#menuModal").modal('hide');
       drawMenuList(true);
     });
+    $("#menuModal input[pattern]").each(function(index, input){
+      setNumericInput(input);
+    })
   }
   
   $("#createMenuLink").on("touch click", function(){

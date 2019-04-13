@@ -664,7 +664,9 @@
         drawCustomerMembershipList(true);
       });
     });
-    setNumericInput(document.getElementById("customerContact"));
+    $("#customerModal input[pattern]").each(function(index, input){
+      setNumericInput(input);
+    });
     $(".addCustomerScheduleBtn").on("touch click", function(){
       $("#customerModal").data("trigger", true).modal("hide");
       $($("#sidebarContainer .calendarMenuLink")[0]).trigger("click");

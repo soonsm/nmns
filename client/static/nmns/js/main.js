@@ -2844,5 +2844,8 @@
         });
         $(".menuLink").on("touch click", switchMenu);
         $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
+        $("input[pattern]").each(function(index, input){
+          setNumericInput(input);
+        })
     })();
 })(jQuery);
