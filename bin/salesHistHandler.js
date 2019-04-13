@@ -27,7 +27,7 @@ const moment = require('moment');
  * @param fn
  * @returns {Promise<function(*=): {status: boolean, data: *, message: *}>}
  */
-let fnTemplate = function(preFn, mainFn, postFn){
+let fnTemplate = function(preFn, mainFn, postFn, exceptionFn){
     let returnFn =  async function(data){
         let user = await db.getWebUser(this.email);
         let status=false,resultData, message;
@@ -46,6 +46,9 @@ let fnTemplate = function(preFn, mainFn, postFn){
         }catch(e){
             message = e;
             status = false;
+            if(exceptionFn){
+                resultData = await exceptionFn(user, data);
+            }
         }
 
         return{
@@ -269,7 +272,15 @@ exports.getMembershipHistory = fnTemplate((user, data) => {
 
     return data;
 
-}, getSalesHistList);
+}, getSalesHistList, async function(user, list){
+    list.forEach(sales => {
+        let member = user.memberList.find(member => member.id === sales.customerId);
+        if(member){
+            sales.balanceMembership = member.pointMembership;
+        }
+    });
+    return list;
+});
 
 /**
  * 고객의 누적 포인트, 누적 카드 매출, 누적 현금 매출 변경
@@ -457,12 +468,28 @@ exports.addMembershipHistory = fnTemplate((user, data) => {
         throw `멤버십 증감 내역 추가는 멤버십 사용, 멤버십 증가, 멤버십 감소, 멤버십 적립만 가능합니다. (${data.type})`;
     }
 
+    data.uuid = data.id;
+    delete data.id;
+
     data.date = moment().format('YYYYMMDD');
     data.time = moment().format('hhmmss');
 
     return data;
 }, saveSalesHist, async function(user, data){
     await db.setWebUser(user);
+
+    let member = user.memberList.find(member => member.id === data.customerId);
+    if(member){
+        data.balanceMembership = member.pointMembership;
+    }
+
+    data.id = data.uuid;
+
+    return data;
+}, async function(user, data){
+
+    data.id = data.uuid;
+
     return data;
 });
 

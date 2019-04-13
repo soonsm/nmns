@@ -213,20 +213,32 @@ exports.getCustomerList = async function(data){
                         }
                     }
 
+                    let totalSales = 0;
+                    let salesHistList = user.saleHistList.filter(sales => sales.scheduleId === reservation.id);
+                    if(salesHistList){
+                        salesHistList.forEach(sales => {
+                            if([process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH].includes(sales.type)){
+                                totalSales += sales.price;
+                            }
+                        })
+                    }
+
                     member.history.push({
-                        date: reservation.start,
+                        start: reservation.start,
+                        end: reservation.end,
                         contents: (reservation.type === 'R' && reservation.contentList) ? JSON.stringify(reservation.contentList) : reservation.contents,
                         status: reservation.status,
                         managerName: manager.name,
                         managerColor: manager.color,
-                        managerId: manager.id
+                        managerId: manager.id,
+                        price: totalSales
                     });
                 }
             });
             member.reservCount = member.history.length;
 
             await member.history.sort(function(r1,r2){
-                return r2.date - r1.date;
+                return r2.start - r1.start;
             });
 
             member.pointMembership = member.pointMembership || 0;
