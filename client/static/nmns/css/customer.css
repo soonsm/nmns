@@ -3,6 +3,7 @@
 #mainCustomerTools .customerHead{
     justify-content: center;
     white-space:normal;
+    word-break:keep-all;
 }
 
 #mainCustomerTools .customerSortType, #customerScheduleNotEmpty .customerScheduleSortType{
@@ -126,7 +127,7 @@
     margin-right:3px;
 }
 
-#customerScheduleEmpty, #customerAlrimEmpty{
+#customerScheduleEmpty, #customerAlrimEmpty, #customerAlrimLoading{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,4 +172,16 @@
 #customerAlrimList .customerAlrim.active:after {
     transform: rotate(180deg);
     filter: none;
+}
+
+#customerMembershipList .customerMembership{
+    display:flex;
+    padding: 10px 5px;
+}
+
+#customerMembershipList .customerMembership div{
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
 }
