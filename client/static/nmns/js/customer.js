@@ -62,7 +62,7 @@
                 <div id="customerScheduleEmpty" style="display:none">예약 내역이 없어요.</div>\
                 <div class="d-flex col-12 px-0" style="margin-top:50px">\
                   <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
-                  <button type="button" dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
+                  <button type="button" data-dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
                 </div>\
               </div>\
               \
@@ -70,10 +70,18 @@
                 <div id="customerAlrimNotEmpty" class="row mx-0 flex-column">\
                   <div id="customerAlrimList" class="row mx-0"></div>\
                 </div>\
+                <div id="customerAlrimLoading" class="flex-column">\
+                  <div class="bouncingLoader">\
+                    <div></div>\
+                    <div></div>\
+                    <div></div>\
+                  </div> \
+                  <span>알림톡 내역을 불러오는 중입니다...</span>\
+                </div>\
                 <div id="customerAlrimEmpty" style="display:none">알림톡 내역이 없어요.</div>\
                 <div class="d-flex col-12 px-0" style="margin-top:50px">\
                   <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
-                  <button type="button" dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
+                  <button type="button" data-dismiss="modal" class="btn btn-accent col ml-1">닫기</button>\
                 </div>\
                 <div class="d-flex">\
                 </div>\
@@ -120,18 +128,19 @@
     var html = "";
     var goalIndex;
     if(alrims && refresh){//from 0 to current customer count
-        list.children().remove();
-        if (alrims.length > 0) {
-            goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerAlrim").length)) : current, alrims.length);
-            html = generateCustomerAlrimRow(0, goalIndex);
-        } else {
-            $("#customerAlrimNotEmpty").hide();
-            $("#customerAlrimEmpty").show();
-            return;
-        }
+      $("#customerAlrimLoading").hide();
+      list.children().remove();
+      if (alrims.length > 0) {
+          goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerAlrim").length)) : current, alrims.length);
+          html = generateCustomerAlrimRow(0, goalIndex);
+      } else {
+          $("#customerAlrimNotEmpty").hide();
+          $("#customerAlrimEmpty").show();
+          return;
+      }
     }else if(alrims){//additional loading
-        goalIndex = Math.min(current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerAlrim").length)), alrims.length);//최대 20개씩 신규로 로딩
-        html = generateCustomerAlrimRow(current, goalIndex);
+      goalIndex = Math.min(current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerAlrim").length)), alrims.length);//최대 20개씩 신규로 로딩
+      html = generateCustomerAlrimRow(current, goalIndex);
     }else{
       $("#customerAlrimNotEmpty").hide();
       $("#customerAlrimEmpty").show();
@@ -140,7 +149,6 @@
     list.data('index', goalIndex);
     list.append(html).on("touch click", ".customerAlrimDetailLink", function(){
       $(this).parent().toggleClass('active');
-      $("#customerAlrimList").data('scroll').update();
     });
     
     $("#customerAlrimEmpty").hide();
@@ -470,8 +478,20 @@
     $("#customerTabList a[href='#customerAlrim']").on("show.bs.tab", function(){
       if($(this).data('id') !== $("#customerModal").data('customer').id){
         $(this).data('id', $("#customerModal").data('customer').id);
+        $("#customerAlrimNotEmpty").hide();
+        $("#customerAlrimEmpty").hide();
+        $("#customerAlrimLoading").show();
         NMNS.socket.emit('get customer alrim', {id:$("#customerModal").data('customer').id});
       }
+    }).one("show.bs.tab", function(){
+      var isLoading = false;
+      $("#customerAlrimList").on("scroll", debounce(function(){
+        if(!isLoading && $(this).data('item') && $(this).data('index') < $(this).data('item').length && this.scrollHeight - this.scrollTop - this.offsetHeight < Math.max(100, this.getBoundingClientRect().height * 0.2)){
+          isLoading = true;
+          drawCustomerAlrimList();
+          isLoading = false;
+        }
+      }, 200));
     });
     $("#customerTabList a[href='#customerSchedule']").on("show.bs.tab", function(){
       if($(this).data('id') !== $("#customerModal").data('customer').id){
@@ -502,6 +522,14 @@
           $("#customerScheduleList").data('index', 0);
           drawCustomerScheduleList(true);
       });
+      var isLoading = false;
+      $("#customerScheduleList").on("scroll", debounce(function(){
+        if(!isLoading && $(this).data('item') && $(this).data('index') < $(this).data('item').length && this.scrollHeight - this.scrollTop - this.offsetHeight < Math.max(100, this.getBoundingClientRect().height * 0.2)){
+          isLoading = true;
+          drawCustomerScheduleList();
+          isLoading = false;
+        }
+      }, 200));
     });
     setNumericInput(document.getElementById("customerContact"));
     setNumericInput(document.getElementById("customerMembershipSales"));

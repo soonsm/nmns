@@ -126,7 +126,7 @@
     margin-right:3px;
 }
 
-#customerScheduleEmpty, #customerAlrimEmpty{
+#customerScheduleEmpty, #customerAlrimEmpty, #customerAlrimLoading{
     display: flex;
     align-items: center;
     justify-content: center;
