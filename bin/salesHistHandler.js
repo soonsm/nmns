@@ -274,10 +274,7 @@ exports.getMembershipHistory = fnTemplate((user, data) => {
 
 }, getSalesHistList, async function(user, list){
     list.forEach(sales => {
-        let member = user.memberList.find(member => member.id === sales.customerId);
-        if(member){
-            sales.balanceMembership = member.pointMembership;
-        }
+        sales.balanceMembership = sales.pointMembershipAtThatTime;
     });
     return list;
 });
@@ -383,8 +380,12 @@ let saveSalesHist = function(user, data){
 
     switch(type){
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
+            commonValidationForMembership(data);
+            data.pointMembershipAtThatTime = member.pointMembership - data.membershipChange;
+            break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
             commonValidationForMembership(data);
+            data.pointMembershipAtThatTime = member.pointMembership + data.membershipChange;
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
             commonValidationForMembership(data);
@@ -394,8 +395,10 @@ let saveSalesHist = function(user, data){
                 throw `멤버십 적립 시에는 결제수단이 필요합니다. (${data.payment})`;
             }
 
+            data.pointMembershipAtThatTime = member.pointMembership + data.membershipChange;
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
+            data.pointMembershipAtThatTime = member.pointMembership - data.membershipChange;
         case process.nmns.SALE_HIST_TYPE.SALES_CARD:
         case process.nmns.SALE_HIST_TYPE.SALES_CASH:
             commonValidationForReservation(data);
@@ -403,6 +406,7 @@ let saveSalesHist = function(user, data){
     }
 
     changeMemberSalesStatistic(member, false, data);
+
 
     let saleHistList = user.saleHistList || [];
     if(data.id){
