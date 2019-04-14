@@ -65,21 +65,14 @@ input[type=checkbox], input[type=radio]{
   display:none;
 }
 input[type=checkbox]:not(.custom-control-input) + label:before{
-  font-family: "Font Awesome 5 Free";
-  font-weight: 400;
   display: inline-block;
-  content: "\f0c8";
-  letter-spacing: 8px;
-  color: $secondary;
-}
-input[type=checkbox]:not(.custom-control-input):not(:checked):hover + label:before{
-  font-weight: 900;
-  color: $lightPrimary;
+  content: url('/nmns/img/uncheck.svg');
+  line-height:11px;
+  vertical-align: text-bottom;
+  margin-right:3px;
 }
 input[type=checkbox]:not(.custom-control-input):checked + label:before{
-  content: "\f14a";
-  font-weight: 900;
-  color: $primary;
+  content: url('/nmns/img/check.svg');
 }
 input[type=checkbox] + label + label{
   color: $primary;
@@ -179,3 +172,13 @@ input[type=number] {
 .justify-center{
   justify-content:center;
 }
+
+/* clears the 'X' from Internet Explorer */
+input[type=search]::-ms-clear {  display: none; width : 0; height: 0; }
+input[type=search]::-ms-reveal {  display: none; width : 0; height: 0; }
+
+/* clears the 'X' from Chrome */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { display: none; }

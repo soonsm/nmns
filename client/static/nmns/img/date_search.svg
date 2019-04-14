@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+  <g id="date_search" transform="translate(0.5 0.5)">
+    <rect id="Rectangle" width="13" height="13" rx="2" stroke-width="1" transform="translate(0 2)" stroke="#393535" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path id="Path" d="M13,0V4" transform="translate(-3.611)" fill="none" stroke="#393535" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+    <path id="Path-2" data-name="Path" stroke="#393535" d="M5,0V4" fill="none" transform="translate(-1.389)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+    <path id="Path-3" data-name="Path" stroke="#393535" d="M0,8H13" fill="none" transform="translate(0 -2.222)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+    <g id="그룹_186" data-name="그룹 186" transform="translate(0.389)">
+      <g id="그룹_184" data-name="그룹 184" transform="translate(-1)">
+        <path id="Path-4" data-name="Path" stroke="#393535" d="M5,0V1" fill="none" transform="translate(4.611 4) rotate(90)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+        <path id="Path-5" data-name="Path" stroke="#393535" d="M5,0V1" fill="none" transform="translate(7.611 4) rotate(90)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+        <path id="Path-6" data-name="Path" stroke="#393535" d="M5,0V1" fill="none" transform="translate(10.611 4) rotate(90)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+      </g>
+      <g id="그룹_185" data-name="그룹 185" transform="translate(-1 3)">
+        <path id="Path-7" data-name="Path" stroke="#393535" d="M5,0V1" fill="none" transform="translate(4.611 4) rotate(90)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+        <path id="Path-8" data-name="Path" stroke="#393535" d="M5,0V1" fill="none" transform="translate(7.611 4) rotate(90)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+        <path id="Path-9" data-name="Path" stroke="#393535" d="M5,0V1" fill="none" transform="translate(10.611 4) rotate(90)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+      </g>
+    </g>
+  </g>
+</svg>

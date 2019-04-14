@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="17" height="18.778" viewBox="0 0 17 18.778">
+  <g id="menu_calendar" transform="translate(0.5 0.5)">
+    <rect id="Rectangle" width="16" height="15.778" rx="2" stroke-width="1" transform="translate(0 2)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path id="Path" d="M13,0V4" transform="translate(-1.444)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+    <path id="Path-2" data-name="Path" stroke="#fff" d="M5,0V4" fill="none" transform="translate(-0.556)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+    <path id="Path-3" data-name="Path" stroke="#fff" d="M0,8H16" fill="none" transform="translate(0 -0.889)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+    <path id="Stroke-200" d="M5.95,12.138l1.685,1.728,3.315-3.125" transform="translate(-0.7)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+  </g>
+</svg>

@@ -42,3 +42,6 @@
 .menuRow .updatingMenu-collapsed.d-block + .menuModalLink{
   display:none;
 }
+#menuModal .modal-header{
+  padding: 25px 30px;
+}

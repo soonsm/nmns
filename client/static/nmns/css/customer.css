@@ -8,6 +8,7 @@
 
 #mainCustomerTools .customerSortType, #customerScheduleNotEmpty .customerScheduleSortType{
     cursor:pointer;
+    position:relative;
 }
 
 #mainCustomerTools .customerSortType:active,
@@ -22,14 +23,12 @@
 }
 
 #mainCustomerTools .customerSortType:after, #customerScheduleNotEmpty .customerScheduleSortType:after{
-    font-family:'Font Awesome 5 Free';
-    font-weight:700;
+    content: url('/nmns/img/sort_on.svg');
+    opacity:1;
     margin-left:3px;
-    content:'\f0dc';
-    opacity: 1;
 }
 
-#mainCustomerTools .customerSortType:not(.active):after, #customerScheduleNotEmpty .customerScheduleSortType:not(.active):after{
+#mainCustomerTools .customerSortType:not(.active):not(:hover):after, #customerScheduleNotEmpty .customerScheduleSortType:not(.active):not(:hover):after{
     opacity:0.5;
 }
 
@@ -161,9 +160,7 @@
 }
 
 #customerAlrimList .customerAlrim:after {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: '\f078';
+    content: url('/nmns/img/arrow_bottom.svg');
     float:right;
     display: block;
     transition: 0.3s all ease;
@@ -174,6 +171,12 @@
     filter: none;
 }
 
+#customerMembershipChange{
+    color:rgba(58, 54, 54, 0.35);
+}
+#customerMembershipChange.manual{
+    color:rgb(58,54,54);
+}
 #customerMembershipList .customerMembership{
     display:flex;
     padding: 10px 5px;
