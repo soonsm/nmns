@@ -69,7 +69,7 @@ a.text-primary {
 
 .btn-white:not(:disabled):not(.disabled) {
   background-color: #fff;
-  border-color: $primary;
+  border-color: $lightPrimary;
   &:hover,
   &:focus,
   &:active {
