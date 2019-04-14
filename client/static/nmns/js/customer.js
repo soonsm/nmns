@@ -53,7 +53,7 @@
               \
               <div id="customerSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">\
                 <div id="customerScheduleNotEmpty" class="row mx-0 flex-column">\
-                  <div class="row mx-0 col-12 px-1 pb-3 customerScheduleHead text-center" style="border-bottom:1px solid #707070">\
+                  <div class="row mx-0 col-12 px-1 pb-3 customerScheduleHead text-center" style="border-bottom:1px solid rgba(112, 112, 112, 0.35)">\
                     <div class="col-4 px-0 customerScheduleSortType active" data-action="sort-date">날짜</div><div class="col-5 px-0 d-flex"><div class="col-4 px-0 customerScheduleSortType" data-action="sort-manager">담당</div>\
                     <div class="col-8 px-0">예약내용</div></div><div class="col-3 px-0 d-flex"><div class="col-6 px-0 customerScheduleSortType" data-action="sort-sales">매출액</div><div class="col-6 px-0 customerScheduleSortType" data-action="sort-status">예약상태</div></div>\
                   </div>\
@@ -97,7 +97,7 @@
                   <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm montserrat col" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
                   <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipAdjust">추가</button></div>\
                 </div>\
-                <div class="row mx-0 col-12 py-3 px-1 text-center customerMembershipHead" style="border-bottom:1px solid #707070">\
+                <div class="row mx-0 col-12 py-3 px-1 text-center customerMembershipHead" style="border-bottom:1px solid rgba(112, 112, 112, 0.35)">\
                   <div class="col-3">날짜</div><div class="col-4">내용</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0">증/감</div><div class="col-6 px-0">잔액</div></div>\
                 </div>\
                 <div class="row mx-0" id="customerMembershipList"></div>\
