@@ -407,6 +407,9 @@ input[type=checkbox]+label{
 .tui-full-calendar-weekday-schedule {
     overflow-y: hidden;
 }
+.tui-full-calendar-today .tui-full-calendar-dayname-date-area {
+  border-bottom:1px solid;
+}
 
 #mainNav{
     padding-left:30px;
@@ -744,7 +747,12 @@ button.calendarType:focus,
 button.calendarType.active {
     opacity:1;
     background-color:#fff !important;
-    text-decoration:underline;
+}
+button.calendarType:active span,
+button.calendarType:hover span,
+button.calendarType:focus span,
+button.calendarType.active span{
+    border-bottom: 1px solid;
 }
 
 button.moveDate {
@@ -1369,7 +1377,7 @@ button.form-control {
 
 /* tipsModal, announcementMenu */
 
-#tipsModal .modal-header #tipsTitle, #announcementModal .modal-header #announcementTitle {
+/*#tipsModal .modal-header #tipsTitle, #announcementModal .modal-header #announcementTitle {
     display: initial;
 }
 
@@ -1388,40 +1396,48 @@ button.form-control {
 #tipsModal .modal-body.wait .waiting, #announcementModal .modal-body.wait .waiting {
     display: block;
 }
-
-#tipsModal .modal-body #tipsBody, #announcementModal .modal-body #announcementBody {
-    opacity: 1;
+*/
+#announcementPopover{
+  display:flex;
+  justify-content: flex-end;
 }
 
-#tipsModal .modal-body.wait #tipsBody, #announcementModal .modal-body.wait #announcementBody {
-    opacity: .5;
+#notificationArea, #announcementArea{
+  box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.12);
+  background-color:#fff;
+  max-width:375px;
+  float:right;
+  border-radius: 5px;
 }
-
-#announcementBody{
+#notificationBody, #announcementArea{
     overflow-y:auto;
     max-height:543px;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
-#announcementBody .announcement{
+#notificationBody .notification, #announcementArea .announcement{
     padding: 25px 30px;
 }
 
-#announcementBody .announcement:not(:last-child){
+#notificationBody .notification:not(:last-child), #announcementArea .announcement:not(:last-child){
     border-bottom:1px solid rgba(58, 54, 54, 0.35);
 }
 
-#announcementBody .announcement .announcementTitle{
+#announcementArea .announcement .announcementTitle{
     font-weight: bold;
 }
 
-#announcementBody .announcement .announcementTime{
+#notificationBody .notification .notificationTime, #announcementArea .announcement .announcementTime{
     font-size:12px;
     opacity:0.5;
     font-weight:500;
 }
 
+#notificationEmpty{
+  display:none;
+  height:228px;
+  align-items:center;
+  justify-content: center;
+}
 /* alrim modal */
 
 #alrimModal #alrimHistoryList .alrimRow {
