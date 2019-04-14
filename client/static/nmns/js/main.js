@@ -2718,7 +2718,7 @@
       }
     });
     
-    function switchMenu(e){
+    function switchMenu(e, isHistory){
       if(e && e.preventDefault){
         e.preventDefault();
       }
@@ -2736,6 +2736,9 @@
         $("#mainContents").css("minWidth", '100%');
         $("#mainAside").css('minWidth', 'unset');
         $("#mainTask").removeClass("show");
+        if(!isHistory){
+          history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
+        }
       }
     }
     
@@ -2867,4 +2870,18 @@
           setNumericInput(input);
         })
     })();
+  window.onpopstate = function(state){
+    var link;
+    if(!state.state){
+      link = 'calendarMenu';
+    }else{
+      link = state.state.link;
+    }
+    var target = $(".menuLink[data-link='"+link+"']");
+    if(target.length){
+      switchMenu.call(target[0], null, true);
+    }else if(state.state.link === 'noShowSearchMenu'){
+      switchMenu.call(document.getElementById('searchNoShow'), null, true);
+    }
+  }
 })(jQuery);
