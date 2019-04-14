@@ -86,9 +86,10 @@
               </div>\
               \
               <div id="customerMembership" class="tab-pane col-12 px-0 fade" role="tabpanel">\
-                <div>멤버십 추가 적립</div>\
+                <div class="d-flex"><div class="col px-0">멤버십 결제 금액</div><div class="col px-0" style="margin-left:-45px">멤버십 적립 금액<span class="subText">적립금액은 따로 입력할 수 있어요.</span></div></div>\
                 <div class="d-flex my-3">\
-                  <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm montserrat col" aria-label="멤버십 추가 적립" placeholder="금액을 숫자로 입력하세요." >\
+                  <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm montserrat col mr-1" aria-label="멤버십 결제 금액" placeholder="결제 금액을 숫자로 입력하세요.">\
+                  <input type="text" pattern="[0-9]*" id="customerMembershipChange" class="form-control form-control-sm montserrat col ml-1" aria-label="멤버십 적립 금액" placeholder="멤버십 적립 금액을 입력하세요.">\
                   <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipSales">추가</button></div>\
                 </div>\
                 <div><input type="radio" name="customerMembershipSalesType" value="CARD" id="customerMembershipCard" checked="checked"><label for="customerMembershipCard"></label><label for="customerMembershipCard" style="margin-right:30px">카드</label><input type="radio" name="customerMembershipSalesType" value="CASH" id="customerMembershipCash"><label for="customerMembershipCash"></label><label for="customerMembershipCash">현금</label></div>\
@@ -130,7 +131,7 @@
         item = memberships[index];
         html += '<div class="customerMembership col-12" data-id="'+item.id+'">'
           + '<div class="col-3 montserrat">' + moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')
-          + '</div><div class="col-4">' + item.item
+          + '</div><div class="col-4" title="'+item.item+'">' + item.item
           + '</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0 montserrat">' + ((item.type === 'MEMBERSHIP_INCREMENT' || item.type === 'MEMBERSHIP_ADD')? '+ ' : '- ') + ((item.membershipChange || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
           + '</div><div class="col-6 px-0 montserrat">' + ((item.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
           + '</div></div></div>';
@@ -470,7 +471,7 @@
       $("#customerModal").modal("hide");
   }));
   NMNS.socket.on("get membership history", socketResponse('멤버십 내역 조회', function(e){
-    $("#customerMembershipList").data('index', 0).data('item', [{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123', date:'20190103', item:'키키키', membershipChange:123123123, balanceMembership: 123123123},{id:'123',  date:'20190103',item:'키asdfasdfasdfasdfasdfasdfㅁㄴㅇ라ㅣ먼이럼닝ㅋ루맨댜얼민다ㅟ키키', membershipChange:123123123, balanceMembership: 123123123}].concat(e.data));
+    $("#customerMembershipList").data('index', 0).data('item', e.data);
     drawCustomerMembershipList(true);
   })).on("add membership", socketResponse("멤버십 내역 변경", function(e){
     $("#customerMembershipList .customerMembership[data-id='"+e.data.id+"'] .balanceMembership").text(((e.data.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
@@ -610,11 +611,20 @@
         NMNS.socket.emit('get membership history', {customerId:id});
       }
     }).one("show.bs.tab", function(){
-      setNumericInput($("#customerMembershipSales").on("keyup", function(e){
+      $("#customerMembershipSales").on("keyup", function(e){
+        if(e.which === 13){
+          $(this).next().next().trigger('click');
+        }else{
+          $(this).next().removeClass('manual').val($(this).val());
+        }
+      });
+      $("#customerMembershipChange").on("keyup", function(e){
         if(e.which === 13){
           $(this).next().trigger('click');
+        }else{
+          $(this).addClass('manual');
         }
-      })[0]);
+      });
       $("#customerMembershipAdjust").on("keyup", function(e){
         if(e.which === 13){
           $(this).next().trigger('click');
@@ -643,7 +653,7 @@
         drawCustomerMembershipList(true);
       });
       $("#addCustomerMembershipSales").on("touch click", function(){
-        if($("#customerMembershipSales").val() === '' || !($("#customerMembershipSales").val() * 1)){
+        if($("#customerMembershipChange").val() === '' || !($("#customerMembershipChange").val() * 1)){
           showSnackBar('적립할 금액을 입력해주세요.');
           return;
         }
@@ -653,7 +663,8 @@
           item: '멤버십 적립',
           customerId: $("#customerModal").data('customer').id,
           payment: $("#customerMembershipCard").prop('checked')? 'CARD' : ($("#customerMembershipCash").prop('checked') ? 'CASH' : null),
-          membershipChange: $("#customerMembershipSales").val() * 1,
+          membershipChange: $("#customerMembershipChange").val() * 1,
+          price: $("#customerMembershipSales").val() * 1,
           date: moment().format('YYYYMMDD')
         }
         if(!input.payment){
@@ -663,6 +674,8 @@
         NMNS.socket.emit('add membership', input);
         $("#customerMembershipList").data('item').splice(0, 0, input);
         drawCustomerMembershipList(true);
+        $("#customerMembershipSales").val('');
+        $("#customerMembershipChange").val('');
       });
     });
     $("#customerModal input[pattern]").each(function(index, input){

@@ -171,6 +171,12 @@
     filter: none;
 }
 
+#customerMembershipChange{
+    color:rgba(58, 54, 54, 0.35);
+}
+#customerMembershipChange.manual{
+    color:rgb(58,54,54);
+}
 #customerMembershipList .customerMembership{
     display:flex;
     padding: 10px 5px;
