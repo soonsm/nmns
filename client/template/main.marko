@@ -31,10 +31,7 @@
   <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
   <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch" onload="this.rel='stylesheet'">
   <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="prefetch" onload="this.rel='stylesheet'">
-  <!--[if IE 9]>
-  <link href="/lib/datetimepicker/ie.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
-  <![endif]-->
+
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
@@ -46,6 +43,14 @@
   <style>
     @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}html{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat'}
   </style>
+  
+<!--[if lte IE 8]>
+<script type="text/jscript">
+  if(confirm("안전에 취약한 오래된 IE 브라우저를 사용하고 계십니다. 최신 브라우저 이용을 권장드립니다.\n 확인을 누르시면 Chrome 브라우저 다운로드 페이지로 이동합니다.\n *WA:SHOW는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
+    location.href = 'https://www.google.com/intl/ko_ALL/chrome/';
+  }
+</script>
+<![endif]-->
 </head>
 
 <body>
@@ -1018,9 +1023,10 @@
     </li>
   </ul>-->
 
-<!--[if lte IE 8]>
+<!--[if IE 9]>
 <script type="text/jscript">
-  document.getElementById("page-top").innerHTML = "";
+  document.getElementById("mainAside").innerHTML = "";
+  document.getElementById("mainRow").innerHTML = "";
   if(confirm("안전에 취약한 오래된 IE 브라우저를 사용하고 계십니다. 최신 브라우저 이용을 권장드립니다.\n 확인을 누르시면 Chrome 브라우저 다운로드 페이지로 이동합니다.\n *WA:SHOW는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
     location.href = 'https://www.google.com/intl/ko_ALL/chrome/';
   }

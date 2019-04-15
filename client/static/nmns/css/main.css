@@ -1480,7 +1480,7 @@ button.form-control {
 }
 
 #alrimModal #alrimHistoryList {
-    max-height: 740px;
+    max-height: calc(100vh - 400px);
     display: block;
 }
 

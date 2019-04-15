@@ -5,7 +5,7 @@
   background-color: #f8f8f8;
   right: 0;
   top: 78px;
-  padding:52px 30px 27px 30px;
+  padding:52px 30px 28px 30px;
 }
 #mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(:focus):not(:hover):not(:active){
   background-color:transparent;
