@@ -242,7 +242,7 @@
         if(document.scrollingElement.scrollTop > 0){
           $(".salesMenu .menuTitle").addClass('fixedScroll');
           $("#menuTitleSticky").removeClass('d-none');
-          if(document.scrollingElement.scrollTop > 220){
+          if(document.scrollingElement.scrollTop > 223){
             $("#mainSalesTools").addClass('fixedScroll');
           }else{
             $("#mainSalesTools").removeClass('fixedScroll');
