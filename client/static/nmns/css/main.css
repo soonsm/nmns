@@ -1501,13 +1501,31 @@ button.form-control {
 #naverBtn, #kakaoBtn{
     font-size:13px;
 }
-#naverBtn.connected{
+#kakaoBtn.connected{
     background-color:#ffeb00;
     border-color:#ffeb00;
     cursor:default;
 }
-
-#kakaoBtn.connected{
+#naverBtn #naverImg{
+  display:none;
+}
+#naverBtn.connected #naverImg{
+  display:inline-block;
+  height:20px;
+  margin-right:3px;
+  vertical-align:text-bottom;
+}
+#naverBtn #naverIdLogin{
+  display:inline-block;
+  margin-right:3px;
+  border-radius:3.5px;
+  overflow:hidden;
+  vertical-align:text-bottom;
+}
+#naverBtn.connected #naverIdLogin{
+  display:none;
+}
+#naverBtn.connected{
     background-color:#1ec800;
     border-color:#1ec800;
     cursor:default;

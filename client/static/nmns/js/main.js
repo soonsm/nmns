@@ -2454,18 +2454,36 @@
         }
         alert('카카오톡 계정 연동!');
       })
-      $("#naverBtn").on("touch click", function(){
+      $("#naverBtn").on("touch click", function(e){
         if($(this).hasClass('connected')){
-          return;
+          e.stopImmediatePropagation();
+          return false;
         }
-        alert('네이버 계정 연동!');
+        e.preventDefault();
       });
-    }).on('shown.bs.modal', function(){
+    }).on('show.bs.modal', function(){
       if(NMNS.info.kakaotalk){
         $("#kakaoBtn").addClass('connected').find('span').text('카카오 계정 연동 완료')
       }
       if(NMNS.info.naver){
         $("#naverBtn").addClass('connected').find('span').text('네이버 계정 연동 완료')
+      }
+      if (!$("#naverBtn").hasClass('connected') && !document.getElementById("naverScript")) {//최초 접속
+        var script = document.createElement("script");
+        script.src = "/nmns/js/naver.min.js";
+        script.id = "naverScript";
+        document.body.appendChild(script);
+
+        script.onload = function() {
+          var naverLogin = new naver.LoginWithNaverId({
+        			clientId: "5dHto9KiEXdHoHJBDcqE",
+        			callbackUrl: window.location.origin + '/naver',
+        			isPopup: true, 
+        			loginButton: {color:'green', type:1, height:20},
+        			callbackHandle:true
+      		});
+      		naverLogin.init();
+        };
       }
     }).on("hidden.bs.modal", function(){
       $("#currentPassword").val("");
