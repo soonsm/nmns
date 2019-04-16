@@ -274,7 +274,7 @@ exports.getMembershipHistory = fnTemplate((user, data) => {
 
 }, getSalesHistList, async function(user, list){
     list.forEach(sales => {
-        sales.balanceMembership = sales.pointMembershipAtThatTime;
+        sales.balanceMembership = sales.pointMembershipAtThatTime || 0;
     });
     return list;
 });
