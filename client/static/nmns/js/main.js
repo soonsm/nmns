@@ -2170,7 +2170,20 @@
       if($("#salesTab").is(":visible")){
         $("#scheduleModal").modal('hide');
       }
-    }));
+    })).on("link sns", socketResponse('SNS 계정 연결', function(e){
+      if(e.data.naver){
+        NMNS.info.naver = e.data.naver;
+        if($("#naverBtn").is(":visible")){
+          $("#naverBtn").addClass('connected');
+        }
+      }
+      if(e.data.kakao){
+        NMNS.info.kakao = e.data.kakao;
+        if($("#kakaoBtn").is(":visible")){
+          $("#kakaoBtn").addClass('connected');
+        }
+      }
+    }, undefined, true));
     //websocket response end
     //Modal events start  
     $(".modal").on("shown.bs.modal", function(){
