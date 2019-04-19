@@ -17,6 +17,7 @@ const indexView = require('../client/template/index');
 const signinView = require('../client/template/signin');
 const signupView = require('../client/template/signup');
 const cancelView = require('../client/template/reservationCancel');
+const naverView = require('../client/template/naver');
 
 let render = function(res, view, data) {
     if (!data) {
@@ -100,6 +101,30 @@ module.exports = function(passport) {
                 kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
             });
         }
+    });
+
+    router.get('/naver', async function(req, res) {
+        /*if (req.user) {
+            let user = await db.getWebUser(req.user.email);
+            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
+                //로그인 되있으면 main으로 이동
+                res.redirect("/");
+            } else {
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
+            }
+        } else {
+        }*/
+        render(res, naverView);
+    });
+
+    router.post('/naver', async function(req, res){
+      let data = req.body;
+      let id = data.id;//unique id
+      let email = data.email;//naver email address
+      //do something
     });
 
     router.get('/index.amp', async function(req, res) {
