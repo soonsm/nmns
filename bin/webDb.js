@@ -139,7 +139,9 @@ exports.newWebUser = function (user) {
         email: user.email,
         authStatus: user.authStatus || process.nmns.AUTH_STATUS.BEFORE_EMAIL_VERIFICATION, //BEFORE_EMAIL_VERIFICATION(인증전), EMAIL_VERIFICATED(인증됨)
         emailAuthToken: user.emailAuthToken || null,
-        password: nmnsUtil.sha512(user.password),
+        snsType: user.snsType,
+        snsLinkId : user.snsLinkId,
+        password: (user.snsType ? undefined : nmnsUtil.sha512(user.password)),
         numOfWrongPassword: 0,
         bizBeginTime: user.bizBeginTime || '0900',
         bizEndTime: user.bizEndTime || '2300',
@@ -204,6 +206,42 @@ exports.setWebUser = async function(user){
     return await put({
         TableName: process.nmns.TABLE.WebSecheduler,
         Item: user
+    });
+}
+
+
+
+/**
+ * SnsLink
+ * snsLinkId: SNS에서 부여한 고객 고유 ID, string, key,
+ * snsType: Naver/KaKao, string
+ * email: washow 계정 email, string
+ * snsEmail: sns email, string
+ */
+exports.getSnsLink = async function (snsLinkId) {
+    let items = await query({
+        TableName: process.nmns.TABLE.SnsLink,
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "snsLinkId"
+        },
+        ExpressionAttributeValues: {
+            ":val": snsLinkId
+        }
+    });
+
+    return items[0];
+};
+
+exports.setSnsLink = async function(data){
+    return await put({
+        TableName: process.nmns.TABLE.SnsLink,
+        Item: {
+            snsLinkId: data.snsLinkId,
+            snsType: data.snsType,
+            snsEmail: data.snsEmail,
+            email: data.email
+        }
     });
 }
 

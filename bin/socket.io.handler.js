@@ -33,7 +33,8 @@ const GetManagerList = 'get manager',
 const GetShop = 'get info',
     UpdateShop = 'update info',
     UpdatePwd = 'update password',
-    GetAnnouncement = 'get announcement';
+    GetAnnouncement = 'get announcement',
+    LinkSns = 'link sns';
 const GetAlrimTalkInfo = 'get alrim', UpdateAlirmTalk = 'update alrim', GetAlrimTalkHistory = 'get alrim history', GetCustomerAlrimTalkHistory = 'get customer alrim';
 const SendVerification = 'send verification';
 const GetCustomerInfo = 'get customer info', GetCustomerDetail = 'get customer', GetCustomerList = "get customer list", AddCustomer = 'add customer', UpdateCustomer = 'update customer', DelCustomer = 'delete customer', MergeCustomer = 'merge customer';
@@ -302,6 +303,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(UpdatePwd, accountHandler.updatePwd);
         addEvent(GetShop, accountHandler.getShop);
         addEvent(UpdateShop, accountHandler.updateShop);
+        addEvent(LinkSns, accountHandler.linkSns);
 
         /**
          * Reservation

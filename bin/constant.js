@@ -47,6 +47,13 @@
 
     o.isValidSaleHistType = makeValidationFn(o.SALE_HIST_TYPE);
 
+    o.SNS_TYPE = {
+        NAVER: 'NAVER',
+        KAKAO: 'KAKAO'
+    };
+
+    o.isValidSnsType = makeValidationFn(o.SNS_TYPE);
+
 
     //계정 인증 상태
     o.AUTH_STATUS = {
@@ -56,7 +63,8 @@
 
     o.TABLE = {
         WebSecheduler: 'WebSecheduler',
-        NoShowList: 'NoShowList'
+        NoShowList: 'NoShowList',
+        SnsLink: 'SnsLink'
     }
 
     o.MODE = {

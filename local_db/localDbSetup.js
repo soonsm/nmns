@@ -9,6 +9,30 @@ AWS.config.update({
 });
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
+
+(async function(){
+    var params = {
+        TableName : "SnsLink",
+        KeySchema: [
+            { AttributeName: "snsLinkId", KeyType: "HASH"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "snsLinkId", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    dynamodb.createTable(params, function(err, data) {
+        if (err) {
+            console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+        }
+    });
+})();
+
 // var params = {
 //     TableName : "KaKaoUserList",
 //     KeySchema: [
@@ -178,27 +202,27 @@ docClient.put(params, function(err, data) {
 });
 */
 
-var params = {
-    TableName: "WebSecheduler",
-    Key: {
-        'email': 'soonsm@gmail.com'
-    },
-    UpdateExpression: "set redNoticeList = :redNoticeList, password = :password, accountStatus = :accountStatus",
-    ExpressionAttributeValues:{
-        ":redNoticeList":[],
-        ":password":'bc4a25d03e9c585ae8b360974c117bc0df87a30ae65eec780627cf0ae84cb49238033e35368279b84f7a64d86b593aef8d1084199b4001c3c669d20c40f41a28',
-        ":accountStatus":0
-    },
-    ReturnValues:"UPDATED_NEW"
-};
-console.log("Updating the item...");
-docClient.update(params, function(err, data) {
-    if (err) {
-        console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-    } else {
-        console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-    }
-});
+// var params = {
+//     TableName: "WebSecheduler",
+//     Key: {
+//         'email': 'soonsm@gmail.com'
+//     },
+//     UpdateExpression: "set redNoticeList = :redNoticeList, password = :password, accountStatus = :accountStatus",
+//     ExpressionAttributeValues:{
+//         ":redNoticeList":[],
+//         ":password":'bc4a25d03e9c585ae8b360974c117bc0df87a30ae65eec780627cf0ae84cb49238033e35368279b84f7a64d86b593aef8d1084199b4001c3c669d20c40f41a28',
+//         ":accountStatus":0
+//     },
+//     ReturnValues:"UPDATED_NEW"
+// };
+// console.log("Updating the item...");
+// docClient.update(params, function(err, data) {
+//     if (err) {
+//         console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+//     } else {
+//         console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+//     }
+// });
 
 /*
 //예약정보 Insert

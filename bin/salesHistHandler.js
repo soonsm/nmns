@@ -275,6 +275,9 @@ exports.getMembershipHistory = fnTemplate((user, data) => {
 }, getSalesHistList, async function(user, list){
     list.forEach(sales => {
         sales.balanceMembership = sales.pointMembershipAtThatTime || 0;
+        if(sales.type === process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE){
+            sales.membershipChange = sales.price;
+        }
     });
     return list;
 });

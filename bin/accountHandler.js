@@ -3,6 +3,7 @@
 const db = require('./webDb');
 const moment = require('moment');
 const util = require('./util');
+const emailValidator = require('email-validator');
 
 exports.updatePwd = async function (data) {
     let status = true,
@@ -124,3 +125,59 @@ exports.updateShop = async function (params) {
         message: message
     };
 };
+
+/**
+ * SNS 연동(네이버, 카카오)
+ * 이미 계정이 있는 사용자가 네이버/카카오 계정과 연동하여 로그인 시 네이버/카카오 로그인을 사용하기 위함
+ * 요청 위치 : 'link sns', 데이터 : {'snsLinkId': ${naver, kakao에서 할당한 사용자 식별 고유 값, string} 'snsType':${sns 종류(NAVER, KAKAO), string }, 'snsEmail':${SNS의 email, string, optional}}
+ * 응답 형식 : 'data':{'snsLinkId':${naver, kakao에서 할당한 사용자 식별 고유 값, string}, 'snsType':${sns 종류(NAVER, KAKAO), string}}
+ * 네이버 연동의 경우 HTTP로 요청(HTTP Post 6번 API)하고 응답만 Websocket을 통해 이 API 응답 형식으로 받는다.
+ */
+exports.linkSns = async function(data){
+    let status=false, message;
+    try{
+        let user = await db.getWebUser(this.email);
+
+        let snsLinkId = data.snsLinkId;
+        let snsType = data.snsType;
+        let snsEmail = data.snsEmail;
+
+        if(!snsLinkId){
+            throw 'snsLinkId가 없습니다.';
+        }else if(!process.nmns.isValidSnsType(snsType)){
+            throw `snsType은 NAVER 또는 KAKAO만 가능합니다.(${snsType})`;
+        }else if(snsEmail && !emailValidator.validate(snsEmail)){
+            throw `이메일이 올바르지 않습니다.(${snsEmail})`;
+        }
+
+
+        user.snsType = snsType;
+        user.snsLinkId = snsLinkId;
+        user.snsEmail = snsEmail;
+
+        let dbResult1 = await db.setSnsLink({
+            snsLinkId: snsLinkId,
+            snsType: snsType,
+            snsEmail: snsEmail,
+            email: this.email
+        });
+
+        let dbResult2 = await db.setWebUser(user);
+
+        if(!dbResult1 || !dbResult2){
+            throw 'DB 저장에 실패했습니다.';
+        }
+
+        message = '연동 성공';
+        status = true;
+    }catch(e){
+        message = e;
+        status = false;
+    }
+
+    return{
+        status: status,
+        data: data,
+        message: message
+    };
+}
