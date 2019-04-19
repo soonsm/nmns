@@ -120,10 +120,10 @@ module.exports = function(passport) {
         render(res, naverView);
     });
 
-    router.post('/naver', async function(req, res){
+    router.post('/naver_link', async function(req, res){
       let data = req.body;
-      let id = data.id;//unique id
-      let email = data.email;//naver email address
+      let id = data.snsLinkId;//unique id
+      let email = data.naverEmail;//naver email address
       //do something
     });
 
