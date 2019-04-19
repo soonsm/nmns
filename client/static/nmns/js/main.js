@@ -2171,14 +2171,14 @@
         $("#scheduleModal").modal('hide');
       }
     })).on("link sns", socketResponse('SNS 계정 연결', function(e){
-      if(e.data.naver){
-        NMNS.info.naver = e.data.naver;
+      if(e.data.snsType === 'NAVER'){
+        NMNS.info.naver = e.data.snsLinkId;
         if($("#naverBtn").is(":visible")){
           $("#naverBtn").addClass('connected');
         }
       }
-      if(e.data.kakao){
-        NMNS.info.kakao = e.data.kakao;
+      if(e.data.snsType === 'KAKAO'){
+        NMNS.info.kakao = e.data.snsLinkId;
         if($("#kakaoBtn").is(":visible")){
           $("#kakaoBtn").addClass('connected');
         }
@@ -2461,12 +2461,6 @@
         $("#renewPassword").val("");
         $("#infoModal").modal('hide');
       })
-      $("#kakaoBtn").on("touch click", function(){
-        if($(this).hasClass('connected')){
-          return;
-        }
-        alert('카카오톡 계정 연동!');
-      })
       $("#naverBtn").on("touch click", function(e){
         if($(this).hasClass('connected')){
           e.stopImmediatePropagation();
@@ -2492,10 +2486,33 @@
         			clientId: "5dHto9KiEXdHoHJBDcqE",
         			callbackUrl: window.location.origin + '/naver',
         			isPopup: true, 
-        			loginButton: {color:'green', type:1, height:20},
-        			callbackHandle:true
+        			loginButton: {color:'green', type:1, height:20}
       		});
       		naverLogin.init();
+        };
+      }
+      if (!$("#kakaoBtn").hasClass('connected') && !document.getElementById("kakaoScript")) {//최초 접속
+        var script2 = document.createElement("script");
+        script2.src = "/nmns/js/kakao.min.js";
+        script2.id = "kakaoScript";
+        document.body.appendChild(script2);
+
+        script2.onload = function() {
+          Kakao.init('0bc4ec615d313261ebfd5ac0fe9c055f');
+          // 카카오 로그인 버튼을 생성합니다.
+          $("#kakaoBtn").on("touch click", function(){
+            if($(this).hasClass('connected')){
+              return;
+            }
+            Kakao.Auth.login({
+              success: function(authObj) {
+                alert(JSON.stringify(authObj));
+              },
+              fail: function(err) {
+                 alert(JSON.stringify(err));
+              }
+            });
+          });
         };
       }
     }).on("hidden.bs.modal", function(){
