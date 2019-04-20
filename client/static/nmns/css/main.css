@@ -1515,7 +1515,8 @@ button.form-control {
   margin-right:3px;
   vertical-align:text-bottom;
 }
-#naverBtn #naverIdLogin{
+#naverBtn #naverIdLogin, #kakaoBtn #kakaoImg{
+  height:20px;
   display:inline-block;
   margin-right:3px;
   border-radius:3.5px;

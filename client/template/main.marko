@@ -30,8 +30,7 @@
   <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
   <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch" onload="this.rel='stylesheet'">
-  <link href="${input.cdn}/lib/material-floating-button/mfb.min.css" rel="prefetch" onload="this.rel='stylesheet'">
-
+  
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
@@ -597,7 +596,7 @@
                     <input id="renewPassword" type="password" placeholder="한번 더 입력해주세요." class="form-control form-control-sm" autocomplete="off"/>
                     <div style="margin-top:35px">계정 연동</div>
                     <div class="row mx-0 col-12 px-0 mt-3">
-                      <button type="button" class="btn btn-sm btn-form col mr-1" id="kakaoBtn"><img style="height:15px;margin-right:3px" src="/nmns/img/kakaolink_btn_medium.png"><span>카카오 계정 연결하기</span></button>
+                      <button type="button" class="btn btn-sm btn-form col mr-1 py-0" id="kakaoBtn"><img id="kakaoImg" src="/nmns/img/kakaolink_btn_medium.png"><span>카카오 계정 연결하기</span></button>
                       <button type="button" class="btn btn-sm btn-form col ml-1 py-0" id="naverBtn"><img id="naverImg" src="/nmns/img/naver.svg"><div id="naverIdLogin"></div><span>네이버 계정 연결하기</span></button>
                     </div>
                   </div>
@@ -962,66 +961,6 @@
       
     </div>
   </div>
-  <!--
-  <ul id="floatingButton" class="mfb-component--br mfb-slidein d-sm-none" data-mfb-toggle="hover" data-mfb-state="closed">
-    <li class="mfb-component__wrap">
-      <a class="mfb-component__button--main">
-        <span class="mfb-component__main-icon--resting">&times;</span>
-        <span class="mfb-component__main-icon--active">&times;</span>
-        <small class="badge float-right mr-1 new calendarMenu">&#9679;</small>
-      </a>
-      <ul class="mfb-component__list calendarMenu">
-        <li>
-          <a href="#" data-mfb-label="예약추가" class="mfb-component__button--child" aria-label="예약추가">
-            <i class="mfb-component__child-icon fas fa-calendar-plus addReservLink"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="노쇼추가" class="mfb-component__button--child" aria-label="노쇼추가">
-            <i class="mfb-component__child-icon fas fa-plus addNoShowLink" data-toggle="modal" data-target="#noShowModal"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="일정추가" class="mfb-component__button--child" aria-label="일정추가">
-            <i class="mfb-component__child-icon fas fa-calendar-check addTaskLink" data-toggle="modal" data-target="#taskModal"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="고객관리" class="mfb-component__button--child" aria-label="고객관리">
-            <i class="mfb-component__child-icon fas fa-user-cog customerMenuLink"></i>
-            <small class="badge float-right new">&#9679;</small>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="제안/문의" class="mfb-component__button--child" aria-label="제안/문의">
-            <i class="mfb-component__child-icon fas fa-pen" data-toggle="modal" data-target="#feedbackModal"></i>
-          </a>
-        </li>
-      </ul>
-      <ul class="mfb-component__list customerMenu">
-        <li>
-          <a href="#" data-mfb-label="고객추가" class="mfb-component__button--child" aria-label="고객추가">
-            <i class="mfb-component__child-icon fas fa-user-plus addCustomerLink"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="노쇼추가" class="mfb-component__button--child" aria-label="노쇼추가">
-            <i class="mfb-component__child-icon fas fa-plus addNoShowLink" data-toggle="modal" data-target="#noShowModal"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="예약관리" class="mfb-component__button--child" aria-label="예약관리">
-            <i class="mfb-component__child-icon far fa-calendar-alt calendarMenuLink"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" data-mfb-label="제안/문의" class="mfb-component__button--child" aria-label="제안/문의">
-            <i class="mfb-component__child-icon fas fa-pen" data-toggle="modal" data-target="#feedbackModal"></i>
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>-->
 
 <!--[if IE 9]>
 <script type="text/jscript">
@@ -1074,8 +1013,6 @@
   <!-- Custom scripts for this template -->
   <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
   <script src="/nmns/js/main.min.js"></script>
-  <script src="/lib/material-floating-button/modernizr.touch.js"></script>
-  <script src="/lib/material-floating-button/mfb.min.js"></script>
   <script if(input.kakaotalk)>
     document.addEventListener("DOMContentLoaded", function(){
       if(showSnackBar){

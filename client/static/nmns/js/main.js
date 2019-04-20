@@ -2183,7 +2183,11 @@
           $("#kakaoBtn").addClass('connected');
         }
       }
-    }, undefined, true));
+    }, function(e){
+      if(e.data.snsType === 'KAKAO'){
+        alert('카카오톡과의 연동을 하지 못했습니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
+      }
+    }, true));
     //websocket response end
     //Modal events start  
     $(".modal").on("shown.bs.modal", function(){
@@ -2506,10 +2510,19 @@
             }
             Kakao.Auth.login({
               success: function(authObj) {
-                alert(JSON.stringify(authObj));
+                Kakao.API.request({url:'/v2/user/me', success:function(res){
+                  NMNS.socket.emit('link sns', {
+                    snsLinkId:res.for_partner.uuid,
+                    snsEmail:res.for_partner.properties.email,
+                    snsType: 'KAKAO'
+                  });
+                }, fail: function(error){
+                  alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
+                }})
               },
               fail: function(err) {
-                 alert(JSON.stringify(err));
+                alert('연결이 취소되었습니다.');
+                console.log(JSON.stringify(err));
               }
             });
           });
