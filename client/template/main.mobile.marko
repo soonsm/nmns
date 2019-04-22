@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125242064-1"></script>
+  <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-125242064-1');</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="theme-color" content="#334150" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="description" content="WA:SHOW - 노쇼는 그만! 이제는 왓쇼하세요!">
+  <meta name="author" content="Koru">
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="${input.cdn}/nmns/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="${input.cdn}/nmns/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="${input.cdn}/nmns/img/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="256x256" href="${input.cdn}/nmns/img/android-chrome-256x256.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="${input.cdn}/nmns/img/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="${input.cdn}/nmns/img/favicon-16x16.png">
+  <link rel="manifest" href="${input.cdn}/nmns/img/site.webmanifest">
+  <link rel="mask-icon" href="${input.cdn}/nmns/img/safari-pinned-tab.svg" color="#334150">
+  <link rel="shortcut icon" href="${input.cdn}/nmns/img/favicon.ico">
+  <meta name="msapplication-TileColor" content="#334150">
+  <meta name="msapplication-TileImage" content="${input.cdn}/nmns/img/mstile-144x144.png">
+  <meta name="msapplication-config" content="${input.cdn}/nmns/img/browserconfig.xml">
+  <meta name="format-detection" content="telephone=no">
+  <title>WA:SHOW - 노쇼 말고 왓쇼!</title>
+  <!-- Bootstrap core CSS -->
+  
+  <link href="${input.cdn}/lib/bootstrap/css/nmns.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="${input.cdn}/lib/tui-calendar/tui-calendar.min.css" rel="stylesheet">
+  <link href="${input.cdn}/lib/datetimepicker/flatpickr.min.css" rel="prefetch" onload="this.rel='stylesheet'">
+  
+  <!-- Custom styles for this template -->
+  <link href="/nmns/css/main.mobile.min.css" rel="stylesheet">
+  <!-- fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="prefetch" as="font" onload="this.rel='stylesheet'">
+
+  <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
+  <!--fonts-->
+  <style>
+    @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}html{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat'}
+  </style>
+  
+<!--[if lte IE 8]>
+<script type="text/jscript">
+  if(confirm("안전에 취약한 오래된 IE 브라우저를 사용하고 계십니다. 최신 브라우저 이용을 권장드립니다.\n 확인을 누르시면 Chrome 브라우저 다운로드 페이지로 이동합니다.\n *WA:SHOW는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
+    location.href = 'https://www.google.com/intl/ko_ALL/chrome/';
+  }
+</script>
+<![endif]-->
+</head>
+
+<body>
+  <div class="d-flex" style="min-height:100vh">
+    <div id="notifications"></div>
+    <aside id="mainAside" class="sidebar-handler bg-primary text-white container px-0 d-flex">
+      <div id="sidebarContainer" class="row mx-0 col-12">
+        <ul class="list-group w-100">
+          <li>
+            <a class="list-group-item list-group-item-action menuLink calendarMenuLink menuLinkActive sidebar-item rounded-0 border-0" data-link="calendarMenu" data-history="/" aria-label="예약/일정 관리">
+              <div class="d-flex w-100 align-items-center">
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18.778" viewBox="0 0 17 18.778">
+                    <g id="menu_calendar" transform="translate(0.5 0.5)">
+                      <rect width="16" height="15.778" rx="2" stroke-width="1" transform="translate(0 2)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                      <path d="M13,0V4" transform="translate(-1.444)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <path data-name="Path" stroke="#fff" d="M5,0V4" fill="none" transform="translate(-0.556)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <path data-name="Path" stroke="#fff" d="M0,8H16" fill="none" transform="translate(0 -0.889)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <path d="M5.95,12.138l1.685,1.728,3.315-3.125" transform="translate(-0.7)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="menu-collapsed">예약/일정 조회</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a class="list-group-item list-group-item-action menuLink customerMenuLink sidebar-item rounded-0 border-0" data-link="customerMenu" data-history="customer" aria-label="고객 관리">
+              <div class="d-flex w-100 align-items-center">
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18">
+                    <g id="menu_customer" transform="translate(0.5 0.5)">
+                      <path d="M16,18V16a4,4,0,0,0-4-4H4a4,4,0,0,0-4,4v2" transform="translate(0 -1)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <circle cx="4" cy="4" r="4" stroke-width="1" transform="translate(4)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="menu-collapsed">고객 관리</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a class="list-group-item list-group-item-action menuLink salesMenuLink sidebar-item rounded-0 border-0" data-link="salesMenu" data-history="sales" aria-label="매출 관리">
+              <div class="d-flex w-100 align-items-center">
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18.6" viewBox="0 0 17 18.6">
+                    <g id="menu_sales" transform="translate(-308.954 -0.959)">
+                      <path d="M5.026,10.027A1.143,1.143,0,1,1,3.883,8.874,1.147,1.147,0,0,1,5.026,10.027Zm4.571,0A1.143,1.143,0,1,1,8.454,8.874,1.147,1.147,0,0,1,9.6,10.027Zm4.571,0a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,14.169,10.027Zm-9.143,4.61a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,5.026,14.636Zm4.571,0a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,9.6,14.636Zm4.571,0a1.143,1.143,0,1,1-1.143-1.152A1.147,1.147,0,0,1,14.169,14.636Zm.692,3.422H2.048A1.6,1.6,0,0,1,.454,16.452V2.065A1.6,1.6,0,0,1,2.048.458H14.861a1.6,1.6,0,0,1,1.593,1.606V16.452A1.6,1.6,0,0,1,14.861,18.058ZM13.407,6.569H3.5A.765.765,0,0,1,2.74,5.8V3.5A.765.765,0,0,1,3.5,2.728h9.9a.765.765,0,0,1,.762.768V5.8A.765.765,0,0,1,13.407,6.569Z" transform="translate(309 1)" fill="none" stroke="#fff" stroke-width="1" fill-rule="evenodd"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="menu-collapsed">매출 관리</span>
+                <!--<small class="badge new card-subtitle">new</small>-->
+              </div>
+            </a>
+          </li>
+          <li>
+            <a class="list-group-item list-group-item-action menuLink menuMenuLink sidebar-item rounded-0 border-0" data-link="menuMenu" data-history="menu" aria-label="메뉴 관리">
+              <div class="d-flex w-100 align-items-center">
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="19" viewBox="0 0 17 19">
+                    <g id="menu_menu" transform="translate(0.5 0.5)">
+                      <path d="M12,2h2a2,2,0,0,1,2,2V16a2,2,0,0,1-2,2H2a2,2,0,0,1-2-2V4A2,2,0,0,1,2,2H4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/>
+                      <rect width="8" height="4" rx="1" stroke-width="1" transform="translate(4)" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="menu-collapsed">메뉴 관리</span>
+                <!--<small class="badge new card-subtitle">new</small>-->
+              </div>
+            </a>
+          </li>
+          <li>
+            <a class="list-group-item list-group-item-action menuLink infoCenterLink sidebar-item rounded-0 border-0" data-link="infoCenter" data-history="info" aria-label="고객센터">
+              <div class="d-flex w-100 align-items-center">
+                <span class="mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
+                    <g id="menu_help" transform="translate(0.5 0.5)">
+                      <circle cx="8" cy="8" r="8" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+                      <path data-name="패스 633" d="M.688-8.2a2.874,2.874,0,0,1,.942-1.989,3.07,3.07,0,0,1,2.111-.736,3.23,3.23,0,0,1,2.192.723,2.328,2.328,0,0,1,.836,1.841,2.461,2.461,0,0,1-.286,1.17,4.313,4.313,0,0,1-1.077,1.2,3.686,3.686,0,0,0-.97,1.044,3.341,3.341,0,0,0-.18,1.3H3.124A4.151,4.151,0,0,1,3.4-5.4,3.989,3.989,0,0,1,4.419-6.589a4.161,4.161,0,0,0,.922-.967,1.5,1.5,0,0,0,.18-.717A1.633,1.633,0,0,0,5.033-9.49a1.749,1.749,0,0,0-1.279-.479q-1.542,0-1.812,1.774Zm3.7,6.858H3.073V-2.655H4.39Z" transform="translate(4.312 13.92)" fill="#fff"/>
+                    </g>
+                  </svg>
+                </span>
+                <span class="menu-collapsed">고객센터</span>
+                <!--<small class="badge new card-subtitle">new</small>-->
+              </div>
+            </a>
+          </li>
+          <li class="mt-3 mb-5">
+            <a href="#" class="list-group-item list-group-item-action rounded-0 border-0 pb-1 addManager" aria-label="담당자 추가하기">
+              <div class="lnbManagerItem">
+                <div class="d-flex w-100 align-items-center">
+                  <span class="icon-plus mr-3" style="padding:0 1px">+</span>
+                  <span class="menu-collapsed">담당자 추가</span>
+                </div>
+              </div>
+            </a>
+            <div id="lnbManagerList"></div>
+            <div id="lnbManagerForm" class="menu-collapsed" style="margin-top:31px;display:none">
+              <div class='lnbManagerItem row mx-0 align-items-center'>
+                <span id="lnbManagerFormColor" title='담당자의 색깔을 아래에서 선택하세요.'></span>
+                <input type="text" id="lnbManagerFormName" class="border-0 col bg-transparent form-control form-control-sm p-0" placeholder="이름을 입력하세요.">
+                <button type="button" id="lnbManagerFormSubmit" class="btn btn-sm btn-flat">저장</button>
+              </div>
+              <div id="lnbManagerColor" class="mx-0">
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#fd5b77"><span style="background-color:#fd5b77"></span><span style="border-color:#fd5b77"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#039fed"><span style="background-color:#039fed"></span><span style="border-color:#039fed"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#7c46e9"><span style="background-color:#7c46e9"></span><span style="border-color:#7c46e9"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#86cdbd"><span style="background-color:#86cdbd"></span><span style="border-color:#86cdbd"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#6a747d"><span style="background-color:#6a747d"></span><span style="border-color:#6a747d"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#f490b2"><span style="background-color:#f490b2"></span><span style="border-color:#f490b2"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#a51783"><span style="background-color:#a51783"></span><span style="border-color:#a51783"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#447270"><span style="background-color:#447270"></span><span style="border-color:#447270"></span></label> 
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#bd902b"><span style="background-color:#bd902b"></span><span style="border-color:#bd902b"></span></label> 
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#db531f"><span style="background-color:#db531f"></span><span style="border-color:#db531f"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#785f37"><span style="background-color:#785f37"></span><span style="border-color:#785f37"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#b26112"><span style="background-color:#b26112"></span><span style="border-color:#b26112"></span></label> 
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#d0a348"><span style="background-color:#d0a348"></span><span style="border-color:#d0a348"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#e6bb86"><span style="background-color:#e6bb86"></span><span style="border-color:#e6bb86"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#73c267"><span style="background-color:#73c267"></span><span style="border-color:#73c267"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#028c99"><span style="background-color:#028c99"></span><span style="border-color:#028c99"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#f4866b"><span style="background-color:#f4866b"></span><span style="border-color:#f4866b"></span></label>
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#948b60"><span style="background-color:#948b60"></span><span style="border-color:#948b60"></span></label> 
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#8d4640"><span style="background-color:#8d4640"></span><span style="border-color:#8d4640"></span></label> 
+                <label><input class="lnbManagerColorTemplate custom-control-input" type="radio" name="lnbManagerColorTemplate" value="#6092c3"><span style="background-color:#6092c3"></span><span style="border-color:#6092c3"></span></label>
+              </div>
+            </div>
+          </li>
+          <div class="mt-auto menu-collapsed" style="margin-bottom:30px;opacity:0.5;font-size:12px">Copyright &copy; washow.co.kr 2019</div>
+        </ul>
+      </div>
+    </aside>
+    
+    <nav class="navbar topNav bg-primary" id="mainNav">
+      <button class="btn btn-flat px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom">
+        <span id="announcementIcon" class="icon-announcement" aria-label="알림"></span>
+        <span class="badge bg-accent announcementCount position-absolute"></span>
+      </button>
+      <div class="topNav" style="padding:30px">
+        <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:auto;vertical-align:initial"/></a>
+      </div>
+      <span id="sidebarToggler" class="float-right cursor-pointer" style="line-height:15px">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11"><g id="menu" transform="translate(-232.5 -40)"><line data-name="선 2" x2="14" transform="translate(232.5 40.5)" fill="none" stroke="#fff" stroke-width="1"/><line data-name="선 3" x2="14" transform="translate(232.5 45.5)" fill="none" stroke="#fff" stroke-width="1"/><line data-name="선 4" x2="14" transform="translate(232.5 50.5)" fill="none" stroke="#fff" stroke-width="1"/></g></svg>
+      </span>
+      <!--<button class="btn btn-primary ml-auto addNoShowLink" data-toggle="modal" data-target="#noShowModal" type="button" title="노쇼 추가" style="white-space:nowrap"><span class="icon-plus">+</span>노쇼 추가</button>
+      <span class="divider">&nbsp;</span>-->
+      <!--<span class="divider">&nbsp;</span>
+      <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" title="메뉴" data-toggle="popover" data-placement="bottom" aria-label="메뉴 열기/닫기">
+        <div>
+          <span>
+            <img id="mainShopIcon" src="/nmns/img/person_01.svg" class="rounded-circle">
+          </span>
+          <span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]><if(input.user.shopName)>${input.user.shopName}</if><else>${input.user.email}</else></span>
+        </div>
+      </button>-->
+    </nav>
+    <div id="mainRow" class="row col px-0 sidebar-handler">
+      <div id="mainContents" style="padding:0 5px 5px 5px;min-width:100%">
+        
+        <div class="calendarMenu switchingMenu">
+          <div id="mainSearchArea">
+            <div>
+              <label class="mb-0" style="opacity:0.5" for="searchNoShow">
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="24.207" height="26.207" viewBox="0 0 24.207 26.207">
+                  <g id="top_search" transform="translate(-965 -23)">
+                    <g data-name="타원 470" transform="translate(965 23)" fill="none" stroke="#393535" stroke-width="2">
+                      <circle cx="11" cy="11" r="11" stroke="none"/>
+                      <circle cx="11" cy="11" r="10" fill="none"/>
+                    </g>
+                    <line data-name="선 96" x2="6" y2="6" transform="translate(982.5 42.5)" fill="none" stroke="#393535" stroke-width="2"/>
+                  </g>
+                </svg></span>
+              </label>
+              <input type="text" pattern="[0-9]*" class="border-0 col bg-transparent pr-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow">
+            </div>
+          </div>
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">예약 관리</span>
+            <span class="divider" style="display:inline-table">&nbsp;</span>
+            <span class="taskMenu cursor-pointer">
+              <span class="h6 mb-0 font-weight-bold" style="opacity:0.5">오늘의 일정&nbsp;</span>
+              <span class="text-accent menuTitleNumber" id="todayTask">0</span>
+            </span>
+            <!--<button class="btn btn-accent ml-auto" type="button" id="addScheduleBtn"><span class="icon-plus" style="margin-right:8px">+</span>예약/일정 추가</button>-->
+          </div>
+          <div>
+            <div id="mainArea">
+              <div id="mainTask" class="bg-white col" style="padding:20px">
+                <div id="mainTaskTip"></div>
+                <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right cursor-pointer">&times;</span></span>
+                <div id="mainTaskContents"></div>
+              </div>
+              <div id="mainCalendarArea" class="bg-white col p-3">
+                <div id="mainCalendarTools" class="text-center align-items-center row mx-0 justify-center">
+                  <div class="col-12 px-0" style="margin-bottom:20px">
+                    <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding:0 20px 0 0"><span class="icon-arrow icon-arrow-left"></span></button>
+                    <span id="renderRange" class="montserrat"></span>
+                    <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding:0 0 0 20px"><span class="icon-arrow icon-arrow-right"></span></button>
+                  </div>
+                  <!--<div class="d-none d-md-inline-flex calendarTypeGroup ml-auto" role="group" aria-label="캘린더 종류">
+                    <button type="button" class="btn btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></button>
+                    <button type="button" class="btn btn-flat calendarType" data-action="toggle-weekly" aria-label="1주"><span class="calendarTypeText">1주</span></button>
+                    <button type="button" class="btn btn-flat calendarType" data-action="toggle-monthly" aria-label="1달"><span class="calendarTypeText">1달</span></button>
+                  </div>
+                  <div class="d-inline-flex d-md-none ml-auto calendarTypeGroup" role="group">
+                    <button id="calendarTypeMenu" type="button" class="btn btn-light btn-flat border dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="다른 단위로 보기"></button>
+                    <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="calendarTypeMenuReference">
+                      <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></a>
+                      <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-weekly" aria-label="1주"><span class="calendarTypeText">1주</span></a>
+                      <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly" aria-label="1달"><span class="calendarTypeText">1달</span></a>
+                    </div>
+                  </div>-->
+                  <div id="mainCalendarCarousel" class="col-12 px-0">
+                  </div>
+                </div>
+                <div id="mainCalendar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="customerMenu switchingMenu">
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">고객 관리</span>
+            <span id="customerCount" class="text-accent menuTitleNumber">0</span>
+            <span class="divider" style="display:inline-table">&nbsp;</span>
+            <label for="searchCustomer" style="opacity:0.5;margin-bottom:0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24.207" height="26.207" viewBox="0 0 24.207 26.207">
+                <g id="customer_search" transform="translate(-965 -23)">
+                  <g data-name="타원 470" transform="translate(965 23)" fill="none" stroke="#393535" stroke-width="2">
+                    <circle cx="11" cy="11" r="11" stroke="none"/>
+                    <circle cx="11" cy="11" r="10" fill="none"/>
+                  </g>
+                  <line data-name="선 96" x2="6" y2="6" transform="translate(982.5 42.5)" fill="none" stroke="#393535" stroke-width="2"/>
+                </g>
+              </svg>
+            </label>
+            <input type="search" class="border-0" placeholder="이름, 연락처, 담당자 이름으로 검색하세요." aria-label="고객 검색" id="searchCustomer">
+            <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><span class="icon-plus">+</span>고객 추가</button>
+          </div>
+         
+          <div id="mainCustomer" class="col-12 px-0 mb-5">
+            <div id="mainCustomerTools" style="font-size:13px">
+              <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:10px 7px;justify-content:center">
+                <div class="d-inline-flex customerHead customerSortType" data-action="sort-manager">담당</div>
+                <div class="d-inline-flex col-1 px-0 customerHead customerSortType active" data-action="sort-name">이름</div>
+                <div class="d-inline-flex col-2 customerHead">연락처</div>
+                <div class="d-inline-flex col-1 px-0 customerHead customerSortType" data-action="sort-visit">방문횟수</div>
+                <div class="col-4">
+                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-date">마지막 방문</div>
+                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-sales">매출액</div>
+                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-membership">멤버십 잔액</div>
+                </div>
+                <div class="d-inline-flex col customerHead">메모</div>
+              </div>
+            </div>
+            <div id="mainCustomerList" class="col-12 px-0 mx-0 text-center flex-column d-flex" style="min-height: calc(100vh - 330px)">
+              <div class="flex-column m-auto">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>고객 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+            <div id="mainCustomerLoading" style="display:none">
+              <div class="flex-column">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>고객 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="switchingMenu infoCenter">
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">고객센터</span>
+          </div>
+          <div class="menuContents">
+            <textarea id="feedbackBody" placeholder="왓쇼를 이용하면서 불편하거나 바라는 점이 있으신가요?\n원하는 점을 적어주시면 최대한 빨리 확인하여 이메일로 답변드릴게요!" class="han col-12"></textarea>
+            <div class="text-center" style="margin: 20px 0 49px 0">
+              <button id="submitFeedback" type="button" class="btn btn-primary">문의 보내기</button>
+            </div>
+          </div>
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">자주하는 질문</span>
+          </div>
+          <div id="faq"></div>
+        </div>
+        
+        <div class="switchingMenu noShowSearchMenu h-100">
+          <div id="noShowClean" class="container flex-column d-flex h-100" style="justify-content:center">
+            <div class="row">
+              <div class="mx-auto">
+                <img class="col-12" id="noShowImage" alt="노쇼를 하신 적이 없는 고객입니다!"/>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="mx-auto" id="noShowSentense" style="font-size:20px">
+                안심하세요. 노쇼를 하신 적이 없어요!
+              </div>
+            </div>
+          </div>
+          <div id="noShowDirty" class="container flex-column d-none" style="justify-content:center">
+            <div class="row">
+              <div class="mx-auto">
+                <img class="col-12" id="noShowDirtyImage" alt="노쇼 내역이 있습니다. 주의하세요!"/>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="mx-auto text-center" style="font-size:20px">
+                이런! 노쇼 이력이 있는 고객이에요.<br>
+                <span id="noShowSearchSummary"></span>
+              </div>
+            </div>
+            <div class="menuTitle row" style="margin-top:72px">
+              <span class="h4 mb-0 font-weight-bold">우리 매장 노쇼 이력</span>
+              <span id="myNoShowCount" class="text-accent menuTitleNumber">0</span>
+              <span class="divider" style="display:inline-table">&nbsp;</span>
+              <span class="h4 mb-0 font-weight-bold">다른 매장 노쇼</span>
+              <span id="otherNoShowCount" class="text-accent menuTitleNumber">0</span>
+            </div>
+            <div class="row">
+              <div id="noShowSearchList" class="col-12 text-center montserrat"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="switchingMenu menuMenu">
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">메뉴 관리</span>
+            <span class="divider updatingMenu-collapsed" style="display:none;">&nbsp;</span>
+            <span class="h6 mb-0 updatingMenu-collapsed" style="opacity:0.5;display:none">드래그해서 순서를 바꿀 수 있어요!</span>
+            <button class="btn btn-primary ml-auto" type="button" id="updateMenuLink">수정</button>
+            <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><span class="icon-plus">+</span>메뉴 추가</button>
+          </div>
+          <div class="menuContents">
+            <div id="mainMenuTools" style="font-size:13px">
+              <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:15px 20px">
+                <div class="d-inline-flex col-3 menuHead" style="justify-content:center">메뉴 이름</div>
+                <div class="d-inline-flex col menuHead" style="justify-content:center">정가(카드가)</div>
+                <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">정가(현금가)</div>
+                <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">회원가</div>
+                <div class="col-1 updatingMenu-collapsed" style="justify-content:center">&nbsp;</div>
+              </div>
+            </div>
+            <div id="mainMenuList" class="col-12 px-0 mx-0 text-center flex-column d-flex" style="min-height:calc(100vh - 280px)">
+              <div class="flex-column m-auto">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>메뉴 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="switchingMenu salesMenu">
+          <div class="d-flex menuTitle">
+            <span class="h4 mb-0 font-weight-bold">매출 관리</span>
+            <span id="menuTitleSticky" class="d-none">
+              <span class="divider">&nbsp;</span>
+              <span class="h6 mb-0 montserrat" id="salesSearchPeriod" style="opacity:0.7;font-size:14px;font-weight:500"></span>
+            </span>
+          </div>
+          <div class="menuContents">
+            <div id="mainSalesTools">
+              <div id="mainSalesSearch">
+                <div class="row mx-0 align-items-center mb-3">
+                  <div class="col-2 d-flex px-0">조회기간</div>
+                  <div class="col-5 d-flex pl-0">
+                    <div class="input-group">
+                      <input type="text" class="form-control form-control-sm pr-0 montserrat" id="salesSearchStartDate" placeholder="조회 시작 일자" style="border-right:none">
+                      <div class="input-group-append">
+                        <div class="input-group-text"><label class="icon-calendar mb-0" for="salesSearchStartDate"></label></div>
+                      </div>
+                    </div>
+                    <span class="mx-3 px-1" style="line-height:35px">-</span>
+                    <div class="input-group">
+                      <input type="text" class="form-control form-control-sm pr-0 montserrat" id="salesSearchEndDate" placeholder="조회 끝 일자" style="border-right:none">
+                      <div class="input-group-append">
+                        <div class="input-group-text"><label class="icon-calendar mb-0" for="salesSearchEndDate"></label></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-5 d-flex px-0">
+                    <div class="px-3" style="margin-top:-5px">
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton activable mr-1" data-action="currentMonth"></button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton activable mr-1" data-action="previousMonth"></button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton activable" data-action="previous2Month"></button>
+                    </div>
+                    <div class="pl-3" style="margin-top:-5px">
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton mr-1" data-action="week">1주일</button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton mr-1" data-action="month">1개월</button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton mr-1" data-action="halfYear">6개월</button>
+                      <button type="button" class="btn btn-sm p-2 mt-1 btn-white salesSearchPeriodButton" data-action="year">1년</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mx-0 align-items-center mb-3 pt-1">
+                  <div class="col-2 px-0">고객 이름</div>
+                  <div class="col-2 px-0">
+                    <input type="text" autocomplete="off" id="salesSearchName" class="form-control form-control-sm" placeholder="선택사항">
+                  </div>
+                  <div class="col-2 pr-0" style="padding-left:30px">담당</div>
+                  <div class="col-2 px-0">
+                    <button id="salesSearchManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자 선택">
+                      <span>선택</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="salesSearchManager" role="menu" id="salesSearchManagerList" style="right:0"></div>
+                  </div>
+                  <div class="col-2 pr-0" style="padding-left:30px">예약 내용</div>
+                  <div class="col-2 px-0">
+                    <input type="text" class="form-control form-control-sm han col" id="salesSearchContents" aria-label="예약 내용" placeholder="선택사항" autocomplete="off" list="scheduleTabContentList">
+                  </div>
+                </div>
+              </div>
+              <div class="row pt-3">
+                <button type="button" class="btn btn-primary col-2 mx-auto disabled" id="salesSearchButton" style="height:42px;line-height:18px">조회</button>
+              </div>
+              <div id="salesToolsSticky" style="display:none">
+                <div class="d-flex col-12 flex-column" id="salesSummary">
+                  <div class="row col-12 mb-2">
+                    <div class="col-2 salesSummaryTitle">총 건수</div>
+                    <div class="col-2"><span id="salesSummaryTotalCount" class="montserrat"></span>건</div>
+                    <div class="col-2 salesSummaryTitle">카드 결제</div>
+                    <div class="col-2"><span id="salesSummaryTotalCard" class="montserrat"></span>건</div>
+                    <div class="col-2 salesSummaryTitle">현금 결제</div>
+                    <div class="col-2"><span id="salesSummaryTotalCash" class="montserrat"></span>건</div>
+                  </div>
+                  <div class="row col-12">
+                    <div class="col-2 salesSummaryTitle">총 매출금액</div>
+                    <div class="col-2"><span id="salesSummaryTotalAmount" class="montserrat"></span>원</div>
+                    <div class="col-2 salesSummaryTitle">멤버십 충전</div>
+                    <div class="col-2"><span id="salesSummaryTotalMembership" class="montserrat"></span>건</div>
+                    <div class="col-4">&nbsp;</div>
+                  </div>
+                </div>
+                <div class="d-flex col-12 text-center px-0" style="white-space:nowrap;padding:15px 20px">
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType active" data-action="sort-date">매출날짜</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-name">이름</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-manager">담당</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-item">예약내용</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-sales">매출액</div>
+                  <div class="d-inline-flex col-2 px-0 salesHead">결제수단</div>
+                </div>
+              </div>
+            </div>
+            <div id="mainSalesList" class="col-12 row px-0 mx-0 text-center flex-column" style="min-height:calc(100vh - 400px)">
+              <div class="flex-column m-auto">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>매출 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+            <div id="mainSalesLoading" style="display:none">
+              <div class="flex-column">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>매출 정보를 불러오는 중입니다...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- modal area -->
+      <div id="infoModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="내 매장 정보" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header p-0 mx-0">
+              <div class="row mx-0 col-12" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                <div class="modal-title">내 매장 정보</div>
+                <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="row mx-0 col-12 p-0">
+                <form id="infoForm" class="col-12 px-0 mb-1">
+                  <div class="form-group">
+                    <div>이메일<span id="infoAuthStatus" class="ml-2"></span></div>
+                    <div class="mt-3 mb-4 montserrat" id="infoEmail">&nbsp;</div>
+                    <div class="pt-2 mb-3">매장 이름</div>
+                    <input id="infoShopName" type="text" placeholder="매장 이름을 입력해주세요" class="form-control form-control-sm han mb-4"/>
+                    <div class="pt-2 mb-3">매장 운영시간</div>
+                    <div class="row mx-0 mb-4 align-items-center">
+                      <div class="select mr-1">
+                        <select id="infoBizBeginTime" class="form-control form-control-sm" aria-describedby="infoBizBeginTimeIcon" autocomplete="off" style="width:auto">
+                          <option value="0000">오전 00:00</option><option value="0030">오전 00:30</option><option value="0100">오전 01:00</option><option value="0130">오전 01:30</option><option value="0200">오전 02:00</option><option value="0230">오전 02:30</option><option value="0300">오전 03:00</option><option value="0330">오전 03:30</option><option value="0400">오전 04:00</option><option value="0430">오전 04:30</option><option value="0500">오전 05:00</option><option value="0530">오전 05:30</option><option value="0600">오전 06:00</option><option value="0630">오전 06:30</option><option value="0700">오전 07:00</option><option value="0730">오전 07:30</option><option value="0800">오전 08:00</option><option value="0830">오전 08:30</option><option value="0900">오전 09:00</option><option value="0930">오전 09:30</option><option value="1000">오전 10:00</option><option value="1030">오전 10:30</option><option value="1100">오전 11:00</option><option value="1130">오전 11:30</option><option value="1200">오후 12:00</option><option value="1230">오후 12:30</option><option value="1300">오후 01:00</option><option value="1330">오후 01:30</option><option value="1400">오후 02:00</option><option value="1430">오후 02:30</option><option value="1500">오후 03:00</option><option value="1530">오후 03:30</option><option value="1600">오후 04:00</option><option value="1630">오후 04:30</option><option value="1700">오후 05:00</option><option value="1730">오후 05:30</option><option value="1800">오후 06:00</option><option value="1830">오후 06:30</option><option value="1900">오후 07:00</option><option value="1930">오후 07:30</option><option value="2000">오후 08:00</option><option value="2030">오후 08:30</option><option value="2100">오후 09:00</option><option value="2130">오후 09:30</option><option value="2200">오후 10:00</option><option value="2230">오후 10:30</option><option value="2300">오후 11:00</option><option value="2330">오후 11:30</option>
+                        </select>
+                      </div>
+                      <span class="px-2 mx-3">~</span>
+                      <div class="select ml-1">
+                        <select id="infoBizEndTime" class="form-control form-control-sm" aria-describedby="infoBizEndTimeIcon" autocomplete="off" style="width:auto">
+                          <option value="0000">오전 00:00</option><option value="0030">오전 00:30</option><option value="0100">오전 01:00</option><option value="0130">오전 01:30</option><option value="0200">오전 02:00</option><option value="0230">오전 02:30</option><option value="0300">오전 03:00</option><option value="0330">오전 03:30</option><option value="0400">오전 04:00</option><option value="0430">오전 04:30</option><option value="0500">오전 05:00</option><option value="0530">오전 05:30</option><option value="0600">오전 06:00</option><option value="0630">오전 06:30</option><option value="0700">오전 07:00</option><option value="0730">오전 07:30</option><option value="0800">오전 08:00</option><option value="0830">오전 08:30</option><option value="0900">오전 09:00</option><option value="0930">오전 09:30</option><option value="1000">오전 10:00</option><option value="1030">오전 10:30</option><option value="1100">오전 11:00</option><option value="1130">오전 11:30</option><option value="1200">오후 12:00</option><option value="1230">오후 12:30</option><option value="1300">오후 01:00</option><option value="1330">오후 01:30</option><option value="1400">오후 02:00</option><option value="1430">오후 02:30</option><option value="1500">오후 03:00</option><option value="1530">오후 03:30</option><option value="1600">오후 04:00</option><option value="1630">오후 04:30</option><option value="1700">오후 05:00</option><option value="1730">오후 05:30</option><option value="1800">오후 06:00</option><option value="1830">오후 06:30</option><option value="1900">오후 07:00</option><option value="1930">오후 07:30</option><option value="2000">오후 08:00</option><option value="2030">오후 08:30</option><option value="2100">오후 09:00</option><option value="2130">오후 09:30</option><option value="2200">오후 10:00</option><option value="2230">오후 10:30</option><option value="2300">오후 11:00</option><option value="2330">오후 11:30</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="pt-2 mb-3">업종</div>
+                    <input id="infoBizType" type="text" placeholder="업종을 입력하세요" class="form-control form-control-sm han"/>
+                    
+                  </div>
+                </form>
+                <div class="row mx-0 mt-5 col-12 p-0">
+                  <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
+                  <button type="button" class="btn btn-accent col ml-1" id="infoBtn">저장</button>
+                </div>
+              </div>
+                  
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="userModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="내 계정 정보" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content ">
+            <div class="modal-header p-0 mx-0">
+              <div class="row mx-0 col-12" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                <div class="modal-title">내 계정 정보</div>
+                <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="row mx-0 col-12 p-0">
+                <form id="passwordForm" class="mb-1 col-12 px-0">
+                  <div class="form-group mb-0">
+                    <div>현재 비밀번호</div>
+                    <input id="currentPassword" type="password" placeholder="현재 비밀번호를 입력해주세요." class="form-control form-control-sm mt-3" autocomplete="off"/>
+                    <div style="margin-top:35px">새 비밀번호</div>
+                    <input id="newPassword" type="password" placeholder="새 비밀번호를 입력해주세요." class="form-control form-control-sm mt-3 mb-2" autocomplete="off"/>
+                    <input id="renewPassword" type="password" placeholder="한번 더 입력해주세요." class="form-control form-control-sm" autocomplete="off"/>
+                    <div style="margin-top:35px">계정 연동</div>
+                    <div class="row mx-0 col-12 px-0 mt-3">
+                      <button type="button" class="btn btn-sm btn-form col mr-1 py-0" id="kakaoBtn"><img id="kakaoImg" src="/nmns/img/kakaolink_btn_medium.png"><span>카카오 계정 연결하기</span></button>
+                      <button type="button" class="btn btn-sm btn-form col ml-1 py-0" id="naverBtn"><img id="naverImg" src="/nmns/img/naver.svg"><div id="naverIdLogin"></div><span>네이버 계정 연결하기</span></button>
+                    </div>
+                  </div>
+                </form>
+                <div class="row mx-0 col-12 px-0 mt-5">
+                  <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
+                  <button type="button" class="btn btn-accent col ml-1" id="resetPasswordBtn">저장</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="noShowModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="노쇼 추가" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header p-0 mx-0">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                <ul id="noShowTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true" aria-label="직접 추가">직접 추가</a></li>
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#noShowSchedule" data-toggle="tab" aria-label="예약에서 추가">예약에서 추가</a></li>
+                </ul>
+                <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">
+                  <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="row mx-0 col-12 tab-content p-0">
+                      
+                <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+                  <div class="row mx-0">
+                    <div>연락처 입력</div>
+                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">
+                    <div>노쇼 사유</div>
+                    <div id="noShowAddContent" class="row mx-0 col-12 px-0 mt-3 mb-5">
+                      <span class="btn noShowAddCase" data-value="지각">지각</span>
+                      <span class="btn noShowAddCase" data-value="잠수">잠수</span>
+                      <span class="btn noShowAddCase" data-value="직전취소">직전취소</span>
+                      <input id="noShowAddCaseEtc" type="text" class="form-control form-control-sm col" placeholder="사유를 직접 입력하세요.">
+                    </div>
+                    <button id="noShowAddBtn" type="button" class="btn btn-accent col-12 mt-1"><span style="opacity:0.35">노쇼 이력 저장</span></button>
+                  </div>
+                </div>
+                
+                <div id="noShowSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <div class="row mx-0">
+                    <div>예약내용 검색</div>
+                    <div class="row col-12 mx-0 px-0 mt-3">
+                      <input type="text" class="form-control form-control-sm col" id="noShowScheduleTarget" placeholder="고객 이름 또는 연락처를 검색하세요.">
+                      <button type="button" class="btn btn-sm btn-primary ml-1 shadow-none" id="noShowScheduleSearch" aria-label="검색">검색</button>
+                    </div>
+                    <div class='row col-12 mx-0 px-0 text-center' style='border-bottom:1px solid rgba(58, 54, 54, 0.35);margin-top:20px;padding:15px'>
+                      <div class='col col-1 pl-0'></div>
+                      <div class='col col-2 px-0'>날짜</div>
+                      <div class='col col-2 pr-0'>고객이름</div>
+                      <div class='col col-3 pr-0'>연락처</div>
+                      <div class='col col-4 pr-0'>예약내용</div>
+                    </div>
+                    <div id="noShowScheduleList" style="height:120px" class="col-12 px-0 text-center">
+                    </div>
+                    <div>노쇼 사유</div>
+                    <div id="noShowScheduleContent" class="row mx-0 col-12 px-0 mt-3 mb-5">
+                      <span class="btn noShowAddCase" data-value="지각">지각</span>
+                      <span class="btn noShowAddCase" data-value="잠수">잠수</span>
+                      <span class="btn noShowAddCase" data-value="직전취소">직전취소</span>
+                      <input id="noShowScheduleCaseEtc" type="text" class="form-control form-control-sm col" placeholder="사유를 직접 입력하세요.">
+                    </div>
+                    <button id="noShowScheduleBtn" type="button" class="btn btn-accent col-12 mt-1"><span style="opacity:0.35">노쇼 이력 저장</span></button>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="alrimModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="알림톡 정보" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header p-0">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                <ul id="alrimTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimTab" data-toggle="tab" aria-label="알림톡 정보">알림톡 정보</a></li>
+                  <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimHistoryTab" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>
+                </ul>
+                <button type="button" class="close p-0 ml-auto my-0 mr-0" data-dismiss="modal" aria-label="닫기">
+                  <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="row mx-0 col-12 px-0 tab-content">
+
+                <div id="alrimTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <form id="alrimForm" class="mb-1">
+                    <div class="form-group mb-0">
+                      <div class="mb-4">
+                        <span id="labelAlrimUseYn" class="d-inline" style="margin-right:8px">알림톡 사용여부</span>
+                        <div class="custom-control custom-switch d-inline">
+                          <input type="checkbox" class="custom-control-input" id="alrimUseYn">
+                          <label class="custom-control-label" for="alrimUseYn"></label>
+                        </div>
+                      </div>
+                      <div style="position:relative">
+                        <div id="alrimScreen"></div>
+                        <div class="mt-2 mb-3">매장 이름</div>
+                        <input id="alrimShopName" name="shopName" type="text" placeholder="고객에게 보여질 매장 이름을 입력해주세요." class="form-control form-control-sm han mb-4"/>
+                        <div class="pt-2 mb-3">휴대폰 번호<span class="align-middle subText">고객이 예약취소 버튼을 눌렀을 때 알림톡을 보내드릴 휴대폰 번호</span></div>
+                        <input id="alrimCallbackPhone" name="callbackPhone" type="text" pattern="[0-9]*" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4 montserrat"/>
+                        <div class="pt-2 mb-3">알림 안내문구<span class="align-middle subText">고객에게 보낼 알림톡 안내문구</span><span class="float-right"><span class="montserrat font-weight-bold"><span id="noticeByteCount">0</span> / 700</span>자</span></div>
+                        <textarea id="alrimNotice" name="notice" placeholder="예시.\n예약해주셔서 감사합니다.\n취소할 때에는 꼭 [예약취소] 버튼을 눌러 주세요!" class="form-control form-control-sm han mb-4"/>
+                        <div class="pt-2 mb-3">예약취소 가능시간<span class="subText">[예약취소는 n시간 전까지 가능합니다.] 라는 문구로 자동표기 됩니다.</span></div>
+                        <input id="alrimCancelDue" name="cancelDue" type="text" placeholder="3시간 << 이렇게 텍스트로 입력해주세요!" class="form-control form-control-sm han"/>
+                      </div>
+                    </div>
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-accent col ml-1" id="alrimInfoBtn">저장</button>
+                  </div>
+                </div>
+
+                <div id="alrimHistoryTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <div>알림톡 검색</div>
+                  <div class="row col-12 px-0 my-3 mx-0">
+                    <input type="text" class="form-control form-control-sm col" id="alrimHistoryTarget" placeholder="고객 이름 또는 연락처를 검색하세요." autocomplete="false">
+                    <button type="button" id="alrimHistorySearch" class="btn btn-sm btn-primary shadow-none ml-3">검색</button>
+                  </div>
+                  <div class="row col-12 px-0 text-center" style="margin:25px 0">
+                    <span class="col-2 px-0">날짜</span>
+                    <span class="col-3 offset-2">고객이름</span>
+                    <span class="col-4 px-0">연락처</span>
+                    <span class="col-2"></span>
+                  </div>
+                  <div id="alrimHistoryList" class="row col-12 px-0 mx-0 mb-1 text-center"></div>
+                  
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">닫기</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="scheduleModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header p-0">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+                <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="height:47px;">
+                  <li class="nav-item d-inline-flex"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
+                  <li class="nav-item createScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>
+                  <li class="nav-item updateScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#salesTab" data-toggle="tab" aria-label="매출 입력">매출 입력</a></li>
+                </ul>
+                <button type="button" class="close p-0 ml-auto my-0 mr-0" data-dismiss="modal" aria-label="닫기">
+                  <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="row mx-0 col-12 px-0 tab-content">
+                
+                <div id="scheduleTab" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
+                  <form id="scheduleForm" class="mb-1">
+                    <div class="updateScheduleElement row mx-0" style="margin-bottom:35px">
+                      <div>예약 상태</div>
+                      <div style="margin-left:35px" id="scheduleStatus">
+                        <input type="radio" name="scheduleStatus" value="RESERVED" id="scheduleStatusReserved">
+                        <label for="scheduleStatusReserved" class="align-middle mr-1"></label>
+                        <label for="scheduleStatusReserved" style="margin-right:30px">정상</label>
+                        <input type="radio" name="scheduleStatus" value="CANCELED" id="scheduleStatusCanceled">
+                        <label for="scheduleStatusCanceled" class="align-middle mr-1"></label>
+                        <label for="scheduleStatusCanceled" style="margin-right:30px">취소</label>
+                        <input type="radio" name="scheduleStatus" value="NOSHOW" id="scheduleStatusNoShow">
+                        <label for="scheduleStatusNoShow" class="align-middle mr-1"></label>
+                        <label for="scheduleStatusNoShow">노쇼</label>
+                      </div>
+                    </div>
+                    <div>고객 이름</div>
+                    <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
+                    <div style="margin-top:35px">고객 연락처</div>
+                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
+                    <div style="margin-top:35px">예약시간
+                      <span class="float-right">
+                        <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>
+                        <label for="scheduleAllDay"></label>
+                        <label for="scheduleAllDay">하루종일</label>
+                      </span>
+                    </div>
+                    <div class="d-flex col-12 px-0 align-items-center mt-3">
+                      <div class="select mr-1">
+                        <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
+                      <span class="px-2 mx-3">~</span>
+                      <div class="select mr-1">
+                        <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
+                    </div>
+                    <div style="margin-top:35px">예약 내용</div>
+                    <div class="flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
+                    <div class="col-12 text-center">
+                      <button type="button" class="btn btn-sm btn-flat" id="scheduleAddContents">
+                        <span class="icon-plus">+</span> 내용 추가
+                      </button>
+                    </div>
+                    <datalist id="scheduleTabContentList"></datalist>
+                    <div class="row mx-0" style="margin-top:35px">
+                      <div class="col mr-1 px-0 flex-column">
+                        <div class="d-flex">담당자</div>
+                        <div class="d-flex mt-3">
+                          <button id="scheduleManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자 선택">
+                            <span>담당자 선택</span>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="scheduleManager" role="menu" id="scheduleManagerList"></div>
+                        </div>
+                      </div>
+                      <div class="col ml-1 px-0 flex-column">
+                        <div class="d-flex">고객 메모</div>
+                        <input type="text" class="form-control form-control-sm han mt-3" id="scheduleEtc" name="etc" aria-label="고객 메모" placeholder="고객 메모">
+                      </div>
+                    </div>
+                      
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white updateScheduleElement col mr-1" id="deleteScheduleBtn">삭제</button>
+                    <button type="button" class="btn btn-primary updateScheduleElement col mx-1" id="resendAlrimScheduleBtn">알림톡 재전송</button>
+                    <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">예약 추가 완료</button>
+                  </div>
+                </div>
+
+                <div id="taskTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <form id="taskForm" class="mb-1">
+                    <div>일정 내용</div>
+                    <input class="form-control form-control-sm han mt-3" id="taskName" placeholder="일정 내용" aria-label="일정 내용" type="text">
+                    <div style="margin-top:35px">예약시간
+                      <span class="float-right">
+                        <input id="taskAllDay" name="isAllDay" type="checkbox"/>
+                        <label for="taskAllDay"></label>
+                        <label for="taskAllDay">하루종일</label>
+                      </span>
+                    </div>
+                    <div class="d-flex col-12 px-0 align-items-center mt-3">
+                      <div class="select mr-1">
+                        <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
+                      <span class="px-2 mx-3">~</span>
+                      <div class="select mr-1">
+                        <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
+                      </div>
+                      <div class="select ml-1">
+                        <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                      </div>
+                    </div>
+                    <div style="margin-top:35px">담당자</div>
+                    <button id="taskManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자 선택">
+                      <span>담당자 선택</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>
+                    
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-accent col ml-1" id="taskBtn">일정 추가 완료</button>
+                  </div>
+                </div>
+                
+                <div id="salesTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
+                  <form class="mb-1">
+                    <div class="flex-column" id="salesLoading">
+                      <div class="bouncingLoader">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div> 
+                      <span>매출 정보를 불러오는 중입니다...</span>
+                    </div>
+                    <div id="salesForm">
+                      
+                    </div>
+                  </form>
+                  <div class="row mx-0 mt-5">
+                    <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-accent col ml-1 disabled" id="salesBtn">저장</button>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div id="tutorialModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <span>
+                <h5 class="modal-title">처음 방문하셨군요!</h5>
+              </span>
+              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">알고나면 더 편리하게 사용할 수 있는 No More No Show!<br/>쉬운 No More No Show 사용법을 알려드릴게요.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
+              <button type="button" id="start" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="시작">시작</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div id="tipsModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <span>
+                <h5 class="modal-title" id="tipsTitle"><if(input.tips)>$!{input.tips.title}</if><else>고객에게 예약카톡 보내기</else></h5>
+                <small class="text-secondary">Tip!</small>
+              </span>
+              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="waitTips" class="waiting flex-column">
+                <div class="bouncingLoader">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div> 
+                <span>매출 정보를 불러오는 중입니다...</span>
+              </div>
+              <p id="tipsBody"><if(input.tips)>$!{input.tips.body}</if><else>오른쪽 상단의 버튼을 클릭하셔서 알림톡 정보 메뉴 > 알림톡 사용을 체크하신 후 예약 추가 시 고객의 연락처를 입력하시면 고객에게 예약 안내 카톡을 보내실 수 있습니다.</else></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="noMoreTips" class="btn btn-light btn-flat" data-dismiss="modal" aria-label="더이상 Tip 보지않기">더이상 <span class="d-none d-sm-inline">Tip</span> 보지않기</button>
+              <button type="button" id="prevTips" class="btn btn-light btn-flat disabled" aria-label="이전"><span class="d-none d-sm-inline-block">이전</span><span class="icon-arrow icon-arrow-left d-inline-block d-sm-none"></span></button>
+              <button type="button" id="nextTips" class="btn btn-light btn-flat" aria-label="다음"><span class="d-none d-sm-inline-block">다음</span><span class="icon-arrow icon-arrow-right d-inline-block d-sm-none"></span></button>
+              <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal" aria-label="닫기">닫기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+<!--[if IE 9]>
+<script type="text/jscript">
+  document.getElementById("mainAside").innerHTML = "";
+  document.getElementById("mainRow").innerHTML = "";
+  if(confirm("안전에 취약한 오래된 IE 브라우저를 사용하고 계십니다. 최신 브라우저 이용을 권장드립니다.\n 확인을 누르시면 Chrome 브라우저 다운로드 페이지로 이동합니다.\n *WA:SHOW는 IE10 이상의 브라우저를 지원하고,\nChrome 브라우저에 최적화되어있습니다.")){
+    location.href = 'https://www.google.com/intl/ko_ALL/chrome/';
+  }
+</script>
+<![endif]-->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="${input.cdn}/nmns/js/util.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js" integrity="sha256-VrmtNHAdGzjNsUNtWYG55xxE9xDTz4gF63x/prKXKH0=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/ko.js" integrity="sha256-qkVUOqyWLNnWgXE3Xd2HmUE9GQ/4Z6zRSk3P7JYAAOk=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js" integrity="sha256-pOydVY7re8c1n+fEgg3uoslR/di9NMsOFXJ0Esf2xjQ=" crossorigin="anonymous"></script>
+
+  <script src="${input.cdn}/lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tui-code-snippet@1.5.0/dist/tui-code-snippet.min.js" integrity="sha256-G/qL3YkywOsmOqpj4hbIEhPEFgnz6FhJyF+E5rYngUo=" crossorigin="anonymous"></script>
+  <script>
+    var NMNS = {
+      email:"${input.user.email}",
+      needInit : true,
+      history : [],
+      holiday: [],
+      info:{},
+      refreshScheduleManager: true,
+      refreshTaskManager: true,
+      refreshMenu: true,
+      colorTemplate : ["#fd5b77", "#039fed", "#7c46e9", "#86cdbd", "#6a747d", "#f490b2", "#a51783", "#447270", "#bd902b", "#db531f", "#785f37", "#b26112", "#d0a348", "#e6bb86", "#73c267", "#028c99", "#f4866b", "#948b60", "#8d4640", "#6092c3"]
+    };
+    if(window.tui){
+      window.tui.usageStatistics = false;
+    }else{
+      window.tui = {usageStatistics : false};
+    }
+  </script>
+  
+  <script src="${input.cdn}/lib/datetimepicker/flatpickr.min.js"></script>
+  <script src="${input.cdn}/lib/datetimepicker/ko.min.js"></script>
+  <script src="${input.cdn}/lib/tui-calendar/tui-calendar.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
+  <script src="/nmns/js/main.mobile.min.js"></script>
+  <script if(input.kakaotalk)>
+    document.addEventListener("DOMContentLoaded", function(){
+      if(showSnackBar){
+        showSnackBar("<span>카카오톡 계정과 성공적으로 연동되었습니다.<br/>이제 카톡에서도 편리하게 노쇼를 관리하세요!</span>");
+      }else{
+        alert("카카오톡 계정과 성공적으로 연동되었습니다.\n이제 카톡에서도 편리하게 노쇼를 관리하세요!");
+      }
+    });
+  </script>
+</body>
+</html>

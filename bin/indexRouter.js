@@ -13,7 +13,7 @@ const moment = require('moment');
 const logger = global.nmns.LOGGER;
 
 const pcMainView = require('../client/template/main');
-const mobileMainView = require('../client/template/main');
+const mobileMainView = require('../client/template/main.mobile');
 const indexView = require('../client/template/index');
 const signinView = require('../client/template/signin');
 const signupView = require('../client/template/signup');
