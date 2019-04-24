@@ -80,11 +80,11 @@ input[name='etc'],
   content: url('/nmns/img/email-ok.svg');
 }
 .icon-announcement{
-  content: url('/nmns/img/Notification.svg');
+  content: url('/nmns/img/Notification_white.svg');
   width:25px;
 }
 .icon-announcement.icon-announcement-count{
-  content: url('/nmns/img/Notification_count.svg');
+  content: url('/nmns/img/Notification_count_white.svg');
 }
 /*main contents*/
 html {
@@ -551,7 +551,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 
 #mainCalendarTools {
     width: 100%;
-    margin-bottom:12px;
+    margin-bottom:20px;
 }
 #mainCalendarCalendar, #mainCalendarCalendar .flatpickr-months, #mainCalendarCalendar .flatpickr-calendar:before, #mainCalendarCalendar .flatpickr-calendar:after{
     display:none;
