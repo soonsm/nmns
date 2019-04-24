@@ -545,13 +545,53 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     font-size: 18px;
     font-weight:500;
     vertical-align:sub;
+    display:inline-block;
+    width:80px;
 }
 
 #mainCalendarTools {
     width: 100%;
     margin-bottom:12px;
 }
-#mainCalendarCarousel .mainCalendarWeek{
+#mainCalendarCalendar, #mainCalendarCalendar .flatpickr-months, #mainCalendarCalendar .flatpickr-calendar:before, #mainCalendarCalendar .flatpickr-calendar:after{
+    display:none;
+}
+#mainCalendarCalendar .flatpickr-calendar{
+    position:initial;
+    box-shadow:none;
+    width:100%;
+    visibility:visible;
+    opacity:1;
+    display:block;
+    padding:0;
+}
+#mainCalendarCalendar .flatpickr-day{
+    max-width:14.28571428%;
+    font-size:16px;
+    font-weight:500;
+    font-family: 'Montserrat';
+    line-height:12vw;
+    padding-bottom:14.28571428%;
+    border-radius:50%;
+}
+#mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
+    color:#1736ff;
+}
+#mainCalendarCalendar .flatpickr-weekday{
+    font-size:13px;
+    font-weight:bold;
+    flex:1 0;
+}
+#mainCalendarCalendar .flatpickr-day.prevMonthDay, #mainCalendarCalendar .flatpickr-day.nextMonthDay{
+    opacity:0.5;
+}
+#mainCalendarCalendar .flatpickr-day.selected, #mainCalendarCalendar .flatpickr-day.startRange, #mainCalendarCalendar .flatpickr-day.endRange, #mainCalendarCalendar .flatpickr-day.selected.inRange, #mainCalendarCalendar .flatpickr-day.startRange.inRange, #mainCalendarCalendar .flatpickr-day.endRange.inRange, #mainCalendarCalendar .flatpickr-day.selected:focus, #mainCalendarCalendar .flatpickr-day.startRange:focus, #mainCalendarCalendar .flatpickr-day.endRange:focus, #mainCalendarCalendar .flatpickr-day.selected:hover, #mainCalendarCalendar .flatpickr-day.startRange:hover, #mainCalendarCalendar .flatpickr-day.endRange:hover, #mainCalendarCalendar .flatpickr-day.selected.prevMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.selected.nextMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.nextMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.nextMonthDay{
+    background-color: rgba(51, 65, 80, 0.1);
+    box-shadow: none;
+    color: initial;
+    border-color: transparent;
+}
+#mainCalendarCarousel .mainCalendarWeek, #mainCalendarCalendar .mainCalendarCalendarMonth{
     display:flex;
     flex-grow:1;
 }
@@ -572,6 +612,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarCarousel .mainCalendarDayName{
     font-size:13px;
     font-weight:bold;
+    height:26px;
+    line-height:26px;
 }
 #mainCalendarCarousel .mainCalendarDayName, #mainCalendarCarousel .mainCalendarOtherMonth .mainCalendarDay{
     opacity:0.5;

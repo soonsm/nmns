@@ -34,7 +34,7 @@
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.mobile.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="prefetch" as="font" onload="this.rel='stylesheet'">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="preload" as="style" onload="this.rel = 'stylesheet'">
 
   <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
@@ -245,9 +245,14 @@
               <div id="mainCalendarArea" class="bg-white col p-3">
                 <div id="mainCalendarTools" class="text-center align-items-center row mx-0 justify-center">
                   <div class="col-12 px-0" style="margin-bottom:20px">
-                    <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding:0 20px 0 0"><span class="icon-arrow icon-arrow-left"></span></button>
-                    <span id="renderRange" class="montserrat"></span>
-                    <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding:0 0 0 20px"><span class="icon-arrow icon-arrow-right"></span></button>
+                    <input type="text" id="mainCalendarRangeInput1" class="d-none">
+                    <input type="text" id="mainCalendarRangeInput2" class="d-none">
+                    <input type="text" id="mainCalendarRangeInput3" class="d-none">
+                    <div id="mainCalendarRange">
+                      <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding:0 20px 0 0"><span class="icon-arrow icon-arrow-left"></span></button>
+                      <span id="renderRange" class="montserrat"></span>
+                      <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding:0 0 0 20px"><span class="icon-arrow icon-arrow-right"></span></button>
+                    </div>
                   </div>
                   <!--<div class="d-none d-md-inline-flex calendarTypeGroup ml-auto" role="group" aria-label="캘린더 종류">
                     <button type="button" class="btn btn-flat calendarType" data-action="toggle-daily" aria-label="1일"><span class="calendarTypeText">1일</span></button>
@@ -262,8 +267,12 @@
                       <a class="dropdown-item calendarType px-0" href="#" data-action="toggle-monthly" aria-label="1달"><span class="calendarTypeText">1달</span></a>
                     </div>
                   </div>-->
-                  <div id="mainCalendarCarousel" class="col-12 px-0">
+                  <div id="mainCalendarCalendar" class="col-12 px-0" style="width:100%">
+                    <div data-index="1" class="mainCalendarCalendarMonth"></div>
+                    <div data-index="2" class="mainCalendarCalendarMonth"></div>
+                    <div data-index="3" class="mainCalendarCalendarMonth"></div>
                   </div>
+                  <div id="mainCalendarCarousel" class="col-12 px-0"></div>
                 </div>
                 <div id="mainCalendar"></div>
               </div>
