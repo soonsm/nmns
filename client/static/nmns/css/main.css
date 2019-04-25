@@ -715,8 +715,15 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: 100%;
     height: 100%;
     overflow: hidden;
+    padding:15px 15px 15px 20px;
 }
-
+.tui-full-calendar-schedule-cover > div{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display:flex;
+    flex-direction:column;
+}
 .tui-full-calendar-time-schedule {
     word-break:break-all;
     line-height: 1.2;

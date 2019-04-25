@@ -335,43 +335,18 @@
     function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
-        if(NMNS.calendar.getViewName() === 'week'){
-          html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center text-center'><div class='col-11 px-0'>"
-          if(!isAllDay){
-              html += "<div class='row mx-0'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
+        var contents = null;
+        if(schedule.raw.contents){
+          try{
+            contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
+          }catch(error){
+            contents = schedule.raw.contents;
           }
-          if (schedule.title) {
-              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>" + schedule.title + "</div></div>";
-          }
-          html += "</div></div>"
-        }else if(NMNS.calendar.getViewName() === 'day'){
-          var contents = null;
-          if(schedule.raw.contents){
-            try{
-              contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
-            }catch(error){
-              contents = schedule.raw.contents;
-            }
-          }
-          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
-          html += ("<div title='"+type+"내용:"+(contents||'')+" class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
-          /*switch (schedule.raw.status) {
-              case "CANCELED":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
-                  break;
-              case "NOSHOW":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
-                  break;
-              case "CUSTOMERCANCELED":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
-                  break;
-          }*/
-          html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
-          
-        }else{
-          html += "예약 " + schedule.count + "건</div>"
         }
-
+        html += "<div class='tui-full-calendar-schedule-cover'><div><div class='row align-items-center' style='margin-bottom:5px'><div class='row mx-0 col'>";
+        html += ("<div title='"+type+"내용:"+(contents||'')+"' class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
+        html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div style='font-size:11px'>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div></div>");
+        
         return html;
     }
 
