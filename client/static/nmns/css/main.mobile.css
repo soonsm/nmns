@@ -1551,8 +1551,8 @@ button.form-control {
     padding:25px 10px 25px 15px;
 }
 #feedbackBody {
-    min-height: calc(30vh);
-    height:30vh;
+    min-height: calc(15vh);
+    height:15vh;
     max-height: calc(100vh - 280px);
     font-size: 14px;
     border:none;
