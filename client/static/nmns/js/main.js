@@ -482,6 +482,7 @@
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
         
+        $('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
     }
 
     function setRenderRangeText() {
@@ -2837,7 +2838,7 @@
               <div class="col px-0 d-none"><div id="announcementArea" class="col px-0 mr-2"></div></div>\
               <div class="col px-0">\
                 <div id="notificationArea" class="col px-0 ml-2">\
-                  <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">\
+                  <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(57, 53, 53, 0.2)">\
                     <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div>\
                   <div id="notificationBody"><div class="flex-column m-auto text-center py-5"><div class="bouncingLoader"><div></div><div></div><div></div></div><span>새로운 알림을 불러오는 중입니다...</span></div></div>\
                   <div id="notificationEmpty">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div>\
