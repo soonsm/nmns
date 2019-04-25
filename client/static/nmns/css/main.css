@@ -177,10 +177,10 @@ input[type=checkbox]+label{
     }
 }
 #mainAside .topNav{
-    border-bottom:0.5px solid rgba(255,255,255,0.35);
+    border-bottom:0.5px solid rgba(255,255,255,0.2);
 }
 #mainRow .topNav{
-    border-bottom:0.5px solid rgba(57,53,53,0.35);
+    border-bottom:0.5px solid rgba(57,53,53,0.2);
 }
 #mainRow.fixedScroll .topNav{
   position:fixed;
@@ -715,7 +715,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: 100%;
     height: 100%;
     overflow: hidden;
-    padding:15px 15px 15px 20px;
+    padding:15px;
 }
 .tui-full-calendar-schedule-cover > div{
     width: 100%;
@@ -1427,7 +1427,7 @@ button.form-control {
 }
 
 #notificationBody .notification:not(:last-child), #announcementArea .announcement:not(:last-child){
-    border-bottom:1px solid rgba(58, 54, 54, 0.35);
+    border-bottom:1px solid rgba(57, 53, 53, 0.2);
 }
 
 #announcementArea .announcement .announcementTitle{
@@ -1723,7 +1723,7 @@ button.form-control {
 }
 
 #faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
-    border-bottom: 1px solid rgba(58, 54, 54, 0.35);
+    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{
