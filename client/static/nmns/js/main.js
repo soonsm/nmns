@@ -151,7 +151,7 @@
             hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
+            "common.border": "1px solid rgba(57, 53, 53, 0.2)",
             "common.saturday.color": "#1736ff",
             'common.dayname.color': '#393535',
             'common.holiday.color':'#fd5b77',
@@ -183,6 +183,7 @@
             "week.pastTime.color": "#393535",
             "week.futureTime.color": "#393535",
             'week.creationGuide.color': '#fd5b77',
+            'week.today.backgroundColor': 'inherit',
             'week.timegrid.paddingRight': '1px',
             'week.dayGridSchedule.marginRight': '1px',
             'week.dayname.borderTop':'none',
@@ -191,6 +192,9 @@
             'week.dayname.textAlign': 'center',
             'week.dayname.height': '51px',
             'week.dayGridSchedule.borderLeft': '2px solid',
+            'week.timegridHorizontalLine.borderBottom': '1px solid rgba(57, 53, 53, 0.2)',
+            'week.daygrid.borderRight': '1px solid rgba(57,53,53,0.2)',
+            'week.timegrid.borderRight': '1px solid rgba(57,53,53,0.2)',
             'week.daygridLeft.width': '54px',
             'week.timegridLeft.borderRight': 'none',
             'week.timegridLeft.width': '54px'
@@ -490,12 +494,15 @@
             html += today.format('YYYY. MM. DD');
             var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
             html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
+            renderRange.style.width = '280px';
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
+            renderRange.style.width = '120px';
         } else {
             html += moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY. MM. DD');
             html += ' - ';
             html += moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM. DD');
+            renderRange.style.width = '280px';
         }
         renderRange.innerHTML = html;
     }

@@ -152,7 +152,7 @@
             hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
+            "common.border": "1px solid rgba(57, 53, 53, 0.2)",
             "common.saturday.color": "#1736ff",
             'common.dayname.color': '#393535',
             'common.holiday.color':'#fd5b77',
@@ -184,6 +184,7 @@
             "week.pastTime.color": "#393535",
             "week.futureTime.color": "#393535",
             'week.creationGuide.color': '#fd5b77',
+            'week.today.backgroundColor': 'inherit',
             'week.timegrid.paddingRight': '1px',
             'week.dayGridSchedule.marginRight': '1px',
             'week.dayname.borderTop':'none',
@@ -191,6 +192,9 @@
             'week.dayname.borderLeft':'none',
             'week.dayname.textAlign': 'center',
             'week.dayname.height': '51px',
+            'week.timegridHorizontalLine.borderBottom': '1px solid rgba(57, 53, 53, 0.2)',
+            'week.daygrid.borderRight': '1px solid rgba(57,53,53,0.2)',
+            'week.timegrid.borderRight': '1px solid rgba(57,53,53,0.2)',
             'week.dayGridSchedule.borderLeft': '2px solid',
             'week.daygridLeft.width': '54px',
             'week.timegridLeft.borderRight': 'none',
@@ -3082,4 +3086,13 @@
       switchMenu.call(document.getElementById('searchNoShow'), null, true);
     }
   }
+  $(document).on("scroll", function(){
+    if($("#mainArea").is(":visible")){
+      if(document.scrollingElement.scrollTop > document.getElementById('mainSearchArea').offsetHeight){
+        $(".calendarMenu").addClass('fixedScroll');
+      }else{
+        $(".calendarMenu").removeClass('fixedScroll');
+      }
+    }
+  });
 })(jQuery);
