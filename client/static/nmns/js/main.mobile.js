@@ -316,7 +316,6 @@
             delete NMNS.needInit;
             setSchedules();
         }
-        $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
         $("#mainTaskContents input").on('change', function(e){
           e.stopPropagation();
           var data = $(this).parent();
@@ -546,21 +545,6 @@
     }
 
     function onClickTask(e){ // handle event when click today's task text
-      /*if($(window).width() < 1600){
-        if($("#mainTask").hasClass("show")){// about to hide task
-          $("#mainCalendarArea").css('minWidth', '');
-          $("#mainContents").css("minWidth", '100%');
-          $("#mainAside").css('minWidth', 'unset');
-        }else{// about to show task
-          $("#mainCalendarArea").css('minWidth', $("#mainCalendarArea").width());
-          $("#mainContents").css("minWidth", '');
-          if($("#mainAside").hasClass("sidebar-toggled")){//hided
-            $("#mainAside").css('minWidth', 'unset');
-          }else{
-            $("#mainAside").css('minWidth', '270px');
-          }
-        }
-      }*/
       document.scrollingElement.scrollTop = 0;
       $(".calendarMenu").removeClass('fixedScroll');
       $("#mainTask").toggleClass('show');
@@ -671,20 +655,24 @@
     
     function generateTaskList(taskList) {
       var html = "";
-      var today = moment().format('YYYYMMDD');
-      var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
-      taskList.forEach(function(day){
-        if(day.task.length > 0){
-          html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
-          day.task.forEach(function(task, index){
-            var manager = findManager(task.manager) || {};
-            html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
-            moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
-            + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
-            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
-          })
-        }
-      })
+      if(taskList.length > 0){
+        var today = moment().format('YYYYMMDD');
+        var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
+        taskList.forEach(function(day){
+          if(day.task.length > 0){
+            html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
+            day.task.forEach(function(task, index){
+              var manager = findManager(task.manager) || {};
+              html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+              moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
+              + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
+              +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
+            })
+          }
+        })
+      }else{
+        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:50vh'>등록된 일정이 없어요.</div>"
+      }
       return html;
     }
 

@@ -460,6 +460,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 
 #mainRow #mainTask #mainTaskContents{
     margin-top:30px;
+    min-height:50vh;
 }
 
 #mainRow #mainTask .task{

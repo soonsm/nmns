@@ -240,7 +240,16 @@
               <div id="mainTask" class="bg-white col" style="padding:20px">
                 <div id="mainTaskTip"></div>
                 <span><span class="h4 font-weight-bold">일정 관리</span><span class="taskMenu float-right cursor-pointer">&times;</span></span>
-                <div id="mainTaskContents"></div>
+                <div id="mainTaskContents">
+                  <div class="flex-column m-auto">
+                    <div class="bouncingLoader">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div> 
+                    <span>일정을 불러오는 중입니다...</span>
+                  </div>
+                </div>
               </div>
               <div id="mainCalendarArea" class="bg-white col px-3 pb-3">
                 <div id="mainCalendarSticky" class="pt-3">
