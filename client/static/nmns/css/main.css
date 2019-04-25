@@ -1835,7 +1835,7 @@ button.form-control {
 }
 
 #scheduleModal .createScheduleElement{
-  display:inline-block;
+  display:inline-flex;
 }
 #scheduleModal.update .createScheduleElement{
   display:none;

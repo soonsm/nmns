@@ -30,6 +30,7 @@
         useCreationPopup: false,
         useDetailPopup: true,
         disableDblClick: true,
+        isReadOnly:true,
         template: {
             allday: function(schedule) {
                 return getTimeSchedule(schedule, schedule.isAllDay);
@@ -241,7 +242,6 @@
       beforeChangeView: function(e){
         NMNS.calendar.changeView(e.viewName);
         NMNS.calendar.setDate(e.date);
-        // setDropdownCalendarType();
         setRenderRangeText();
         setSchedules();
       }
@@ -308,9 +308,9 @@
         });
 
         $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
-        if($("#sidebarContainer").data('scroll')){
+        /*if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
-        }
+        }*/
         NMNS.calendar.setCalendars(e.data);
         if (NMNS.needInit) {
             delete NMNS.needInit;
@@ -353,53 +353,6 @@
         return html;
     }
 
-    /*function onClickMenu(e) { // changer calendar view
-        var action = e.target.getAttribute('data-action');
-        if (!action) {
-            action = e.target.parentElement.getAttribute('data-action');
-        }
-        var viewName = '';
-
-        switch (action) {
-            case 'toggle-daily':
-                viewName = 'day';
-                $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-                break;
-            case 'toggle-weekly':
-                viewName = 'week';
-                $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-                break;
-            case 'toggle-monthly':
-                viewName = 'month';
-                $("#mainCalendar").css("height", "598px");
-                break;
-            default:
-                break;
-        }
-        NMNS.calendar.changeView(viewName, true);
-
-        // setDropdownCalendarType();
-        setRenderRangeText();
-        setSchedules();
-    }*/
-
-    /*function setDropdownCalendarType() {// change calendar view on small device
-        $(".calendarType").removeClass("active");
-
-        switch (NMNS.calendar.getViewName()) {
-            case "day":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
-                break;
-            case "week":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
-                break;
-            default:
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
-                break;
-        }
-
-    }*/
-    
     function generateCarouselItem(start){
       var html = '';
       var monday=start.clone().add(1, 'days'), tuesday=start.clone().add(2, 'days'), wednesday=start.clone().add(3, 'days'), thursday=start.clone().add(4,'days'), friday=start.clone().add(5,'days'), saturday=start.clone().add(6, 'days');
@@ -671,7 +624,7 @@
           }
         })
       }else{
-        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:50vh'>등록된 일정이 없어요.</div>"
+        html = "<div class='m-auto'>등록된 일정이 없어요.</div>"
       }
       return html;
     }
@@ -682,9 +635,9 @@
 
     function drawAlrimList(alrims) {
         var list = $("#alrimHistoryList");
-        if (!list.hasClass("ps")) {
+        /*if (!list.hasClass("ps")) {
             list.data("scroll", new PerfectScrollbar("#alrimHistoryList"));
-        }
+        }*/
         if (alrims && alrims.length > 0) {
             var html = "";
             var base = $("#alrimHistoryList .alrimRow").length
@@ -703,7 +656,7 @@
         } else {
             list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
         }
-        list.data("scroll").update();
+        // list.data("scroll").update();
     }
 
     function refreshAlrimModal() {
@@ -862,7 +815,7 @@
 
     function initNoShowModal() {
         if (!$("#noShowScheduleList").hasClass("ps")) {
-          $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+          // $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
         
           $(".noShowAddCase").off("touch click").on("touch click", function() {
             $(this).siblings().removeClass("bg-primary");
@@ -1886,9 +1839,9 @@
           }
         })
         
-        if ($("#noShowScheduleList").hasClass("ps")) {
+        /*if ($("#noShowScheduleList").hasClass("ps")) {
             $("#noShowScheduleList").data("scroll").update();
-        }
+        }*/
     }));
 
     NMNS.socket.on("add reserv", socketResponse("예약/일정 추가하기", function(e) {
@@ -1986,9 +1939,9 @@
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
-            if($("#sidebarContainer").data('scroll')){
+            /*if($("#sidebarContainer").data('scroll')){
               $("#sidebarContainer").data('scroll').update();
-            }
+            }*/
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -2667,9 +2620,9 @@
         //create
         id = NMNS.email + generateRandom();
         $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
-        if($("#sidebarContainer").data('scroll')){
+        /*if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
-        }
+        }*/
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -3059,7 +3012,7 @@
           }
         });
         $(".menuLink").on("touch click", switchMenu);
-        $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
+        // $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
         $("input[pattern]").each(function(index, input){
           setNumericInput(input);
         })

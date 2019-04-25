@@ -130,30 +130,27 @@ input[type=checkbox]+label{
 #mainAside{
     width:0;
     transition:0.3s ease-in-out;
-    z-index:1;
+    z-index:2;
     position:fixed;
-    left:0;
-    top:0;
+    right:0;
+    top:64px;
     bottom:0;
+    overflow:auto;
 }
-#sidebarContainer{
-    display:none;
-}
-#mainAside.sideBar-toggled #sidebarContainer{
+
+#mainAside.sidebar-toggled #sidebarContainer{
     display:block;
 }
 #mainRow {
     position:relative;
     margin:0;
 }
-@media(max-width:576px){
-    #mainAside.sidebar-toggled{
-        width:100%;
-        display:block;
-    }
-    #mainRow{
-        width:100%;
-    }
+#mainAside.sidebar-toggled{
+    width:100%;
+    display:block;
+}
+#mainRow{
+    width:100%;
 }
 #mainSearchArea{
     padding:30px 15px 0 15px;
@@ -174,46 +171,10 @@ input[type=checkbox]+label{
 }*/
 /* side bar */
 #sidebarContainer{
-    margin-top:79px;
+    display:none;
     padding-left:30px;
     padding-right:30px;
-    padding-top:50px;
-}
-#sidebarContainer.ps:hover > .ps__rail-x,
-#sidebarContainer.ps:hover > .ps__rail-y,
-#sidebarContainer.ps--focus > .ps__rail-x,
-#sidebarContainer.ps--focus > .ps__rail-y,
-#sidebarContainer.ps--scrolling-x > .ps__rail-x,
-#sidebarContainer.ps--scrolling-y > .ps__rail-y {
-  opacity: 0.6;
-}
-
-#sidebarContainer.ps .ps__rail-x:hover,
-#sidebarContainer.ps .ps__rail-y:hover,
-#sidebarContainer.ps .ps__rail-x:focus,
-#sidebarContainer.ps .ps__rail-y:focus,
-#sidebarContainer.ps .ps__rail-x.ps--clicking,
-#sidebarContainer.ps .ps__rail-y.ps--clicking {
-  background-color: transparent;
-  opacity: 0.9;
-}
-
-#sidebarContainer .ps__rail-x:hover > .ps__thumb-x,
-#sidebarContainer .ps__rail-x:focus > .ps__thumb-x,
-#sidebarContainer .ps__rail-x.ps--clicking .ps__thumb-x {
-  background-color: #3e4d5d;
-}
-
-#sidebarContainer .ps__rail-y:hover > .ps__thumb-y,
-#sidebarContainer .ps__rail-y:focus > .ps__thumb-y,
-#sidebarContainer .ps__rail-y.ps--clicking .ps__thumb-y {
-  background-color: #999;
-}
-#sidebarContainer.ps--active-y:hover .ps__thumb-y{
-  background-color: #3e4d5d;
-}
-#sidebarContainer.ps--active-x:hover .ps__thumb-x{
-  background-color: #3e4d5d;
+    padding-top:30px;
 }
 
 #sidebarContainer .list-group-item span{
@@ -461,6 +422,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 #mainRow #mainTask #mainTaskContents{
     margin-top:30px;
     min-height:50vh;
+    display:flex;
 }
 
 #mainRow #mainTask .task{
@@ -663,11 +625,6 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarArea{
     width:100%;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-}
-
-
-.tui-full-calendar-timegrid-right+div+.ps__rail-y {
-    opacity: 0;
 }
 
 .tui-full-calendar-screen {
@@ -1587,14 +1544,18 @@ button.form-control {
 }
 
 /* incoCenterMenu */
-
+#feedback{
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+    overflow:hidden;
+    padding:25px 10px 25px 15px;
+}
 #feedbackBody {
-    height: 186px;
+    min-height: calc(30vh);
+    height:30vh;
+    max-height: calc(100vh - 280px);
     font-size: 14px;
     border:none;
-    border-radius: 2px;
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    padding:25px 30px;
 }
 
 #snackbar {
@@ -1723,12 +1684,14 @@ button.form-control {
 #faq{
     border-top:2px solid #393535;
     font-size: 14px;
+    margin-left:15px;
+    margin-right:15px;
 }
 
 #faq .faqRow {
     width: 100%;
     cursor: pointer;
-    padding: 17.5px 20px;
+    padding: 19.5px 0;
     position:relative;
 }
 
@@ -1755,20 +1718,8 @@ button.form-control {
     font-weight:bold;
 }
 
-#faq .row .faqDetailLink+div:after {
-    content: url('/nmns/img/arrow_bottom.svg');
-    margin-left:auto;
-    display: inline-block;
-    transition: 0.3s all ease;
-}
-
-#faq .row .faqDetailLink[aria-expanded=true]+div:after {
-    transform: rotate(180deg);
-    filter: none;
-}
-
 #faq .faqDetailRow {
-    padding: 0 20px;
+    padding: 0;
     flex: 0 0 100%;
     max-width: 100%;
     word-break: break-all;
