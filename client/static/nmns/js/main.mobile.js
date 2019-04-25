@@ -2716,6 +2716,7 @@
     
     $("#mainCalendarRange").on("touch click", function(){
       $("#mainCalendarCarousel, #mainCalendarCalendar").toggle();
+      $("#mainCalendar").toggleClass('pushedDown');
       if($("#mainCalendarCalendar").is(":visible")){
         if(!$("#mainCalendarRangeInput1")[0]._flatpickr){
           flatpickr("#mainCalendarRangeInput1", {

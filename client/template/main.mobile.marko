@@ -243,23 +243,25 @@
                 <div id="mainTaskContents"></div>
               </div>
               <div id="mainCalendarArea" class="bg-white col px-3 pb-3">
-                <div id="mainCalendarTools" class="text-center align-items-center row mx-0 justify-center pt-3">
-                  <div class="col-12 px-0" style="margin-bottom:20px">
-                    <input type="text" id="mainCalendarRangeInput1" class="d-none">
-                    <input type="text" id="mainCalendarRangeInput2" class="d-none">
-                    <input type="text" id="mainCalendarRangeInput3" class="d-none">
-                    <div id="mainCalendarRange">
-                      <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding:0 20px 0 0"><span class="icon-arrow icon-arrow-left"></span></button>
-                      <span id="renderRange" class="montserrat"></span>
-                      <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding:0 0 0 20px"><span class="icon-arrow icon-arrow-right"></span></button>
+                <div id="mainCalendarSticky" class="pt-3">
+                  <div id="mainCalendarTools" class="text-center align-items-center row mx-0 justify-center">
+                    <div class="col-12 px-0" style="margin-bottom:20px">
+                      <input type="text" id="mainCalendarRangeInput1" class="d-none">
+                      <input type="text" id="mainCalendarRangeInput2" class="d-none">
+                      <input type="text" id="mainCalendarRangeInput3" class="d-none">
+                      <div id="mainCalendarRange">
+                        <button class="btn moveDate" data-action="prev" type="button" aria-label="이전" style="padding:0 20px 0 0"><span class="icon-arrow icon-arrow-left"></span></button>
+                        <span id="renderRange" class="montserrat"></span>
+                        <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding:0 0 0 20px"><span class="icon-arrow icon-arrow-right"></span></button>
+                      </div>
                     </div>
+                    <div id="mainCalendarCalendar" class="col-12 px-0" style="width:100%">
+                      <div data-index="1" class="mainCalendarCalendarMonth"></div>
+                      <div data-index="2" class="mainCalendarCalendarMonth"></div>
+                      <div data-index="3" class="mainCalendarCalendarMonth"></div>
+                    </div>
+                    <div id="mainCalendarCarousel" class="col-12 px-0"></div>
                   </div>
-                  <div id="mainCalendarCalendar" class="col-12 px-0" style="width:100%">
-                    <div data-index="1" class="mainCalendarCalendarMonth"></div>
-                    <div data-index="2" class="mainCalendarCalendarMonth"></div>
-                    <div data-index="3" class="mainCalendarCalendarMonth"></div>
-                  </div>
-                  <div id="mainCalendarCarousel" class="col-12 px-0"></div>
                 </div>
                 <div id="mainCalendar"></div>
               </div>

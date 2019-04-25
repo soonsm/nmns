@@ -477,17 +477,38 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     border-width: .05rem;
     border-radius: 0;
 }
-.calendarMenu.fixedScroll .menuTitle{
-    display:fixed;
+#mainRow .calendarMenu.fixedScroll .menuTitle{
+    position:fixed;
     top:64px;
     left:0;
     right:0;
+    z-index:1;
+    background-color:#f8f8f8;
+    padding-left:20px;
+    padding-right:20px;
+}
+.calendarMenu.fixedScroll #mainCalendarSticky{
+    position:fixed;
+    left:5px;
+    right:5px;
+    z-index:1;
+    top:131px;
+    padding-left:15px;
+    padding-right:15px;
+    background-color:#fff;
+}
+.calendarMenu.fixedScroll #mainCalendar{
+    margin-top:190px;
+    padding-top:11px;
+}
+.calendarMenu.fixedScroll #mainCalendar.pushedDown{
+    margin-top:449px;
+    padding-top:11px;
 }
 #mainRow .menuTitle{
-    margin-bottom:15px;
     align-items:center;
     min-height:45px;
-    padding:25px 15px 0 15px;
+    padding:25px 15px 15px 15px;
 }
 
 #mainRow .menuTitle .menuTitleNumber{
