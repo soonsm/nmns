@@ -546,7 +546,7 @@
     }
 
     function onClickTask(e){ // handle event when click today's task text
-      if($(window).width() < 1600){
+      /*if($(window).width() < 1600){
         if($("#mainTask").hasClass("show")){// about to hide task
           $("#mainCalendarArea").css('minWidth', '');
           $("#mainContents").css("minWidth", '100%');
@@ -560,8 +560,11 @@
             $("#mainAside").css('minWidth', '270px');
           }
         }
-      }
+      }*/
+      document.scrollingElement.scrollTop = 0;
+      $(".calendarMenu").removeClass('fixedScroll');
       $("#mainTask").toggleClass('show');
+      $("#mainCalendarArea").toggle();
     }
 
     function findManager(managerId) {
@@ -3088,7 +3091,7 @@
     }
   }
   $(document).on("scroll", function(){
-    if($("#mainArea").is(":visible")){
+    if($("#mainCalendar").is(":visible")){
       if(document.scrollingElement.scrollTop > document.getElementById('mainSearchArea').offsetHeight){
         $(".calendarMenu").addClass('fixedScroll');
       }else{

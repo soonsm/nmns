@@ -435,22 +435,15 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 
 #mainRow #mainTask{
     display:none;
-    position:absolute;
+    height:0;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    transition: 0.3 left ease;
-    overflow:hidden;
-    left:-310px;
-    z-index:-1;
+    transition: 0.3 height ease;
 }
 
 #mainRow #mainTask.show{
-    display:initial;
-    max-width:237px;
-    min-width:237px;
-    width:237px;
-    left:30px;
-    z-index:0;
-    margin-right:23px;
+    display:block;
+    width:100%;
+    height:auto;
 }
 
 #mainRow #mainTask #mainTaskTip{
@@ -462,7 +455,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     border-bottom: 12px solid #fff;
     position: absolute;
     top: -24px;
-    right: 32px;
+    right: calc(50% - 6px);
 }
 
 #mainRow #mainTask #mainTaskContents{
@@ -669,18 +662,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarArea{
     width:100%;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    transition: 0.3s margin-left ease;
 }
 
-#mainTask.show+#mainCalendarArea {
-    margin-left: 260px;
-}
-
-@media(min-width:1600px){
-    #mainCalendarArea{
-        min-width:unset;
-    }
-}
 
 .tui-full-calendar-timegrid-right+div+.ps__rail-y {
     opacity: 0;
