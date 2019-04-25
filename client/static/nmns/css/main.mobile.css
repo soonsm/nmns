@@ -1523,16 +1523,6 @@ button.form-control {
     color:#fff;
 }
 
-/* tutorial */
-
-.popover.tutorial {
-    max-width: 350px;
-}
-
-.popover.tutorial .clearfix button {
-    margin-left: .5rem;
-}
-
 /* announcement */
 .btn .announcementCount, .announcementCount{
   vertical-align: super;
@@ -1714,7 +1704,7 @@ button.form-control {
     border-bottom: 1px solid rgba(57, 53, 53, 0.2);
 }
 
-#faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{
+#faq .row .faqDetailLink:not(.collapsed):not(:active)+div{
     font-weight:bold;
 }
 
