@@ -395,13 +395,13 @@
         <div class="switchingMenu menuMenu">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">메뉴 관리</span>
-            <span class="divider updatingMenu-collapsed" style="display:none;">&nbsp;</span>
+            <!--<span class="divider updatingMenu-collapsed" style="display:none;">&nbsp;</span>
             <span class="h6 mb-0 updatingMenu-collapsed" style="opacity:0.5;display:none">드래그해서 순서를 바꿀 수 있어요!</span>
             <button class="btn btn-primary ml-auto" type="button" id="updateMenuLink">수정</button>
-            <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><span class="icon-plus">+</span>메뉴 추가</button>
+            <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><span class="icon-plus">+</span>메뉴 추가</button>-->
           </div>
-          <div class="menuContents">
-            <div id="mainMenuTools" style="font-size:13px">
+          <div class="menuContents pt-1">
+            <!--<div id="mainMenuTools" style="font-size:13px">
               <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:15px 20px">
                 <div class="d-inline-flex col-3 menuHead" style="justify-content:center">메뉴 이름</div>
                 <div class="d-inline-flex col menuHead" style="justify-content:center">정가(카드가)</div>
@@ -409,8 +409,8 @@
                 <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">회원가</div>
                 <div class="col-1 updatingMenu-collapsed" style="justify-content:center">&nbsp;</div>
               </div>
-            </div>
-            <div id="mainMenuList" class="col-12 px-0 mx-0 text-center flex-column d-flex" style="min-height:calc(100vh - 280px)">
+            </div>-->
+            <div id="mainMenuList" class="col-12 px-0 mx-0 row" style="min-height:calc(100vh - 280px)">
               <div class="flex-column m-auto">
                 <div class="bouncingLoader">
                   <div></div>
@@ -419,6 +419,14 @@
                 </div> 
                 <span>메뉴 정보를 불러오는 중입니다...</span>
               </div>
+            </div>
+            <div id="mainMenuLoading" class="flex-column m-auto" style="display:none">
+              <div class="bouncingLoader">
+                <div></div>
+                <div></div>
+                <div></div>
+              </div> 
+              <span>메뉴 정보를 불러오는 중입니다...</span>
             </div>
           </div>
         </div>

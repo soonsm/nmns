@@ -2189,6 +2189,9 @@
         $("#scheduleTabContentList").html(generateMenuList(e.data));
         NMNS.menuList = e.data;
       }
+      if($("#mainMenuList").is(":visible") && NMNS.drawMenuList){
+        NMNS.drawMenuList(true);
+      }
     }, undefined, true));
     
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
@@ -2760,28 +2763,21 @@
       if(!document.getElementById('menuStyle')){
         var style = document.createElement('link');
         style.rel="stylesheet";
-        style.href="/nmns/css/menu.min.css";
+        style.href="/nmns/css/menu.mobile.min.css";
         style.id = 'menuStyle';
         document.head.appendChild(style);
       }
       if (!document.getElementById("menuScript")) {
         var script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js";
+        script.src = "/nmns/js/menu.mobile.min.js";
         script.id = "menuScript";
         document.body.appendChild(script);
 
         script.onload = function() {
-          var script2 = document.createElement("script");
-          script2.src = "/nmns/js/menu.min.js";
-          document.body.appendChild(script2);
           NMNS.socket.emit("get menu list", null);
         };
       }
       $(this).on("touch click", function(){//메뉴 초기화
-        $("#mainMenuTools .updatingMenu-collapsed").removeClass('d-inline-flex');
-        $(".updatingMenu-collapsed").hide();
-        $(".updatingMenu-expanded").show();
-        $("#updateMenuLink").text('수정');
         NMNS.socket.emit("get menu list", null);
       });
     });

@@ -1,0 +1,45 @@
+.menuRow .menuPrice, .menuRow .menuSubHead{
+  font-size:12px;
+  line-height:1.25;
+  margin-top:9px;
+}
+.menuRow .menuSubHead{
+  opacity:0.7;
+  line-height:1.17;
+}
+.menuRow{
+  padding:0;
+  margin-bottom:8px;
+}
+.menuRow:nth-child(2n+1){
+  padding-right:4px;
+}
+.menuRow:nth-child(2n){
+  padding-left:4px;
+}
+.menuRowCover{
+  background-color:#fff;
+  display:flex;
+  flex-wrap:wrap;
+  border-radius: 2px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  padding:20px 15px;
+}
+.menuRow .menuRowHead{
+  font-weight: bold;
+  font-size:14px;
+  margin-bottom:7px;
+}
+.menuRowCover:hover {
+  box-shadow: 0 5px 15px 0 rgba(0,0,0,.1);
+}
+/*.menuModalLink{
+  position: absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+}
+#menuModal .modal-header{
+  padding: 25px 30px;
+}*/
