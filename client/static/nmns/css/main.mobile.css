@@ -1539,6 +1539,7 @@ button.form-control {
     border-radius: 2px;
     overflow:hidden;
     padding:25px 10px 25px 15px;
+    background-color:#fff;
 }
 #feedbackBody {
     min-height: calc(15vh);
@@ -1676,6 +1677,11 @@ button.form-control {
     font-size: 14px;
     margin-left:15px;
     margin-right:15px;
+    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
+}
+
+#faq .faqRow:not(:first-child) {
+    border-top: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .faqRow {
@@ -1698,10 +1704,6 @@ button.form-control {
     bottom:0;
     z-index: 1;
     border-bottom: none;
-}
-
-#faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
-    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .row .faqDetailLink:not(.collapsed):not(:active)+div{

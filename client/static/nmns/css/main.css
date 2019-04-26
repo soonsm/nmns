@@ -1689,6 +1689,7 @@ button.form-control {
 #faq{
     border-top:2px solid #393535;
     font-size: 14px;
+    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .faqRow {
@@ -1698,6 +1699,9 @@ button.form-control {
     position:relative;
 }
 
+#faq .faqRow:not(:first-child) {
+    border-top: 1px solid rgba(57, 53, 53, 0.2);
+}
 #faq .faqRow .ellipsis{
     width:100%;
     display:flex;
@@ -1711,10 +1715,6 @@ button.form-control {
     bottom:0;
     z-index: 1;
     border-bottom: none;
-}
-
-#faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
-    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{

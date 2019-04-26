@@ -1337,7 +1337,7 @@
               showSnackBar("시작 일자를 확인해주세요.");
               return;
             }else if(!moment(endDate).isValid()){
-              showSnackBar("종료 일자를 확인해���세요.");
+              showSnackBar("종료 일자를 확인해주세요.");
               return;
             }
           } catch (e) {
@@ -1995,7 +1995,7 @@
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
         if (e.data.summary.noShowCount > 0) {
-          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});
+          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
           if(!$("#noShowDirtyImage").attr('src')){
             $("#noShowDirtyImage").attr('src', '/nmns/img/badperson.png');
@@ -2200,7 +2200,7 @@
     }));
     
     NMNS.socket.on("save sales", socketResponse('매출 내역 저장', function(e){
-      showSnackBar('���출 내역을 저장하였습니다.')
+      showSnackBar('매출 내역을 저장하였습니다.')
       if($("#salesTab").is(":visible")){
         $("#scheduleModal").modal('hide');
       }
@@ -2879,10 +2879,10 @@
         $(".menuLinkActive").removeClass("menuLinkActive");
         $(this).addClass("menuLinkActive");
         // hide mainTask field
-        $("#mainCalendarArea").css('minWidth', '');
-        $("#mainContents").css("minWidth", '100%');
-        $("#mainAside").css('minWidth', 'unset');
         $("#mainTask").removeClass("show");
+        $(".calendarMenu").removeClass('fixedScroll');
+        document.scrollingElement.scrollTop = 0;
+        $("#mainAside").toggleClass('sidebar-toggled');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
@@ -2912,13 +2912,6 @@
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
-          if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
-            if($("#mainTask").hasClass("show")){
-              $("#mainAside").css('minWidth', '270px');
-            }
-          }else{// about to hide aside
-            $("#mainAside").css('minWidth', 'unset');
-          }
           $('#mainAside').toggleClass('sidebar-toggled');
         });
         $(".announcementMenuLink").popover({
