@@ -281,39 +281,41 @@
         <div class="customerMenu switchingMenu">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">고객 관리</span>
-            <span id="customerCount" class="text-accent menuTitleNumber">0</span>
-            <span class="divider" style="display:inline-table">&nbsp;</span>
-            <label for="searchCustomer" style="opacity:0.5;margin-bottom:0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24.207" height="26.207" viewBox="0 0 24.207 26.207">
-                <g id="customer_search" transform="translate(-965 -23)">
-                  <g data-name="타원 470" transform="translate(965 23)" fill="none" stroke="#393535" stroke-width="2">
-                    <circle cx="11" cy="11" r="11" stroke="none"/>
-                    <circle cx="11" cy="11" r="10" fill="none"/>
-                  </g>
-                  <line data-name="선 96" x2="6" y2="6" transform="translate(982.5 42.5)" fill="none" stroke="#393535" stroke-width="2"/>
-                </g>
-              </svg>
-            </label>
-            <input type="search" class="border-0" placeholder="이름, 연락처, 담당자 이름으로 검색하세요." aria-label="고객 검색" id="searchCustomer">
-            <button class="btn btn-accent ml-auto" type="button" id="addCustomerBtn" data-toggle="modal" data-target="#customerModal"><span class="icon-plus">+</span>고객 추가</button>
+            <!--<span id="customerCount" class="text-accent menuTitleNumber">0</span>-->
           </div>
-         
+          <div class="col-12">
+            <div class="pb-3 d-flex" style="border-bottom:1px solid rgba(57, 53, 53, 0.2)">
+              <label for="searchCustomer" style="opacity:0.5;margin-bottom:0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24.207" height="26.207" viewBox="0 0 24.207 26.207">
+                  <g id="customer_search" transform="translate(-965 -23)">
+                    <g data-name="타원 470" transform="translate(965 23)" fill="none" stroke="#393535" stroke-width="2">
+                      <circle cx="11" cy="11" r="11" stroke="none"/>
+                      <circle cx="11" cy="11" r="10" fill="none"/>
+                    </g>
+                    <line data-name="선 96" x2="6" y2="6" transform="translate(982.5 42.5)" fill="none" stroke="#393535" stroke-width="2"/>
+                  </g>
+                </svg>
+              </label>
+              <input type="search" class="border-0 col px-0" placeholder="이름, 연락처, 담당자 이름으로 검색하세요." aria-label="고객 검색" id="searchCustomer">
+            </div>
+          </div>
           <div id="mainCustomer" class="col-12 px-0 mb-5">
             <div id="mainCustomerTools" style="font-size:13px">
-              <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:10px 7px;justify-content:center">
-                <div class="d-inline-flex customerHead customerSortType" data-action="sort-manager">담당</div>
-                <div class="d-inline-flex col-1 px-0 customerHead customerSortType active" data-action="sort-name">이름</div>
-                <div class="d-inline-flex col-2 customerHead">연락처</div>
-                <div class="d-inline-flex col-1 px-0 customerHead customerSortType" data-action="sort-visit">방문횟수</div>
-                <div class="col-4">
-                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-date">마지막 방문</div>
-                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-sales">매출액</div>
-                  <div class="d-inline-flex col-4 px-0 customerHead customerSortType" data-action="sort-membership">멤버십 잔액</div>
+              <div class="col-12 position-relative">
+                <button id="customerSortTypeMenu" type="button" class="btn btn-flat dropdown-toggle ml-auto d-flex pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="고객 정렬하기" data-action="sort-name">
+                  이름
+                </button>
+                <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="customerSortTypeMenu">
+                  <a class="dropdown-item" href="#" data-action="sort-name" aria-label="이름">이름</a>
+                  <a class="dropdown-item" href="#" data-action="sort-manager" aria-label="담당">담당</a>
+                  <a class="dropdown-item" href="#" data-action="sort-visit" aria-label="방문횟수">방문횟수</a>
+                  <a class="dropdown-item" href="#" data-action="sort-date" aria-label="마지막 방문">마지막 방문</a>
+                  <a class="dropdown-item" href="#" data-action="sort-sales" aria-label="매출액">매출액</a>
+                  <a class="dropdown-item" href="#" data-action="sort-membership" aria-label="멤버십 잔액">멤버십 잔액</a>
                 </div>
-                <div class="d-inline-flex col customerHead">메모</div>
               </div>
             </div>
-            <div id="mainCustomerList" class="col-12 px-0 mx-0 text-center flex-column d-flex" style="min-height: calc(100vh - 330px)">
+            <div id="mainCustomerList" class="col-12 px-0 mx-0 flex-column d-flex" style="min-height: calc(100vh - 330px)">
               <div class="flex-column m-auto">
                 <div class="bouncingLoader">
                   <div></div>
@@ -401,15 +403,6 @@
             <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><span class="icon-plus">+</span>메뉴 추가</button>-->
           </div>
           <div class="menuContents pt-1">
-            <!--<div id="mainMenuTools" style="font-size:13px">
-              <div class="d-flex col-12 text-center" style="white-space:nowrap;padding:15px 20px">
-                <div class="d-inline-flex col-3 menuHead" style="justify-content:center">메뉴 이름</div>
-                <div class="d-inline-flex col menuHead" style="justify-content:center">정가(카드가)</div>
-                <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">정가(현금가)</div>
-                <div class="d-inline-flex col-3 px-0 menuHead" style="justify-content:center">회원가</div>
-                <div class="col-1 updatingMenu-collapsed" style="justify-content:center">&nbsp;</div>
-              </div>
-            </div>-->
             <div id="mainMenuList" class="col-12 px-0 mx-0 row" style="min-height:calc(100vh - 280px)">
               <div class="flex-column m-auto">
                 <div class="bouncingLoader">
@@ -552,7 +545,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header p-0 mx-0">
-              <div class="row mx-0 col-12" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+              <div class="row mx-0 col-12" style="padding:25px 30px">
                 <div class="modal-title">내 매장 정보</div>
                 <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">
                   <span aria-hidden="true">&times;</span>
@@ -601,7 +594,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content ">
             <div class="modal-header p-0 mx-0">
-              <div class="row mx-0 col-12" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+              <div class="row mx-0 col-12" style="padding:25px 30px">
                 <div class="modal-title">내 계정 정보</div>
                 <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">
                   <span aria-hidden="true">&times;</span>
@@ -639,7 +632,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header p-0 mx-0">
-              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px">
                 <ul id="noShowTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
                   <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#noShowAdd" data-toggle="tab" aria-selected="true" aria-label="직접 추가">직접 추가</a></li>
                   <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#noShowSchedule" data-toggle="tab" aria-label="예약에서 추가">예약에서 추가</a></li>
@@ -674,7 +667,7 @@
                       <input type="text" class="form-control form-control-sm col" id="noShowScheduleTarget" placeholder="고객 이름 또는 연락처를 검색하세요.">
                       <button type="button" class="btn btn-sm btn-primary ml-1 shadow-none" id="noShowScheduleSearch" aria-label="검색">검색</button>
                     </div>
-                    <div class='row col-12 mx-0 px-0 text-center' style='border-bottom:1px solid rgba(58, 54, 54, 0.35);margin-top:20px;padding:15px'>
+                    <div class='row col-12 mx-0 px-0 text-center' style='border-bottom:1px solid rgba(57, 53, 53, 0.2);margin-top:20px;padding:15px'>
                       <div class='col col-1 pl-0'></div>
                       <div class='col col-2 px-0'>날짜</div>
                       <div class='col col-2 pr-0'>고객이름</div>
@@ -704,7 +697,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header p-0">
-              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px">
                 <ul id="alrimTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
                   <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimTab" data-toggle="tab" aria-label="알림톡 정보">알림톡 정보</a></li>
                   <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimHistoryTab" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>
@@ -775,7 +768,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header p-0">
-              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">
+              <div class="row mx-0 col-12" style="padding:25px 30px 0 30px">
                 <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="height:47px;">
                   <li class="nav-item d-inline-flex"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
                   <li class="nav-item createScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>

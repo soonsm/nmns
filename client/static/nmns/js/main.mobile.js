@@ -2728,17 +2728,17 @@
     //notification handling end
     //menu switch start
     $(".customerMenuLink").off("touch click").on("touch click", function() {
-        var action = $($(".customerSortType.active")[0]).data("action");
+        var action = $("#customerSortTypeMenu").data("action");
         if(!document.getElementById('customerStyle')){
           var style = document.createElement('link');
           style.rel="stylesheet";
-          style.href="/nmns/css/customer.min.css"
+          style.href="/nmns/css/customer.mobile.min.css"
           style.id = 'customerStyle';
           document.head.appendChild(style);
         }
         if (!document.getElementById("customerScript")) {
           var script = document.createElement("script");
-          script.src = "/nmns/js/customer.min.js";
+          script.src = "/nmns/js/customer.mobile.min.js";
           script.id = "customerScript";
           document.body.appendChild(script);
 
