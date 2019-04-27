@@ -1,0 +1,153 @@
+.salesMenu .menuTitle.fixedScroll{
+  position:fixed;
+  left: 270px;
+  z-index: 1;
+  background-color: #f8f8f8;
+  right: 0;
+  top: 78px;
+  padding:52px 30px 42px 30px;
+}
+#mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(:focus):not(:hover):not(:active){
+  background-color:transparent;
+}
+#mainSalesSearch .input-group-text{
+  border-left:none;
+}
+#mainSalesList{
+  min-height: calc(100vh - 400px);
+}
+#salesSearchManagerList{
+  border:none;
+  border-radius: 2px;
+  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
+  padding:20px 0 10px 0;
+}
+#salesCalendarArea .flatpickr-calendar{
+  display:block;
+  opacity:1;
+  visibility: visible;
+  position:relative;
+  border-radius:0;
+  width:100%;
+}
+#salesCalendarArea .flatpickr-day{
+  max-width:14.28571428%;
+  font-size:16px;
+  font-weight:500;
+  font-family: 'Montserrat';
+  line-height:14vw;
+  padding-bottom:14.28571428%;
+}
+#salesCalendarArea .flatpickr-day:nth-child(7n), #salesCalendarArea .flatpickr-weekday:last-child{
+  color:#1736ff;
+}
+#salesCalendarArea .flatpickr-weekday{
+  font-size:13px;
+  font-weight:bold;
+  flex:1 0;
+}
+#salesCalendarArea .flatpickr-day.prevMonthDay, #salesCalendarArea .flatpickr-day.nextMonthDay{
+  opacity:0.5;
+}
+#salesCalendarArea .flatpickr-day.inRange{
+  border-left:none;
+  border-right:none;
+}
+#salesCalendarArea .flatpickr-day.inRange, #salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange{
+  background-color:#fd5b77;
+  color:#fff;
+  box-shadow:none;
+}
+#salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange{
+  border-top: none;
+  border-bottom: none;
+  margin-top: 2px;
+}
+.salesMenu .menuTitle.fixedScroll + div #mainSalesSearch{
+  margin-top:75px;
+}
+.salesRow .montserrat{
+  font-size:11px;
+}
+.salesRow{
+  display:flex;
+  padding:15px 20px;
+  background-color:#fff;
+  border-radius: 2px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  margin-bottom:5px;
+  align-items:center;
+}
+#mainSalesTools.fixedScroll #salesToolsSticky{
+  position: fixed;
+  top: 198px;
+  z-index: 1;
+  right: 0;
+  left: 270px;
+  padding: 0 30px;
+  background-color: #f8f8f8;
+}
+#mainSalesTools.fixedScroll #salesToolsSticky #salesSummary{
+  margin-top:0;
+}
+#mainSalesTools.fixedScroll + #mainSalesList{
+  margin-top:250px;
+}
+#salesToolsSticky .salesHead{
+    justify-content: center;
+    font-size:13px;
+}
+
+#salesToolsSticky .salesSortType{
+    cursor:pointer;
+}
+
+#salesToolsSticky .salesSortType:active,
+#salesToolsSticky .salesSortType:hover,
+#salesToolsSticky .salesSortType:focus,
+#salesToolsSticky .salesSortType.active {
+    font-weight:bold;
+}
+
+#salesToolsSticky .salesSortType:after{
+  content: url('/nmns/img/sort_on.svg');
+  opacity:1;
+  margin-left:3px;
+}
+
+#salesToolsSticky .salesSortType:not(.active):after{
+    opacity:0.5;
+}
+
+#salesSummary{
+  background-color:#fff;
+  border-radius: 2px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+  padding:30px 5%;
+  margin:50px 0 35px 0;
+}
+#salesSummary .salesSummaryTitle{
+  opacity:0.7;
+}
+
+#salesSummary .montserrat{
+  font-weight:bold;
+}
+
+#mainSalesList .salesRow div{
+  font-size:11px;
+}
+#mainSalesList .salesRow .salesName{
+  font-size:14px;
+  font-weight:bold;
+}
+#mainSalesList .salesRow .montserrat{
+  font-size:12px;
+}
+
+#mainSalesList .salesRow .tui-full-calendar-weekday-schedule-bullet{
+  position:relative;
+  display: inline-block;
+  top:unset;
+  left:unset;
+}

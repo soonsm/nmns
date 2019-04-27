@@ -2785,24 +2785,18 @@
       if(!document.getElementById('salesStyle')){
         var style = document.createElement('link');
         style.rel="stylesheet";
-        style.href="/nmns/css/sales.min.css";
+        style.href="/nmns/css/sales.mobile.min.css";
         style.id = 'salesStyle';
         document.head.appendChild(style);
       }
       if (!document.getElementById("salesScript")) {//최초 접속
         var script = document.createElement("script");
-        script.src = "/nmns/js/sales.min.js";
+        script.src = "/nmns/js/sales.mobile.min.js";
         script.id = "salesScript";
         document.body.appendChild(script);
 
         script.onload = function() {
-          NMNS.socket.emit("get sales list", {
-            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
-            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
-            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
-          });
+          $("#salesSearchButton").removeClass('disabled')
         };
         
         $("#salesSearchName").autocomplete({
@@ -2831,28 +2825,19 @@
             }
         }, NMNS.socket);
         
-        flatpickr("#salesSearchStartDate", {
-            dateFormat: "Y. m. d",
-            defaultDate: moment().startOf('month').toDate(),
-            locale: "ko"
+        $("#salesSearchStartDate").val(moment().startOf('month').format('YYYY. MM. DD'));
+        $("#salesSearchEndDate").val(moment().format('YYYY. MM. DD'));
+        flatpickr("#salesCalendar", {
+          dateFormat: "Y. m. d",
+          defaultDate: [moment().startOf('month').toDate(), new Date()],
+          mode:'range',
+          disableMobile: true,
+          appendTo:document.getElementById('salesCalendarArea'),
+          locale: "ko"
         });
-        flatpickr("#salesSearchEndDate", {
-            dateFormat: "Y. m. d",
-            defaultDate: new Date(),
-            locale: "ko"
-        });
-        if(!NMNS.salesList || NMNS.salesList.length === 0){
-          NMNS.socket.emit('get sales list', {
-            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
-            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
-            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
-          });
-        }
         var now = moment();
         $("#mainSalesSearch .activable").each(function(index, button){
-          button.innerText = now.format('M월');
+          button.innerHTML = '<span class="montserrat">'+now.format('M')+'</span>월';
           now.add(-1, 'month');
         });
         $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
