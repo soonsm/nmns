@@ -34,7 +34,7 @@
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.mobile.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="preload" as="style" onload="this.rel = 'stylesheet'">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="stylesheet">
 
   <!--<link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />-->
@@ -223,7 +223,7 @@
                   </g>
                 </svg></span>
               </label>
-              <input type="text" pattern="[0-9]*" class="border-0 col bg-transparent pr-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow">
+              <input type="text" pattern="[0-9]*" class="border-0 col bg-transparent pr-0" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow" style="max-width:calc(100% - 24px)">
             </div>
           </div>
           <div class="d-flex menuTitle">
@@ -427,7 +427,7 @@
         <div class="switchingMenu salesMenu">
           <div class="d-flex menuTitle">
             <span class="h4 mb-0 font-weight-bold">매출 관리</span>
-            <span id="menuTitleSticky" class="d-none">
+            <span id="menuTitleSticky" class="salesSearchSwitch" style="display:none">
               <span class="divider">&nbsp;</span>
               <span class="h6 mb-0 montserrat" id="salesSearchPeriod" style="opacity:0.7;font-size:14px;font-weight:500"></span>
             </span>
@@ -485,41 +485,40 @@
                     <input type="text" class="form-control form-control-sm han col" id="salesSearchContents" aria-label="예약 내용" placeholder="선택사항" autocomplete="off" list="scheduleTabContentList">
                   </div>
                 </div>
-              </div>
-              <div class="row justify-center" style="margin-top:70px">
-                <button type="button" class="btn btn-primary col-5 disabled" id="salesSearchButton" style="height:42px;line-height:18px">조회</button>
-              </div>
-              <div id="salesToolsSticky" style="display:none">
-                <div class="d-flex col-12 flex-column" id="salesSummary">
-                  <div class="row col-12 mb-2">
-                    <div class="col-2 salesSummaryTitle">총 건수</div>
-                    <div class="col-2"><span id="salesSummaryTotalCount" class="montserrat"></span>건</div>
-                    <div class="col-2 salesSummaryTitle">카드 결제</div>
-                    <div class="col-2"><span id="salesSummaryTotalCard" class="montserrat"></span>건</div>
-                    <div class="col-2 salesSummaryTitle">현금 결제</div>
-                    <div class="col-2"><span id="salesSummaryTotalCash" class="montserrat"></span>건</div>
-                  </div>
-                  <div class="row col-12">
-                    <div class="col-2 salesSummaryTitle">총 매출금액</div>
-                    <div class="col-2"><span id="salesSummaryTotalAmount" class="montserrat"></span>원</div>
-                    <div class="col-2 salesSummaryTitle">멤버십 충전</div>
-                    <div class="col-2"><span id="salesSummaryTotalMembership" class="montserrat"></span>건</div>
-                    <div class="col-4">&nbsp;</div>
-                  </div>
+                <div class="row mx-0 justify-center" style="margin-top:70px">
+                  <button type="button" class="btn btn-primary bg-primary col-5 disabled" id="salesSearchButton" style="height:42px;line-height:18px">조회</button>
                 </div>
-                <div class="d-flex col-12 text-center px-0" style="white-space:nowrap;padding:15px 20px">
-                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType active" data-action="sort-date">매출날짜</div>
-                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-name">이름</div>
-                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-manager">담당</div>
-                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-item">예약내용</div>
-                  <div class="d-inline-flex col-2 px-0 salesHead salesSortType" data-action="sort-sales">매출액</div>
-                  <div class="d-inline-flex col-2 px-0 salesHead">결제수단</div>
+              </div>
+              <div id="salesToolsSticky" class="salesSearchSwitch" style="display:none">
+                <div class="row mx-0 col-12" id="salesSummary">
+                  <div class="mb-2 col-4 px-0 salesSummaryTitle">총 건수</div>
+                  <div class="mb-2 col-8 pr-0"><span id="salesSummaryTotalCount" class="montserrat"></span>건</div>
+                  <div class="mb-2 col-4 px-0 salesSummaryTitle">카드 결제</div>
+                  <div class="mb-2 col-8 pr-0"><span id="salesSummaryTotalCard" class="montserrat"></span>건</div>
+                  <div class="mb-2 col-4 px-0 salesSummaryTitle">현금 결제</div>
+                  <div class="mb-2 col-8 pr-0"><span id="salesSummaryTotalCash" class="montserrat"></span>건</div>
+                  <div class="mb-2 col-4 px-0 salesSummaryTitle">총 매출금액</div>
+                  <div class="mb-2 col-8 pr-0"><span id="salesSummaryTotalAmount" class="montserrat"></span>원</div>
+                  <div class="mb-2 col-4 px-0 salesSummaryTitle">멤버십 충전</div>
+                  <div class="col-8 pr-0"><span id="salesSummaryTotalMembership" class="montserrat"></span>건</div>
+                </div>
+                <div class="col-12 position-relative">
+                  <button id="salesSortTypeMenu" type="button" class="btn btn-flat dropdown-toggle ml-auto d-flex pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="매출 정렬하기" data-action="sort-date">
+                    매출날짜
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="salesSortTypeMenu">
+                    <a class="dropdown-item" href="#" data-action="sort-date" aria-label="매출날짜">매출날짜</a>
+                    <a class="dropdown-item" href="#" data-action="sort-name" aria-label="이름">이름</a>
+                    <a class="dropdown-item" href="#" data-action="sort-manager" aria-label="담당">담당</a>
+                    <a class="dropdown-item" href="#" data-action="sort-item" aria-label="예약내용">예약내용</a>
+                    <a class="dropdown-item" href="#" data-action="sort-sales" aria-label="매출액">매출액</a>
+                  </div>
                 </div>
               </div>
             </div>
-            <div id="mainSalesList" class="col-12 row px-0 mx-0 text-center flex-column" style="min-height:calc(100vh - 400px)">
+            <div id="mainSalesList" class="col-12 row px-0 mx-0 text-center flex-column salesSearchSwitch" style="min-height:calc(100vh - 400px);display:none">
             </div>
-            <div id="mainSalesLoading" style="display:none">
+            <div id="mainSalesLoading" class="salesSearchSwitch" style="display:none">
               <div class="flex-column">
                 <div class="bouncingLoader">
                   <div></div>

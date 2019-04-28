@@ -2833,7 +2833,12 @@
           mode:'range',
           disableMobile: true,
           appendTo:document.getElementById('salesCalendarArea'),
-          locale: "ko"
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            if(selectedDates.length === 2){
+              $("#salesCalendarModal").modal('hide');
+            }
+          }
         });
         var now = moment();
         $("#mainSalesSearch .activable").each(function(index, button){
@@ -3001,8 +3006,16 @@
     var target = $(".menuLink[data-link='"+link+"']");
     if(target.length){
       switchMenu.call(target[0], null, true);
-    }else if(state.state.link === 'noShowSearchMenu'){
+    }else if(link === 'noShowSearchMenu'){
       switchMenu.call(document.getElementById('searchNoShow'), null, true);
+    }
+    if(link === 'salesMenu'){
+      if(state.state.subLink === 'search'){//result page
+        $("#salesSearchButton").removeClass('disabled').trigger('click');
+      }else{//search page
+        $(".salesSearchSwitch").hide();
+        $("#mainSalesSearch").show();
+      }
     }
   }
   $(document).on("scroll", function(){

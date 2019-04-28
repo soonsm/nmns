@@ -26,10 +26,6 @@
   font-size:14px;
   height:40px;
 }
-#customerSortTypeMenu .dropdown-item:active{
-  background-color:initial;
-  color:initial;
-}
 #mainCustomerList .customer{
   position:relative;
   padding:20px 15px;
