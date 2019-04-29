@@ -13,7 +13,6 @@
     $("#salesSummaryTotalCash").text((e.data.totalSalesCash || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesSummaryTotalMembership").text((e.data.totalSalesMembership || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesSummaryTotalAmount").text((e.data.totalSalesAmount || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesToolsSticky").show();
     if(!$("#mainSalesTools").data('initialHeight')){
       $("#mainSalesTools").data('initialHeight', document.getElementById("mainSalesTools").offsetHeight);
     }
@@ -71,11 +70,11 @@
                   name:'(삭제된 담당자)'
               }
           }
-          html += '<div class="row col-12 salesRow" data-index="'+index+'"><div class="d-flex position-relative col-12 px-0 align-items-center" style="margin-bottom:18px"><div class="salesName ellipsis">'+item.customerName+'</div><span class="divider" style="display:inline-table">&nbsp;</span><div class="montserrat">'
+          html += '<div class="row col-12 salesRow" data-index="'+index+'"><div class="d-flex position-relative col-12 px-0 align-items-center" style="margin-bottom:18px"><div class="salesName ellipsis">'+item.customerName+'</div><span class="divider" style="display:inline-table">&nbsp;</span><div class="montserrat nowrap mr-2">'
             +moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')+'</div><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span></div>'
             +'<div class="d-flex col-6 px-0"><div class="col-4 px-0 salesSubHead">매출액</div><div class="col-8 pr-0 montserrat">'+(item.price + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</div></div>'
             +'<div class="d-flex col-6 px-0"><div class="col-4 px-0 salesSubHead">결제수단</div><div class="col-8 pr-0">'+(item.type==='CARD'?'카드':(item.type === 'CASH'?'현금':'멤버십'))+'</div></div>'
-            +'<div class="col-2 px-0 salesSubHead">예약내용</div><div class="pl-3">'+item.item+'</div></div>'
+            +'<div class="col-2 px-0 salesSubHead mt-1">예약내용</div><div class="col-10 pr-0 mt-1" style="word-break:break-all">'+item.item+'</div></div>'
       }
       return html;
   }
@@ -90,7 +89,7 @@
               goalIndex = Math.min(currentSalesCount === 0? currentSalesCount + Math.max(20, (5 + Math.ceil($('#mainSalesList').height() / 48) - $("#mainSalesList .salesRow").length)) : currentSalesCount, NMNS.salesList.length);
               html += generateSalesRow(0, goalIndex)
           } else {
-              html += "<p>저장된 매출 내역이 없습니다.</p>";
+              html += "<p class='m-auto'>저장된 매출 내역이 없습니다.</p>";
           }
       }else if(NMNS.salesList){//additional loading
           goalIndex = Math.min(currentSalesCount + Math.max(20, (5 + Math.ceil($('#mainSalesList').height() / 48) - $("#mainSalesList .salesRow").length)), NMNS.salesList.length);//최대 20개씩 신규로 로딩
@@ -103,7 +102,7 @@
   $("#salesSearchButton").on("touch click", function(){
     if(!$(this).hasClass('disabled')){
       $(this).addClass('disabled');
-      history.pushState({link:$(this).data('link'), subLink:'search'}, "", '/sales/search');
+      history.pushState({link:'salesMenu', subLink:'search'}, "", '/sales/search');
       NMNS.socket.emit('get sales list', {
         start:moment(document.getElementById('salesCalendar')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
         end:moment(document.getElementById('salesCalendar')._flatpickr.selectedDates[1]).format('YYYYMMDD'),
@@ -114,7 +113,10 @@
       $("#mainSalesSearch").hide();
       $("#mainSalesList").html('');//reset search result
       $("#mainSalesLoading").show();
+      document.scrollingElement.scrollTop = 0;
+      $(".salesMenu .menuTitle").addClass('fixedScroll');
       $(".salesSearchSwitch").show();
+      $("#salesToolsSticky").data('initialHeight', $("#salesToolsSticky").offset().top);
     }
   });
   
@@ -245,15 +247,10 @@
     }
   }, 100)).on("scroll", function(){
     if($("#mainSalesList").is(":visible")){
-      if(document.scrollingElement.scrollTop > 0){
-        $(".salesMenu .menuTitle").addClass('fixedScroll');
-        if(document.scrollingElement.scrollTop > $("#mainSalesTools").data('initialHeight') - document.getElementById('salesToolsSticky').offsetHeight){
-          $("#mainSalesTools").addClass('fixedScroll');
-        }else{
-          $("#mainSalesTools").removeClass('fixedScroll');
-        }
+      if(document.scrollingElement.scrollTop >= document.getElementById('salesTools').offsetHeight + 31){
+        $("#mainSalesTools").addClass('fixedScroll');
       }else{
-        $(".salesMenu .menuTitle").removeClass('fixedScroll');
+        $("#mainSalesTools").removeClass('fixedScroll');
       }
     }
   });

@@ -489,7 +489,7 @@
                   <button type="button" class="btn btn-primary bg-primary col-5 disabled" id="salesSearchButton" style="height:42px;line-height:18px">조회</button>
                 </div>
               </div>
-              <div id="salesToolsSticky" class="salesSearchSwitch" style="display:none">
+              <div id="salesTools" class="salesSearchSwitch" style="display:none">
                 <div class="row mx-0 col-12" id="salesSummary">
                   <div class="mb-2 col-4 px-0 salesSummaryTitle">총 건수</div>
                   <div class="mb-2 col-8 pr-0"><span id="salesSummaryTotalCount" class="montserrat"></span>건</div>
@@ -502,17 +502,17 @@
                   <div class="mb-2 col-4 px-0 salesSummaryTitle">멤버십 충전</div>
                   <div class="col-8 pr-0"><span id="salesSummaryTotalMembership" class="montserrat"></span>건</div>
                 </div>
-                <div class="col-12 position-relative">
-                  <button id="salesSortTypeMenu" type="button" class="btn btn-flat dropdown-toggle ml-auto d-flex pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="매출 정렬하기" data-action="sort-date">
-                    매출날짜
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="salesSortTypeMenu">
-                    <a class="dropdown-item" href="#" data-action="sort-date" aria-label="매출날짜">매출날짜</a>
-                    <a class="dropdown-item" href="#" data-action="sort-name" aria-label="이름">이름</a>
-                    <a class="dropdown-item" href="#" data-action="sort-manager" aria-label="담당">담당</a>
-                    <a class="dropdown-item" href="#" data-action="sort-item" aria-label="예약내용">예약내용</a>
-                    <a class="dropdown-item" href="#" data-action="sort-sales" aria-label="매출액">매출액</a>
-                  </div>
+              </div>
+              <div id="salesToolsSticky" class="col-12 salesSearchSwitch" style="display:none;height:50px">
+                <button id="salesSortTypeMenu" type="button" class="btn btn-flat dropdown-toggle ml-auto d-flex pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="매출 정렬하기" data-action="sort-date">
+                  매출날짜
+                </button>
+                <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="salesSortTypeMenu">
+                  <a class="dropdown-item" href="#" data-action="sort-date" aria-label="매출날짜">매출날짜</a>
+                  <a class="dropdown-item" href="#" data-action="sort-name" aria-label="이름">이름</a>
+                  <a class="dropdown-item" href="#" data-action="sort-manager" aria-label="담당">담당</a>
+                  <a class="dropdown-item" href="#" data-action="sort-item" aria-label="예약내용">예약내용</a>
+                  <a class="dropdown-item" href="#" data-action="sort-sales" aria-label="매출액">매출액</a>
                 </div>
               </div>
             </div>

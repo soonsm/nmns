@@ -1767,7 +1767,9 @@ button.form-control {
     border-radius: 5px;
     box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.07);
 }
-
+.salesMenu .menuTitle+.menuContents{
+    margin-top:30px;
+}
 /* noShow menu */
 
 .nav-pills .nav-link{

@@ -1,11 +1,17 @@
 .salesMenu .menuTitle.fixedScroll{
   position:fixed;
-  left: 270px;
   z-index: 1;
   background-color: #f8f8f8;
-  right: 0;
-  top: 78px;
-  padding:52px 30px 42px 30px;
+  right: 5px;
+  left:5px;
+  top: 64px;
+}
+.salesMenu .menuTitle.fixedScroll + .menuContents{
+  margin-top:97px;
+}
+.salesMenu #menuTitleSticky .divider{
+  line-height:16px;
+  display:inline-block;
 }
 #mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(:focus):not(:hover):not(:active){
   background-color:transparent;
@@ -96,6 +102,9 @@
   float:none;
   margin-top:0;
 }
+#salesToolsSticky{
+  position:relative;
+}
 #salesToolsSticky .dropdown-menu{
   border:none;
   min-width:110px;
@@ -120,47 +129,23 @@
   background-color:#fff;
   border-radius: 2px;
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-  margin:0 0 5px 0;
+  margin:0 0 8px 0;
   align-items:center;
 }
 #mainSalesTools.fixedScroll #salesToolsSticky{
   position: fixed;
-  top: 198px;
+  top: 131px;
   z-index: 1;
-  right: 0;
-  left: 270px;
-  padding: 0 30px;
+  right: 5px;
   background-color: #f8f8f8;
 }
-#mainSalesTools.fixedScroll #salesToolsSticky #salesSummary{
-  margin-top:0;
-}
+
 #mainSalesTools.fixedScroll + #mainSalesList{
-  margin-top:250px;
+  margin-top:50px;
 }
-#salesToolsSticky .salesHead{
+#salesSummary .salesHead{
     justify-content: center;
     font-size:13px;
-}
-#salesToolsSticky{
-  margin-top:30px;
-}
-
-#salesToolsSticky .salesSortType:active,
-#salesToolsSticky .salesSortType:hover,
-#salesToolsSticky .salesSortType:focus,
-#salesToolsSticky .salesSortType.active {
-    font-weight:bold;
-}
-
-#salesToolsSticky .salesSortType:after{
-  content: url('/nmns/img/sort_on.svg');
-  opacity:1;
-  margin-left:3px;
-}
-
-#salesToolsSticky .salesSortType:not(.active):after{
-    opacity:0.5;
 }
 
 #salesSummary{

@@ -2848,6 +2848,10 @@
         $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
           $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
+      }else{
+        $(".salesMenu .menuTitle").removeClass('fixedScroll');
+        $(".salesSearchSwitch").hide();
+        $("#mainSalesSearch").show();
       }
     });
     
@@ -3011,8 +3015,11 @@
     }
     if(link === 'salesMenu'){
       if(state.state.subLink === 'search'){//result page
-        $("#salesSearchButton").removeClass('disabled').trigger('click');
+        $(".salesMenu .menuTitle").addClass('fixedScroll');
+        $("#mainSalesSearch").hide();
+        $(".salesSearchSwitch").show();
       }else{//search page
+        $(".salesMenu .menuTitle").removeClass('fixedScroll');
         $(".salesSearchSwitch").hide();
         $("#mainSalesSearch").show();
       }
