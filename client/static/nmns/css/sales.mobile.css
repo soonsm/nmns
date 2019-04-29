@@ -13,8 +13,15 @@
   line-height:16px;
   display:inline-block;
 }
-#mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(:focus):not(:hover):not(:active){
+#mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(#salesSearchButton){
   background-color:transparent;
+  border-color: rgba(112,112,112,.35);
+  color: #334150;
+}
+#mainSalesSearch button.active:not(#salesSearchButton){
+  background-color:#334150;
+  color:#fff;
+  border-color:#334150;
 }
 #mainSalesSearch .input-group-text{
   border-left:none;
@@ -27,6 +34,23 @@
   border-radius: 2px;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
   padding:20px 0 10px 0;
+}
+#salesCalendarArea .flatpickr-month{
+  font-size: 18px;
+  font-weight: 500;
+}
+#salesCalendarArea .flatpickr-prev-month{
+  content: url('/nmns/img/arrow_bottom.svg');
+  transform:rotate(90deg);
+  vertical-align: middle;
+}
+#salesCalendarArea .flatpickr-next-month{
+  content: url('/nmns/img/arrow_bottom.svg');
+  transform:rotate(-90deg);
+  vertical-align: middle;
+}
+#salesCalendarArea .flatpickr-current-month .numInputWrapper{
+  width:44px;
 }
 #salesCalendarArea .flatpickr-calendar{
   display:block;
@@ -176,4 +200,5 @@
   top:unset;
   left:unset;
   margin-left:auto;
+  min-width:7px;
 }

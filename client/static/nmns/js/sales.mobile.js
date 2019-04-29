@@ -20,19 +20,23 @@
     $("#salesSearchPeriod").text(moment(document.getElementById('salesCalendar')._flatpickr.selectedDates[0]).format('YYYY. MM. DD - ') + moment(document.getElementById('salesCalendar')._flatpickr.selectedDates[1]).format('YYYY. MM. DD'));
   }));
   
-  $(".salesSearchPeriodButton").on("touch click", function(){
+  $(".salesSearchPeriodButton").on("touch click", function(e){
     $(".salesSearchPeriodButton").removeClass('active');
+    e.preventDefault();
     var start, end;
     switch($(this).data('action')){
       case 'week':
+        $(this).blur();
         end = moment();
         start = moment().add(-7, 'day');
         break;
       case 'month':
+        $(this).blur();
         end = moment();
         start = moment().add(-1, 'month');
         break;
       case 'halfYear':
+        $(this).blur();
         end = moment();
         start = moment().add(-6, 'month');
         break;
@@ -53,8 +57,8 @@
         break;
     }
     if(start && end){
-      document.getElementById('salesSearchStartDate')._flatpickr.setDate(start.toDate());
-      document.getElementById('salesSearchEndDate')._flatpickr.setDate(end.toDate());
+      $('#salesSearchStartDate').val(start.format('YYYY. MM. DD'));
+      $('#salesSearchEndDate').val(end.format('YYYY. MM. DD'));
     }
   })
   function generateSalesRow(init, goal){
