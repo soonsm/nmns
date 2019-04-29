@@ -37,10 +37,6 @@
         end = moment();
         start = moment().add(-6, 'month');
         break;
-      case 'year':
-        end = moment();
-        start = moment().add(-1, 'year');
-        break;
       case 'currentMonth':
         $(this).addClass('active');
         end = moment().endOf('month');
@@ -75,10 +71,11 @@
                   name:'(삭제된 담당자)'
               }
           }
-          html += '<div class="col-12 px-0 salesRow" data-index="'+index+'"><div class="col-2 px-0 montserrat">'+moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')
-          +'</div><div class="col-2 px-0 salesName ellipsis">'+item.customerName+'</div><div class="col-2 px-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name
-          +'"></span></div><div class="col-2 px-0 ellipsis">'+item.item+'</div><div class="col-2 px-0 montserrat">'+(item.price + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</div><div class="col-2 px-0">'
-          +(item.type==='CARD'?'카드':(item.type === 'CASH'?'현금':'멤버십'))+'</div></div>'
+          html += '<div class="row col-12 salesRow" data-index="'+index+'"><div class="d-flex position-relative col-12 px-0 align-items-center" style="margin-bottom:18px"><div class="salesName ellipsis">'+item.customerName+'</div><span class="divider" style="display:inline-table">&nbsp;</span><div class="montserrat">'
+            +moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')+'</div><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span></div>'
+            +'<div class="d-flex col-6 px-0"><div class="col-4 px-0 salesSubHead">매출액</div><div class="col-8 pr-0 montserrat">'+(item.price + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</div></div>'
+            +'<div class="d-flex col-6 px-0"><div class="col-4 px-0 salesSubHead">결제수단</div><div class="col-8 pr-0">'+(item.type==='CARD'?'카드':(item.type === 'CASH'?'현금':'멤버십'))+'</div></div>'
+            +'<div class="col-2 px-0 salesSubHead">예약내용</div><div class="pl-3">'+item.item+'</div></div>'
       }
       return html;
   }

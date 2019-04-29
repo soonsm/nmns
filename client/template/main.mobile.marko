@@ -426,8 +426,8 @@
         
         <div class="switchingMenu salesMenu">
           <div class="d-flex menuTitle">
-            <span class="h4 mb-0 font-weight-bold">매출 관리</span>
-            <span id="menuTitleSticky" class="salesSearchSwitch" style="display:none">
+            <span class="h4 mb-0 font-weight-bold nowrap">매출 관리</span>
+            <span id="menuTitleSticky" class="salesSearchSwitch ellipsis" style="display:none">
               <span class="divider">&nbsp;</span>
               <span class="h6 mb-0 montserrat" id="salesSearchPeriod" style="opacity:0.7;font-size:14px;font-weight:500"></span>
             </span>
@@ -485,7 +485,7 @@
                     <input type="text" class="form-control form-control-sm han col" id="salesSearchContents" aria-label="예약 내용" placeholder="선택사항" autocomplete="off" list="scheduleTabContentList">
                   </div>
                 </div>
-                <div class="row mx-0 justify-center" style="margin-top:70px">
+                <div class="row justify-center" style="margin:70px 0 85px 0">
                   <button type="button" class="btn btn-primary bg-primary col-5 disabled" id="salesSearchButton" style="height:42px;line-height:18px">조회</button>
                 </div>
               </div>
@@ -516,7 +516,7 @@
                 </div>
               </div>
             </div>
-            <div id="mainSalesList" class="col-12 row px-0 mx-0 text-center flex-column salesSearchSwitch" style="min-height:calc(100vh - 400px);display:none">
+            <div id="mainSalesList" class="col-12 row px-0 mx-0 flex-column salesSearchSwitch" style="min-height:calc(100vh - 400px);display:none">
             </div>
             <div id="mainSalesLoading" class="salesSearchSwitch" style="display:none">
               <div class="flex-column">
