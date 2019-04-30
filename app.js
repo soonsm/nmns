@@ -197,4 +197,4 @@ app.get('*', function(req, res){
 require('./bin/socket.io.handler')(server, sessionStore, passport, cookieParser);
 
 // Sets server port and logs message on success
-server.listen(process.env.PORT || 8088, process.env.IP || "0.0.0.0", () => logger.info('nmns is listening at ' + server.address().address + " : " + server.address().port));
+server.listen(process.env.PORT || 8080, process.env.IP || "0.0.0.0", () => logger.info('nmns is listening at ' + server.address().address + " : " + server.address().port));
