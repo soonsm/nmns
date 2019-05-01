@@ -177,10 +177,10 @@ input[type=checkbox]+label{
     }
 }
 #mainAside .topNav{
-    border-bottom:0.5px solid rgba(255,255,255,0.35);
+    border-bottom:0.5px solid rgba(255,255,255,0.2);
 }
 #mainRow .topNav{
-    border-bottom:0.5px solid rgba(57,53,53,0.35);
+    border-bottom:0.5px solid rgba(57,53,53,0.2);
 }
 #mainRow.fixedScroll .topNav{
   position:fixed;
@@ -424,13 +424,6 @@ input[type=checkbox]+label{
     display:inline-flex;
     flex-grow:1;
 }
-input[type=text]::placeholder, input[type=text]::-webkit-input-placeholder, input[type=text]:-ms-input-placeholder,
-input[type=password]::placeholder, input[type=password]::-webkit-input-placeholder, input[type=password]:-ms-input-placeholder,
-input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, input[type=email]:-ms-input-placeholder,
-.form-control::placeholder, .forn-control::-webkit-input-placeholder, .form-control:-ms-input-placeholder{
-    color:#393535;
-    opacity:0.5;
-}
 .divider{
     border-left:1px solid #393535;
     margin-left:30px;
@@ -455,7 +448,6 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     position:absolute;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
     transition: 0.3 left ease;
-    overflow:hidden;
     left:-310px;
     z-index:-1;
 }
@@ -506,7 +498,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     font-size:18px;
     font-weight:bold;
     line-height:27px;
-    margin-left:15px;
+    margin-left:8px;
 }
 
 #mainRow .tui-full-calendar-time-date:last-child {
@@ -715,8 +707,15 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: 100%;
     height: 100%;
     overflow: hidden;
+    padding:15px;
 }
-
+.tui-full-calendar-schedule-cover > div{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display:flex;
+    flex-direction:column;
+}
 .tui-full-calendar-time-schedule {
     word-break:break-all;
     line-height: 1.2;
@@ -1140,7 +1139,6 @@ button.moveDate:focus {
     line-height: 1;
     height: 100%;
     padding: 10px;
-    border: 1px solid #707070;
     border-radius: 2px;
     cursor:pointer;
 }
@@ -1420,7 +1418,7 @@ button.form-control {
 }
 
 #notificationBody .notification:not(:last-child), #announcementArea .announcement:not(:last-child){
-    border-bottom:1px solid rgba(58, 54, 54, 0.35);
+    border-bottom:1px solid rgba(57, 53, 53, 0.2);
 }
 
 #announcementArea .announcement .announcementTitle{
@@ -1691,6 +1689,7 @@ button.form-control {
 #faq{
     border-top:2px solid #393535;
     font-size: 14px;
+    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .faqRow {
@@ -1700,6 +1699,9 @@ button.form-control {
     position:relative;
 }
 
+#faq .faqRow:not(:first-child) {
+    border-top: 1px solid rgba(57, 53, 53, 0.2);
+}
 #faq .faqRow .ellipsis{
     width:100%;
     display:flex;
@@ -1713,10 +1715,6 @@ button.form-control {
     bottom:0;
     z-index: 1;
     border-bottom: none;
-}
-
-#faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
-    border-bottom: 1px solid rgba(58, 54, 54, 0.35);
 }
 
 #faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{
@@ -1836,6 +1834,9 @@ button.form-control {
   display:inline-block;
 }
 
+#scheduleModal .createScheduleElement{
+  display:inline-flex;
+}
 #scheduleModal.update .createScheduleElement{
   display:none;
 }

@@ -182,3 +182,22 @@ input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration { display: none; }
+
+input[type=text]::placeholder, input[type=text]::-webkit-input-placeholder, input[type=text]:-ms-input-placeholder, input[type=text]:-moz-placeholder, input[type=text]::-moz-placeholder,
+input[type=password]::placeholder, input[type=password]::-webkit-input-placeholder, input[type=password]:-ms-input-placeholder, input[type=password]:-moz-placeholder, input[type=password]::-moz-placeholder,
+input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, input[type=email]:-ms-input-placeholder, input[type=email]:-moz-placeholder, input[type=email]::-moz-placeholder,
+.form-control::placeholder, .forn-control::-webkit-input-placeholder, .form-control:-ms-input-placeholder, .form-control:-moz-placeholder, .form-control::-moz-placeholder{
+    color:#393535;
+    opacity:0.5;
+}
+*:focus::-webkit-input-placeholder { opacity: 0; } /* Chrome <=56, Safari < 10 */
+*:focus:-moz-placeholder { opacity: 0; } /* FF 4-18 */
+*:focus::-moz-placeholder { opacity: 0; } /* FF 19-50 */
+*:focus:-ms-input-placeholder { opacity: 0; } /* IE 10+ */
+*:focus::placeholder { opacity: 0; } /* Modern Browsers */
+*::-webkit-scrollbar-thumb {
+  background-color: #EBEAEA;
+}
+.nowrap{
+  white-space:nowrap;
+}

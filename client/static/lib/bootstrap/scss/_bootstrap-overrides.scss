@@ -222,7 +222,9 @@ select.form-control-sm{
   line-height: 1.2;
   font-weight:normal;
 }
-
+.modal-header{
+  border-bottom: 1px solid rgba(57, 53, 53, 0.2);
+}
 .modal-title{
   font-weight: bold;
   opacity:1;

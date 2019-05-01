@@ -151,7 +151,7 @@
             hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
+            "common.border": "1px solid rgba(57, 53, 53, 0.2)",
             "common.saturday.color": "#1736ff",
             'common.dayname.color': '#393535',
             'common.holiday.color':'#fd5b77',
@@ -183,6 +183,7 @@
             "week.pastTime.color": "#393535",
             "week.futureTime.color": "#393535",
             'week.creationGuide.color': '#fd5b77',
+            'week.today.backgroundColor': 'inherit',
             'week.timegrid.paddingRight': '1px',
             'week.dayGridSchedule.marginRight': '1px',
             'week.dayname.borderTop':'none',
@@ -191,6 +192,9 @@
             'week.dayname.textAlign': 'center',
             'week.dayname.height': '51px',
             'week.dayGridSchedule.borderLeft': '2px solid',
+            'week.timegridHorizontalLine.borderBottom': '1px solid rgba(57, 53, 53, 0.2)',
+            'week.daygrid.borderRight': '1px solid rgba(57,53,53,0.2)',
+            'week.timegrid.borderRight': '1px solid rgba(57,53,53,0.2)',
             'week.daygridLeft.width': '54px',
             'week.timegridLeft.borderRight': 'none',
             'week.timegridLeft.width': '54px'
@@ -352,20 +356,9 @@
               contents = schedule.raw.contents;
             }
           }
-          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
-          html += ("<div title='"+type+"내용:"+(contents||'')+" class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
-          /*switch (schedule.raw.status) {
-              case "CANCELED":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
-                  break;
-              case "NOSHOW":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
-                  break;
-              case "CUSTOMERCANCELED":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
-                  break;
-          }*/
-          html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
+          html += "<div class='tui-full-calendar-schedule-cover'><div><div class='row align-items-center' style='margin-bottom:5px'><div class='row mx-0 col'>";
+          html += ("<div title='"+type+"내용:"+(contents||'')+"' class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
+          html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div style='font-size:11px'>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div></div>");
           
         }else{
           html += "예약 " + schedule.count + "건</div>"
@@ -489,6 +482,7 @@
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
         
+        $('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
     }
 
     function setRenderRangeText() {
@@ -501,12 +495,15 @@
             html += today.format('YYYY. MM. DD');
             var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
             html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
+            renderRange.style.width = '280px';
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
+            renderRange.style.width = '120px';
         } else {
             html += moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY. MM. DD');
             html += ' - ';
             html += moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM. DD');
+            renderRange.style.width = '280px';
         }
         renderRange.innerHTML = html;
     }
@@ -576,20 +573,24 @@
     
     function generateTaskList(taskList) {
       var html = "";
-      var today = moment().format('YYYYMMDD');
-      var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
-      taskList.forEach(function(day){
-        if(day.task.length > 0){
-          html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
-          day.task.forEach(function(task, index){
-            var manager = findManager(task.manager) || {};
-            html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
-            moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
-            + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
-            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
-          })
-        }
-      })
+      if(taskList.length > 0){
+        var today = moment().format('YYYYMMDD');
+        var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
+        taskList.forEach(function(day){
+          if(day.task.length > 0){
+            html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
+            day.task.forEach(function(task, index){
+              var manager = findManager(task.manager) || {};
+              html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+              moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
+              + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
+              +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
+            })
+          }
+        })
+      }else{
+        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:100%'>등록된 일정이 없어요.</div>"
+      }
       return html;
     }
 
@@ -2841,7 +2842,7 @@
               <div class="col px-0 d-none"><div id="announcementArea" class="col px-0 mr-2"></div></div>\
               <div class="col px-0">\
                 <div id="notificationArea" class="col px-0 ml-2">\
-                  <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">\
+                  <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(57, 53, 53, 0.2)">\
                     <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div>\
                   <div id="notificationBody"><div class="flex-column m-auto text-center py-5"><div class="bouncingLoader"><div></div><div></div><div></div></div><span>새로운 알림을 불러오는 중입니다...</span></div></div>\
                   <div id="notificationEmpty">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div>\

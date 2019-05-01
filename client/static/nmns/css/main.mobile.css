@@ -80,11 +80,11 @@ input[name='etc'],
   content: url('/nmns/img/email-ok.svg');
 }
 .icon-announcement{
-  content: url('/nmns/img/Notification.svg');
+  content: url('/nmns/img/Notification_white.svg');
   width:25px;
 }
 .icon-announcement.icon-announcement-count{
-  content: url('/nmns/img/Notification_count.svg');
+  content: url('/nmns/img/Notification_count_white.svg');
 }
 /*main contents*/
 html {
@@ -130,37 +130,34 @@ input[type=checkbox]+label{
 #mainAside{
     width:0;
     transition:0.3s ease-in-out;
-    z-index:1;
+    z-index:2;
     position:fixed;
-    left:0;
-    top:0;
+    right:0;
+    top:64px;
     bottom:0;
+    overflow:auto;
 }
-#sidebarContainer{
-    display:none;
-}
-#mainAside.sideBar-toggled #sidebarContainer{
+
+#mainAside.sidebar-toggled #sidebarContainer{
     display:block;
 }
 #mainRow {
     position:relative;
     margin:0;
 }
-@media(max-width:576px){
-    #mainAside.sidebar-toggled{
-        width:100%;
-        display:block;
-    }
-    #mainRow{
-        width:100%;
-    }
+#mainAside.sidebar-toggled{
+    width:100%;
+    display:block;
+}
+#mainRow{
+    width:100%;
 }
 #mainSearchArea{
-    padding:30px 15px;
+    padding:30px 15px 0 15px;
     width:100%;
 }
 #mainSearchArea div{
-    border-bottom:1px solid rgba(58, 54, 54, 0.35);
+    border-bottom:1px solid rgba(57, 53, 53, 0.2);
     padding-bottom:15px;
     display:flex;
     width:100%;
@@ -174,46 +171,10 @@ input[type=checkbox]+label{
 }*/
 /* side bar */
 #sidebarContainer{
-    margin-top:79px;
+    display:none;
     padding-left:30px;
     padding-right:30px;
-    padding-top:50px;
-}
-#sidebarContainer.ps:hover > .ps__rail-x,
-#sidebarContainer.ps:hover > .ps__rail-y,
-#sidebarContainer.ps--focus > .ps__rail-x,
-#sidebarContainer.ps--focus > .ps__rail-y,
-#sidebarContainer.ps--scrolling-x > .ps__rail-x,
-#sidebarContainer.ps--scrolling-y > .ps__rail-y {
-  opacity: 0.6;
-}
-
-#sidebarContainer.ps .ps__rail-x:hover,
-#sidebarContainer.ps .ps__rail-y:hover,
-#sidebarContainer.ps .ps__rail-x:focus,
-#sidebarContainer.ps .ps__rail-y:focus,
-#sidebarContainer.ps .ps__rail-x.ps--clicking,
-#sidebarContainer.ps .ps__rail-y.ps--clicking {
-  background-color: transparent;
-  opacity: 0.9;
-}
-
-#sidebarContainer .ps__rail-x:hover > .ps__thumb-x,
-#sidebarContainer .ps__rail-x:focus > .ps__thumb-x,
-#sidebarContainer .ps__rail-x.ps--clicking .ps__thumb-x {
-  background-color: #3e4d5d;
-}
-
-#sidebarContainer .ps__rail-y:hover > .ps__thumb-y,
-#sidebarContainer .ps__rail-y:focus > .ps__thumb-y,
-#sidebarContainer .ps__rail-y.ps--clicking .ps__thumb-y {
-  background-color: #999;
-}
-#sidebarContainer.ps--active-y:hover .ps__thumb-y{
-  background-color: #3e4d5d;
-}
-#sidebarContainer.ps--active-x:hover .ps__thumb-x{
-  background-color: #3e4d5d;
+    padding-top:30px;
 }
 
 #sidebarContainer .list-group-item span{
@@ -435,22 +396,15 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 
 #mainRow #mainTask{
     display:none;
-    position:absolute;
+    height:0;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    transition: 0.3 left ease;
-    overflow:hidden;
-    left:-310px;
-    z-index:-1;
+    transition: 0.3 height ease;
 }
 
 #mainRow #mainTask.show{
-    display:initial;
-    max-width:237px;
-    min-width:237px;
-    width:237px;
-    left:30px;
-    z-index:0;
-    margin-right:23px;
+    display:block;
+    width:100%;
+    height:auto;
 }
 
 #mainRow #mainTask #mainTaskTip{
@@ -462,27 +416,55 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     border-bottom: 12px solid #fff;
     position: absolute;
     top: -24px;
-    right: 32px;
+    right: calc(50% - 6px);
 }
 
 #mainRow #mainTask #mainTaskContents{
     margin-top:30px;
+    min-height:50vh;
+    display:flex;
 }
 
 #mainRow #mainTask .task{
     word-break: break-all;
 }
 
-#mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
+/*#mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
     border-width: .05rem;
     border-radius: 0;
+}*/
+#mainRow .calendarMenu.fixedScroll .menuTitle{
+    position:fixed;
+    top:64px;
+    left:0;
+    right:0;
+    z-index:1;
+    background-color:#f8f8f8;
+    padding-left:20px;
+    padding-right:20px;
 }
-
+.calendarMenu.fixedScroll #mainCalendarSticky{
+    position:fixed;
+    left:5px;
+    right:5px;
+    z-index:1;
+    top:131px;
+    padding-left:15px;
+    padding-right:15px;
+    background-color:#fff;
+}
+.calendarMenu.fixedScroll #mainCalendar{
+    margin-top:190px;
+    padding-top:11px;
+}
+.calendarMenu.fixedScroll #mainCalendar.pushedDown{
+    margin-top:449px;
+    padding-top:11px;
+}
 #mainRow .menuTitle{
-    margin-bottom:15px;
     align-items:center;
     min-height:45px;
-    padding:0 15px;
+    padding:25px 15px 15px 15px;
 }
 
 #mainRow .menuTitle .menuTitleNumber{
@@ -545,13 +527,53 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     font-size: 18px;
     font-weight:500;
     vertical-align:sub;
+    display:inline-block;
+    width:80px;
 }
 
 #mainCalendarTools {
     width: 100%;
-    margin-bottom:12px;
+    margin-bottom:20px;
 }
-#mainCalendarCarousel .mainCalendarWeek{
+#mainCalendarCalendar, #mainCalendarCalendar .flatpickr-months, #mainCalendarCalendar .flatpickr-calendar:before, #mainCalendarCalendar .flatpickr-calendar:after{
+    display:none;
+}
+#mainCalendarCalendar .flatpickr-calendar{
+    position:initial;
+    box-shadow:none;
+    width:100%;
+    visibility:visible;
+    opacity:1;
+    display:block;
+    padding:0;
+}
+#mainCalendarCalendar .flatpickr-day{
+    max-width:14.28571428%;
+    font-size:16px;
+    font-weight:500;
+    font-family: 'Montserrat';
+    line-height:12vw;
+    padding-bottom:14.28571428%;
+    border-radius:50%;
+}
+#mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
+    color:#1736ff;
+}
+#mainCalendarCalendar .flatpickr-weekday{
+    font-size:13px;
+    font-weight:bold;
+    flex:1 0;
+}
+#mainCalendarCalendar .flatpickr-day.prevMonthDay, #mainCalendarCalendar .flatpickr-day.nextMonthDay{
+    opacity:0.5;
+}
+#mainCalendarCalendar .flatpickr-day.selected, #mainCalendarCalendar .flatpickr-day.startRange, #mainCalendarCalendar .flatpickr-day.endRange, #mainCalendarCalendar .flatpickr-day.selected.inRange, #mainCalendarCalendar .flatpickr-day.startRange.inRange, #mainCalendarCalendar .flatpickr-day.endRange.inRange, #mainCalendarCalendar .flatpickr-day.selected:focus, #mainCalendarCalendar .flatpickr-day.startRange:focus, #mainCalendarCalendar .flatpickr-day.endRange:focus, #mainCalendarCalendar .flatpickr-day.selected:hover, #mainCalendarCalendar .flatpickr-day.startRange:hover, #mainCalendarCalendar .flatpickr-day.endRange:hover, #mainCalendarCalendar .flatpickr-day.selected.prevMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.selected.nextMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.nextMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.nextMonthDay{
+    background-color: rgba(51, 65, 80, 0.1);
+    box-shadow: none;
+    color: initial;
+    border-color: transparent;
+}
+#mainCalendarCarousel .mainCalendarWeek, #mainCalendarCalendar .mainCalendarCalendarMonth{
     display:flex;
     flex-grow:1;
 }
@@ -572,6 +594,8 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarCarousel .mainCalendarDayName{
     font-size:13px;
     font-weight:bold;
+    height:26px;
+    line-height:26px;
 }
 #mainCalendarCarousel .mainCalendarDayName, #mainCalendarCarousel .mainCalendarOtherMonth .mainCalendarDay{
     opacity:0.5;
@@ -601,21 +625,6 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarArea{
     width:100%;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    transition: 0.3s margin-left ease;
-}
-
-#mainTask.show+#mainCalendarArea {
-    margin-left: 260px;
-}
-
-@media(min-width:1600px){
-    #mainCalendarArea{
-        min-width:unset;
-    }
-}
-
-.tui-full-calendar-timegrid-right+div+.ps__rail-y {
-    opacity: 0;
 }
 
 .tui-full-calendar-screen {
@@ -688,8 +697,15 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: 100%;
     height: 100%;
     overflow: hidden;
+    padding:15px;
 }
-
+.tui-full-calendar-schedule-cover > div{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display:flex;
+    flex-direction:column;
+}
 .tui-full-calendar-time-schedule {
     word-break:break-all;
     line-height: 1.2;
@@ -1393,7 +1409,7 @@ button.form-control {
 }
 
 #notificationBody .notification:not(:last-child), #announcementArea .announcement:not(:last-child){
-    border-bottom:1px solid rgba(58, 54, 54, 0.35);
+    border-bottom:1px solid rgba(57, 53, 53, 0.2);
 }
 
 #announcementArea .announcement .announcementTitle{
@@ -1507,16 +1523,6 @@ button.form-control {
     color:#fff;
 }
 
-/* tutorial */
-
-.popover.tutorial {
-    max-width: 350px;
-}
-
-.popover.tutorial .clearfix button {
-    margin-left: .5rem;
-}
-
 /* announcement */
 .btn .announcementCount, .announcementCount{
   vertical-align: super;
@@ -1528,14 +1534,19 @@ button.form-control {
 }
 
 /* incoCenterMenu */
-
+#feedback{
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+    overflow:hidden;
+    padding:25px 10px 25px 15px;
+    background-color:#fff;
+}
 #feedbackBody {
-    height: 186px;
+    min-height: calc(15vh);
+    height:15vh;
+    max-height: calc(100vh - 280px);
     font-size: 14px;
     border:none;
-    border-radius: 2px;
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-    padding:25px 30px;
 }
 
 #snackbar {
@@ -1664,12 +1675,19 @@ button.form-control {
 #faq{
     border-top:2px solid #393535;
     font-size: 14px;
+    margin-left:15px;
+    margin-right:15px;
+    border-bottom: 1px solid rgba(57, 53, 53, 0.2);
+}
+
+#faq .faqRow:not(:first-child) {
+    border-top: 1px solid rgba(57, 53, 53, 0.2);
 }
 
 #faq .faqRow {
     width: 100%;
     cursor: pointer;
-    padding: 17.5px 20px;
+    padding: 19.5px 0;
     position:relative;
 }
 
@@ -1688,28 +1706,12 @@ button.form-control {
     border-bottom: none;
 }
 
-#faq .row .faqDetailLink.collapsed, #faq .faqDetailRow{
-    border-bottom: 1px solid rgba(58, 54, 54, 0.35);
-}
-
-#faq .row .faqDetailLink:not(.collapsed)+div, #faq .row .faqDetailLink:hover+div{
+#faq .row .faqDetailLink:not(.collapsed):not(:active)+div{
     font-weight:bold;
 }
 
-#faq .row .faqDetailLink+div:after {
-    content: url('/nmns/img/arrow_bottom.svg');
-    margin-left:auto;
-    display: inline-block;
-    transition: 0.3s all ease;
-}
-
-#faq .row .faqDetailLink[aria-expanded=true]+div:after {
-    transform: rotate(180deg);
-    filter: none;
-}
-
 #faq .faqDetailRow {
-    padding: 0 20px;
+    padding: 0;
     flex: 0 0 100%;
     max-width: 100%;
     word-break: break-all;
@@ -1765,7 +1767,9 @@ button.form-control {
     border-radius: 5px;
     box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.07);
 }
-
+.salesMenu .menuTitle+.menuContents{
+    margin-top:30px;
+}
 /* noShow menu */
 
 .nav-pills .nav-link{

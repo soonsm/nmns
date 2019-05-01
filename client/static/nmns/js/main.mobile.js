@@ -1,5 +1,5 @@
 /*global jQuery, location, moment, tui, NMNS, io, filterNonNumericCharacter, dashContact, navigator, socketResponse, generateRandom, getCookie, flatpickr, PerfectScrollbar, toYYYYMMDD, findById, Notification, drawCustomerAlrimList, showSnackBar, showNotification, getBackgroundColor */
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("Siema",[],t):"object"==typeof exports?exports.Siema=t():e.Siema=t()}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(i[r])return i[r].exports;var n=i[r]={i:r,l:!1,exports:{}};return e[r].call(n.exports,n,n.exports,t),n.l=!0,n.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,r){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,i){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},s=function(){function e(e,t){for(var i=0;i<t.length;i++){var r=t[i];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,i,r){return i&&e(t.prototype,i),r&&e(t,r),t}}(),l=function(){function e(t){var i=this;if(r(this,e),this.config=e.mergeSettings(t),this.selector="string"==typeof this.config.selector?document.querySelector(this.config.selector):this.config.selector,null===this.selector)throw new Error("Something wrong with your selector 😭");this.resolveSlidesNumber(),this.selectorWidth=this.selector.offsetWidth,this.innerElements=[].slice.call(this.selector.children),this.currentSlide=this.config.loop?this.config.startIndex%this.innerElements.length:Math.max(0,Math.min(this.config.startIndex,this.innerElements.length-this.perPage)),this.transformProperty=e.webkitOrNot(),["resizeHandler","touchstartHandler","touchendHandler","touchmoveHandler","mousedownHandler","mouseupHandler","mouseleaveHandler","mousemoveHandler","clickHandler"].forEach(function(e){i[e]=i[e].bind(i)}),this.init()}return s(e,[{key:"attachEvents",value:function(){window.addEventListener("resize",this.resizeHandler),this.config.draggable&&(this.pointerDown=!1,this.drag={startX:0,endX:0,startY:0,letItGo:null,preventClick:!1},this.selector.addEventListener("touchstart",this.touchstartHandler),this.selector.addEventListener("touchend",this.touchendHandler),this.selector.addEventListener("touchmove",this.touchmoveHandler),this.selector.addEventListener("mousedown",this.mousedownHandler),this.selector.addEventListener("mouseup",this.mouseupHandler),this.selector.addEventListener("mouseleave",this.mouseleaveHandler),this.selector.addEventListener("mousemove",this.mousemoveHandler),this.selector.addEventListener("click",this.clickHandler))}},{key:"detachEvents",value:function(){window.removeEventListener("resize",this.resizeHandler),this.selector.removeEventListener("touchstart",this.touchstartHandler),this.selector.removeEventListener("touchend",this.touchendHandler),this.selector.removeEventListener("touchmove",this.touchmoveHandler),this.selector.removeEventListener("mousedown",this.mousedownHandler),this.selector.removeEventListener("mouseup",this.mouseupHandler),this.selector.removeEventListener("mouseleave",this.mouseleaveHandler),this.selector.removeEventListener("mousemove",this.mousemoveHandler),this.selector.removeEventListener("click",this.clickHandler)}},{key:"init",value:function(){this.attachEvents(),this.selector.style.overflow="hidden",this.selector.style.direction=this.config.rtl?"rtl":"ltr",this.buildSliderFrame(),this.config.onInit.call(this)}},{key:"buildSliderFrame",value:function(){var e=this.selectorWidth/this.perPage,t=this.config.loop?this.innerElements.length+2*this.perPage:this.innerElements.length;this.sliderFrame=document.createElement("div"),this.sliderFrame.style.width=e*t+"px",this.enableTransition(),this.config.draggable&&(this.selector.style.cursor="-webkit-grab");var i=document.createDocumentFragment();if(this.config.loop)for(var r=this.innerElements.length-this.perPage;r<this.innerElements.length;r++){var n=this.buildSliderFrameItem(this.innerElements[r].cloneNode(!0));i.appendChild(n)}for(var s=0;s<this.innerElements.length;s++){var l=this.buildSliderFrameItem(this.innerElements[s]);i.appendChild(l)}if(this.config.loop)for(var o=0;o<this.perPage;o++){var a=this.buildSliderFrameItem(this.innerElements[o].cloneNode(!0));i.appendChild(a)}this.sliderFrame.appendChild(i),this.selector.innerHTML="",this.selector.appendChild(this.sliderFrame),this.slideToCurrent()}},{key:"buildSliderFrameItem",value:function(e){var t=document.createElement("div");return t.style.cssFloat=this.config.rtl?"right":"left",t.style.float=this.config.rtl?"right":"left",t.style.width=(this.config.loop?100/(this.innerElements.length+2*this.perPage):100/this.innerElements.length)+"%",t.appendChild(e),t}},{key:"resolveSlidesNumber",value:function(){if("number"==typeof this.config.perPage)this.perPage=this.config.perPage;else if("object"===n(this.config.perPage)){this.perPage=1;for(var e in this.config.perPage)window.innerWidth>=e&&(this.perPage=this.config.perPage[e])}}},{key:"prev",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1,t=arguments[1];if(!(this.innerElements.length<=this.perPage)){var i=this.currentSlide;if(this.config.loop){if(this.currentSlide-e<0){this.disableTransition();var r=this.currentSlide+this.innerElements.length,n=this.perPage,s=r+n,l=(this.config.rtl?1:-1)*s*(this.selectorWidth/this.perPage),o=this.config.draggable?this.drag.endX-this.drag.startX:0;this.sliderFrame.style[this.transformProperty]="translate3d("+(l+o)+"px, 0, 0)",this.currentSlide=r-e}else this.currentSlide=this.currentSlide-e}else this.currentSlide=Math.max(this.currentSlide-e,0);i!==this.currentSlide&&(this.slideToCurrent(this.config.loop),this.config.onChange.call(this),t&&t.call(this))}}},{key:"next",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1,t=arguments[1];if(!(this.innerElements.length<=this.perPage)){var i=this.currentSlide;if(this.config.loop){if(this.currentSlide+e>this.innerElements.length-this.perPage){this.disableTransition();var r=this.currentSlide-this.innerElements.length,n=this.perPage,s=r+n,l=(this.config.rtl?1:-1)*s*(this.selectorWidth/this.perPage),o=this.config.draggable?this.drag.endX-this.drag.startX:0;this.sliderFrame.style[this.transformProperty]="translate3d("+(l+o)+"px, 0, 0)",this.currentSlide=r+e}else this.currentSlide=this.currentSlide+e}else this.currentSlide=Math.min(this.currentSlide+e,this.innerElements.length-this.perPage);i!==this.currentSlide&&(this.slideToCurrent(this.config.loop),this.config.onChange.call(this),t&&t.call(this))}}},{key:"disableTransition",value:function(){this.sliderFrame.style.webkitTransition="all 0ms "+this.config.easing,this.sliderFrame.style.transition="all 0ms "+this.config.easing}},{key:"enableTransition",value:function(){this.sliderFrame.style.webkitTransition="all "+this.config.duration+"ms "+this.config.easing,this.sliderFrame.style.transition="all "+this.config.duration+"ms "+this.config.easing}},{key:"goTo",value:function(e,t){if(!(this.innerElements.length<=this.perPage)){var i=this.currentSlide;this.currentSlide=this.config.loop?e%this.innerElements.length:Math.min(Math.max(e,0),this.innerElements.length-this.perPage),i!==this.currentSlide&&(this.slideToCurrent(),this.config.onChange.call(this),t&&t.call(this))}}},{key:"slideToCurrent",value:function(e){var t=this,i=this.config.loop?this.currentSlide+this.perPage:this.currentSlide,r=(this.config.rtl?1:-1)*i*(this.selectorWidth/this.perPage);e?requestAnimationFrame(function(){requestAnimationFrame(function(){t.enableTransition(),t.sliderFrame.style[t.transformProperty]="translate3d("+r+"px, 0, 0)"})}):this.sliderFrame.style[this.transformProperty]="translate3d("+r+"px, 0, 0)"}},{key:"updateAfterDrag",value:function(){var e=(this.config.rtl?-1:1)*(this.drag.endX-this.drag.startX),t=Math.abs(e),i=this.config.multipleDrag?Math.ceil(t/(this.selectorWidth/this.perPage)):1,r=e>0&&this.currentSlide-i<0,n=e<0&&this.currentSlide+i>this.innerElements.length-this.perPage;e>0&&t>this.config.threshold&&this.innerElements.length>this.perPage?this.prev(i):e<0&&t>this.config.threshold&&this.innerElements.length>this.perPage&&this.next(i),this.slideToCurrent(r||n)}},{key:"resizeHandler",value:function(){this.resolveSlidesNumber(),this.currentSlide+this.perPage>this.innerElements.length&&(this.currentSlide=this.innerElements.length<=this.perPage?0:this.innerElements.length-this.perPage),this.selectorWidth=this.selector.offsetWidth,this.buildSliderFrame()}},{key:"clearDrag",value:function(){this.drag={startX:0,endX:0,startY:0,letItGo:null,preventClick:this.drag.preventClick}}},{key:"touchstartHandler",value:function(e){-1!==["TEXTAREA","OPTION","INPUT","SELECT"].indexOf(e.target.nodeName)||(e.stopPropagation(),this.pointerDown=!0,this.drag.startX=e.touches[0].pageX,this.drag.startY=e.touches[0].pageY)}},{key:"touchendHandler",value:function(e){e.stopPropagation(),this.pointerDown=!1,this.enableTransition(),this.drag.endX&&this.updateAfterDrag(),this.clearDrag()}},{key:"touchmoveHandler",value:function(e){if(e.stopPropagation(),null===this.drag.letItGo&&(this.drag.letItGo=Math.abs(this.drag.startY-e.touches[0].pageY)<Math.abs(this.drag.startX-e.touches[0].pageX)),this.pointerDown&&this.drag.letItGo){e.preventDefault(),this.drag.endX=e.touches[0].pageX,this.sliderFrame.style.webkitTransition="all 0ms "+this.config.easing,this.sliderFrame.style.transition="all 0ms "+this.config.easing;var t=this.config.loop?this.currentSlide+this.perPage:this.currentSlide,i=t*(this.selectorWidth/this.perPage),r=this.drag.endX-this.drag.startX,n=this.config.rtl?i+r:i-r;this.sliderFrame.style[this.transformProperty]="translate3d("+(this.config.rtl?1:-1)*n+"px, 0, 0)"}}},{key:"mousedownHandler",value:function(e){-1!==["TEXTAREA","OPTION","INPUT","SELECT"].indexOf(e.target.nodeName)||(e.preventDefault(),e.stopPropagation(),this.pointerDown=!0,this.drag.startX=e.pageX)}},{key:"mouseupHandler",value:function(e){e.stopPropagation(),this.pointerDown=!1,this.selector.style.cursor="-webkit-grab",this.enableTransition(),this.drag.endX&&this.updateAfterDrag(),this.clearDrag()}},{key:"mousemoveHandler",value:function(e){if(e.preventDefault(),this.pointerDown){"A"===e.target.nodeName&&(this.drag.preventClick=!0),this.drag.endX=e.pageX,this.selector.style.cursor="-webkit-grabbing",this.sliderFrame.style.webkitTransition="all 0ms "+this.config.easing,this.sliderFrame.style.transition="all 0ms "+this.config.easing;var t=this.config.loop?this.currentSlide+this.perPage:this.currentSlide,i=t*(this.selectorWidth/this.perPage),r=this.drag.endX-this.drag.startX,n=this.config.rtl?i+r:i-r;this.sliderFrame.style[this.transformProperty]="translate3d("+(this.config.rtl?1:-1)*n+"px, 0, 0)"}}},{key:"mouseleaveHandler",value:function(e){this.pointerDown&&(this.pointerDown=!1,this.selector.style.cursor="-webkit-grab",this.drag.endX=e.pageX,this.drag.preventClick=!1,this.enableTransition(),this.updateAfterDrag(),this.clearDrag())}},{key:"clickHandler",value:function(e){this.drag.preventClick&&e.preventDefault(),this.drag.preventClick=!1}},{key:"remove",value:function(e,t){if(e<0||e>=this.innerElements.length)throw new Error("Item to remove doesn't exist 😭");var i=e<this.currentSlide,r=this.currentSlide+this.perPage-1===e;(i||r)&&this.currentSlide--,this.innerElements.splice(e,1),this.buildSliderFrame(),t&&t.call(this)}},{key:"insert",value:function(e,t,i){if(t<0||t>this.innerElements.length+1)throw new Error("Unable to inset it at this index 😭");if(-1!==this.innerElements.indexOf(e))throw new Error("The same item in a carousel? Really? Nope 😭");var r=t<=this.currentSlide>0&&this.innerElements.length;this.currentSlide=r?this.currentSlide+1:this.currentSlide,this.innerElements.splice(t,0,e),this.buildSliderFrame(),i&&i.call(this)}},{key:"prepend",value:function(e,t){this.insert(e,0),t&&t.call(this)}},{key:"append",value:function(e,t){this.insert(e,this.innerElements.length+1),t&&t.call(this)}},{key:"destroy",value:function(){var e=arguments.length>0&&void 0!==arguments[0]&&arguments[0],t=arguments[1];if(this.detachEvents(),this.selector.style.cursor="auto",e){for(var i=document.createDocumentFragment(),r=0;r<this.innerElements.length;r++)i.appendChild(this.innerElements[r]);this.selector.innerHTML="",this.selector.appendChild(i),this.selector.removeAttribute("style")}t&&t.call(this)}}],[{key:"mergeSettings",value:function(e){var t={selector:".siema",duration:200,easing:"ease-out",perPage:1,startIndex:0,draggable:!0,multipleDrag:!0,threshold:20,loop:!1,rtl:!1,onInit:function(){},onChange:function(){}},i=e;for(var r in i)t[r]=i[r];return t}},{key:"webkitOrNot",value:function(){return"string"==typeof document.documentElement.style.transform?"transform":"WebkitTransform"}}]),e}();t.default=l,e.exports=t.default}])});
+!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("Siema",[],t):"object"==typeof exports?exports.Siema=t():e.Siema=t()}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(i[r])return i[r].exports;var n=i[r]={i:r,l:!1,exports:{}};return e[r].call(n.exports,n,n.exports,t),n.l=!0,n.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,r){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,i){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},s=function(){function e(e,t){for(var i=0;i<t.length;i++){var r=t[i];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,i,r){return i&&e(t.prototype,i),r&&e(t,r),t}}(),l=function(){function e(t){var i=this;if(r(this,e),this.config=e.mergeSettings(t),this.selector="string"==typeof this.config.selector?document.querySelector(this.config.selector):this.config.selector,null===this.selector)throw new Error("Something wrong with your selector 😭");this.resolveSlidesNumber(),this.selectorWidth=this.selector.offsetWidth,this.transformProperty=e.webkitOrNot(),["resizeHandler","touchstartHandler","touchendHandler","touchmoveHandler","mousedownHandler","mouseupHandler","mouseleaveHandler","mousemoveHandler","clickHandler"].forEach(function(e){i[e]=i[e].bind(i)}),this.init()}return s(e,[{key:"attachEvents",value:function(){window.addEventListener("resize",this.resizeHandler),this.config.draggable&&(this.pointerDown=!1,this.drag={startX:0,endX:0,startY:0,letItGo:null,preventClick:!1},this.selector.addEventListener("touchstart",this.touchstartHandler),this.selector.addEventListener("touchend",this.touchendHandler),this.selector.addEventListener("touchmove",this.touchmoveHandler),this.selector.addEventListener("mousedown",this.mousedownHandler),this.selector.addEventListener("mouseup",this.mouseupHandler),this.selector.addEventListener("mouseleave",this.mouseleaveHandler),this.selector.addEventListener("mousemove",this.mousemoveHandler),this.selector.addEventListener("click",this.clickHandler))}},{key:"detachEvents",value:function(){window.removeEventListener("resize",this.resizeHandler),this.selector.removeEventListener("touchstart",this.touchstartHandler),this.selector.removeEventListener("touchend",this.touchendHandler),this.selector.removeEventListener("touchmove",this.touchmoveHandler),this.selector.removeEventListener("mousedown",this.mousedownHandler),this.selector.removeEventListener("mouseup",this.mouseupHandler),this.selector.removeEventListener("mouseleave",this.mouseleaveHandler),this.selector.removeEventListener("mousemove",this.mousemoveHandler),this.selector.removeEventListener("click",this.clickHandler)}},{key:"init",value:function(){this.innerElements=[].slice.call(this.selector.children),this.currentSlide=this.config.loop?this.config.startIndex%this.innerElements.length:Math.max(0,Math.min(this.config.startIndex,this.innerElements.length-this.perPage)),this.attachEvents(),this.selector.style.overflow="hidden",this.selector.style.direction=this.config.rtl?"rtl":"ltr",this.buildSliderFrame(),this.config.onInit.call(this)}},{key:"buildSliderFrame",value:function(){var e=this.selectorWidth/this.perPage,t=this.config.loop?this.innerElements.length+2*this.perPage:this.innerElements.length;this.sliderFrame=document.createElement("div"),this.sliderFrame.style.width=e*t+"px",this.enableTransition(),this.config.draggable&&(this.selector.style.cursor="-webkit-grab");var i=document.createDocumentFragment();if(this.config.loop)for(var r=this.innerElements.length-this.perPage;r<this.innerElements.length;r++){var n=this.buildSliderFrameItem(this.innerElements[r].cloneNode(!0));i.appendChild(n)}for(var s=0;s<this.innerElements.length;s++){var l=this.buildSliderFrameItem(this.innerElements[s]);i.appendChild(l)}if(this.config.loop)for(var o=0;o<this.perPage;o++){var a=this.buildSliderFrameItem(this.innerElements[o].cloneNode(!0));i.appendChild(a)}this.sliderFrame.appendChild(i),this.selector.innerHTML="",this.selector.appendChild(this.sliderFrame),this.slideToCurrent()}},{key:"buildSliderFrameItem",value:function(e){var t=document.createElement("div");return t.style.cssFloat=this.config.rtl?"right":"left",t.style.float=this.config.rtl?"right":"left",t.style.width=(this.config.loop?100/(this.innerElements.length+2*this.perPage):100/this.innerElements.length)+"%",t.appendChild(e),t}},{key:"resolveSlidesNumber",value:function(){if("number"==typeof this.config.perPage)this.perPage=this.config.perPage;else if("object"===n(this.config.perPage)){this.perPage=1;for(var e in this.config.perPage)window.innerWidth>=e&&(this.perPage=this.config.perPage[e])}}},{key:"prev",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1,t=arguments[1];if(!(this.innerElements.length<=this.perPage)){var i=this.currentSlide;if(this.config.loop){if(this.currentSlide-e<0){this.disableTransition();var r=this.currentSlide+this.innerElements.length,n=this.perPage,s=r+n,l=(this.config.rtl?1:-1)*s*(this.selectorWidth/this.perPage),o=this.config.draggable?this.drag.endX-this.drag.startX:0;this.sliderFrame.style[this.transformProperty]="translate3d("+(l+o)+"px, 0, 0)",this.currentSlide=r-e}else this.currentSlide=this.currentSlide-e}else this.currentSlide=Math.max(this.currentSlide-e,0);i!==this.currentSlide&&(this.slideToCurrent(this.config.loop),this.config.onChange.call(this),t&&t.call(this))}}},{key:"next",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1,t=arguments[1];if(!(this.innerElements.length<=this.perPage)){var i=this.currentSlide;if(this.config.loop){if(this.currentSlide+e>this.innerElements.length-this.perPage){this.disableTransition();var r=this.currentSlide-this.innerElements.length,n=this.perPage,s=r+n,l=(this.config.rtl?1:-1)*s*(this.selectorWidth/this.perPage),o=this.config.draggable?this.drag.endX-this.drag.startX:0;this.sliderFrame.style[this.transformProperty]="translate3d("+(l+o)+"px, 0, 0)",this.currentSlide=r+e}else this.currentSlide=this.currentSlide+e}else this.currentSlide=Math.min(this.currentSlide+e,this.innerElements.length-this.perPage);i!==this.currentSlide&&(this.slideToCurrent(this.config.loop),this.config.onChange.call(this),t&&t.call(this))}}},{key:"disableTransition",value:function(){this.sliderFrame.style.webkitTransition="all 0ms "+this.config.easing,this.sliderFrame.style.transition="all 0ms "+this.config.easing}},{key:"enableTransition",value:function(){this.sliderFrame.style.webkitTransition="all "+this.config.duration+"ms "+this.config.easing,this.sliderFrame.style.transition="all "+this.config.duration+"ms "+this.config.easing}},{key:"goTo",value:function(e,t){if(!(this.innerElements.length<=this.perPage)){var i=this.currentSlide;this.currentSlide=this.config.loop?e%this.innerElements.length:Math.min(Math.max(e,0),this.innerElements.length-this.perPage),i!==this.currentSlide&&(this.slideToCurrent(),this.config.onChange.call(this),t&&t.call(this))}}},{key:"slideToCurrent",value:function(e){var t=this,i=this.config.loop?this.currentSlide+this.perPage:this.currentSlide,r=(this.config.rtl?1:-1)*i*(this.selectorWidth/this.perPage);e?requestAnimationFrame(function(){requestAnimationFrame(function(){t.enableTransition(),t.sliderFrame.style[t.transformProperty]="translate3d("+r+"px, 0, 0)"})}):this.sliderFrame.style[this.transformProperty]="translate3d("+r+"px, 0, 0)"}},{key:"updateAfterDrag",value:function(){var e=(this.config.rtl?-1:1)*(this.drag.endX-this.drag.startX),t=Math.abs(e),i=this.config.multipleDrag?Math.ceil(t/(this.selectorWidth/this.perPage)):1,r=e>0&&this.currentSlide-i<0,n=e<0&&this.currentSlide+i>this.innerElements.length-this.perPage;e>0&&t>this.config.threshold&&this.innerElements.length>this.perPage?this.prev(i):e<0&&t>this.config.threshold&&this.innerElements.length>this.perPage&&this.next(i),this.slideToCurrent(r||n)}},{key:"resizeHandler",value:function(){this.resolveSlidesNumber(),this.currentSlide+this.perPage>this.innerElements.length&&(this.currentSlide=this.innerElements.length<=this.perPage?0:this.innerElements.length-this.perPage),this.selectorWidth=this.selector.offsetWidth,this.buildSliderFrame()}},{key:"clearDrag",value:function(){this.drag={startX:0,endX:0,startY:0,letItGo:null,preventClick:this.drag.preventClick}}},{key:"touchstartHandler",value:function(e){-1!==["TEXTAREA","OPTION","INPUT","SELECT"].indexOf(e.target.nodeName)||(e.stopPropagation(),this.pointerDown=!0,this.drag.startX=e.touches[0].pageX,this.drag.startY=e.touches[0].pageY)}},{key:"touchendHandler",value:function(e){e.stopPropagation(),this.pointerDown=!1,this.enableTransition(),this.drag.endX&&this.updateAfterDrag(),this.clearDrag()}},{key:"touchmoveHandler",value:function(e){if(e.stopPropagation(),null===this.drag.letItGo&&(this.drag.letItGo=Math.abs(this.drag.startY-e.touches[0].pageY)<Math.abs(this.drag.startX-e.touches[0].pageX)),this.pointerDown&&this.drag.letItGo){e.preventDefault(),this.drag.endX=e.touches[0].pageX,this.sliderFrame.style.webkitTransition="all 0ms "+this.config.easing,this.sliderFrame.style.transition="all 0ms "+this.config.easing;var t=this.config.loop?this.currentSlide+this.perPage:this.currentSlide,i=t*(this.selectorWidth/this.perPage),r=this.drag.endX-this.drag.startX,n=this.config.rtl?i+r:i-r;this.sliderFrame.style[this.transformProperty]="translate3d("+(this.config.rtl?1:-1)*n+"px, 0, 0)"}}},{key:"mousedownHandler",value:function(e){-1!==["TEXTAREA","OPTION","INPUT","SELECT"].indexOf(e.target.nodeName)||(e.preventDefault(),e.stopPropagation(),this.pointerDown=!0,this.drag.startX=e.pageX)}},{key:"mouseupHandler",value:function(e){e.stopPropagation(),this.pointerDown=!1,this.selector.style.cursor="-webkit-grab",this.enableTransition(),this.drag.endX&&this.updateAfterDrag(),this.clearDrag()}},{key:"mousemoveHandler",value:function(e){if(e.preventDefault(),this.pointerDown){"A"===e.target.nodeName&&(this.drag.preventClick=!0),this.drag.endX=e.pageX,this.selector.style.cursor="-webkit-grabbing",this.sliderFrame.style.webkitTransition="all 0ms "+this.config.easing,this.sliderFrame.style.transition="all 0ms "+this.config.easing;var t=this.config.loop?this.currentSlide+this.perPage:this.currentSlide,i=t*(this.selectorWidth/this.perPage),r=this.drag.endX-this.drag.startX,n=this.config.rtl?i+r:i-r;this.sliderFrame.style[this.transformProperty]="translate3d("+(this.config.rtl?1:-1)*n+"px, 0, 0)"}}},{key:"mouseleaveHandler",value:function(e){this.pointerDown&&(this.pointerDown=!1,this.selector.style.cursor="-webkit-grab",this.drag.endX=e.pageX,this.drag.preventClick=!1,this.enableTransition(),this.updateAfterDrag(),this.clearDrag())}},{key:"clickHandler",value:function(e){this.drag.preventClick&&e.preventDefault(),this.drag.preventClick=!1}},{key:"remove",value:function(e,t){if(e<0||e>=this.innerElements.length)throw new Error("Item to remove doesn't exist 😭");var i=e<this.currentSlide,r=this.currentSlide+this.perPage-1===e;(i||r)&&this.currentSlide--,this.innerElements.splice(e,1),this.buildSliderFrame(),t&&t.call(this)}},{key:"insert",value:function(e,t,i){if(t<0||t>this.innerElements.length+1)throw new Error("Unable to inset it at this index 😭");if(-1!==this.innerElements.indexOf(e))throw new Error("The same item in a carousel? Really? Nope 😭");var r=t<=this.currentSlide>0&&this.innerElements.length;this.currentSlide=r?this.currentSlide+1:this.currentSlide,this.innerElements.splice(t,0,e),this.buildSliderFrame(),i&&i.call(this)}},{key:"prepend",value:function(e,t){this.insert(e,0),t&&t.call(this)}},{key:"append",value:function(e,t){this.insert(e,this.innerElements.length+1),t&&t.call(this)}},{key:"destroy",value:function(){var e=arguments.length>0&&void 0!==arguments[0]&&arguments[0],t=arguments[1];if(this.detachEvents(),this.selector.style.cursor="auto",e){for(var i=document.createDocumentFragment(),r=0;r<this.innerElements.length;r++)i.appendChild(this.innerElements[r]);this.selector.innerHTML="",this.selector.appendChild(i),this.selector.removeAttribute("style")}t&&t.call(this)}}],[{key:"mergeSettings",value:function(e){var t={selector:".siema",duration:200,easing:"ease-out",perPage:1,startIndex:0,draggable:!0,multipleDrag:!0,threshold:20,loop:!1,rtl:!1,onInit:function(){},onChange:function(){}},i=e;for(var r in i)t[r]=i[r];return t}},{key:"webkitOrNot",value:function(){return"string"==typeof document.documentElement.style.transform?"transform":"WebkitTransform"}}]),e}();t.default=l,e.exports=t.default}])});
 (function($) {
     if ( /*@cc_on!@*/ false || !!document.documentMode) {
         var word;
@@ -30,6 +30,7 @@
         useCreationPopup: false,
         useDetailPopup: true,
         disableDblClick: true,
+        isReadOnly:true,
         template: {
             allday: function(schedule) {
                 return getTimeSchedule(schedule, schedule.isAllDay);
@@ -152,7 +153,7 @@
             hourEnd: NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23
         },
         theme: {
-            "common.border": ".07rem solid rgba(57, 53, 53, 0.35)",
+            "common.border": "1px solid rgba(57, 53, 53, 0.2)",
             "common.saturday.color": "#1736ff",
             'common.dayname.color': '#393535',
             'common.holiday.color':'#fd5b77',
@@ -184,6 +185,7 @@
             "week.pastTime.color": "#393535",
             "week.futureTime.color": "#393535",
             'week.creationGuide.color': '#fd5b77',
+            'week.today.backgroundColor': 'inherit',
             'week.timegrid.paddingRight': '1px',
             'week.dayGridSchedule.marginRight': '1px',
             'week.dayname.borderTop':'none',
@@ -191,6 +193,9 @@
             'week.dayname.borderLeft':'none',
             'week.dayname.textAlign': 'center',
             'week.dayname.height': '51px',
+            'week.timegridHorizontalLine.borderBottom': '1px solid rgba(57, 53, 53, 0.2)',
+            'week.daygrid.borderRight': '1px solid rgba(57,53,53,0.2)',
+            'week.timegrid.borderRight': '1px solid rgba(57,53,53,0.2)',
             'week.dayGridSchedule.borderLeft': '2px solid',
             'week.daygridLeft.width': '54px',
             'week.timegridLeft.borderRight': 'none',
@@ -237,7 +242,6 @@
       beforeChangeView: function(e){
         NMNS.calendar.changeView(e.viewName);
         NMNS.calendar.setDate(e.date);
-        // setDropdownCalendarType();
         setRenderRangeText();
         setSchedules();
       }
@@ -304,15 +308,14 @@
         });
 
         $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
-        if($("#sidebarContainer").data('scroll')){
+        /*if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
-        }
+        }*/
         NMNS.calendar.setCalendars(e.data);
         if (NMNS.needInit) {
             delete NMNS.needInit;
             setSchedules();
         }
-        $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
         $("#mainTaskContents input").on('change', function(e){
           e.stopPropagation();
           var data = $(this).parent();
@@ -335,93 +338,21 @@
     function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
-        if(NMNS.calendar.getViewName() === 'week'){
-          html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center text-center'><div class='col-11 px-0'>"
-          if(!isAllDay){
-              html += "<div class='row mx-0'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
+        var contents = null;
+        if(schedule.raw.contents){
+          try{
+            contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
+          }catch(error){
+            contents = schedule.raw.contents;
           }
-          if (schedule.title) {
-              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>" + schedule.title + "</div></div>";
-          }
-          html += "</div></div>"
-        }else if(NMNS.calendar.getViewName() === 'day'){
-          var contents = null;
-          if(schedule.raw.contents){
-            try{
-              contents = JSON.parse(schedule.raw.contents).map(function(item){return item.value}).join(', ');
-            }catch(error){
-              contents = schedule.raw.contents;
-            }
-          }
-          html += "<div class='tui-full-calendar-schedule-cover flex-column d-flex' style='padding:20px'><div class='row align-items-center' style='margin-bottom:5px'><div class='col d-flex'>";
-          html += ("<div title='"+type+"내용:"+(contents||'')+" class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
-          /*switch (schedule.raw.status) {
-              case "CANCELED":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>취소</span>";
-                  break;
-              case "NOSHOW":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-danger'>노쇼</span>";
-                  break;
-              case "CUSTOMERCANCELED":
-                  html += "<span title='상태/" + type + "내용'><span class='badge badge-light'>고객취소</span>";
-                  break;
-          }*/
-          html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div>");
-          
-        }else{
-          html += "예약 " + schedule.count + "건</div>"
         }
-
+        html += "<div class='tui-full-calendar-schedule-cover'><div><div class='row align-items-center' style='margin-bottom:5px'><div class='row mx-0 col'>";
+        html += ("<div title='"+type+"내용:"+(contents||'')+"' class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
+        html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div></div><div style='font-size:11px'>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div></div>");
+        
         return html;
     }
 
-    /*function onClickMenu(e) { // changer calendar view
-        var action = e.target.getAttribute('data-action');
-        if (!action) {
-            action = e.target.parentElement.getAttribute('data-action');
-        }
-        var viewName = '';
-
-        switch (action) {
-            case 'toggle-daily':
-                viewName = 'day';
-                $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-                break;
-            case 'toggle-weekly':
-                viewName = 'week';
-                $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
-                break;
-            case 'toggle-monthly':
-                viewName = 'month';
-                $("#mainCalendar").css("height", "598px");
-                break;
-            default:
-                break;
-        }
-        NMNS.calendar.changeView(viewName, true);
-
-        // setDropdownCalendarType();
-        setRenderRangeText();
-        setSchedules();
-    }*/
-
-    /*function setDropdownCalendarType() {// change calendar view on small device
-        $(".calendarType").removeClass("active");
-
-        switch (NMNS.calendar.getViewName()) {
-            case "day":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-daily']").addClass("active").html());
-                break;
-            case "week":
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-weekly']").addClass("active").html());
-                break;
-            default:
-                $("#calendarTypeMenu").html($(".calendarType[data-action='toggle-monthly']").addClass("active").html());
-                break;
-        }
-
-    }*/
-    
     function generateCarouselItem(start){
       var html = '';
       var monday=start.clone().add(1, 'days'), tuesday=start.clone().add(2, 'days'), wednesday=start.clone().add(3, 'days'), thursday=start.clone().add(4,'days'), friday=start.clone().add(5,'days'), saturday=start.clone().add(6, 'days');
@@ -441,28 +372,43 @@
           NMNS.calendar.setDate(moment($(this).data('date'), 'YYYYMMDD').toDate());
           setRenderRangeText();
           setSchedules();
+          var month = moment(NMNS.calendar.getDate().getTime()).format('YYYYMM');
+          $("#mainCalendarCarousel > div > div:nth-child("+(NMNS.siema.currentSlide + 1)+") .mainCalendarWeekday").each(function(index, weekday){
+            if(($(weekday).data('date')+'').indexOf(month) === 0){
+              $(weekday).removeClass('mainCalendarOtherMonth');
+            }else{
+              $(weekday).addClass('mainCalendarOtherMonth');
+            }
+          });
+          
         }
       });
       return html;
     }
     function initCalendarCarousel(){
-      $("#mainCalendarCarousel").append(generateCarouselItem(moment().add(-7, 'days').startOf('week')));
-      $("#mainCalendarCarousel").append(generateCarouselItem(moment().startOf('week')));
-      $("#mainCalendarCarousel").append(generateCarouselItem(moment().add(7, 'days').startOf('week')));
-      NMNS.siema = new Siema({
-        selector: '#mainCalendarCarousel',
-        duration: 200,
-        easing: 'ease-out',
-        perPage: 1,
-        startIndex: 1,
-        draggable: true,
-        multipleDrag: false,
-        threshold: 20,
-        loop: false,
-        rtl: false,
-        onChange: onChangeCarousel
-      });
-      $("#mainCalendarCarousel > div > div:nth-child(2) .mainCalendarWeekday[data-date='"+moment().format('YYYYMMDD')+"']").addClass('mainCalendarWeekdayActive');
+      var date = NMNS.calendar.getDate().toDate();
+      if(NMNS.siema){
+        NMNS.siema.destroy(true);
+        $("#mainCalendarCarousel").html('').html(generateCarouselItem(moment(date).add(-7, 'days').startOf('week'))).append(generateCarouselItem(moment(date).startOf('week'))).append(generateCarouselItem(moment(date).add(7, 'days').startOf('week')));
+        NMNS.siema.init();
+        NMNS.siema.goTo(1);
+      }else{
+        $("#mainCalendarCarousel").html(generateCarouselItem(moment(date).add(-7, 'days').startOf('week'))).append(generateCarouselItem(moment(date).startOf('week'))).append(generateCarouselItem(moment(date).add(7, 'days').startOf('week')));
+        NMNS.siema = new Siema({
+          selector: '#mainCalendarCarousel',
+          duration: 200,
+          easing: 'ease-out',
+          perPage: 1,
+          startIndex: 1,
+          draggable: true,
+          multipleDrag: false,
+          threshold: 20,
+          loop: false,
+          rtl: false,
+          onChange: onChangeCarousel
+        });
+      }
+      $("#mainCalendarCarousel > div > div:nth-child(2) .mainCalendarWeekday[data-date='"+moment(date).format('YYYYMMDD')+"']").addClass('mainCalendarWeekdayActive');
     }
     function onChangeCarousel(){
       var index= NMNS.siema.currentSlide;
@@ -470,6 +416,15 @@
       //change the date of calendar
       NMNS.calendar.setDate(moment($("#mainCalendarCarousel > div > div:nth-child("+(index+1)+") .mainCalendarWeek .mainCalendarWeekday:nth-child("+($("#mainCalendarCarousel .mainCalendarWeekdayActive").removeClass('mainCalendarWeekdayActive').index()+1)+")").addClass('mainCalendarWeekdayActive').data('date'), 'YYYYMMDD').toDate());
       setRenderRangeText();
+      var month = moment(NMNS.calendar.getDate().getTime()).format('YYYYMM');
+      $("#mainCalendarCarousel > div > div:nth-child("+(NMNS.siema.currentSlide + 1)+") .mainCalendarWeekday").each(function(index, weekday){
+        if(($(weekday).data('date')+'').indexOf(month) === 0){
+          $(weekday).removeClass('mainCalendarOtherMonth');
+        }else{
+          $(weekday).addClass('mainCalendarOtherMonth');
+        }
+      });
+      
       setSchedules();
       if(index === 0){//create previous week
         NMNS.siema.prepend(generateCarouselItem(moment($("#mainCalendarCarousel .mainCalendarWeek").eq(index).data('start'), 'YYYYMMDD').add(-7, 'days'))[0]);
@@ -478,43 +433,75 @@
       }
     }
 
+    function onChangeCalendarCarousel(){
+      var nextIndex, prevIndex;
+      switch (NMNS.siemaCalendar.currentSlide){
+        case 0:
+          nextIndex = 2;
+          prevIndex = 3;
+          break;
+        case 1:
+          nextIndex = 3;
+          prevIndex = 1;
+          break;
+        case 2:
+          nextIndex = 1;
+          prevIndex = 2;
+          break;
+        default:
+          return;
+      }
+      var current = document.getElementById('mainCalendarRangeInput'+(NMNS.siemaCalendar.currentSlide + 1))._flatpickr;
+      setRenderRangeText(current.currentYear + '. ' + (current.currentMonth > 8?'':'0')+(current.currentMonth + 1));
+      current = moment([current.currentYear + '' , current.currentMonth + '']).toDate();
+      document.getElementById('mainCalendarRangeInput' + prevIndex)._flatpickr.jumpToDate(moment(current).add(-1, 'month').toDate());
+      document.getElementById('mainCalendarRangeInput' + nextIndex)._flatpickr.jumpToDate(moment(current).add(1, 'month').toDate());
+      
+    }
+    
+    function onChangeMainCalendar(id){
+      return function(){
+        NMNS.calendar.setDate(moment($(id).val(), 'YYYYMMDD').toDate());
+        $("#mainCalendarRange").trigger('click');
+        initCalendarCarousel();
+        var month = moment(NMNS.calendar.getDate().getTime()).format('YYYYMM');
+        $("#mainCalendarCarousel > div > div:nth-child("+(NMNS.siema.currentSlide + 1)+") .mainCalendarWeekday").each(function(index, weekday){
+          if(($(weekday).data('date')+'').indexOf(month) === 0){
+            $(weekday).removeClass('mainCalendarOtherMonth');
+          }else{
+            $(weekday).addClass('mainCalendarOtherMonth');
+          }
+        });
+        
+        $(id).val(null);
+      };
+    }
+
     function onClickNavi(e) { // prev, next button event on calendar
+      if($("#mainCalendarCalendar").is(":visible")){
+        e.stopPropagation();
         var action = e.target.getAttribute('data-action');
         if (!action) {
             action = e.target.parentElement.getAttribute('data-action');
         }
         switch (action) {
-            case 'prev':
-                NMNS.calendar.prev();
-                break;
-            case 'next':
-                NMNS.calendar.next();
-                break;
-            default:
-                return;
+          case 'prev':
+            NMNS.siemaCalendar.prev();
+            break;
+          case 'next':
+            NMNS.siemaCalendar.next();
+            break;
+          default:
+            return;
         }
-
-        setRenderRangeText();
-        setSchedules();
+      }
     }
 
     function onClickTask(e){ // handle event when click today's task text
-      if($(window).width() < 1600){
-        if($("#mainTask").hasClass("show")){// about to hide task
-          $("#mainCalendarArea").css('minWidth', '');
-          $("#mainContents").css("minWidth", '100%');
-          $("#mainAside").css('minWidth', 'unset');
-        }else{// about to show task
-          $("#mainCalendarArea").css('minWidth', $("#mainCalendarArea").width());
-          $("#mainContents").css("minWidth", '');
-          if($("#mainAside").hasClass("sidebar-toggled")){//hided
-            $("#mainAside").css('minWidth', 'unset');
-          }else{
-            $("#mainAside").css('minWidth', '270px');
-          }
-        }
-      }
+      document.scrollingElement.scrollTop = 0;
+      $(".calendarMenu").removeClass('fixedScroll');
       $("#mainTask").toggleClass('show');
+      $("#mainCalendarArea").toggle();
     }
 
     function findManager(managerId) {
@@ -545,35 +532,15 @@
             span.style.backgroundColor = input.checked ? span.getAttribute('data-color') : 'transparent';
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
-        
     }
 
-    function setRenderRangeText() {
-        var renderRange = document.getElementById('renderRange');
-        // var options = NMNS.calendar.getOptions();
-        // var viewName = NMNS.calendar.getViewName();
-        var html = moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
-        /*if (viewName === 'day') {
-            var today = moment(NMNS.calendar.getDate().getTime());
-            html += today.format('YYYY. MM. DD');
-            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
-            html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
-        } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
-        } else {
-            html += moment(NMNS.calendar.getDateRangeStart().getTime()).format('YYYY. MM. DD');
-            html += ' - ';
-            html += moment(NMNS.calendar.getDateRangeEnd().getTime()).format(' MM. DD');
-        }*/
-        //TODO : check other month date on carousel
-        var month = moment(NMNS.calendar.getDate().getTime()).format('YYYYMM');
-        $("#mainCalendarCarousel > div > div:nth-child("+(NMNS.siema.currentSlide + 1)+") .mainCalendarWeekday").each(function(index, weekday){
-          if(($(weekday).data('date')+'').indexOf(month) === 0){
-            $(weekday).removeClass('mainCalendarOtherMonth');
-          }else{
-            $(weekday).addClass('mainCalendarOtherMonth');
-          }
-        });
-        renderRange.innerHTML = html;
+    function setRenderRangeText(target) {
+      var renderRange = document.getElementById('renderRange');
+      if(target){
+        renderRange.innerHTML = target;
+      }else{
+        renderRange.innerHTML = moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
+      }
     }
 
     function setSchedules() {
@@ -641,20 +608,24 @@
     
     function generateTaskList(taskList) {
       var html = "";
-      var today = moment().format('YYYYMMDD');
-      var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
-      taskList.forEach(function(day){
-        if(day.task.length > 0){
-          html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
-          day.task.forEach(function(task, index){
-            var manager = findManager(task.manager) || {};
-            html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
-            moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
-            + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
-            +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
-          })
-        }
-      })
+      if(taskList.length > 0){
+        var today = moment().format('YYYYMMDD');
+        var tomorrow = moment().add(1, 'days').format('YYYYMMDD');
+        taskList.forEach(function(day){
+          if(day.task.length > 0){
+            html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
+            day.task.forEach(function(task, index){
+              var manager = findManager(task.manager) || {};
+              html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-title='"+task.title+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.title+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+              moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
+              + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
+              +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
+            })
+          }
+        })
+      }else{
+        html = "<div class='m-auto'>등록된 일정이 없어요.</div>"
+      }
       return html;
     }
 
@@ -664,9 +635,9 @@
 
     function drawAlrimList(alrims) {
         var list = $("#alrimHistoryList");
-        if (!list.hasClass("ps")) {
+        /*if (!list.hasClass("ps")) {
             list.data("scroll", new PerfectScrollbar("#alrimHistoryList"));
-        }
+        }*/
         if (alrims && alrims.length > 0) {
             var html = "";
             var base = $("#alrimHistoryList .alrimRow").length
@@ -685,7 +656,7 @@
         } else {
             list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
         }
-        list.data("scroll").update();
+        // list.data("scroll").update();
     }
 
     function refreshAlrimModal() {
@@ -844,7 +815,7 @@
 
     function initNoShowModal() {
         if (!$("#noShowScheduleList").hasClass("ps")) {
-          $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
+          // $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
         
           $(".noShowAddCase").off("touch click").on("touch click", function() {
             $(this).siblings().removeClass("bg-primary");
@@ -1868,9 +1839,9 @@
           }
         })
         
-        if ($("#noShowScheduleList").hasClass("ps")) {
+        /*if ($("#noShowScheduleList").hasClass("ps")) {
             $("#noShowScheduleList").data("scroll").update();
-        }
+        }*/
     }));
 
     NMNS.socket.on("add reserv", socketResponse("예약/일정 추가하기", function(e) {
@@ -1968,9 +1939,9 @@
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
-            if($("#sidebarContainer").data('scroll')){
+            /*if($("#sidebarContainer").data('scroll')){
               $("#sidebarContainer").data('scroll').update();
-            }
+            }*/
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -2024,7 +1995,7 @@
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
         if (e.data.summary.noShowCount > 0) {
-          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});
+          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
           if(!$("#noShowDirtyImage").attr('src')){
             $("#noShowDirtyImage").attr('src', '/nmns/img/badperson.png');
@@ -2217,6 +2188,9 @@
       if($("#scheduleTabContentList").is(":visible")){
         $("#scheduleTabContentList").html(generateMenuList(e.data));
         NMNS.menuList = e.data;
+      }
+      if($("#mainMenuList").is(":visible") && NMNS.drawMenuList){
+        NMNS.drawMenuList(true);
       }
     }, undefined, true));
     
@@ -2598,13 +2572,13 @@
     })
     //Modal events end
     //mobile horizontal scroll handling
-    swipedetect(document.getElementById('mainCalendar'), function(swipedir) {
+    /*swipedetect(document.getElementById('mainCalendar'), function(swipedir) {
         if (swipedir === "left") {
             $("#renderRange").next().trigger("click");
         } else if (swipedir === "right") {
             $("#renderRange").prev().trigger("click");
         }
-    });
+    });*/
 
     //mobile horizontal scroll handling end
     function initLnbManagerForm(){
@@ -2649,9 +2623,9 @@
         //create
         id = NMNS.email + generateRandom();
         $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
-        if($("#sidebarContainer").data('scroll')){
+        /*if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
-        }
+        }*/
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2687,10 +2661,62 @@
       $("#lnbManagerForm").data('id', null).hide();
     }).one("touch click", initLnbManagerForm);
     
-    $(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
+    $("#mainCalendarRange").on("touch click", function(){
+      $("#mainCalendarCarousel, #mainCalendarCalendar").toggle();
+      $("#mainCalendar").toggleClass('pushedDown');
+      if($("#mainCalendarCalendar").is(":visible")){
+        if(!$("#mainCalendarRangeInput1")[0]._flatpickr){
+          flatpickr("#mainCalendarRangeInput1", {
+              dateFormat: "Ymd",
+              locale: "ko",
+              disableMobile:true,
+              appendTo:$(".mainCalendarCalendarMonth[data-index='1']")[0],
+              clickOpens:false,
+              onChange:onChangeMainCalendar('#mainCalendarRangeInput1')
+          });
+          flatpickr("#mainCalendarRangeInput2", {
+              dateFormat: "Ymd",
+              locale: "ko",
+              defaultDate:NMNS.calendar.getDate().toDate(),
+              disableMobile:true,
+              appendTo:$(".mainCalendarCalendarMonth[data-index='2']")[0],
+              clickOpens:false,
+              onChange:onChangeMainCalendar('#mainCalendarRangeInput2')
+          });
+          flatpickr("#mainCalendarRangeInput3", {
+              dateFormat: "Ymd",
+              locale: "ko",
+              disableMobile:true,
+              appendTo:$(".mainCalendarCalendarMonth[data-index='3']")[0],
+              clickOpens:false,
+              onChange:onChangeMainCalendar('#mainCalendarRangeInput3')
+          });
+          NMNS.siemaCalendar = new Siema({
+            selector: '#mainCalendarCalendar',
+            duration: 200,
+            easing: 'ease-out',
+            perPage: 1,
+            startIndex: 1,
+            draggable: true,
+            multipleDrag: false,
+            threshold: 20,
+            loop: true,
+            rtl: false,
+            onChange: onChangeCalendarCarousel
+          });
+          document.getElementById('mainCalendarRangeInput1')._flatpickr.jumpToDate(moment(NMNS.calendar.getDate().toDate()).add(-1, 'month').toDate());
+          document.getElementById('mainCalendarRangeInput3')._flatpickr.jumpToDate(moment(NMNS.calendar.getDate().toDate()).add(1, 'month').toDate());
+        }else{
+          document.getElementById('mainCalendarRangeInput' + (NMNS.siemaCalendar.currentSlide + 1))._flatpickr.setDate(NMNS.calendar.getDate().toDate());
+        }
+      }
+      setRenderRangeText();
+    });
+    
+    /*$(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
-    });
+    });*/
     
     //notification handling start
     NMNS.socket.emit("get noti");
@@ -2702,17 +2728,17 @@
     //notification handling end
     //menu switch start
     $(".customerMenuLink").off("touch click").on("touch click", function() {
-        var action = $($(".customerSortType.active")[0]).data("action");
+        var action = $("#customerSortTypeMenu").data("action");
         if(!document.getElementById('customerStyle')){
           var style = document.createElement('link');
           style.rel="stylesheet";
-          style.href="/nmns/css/customer.min.css"
+          style.href="/nmns/css/customer.mobile.min.css"
           style.id = 'customerStyle';
           document.head.appendChild(style);
         }
         if (!document.getElementById("customerScript")) {
           var script = document.createElement("script");
-          script.src = "/nmns/js/customer.min.js";
+          script.src = "/nmns/js/customer.mobile.min.js";
           script.id = "customerScript";
           document.body.appendChild(script);
 
@@ -2737,28 +2763,21 @@
       if(!document.getElementById('menuStyle')){
         var style = document.createElement('link');
         style.rel="stylesheet";
-        style.href="/nmns/css/menu.min.css";
+        style.href="/nmns/css/menu.mobile.min.css";
         style.id = 'menuStyle';
         document.head.appendChild(style);
       }
       if (!document.getElementById("menuScript")) {
         var script = document.createElement("script");
-        script.src = "https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js";
+        script.src = "/nmns/js/menu.mobile.min.js";
         script.id = "menuScript";
         document.body.appendChild(script);
 
         script.onload = function() {
-          var script2 = document.createElement("script");
-          script2.src = "/nmns/js/menu.min.js";
-          document.body.appendChild(script2);
           NMNS.socket.emit("get menu list", null);
         };
       }
       $(this).on("touch click", function(){//메뉴 초기화
-        $("#mainMenuTools .updatingMenu-collapsed").removeClass('d-inline-flex');
-        $(".updatingMenu-collapsed").hide();
-        $(".updatingMenu-expanded").show();
-        $("#updateMenuLink").text('수정');
         NMNS.socket.emit("get menu list", null);
       });
     });
@@ -2766,24 +2785,18 @@
       if(!document.getElementById('salesStyle')){
         var style = document.createElement('link');
         style.rel="stylesheet";
-        style.href="/nmns/css/sales.min.css";
+        style.href="/nmns/css/sales.mobile.min.css";
         style.id = 'salesStyle';
         document.head.appendChild(style);
       }
       if (!document.getElementById("salesScript")) {//최초 접속
         var script = document.createElement("script");
-        script.src = "/nmns/js/sales.min.js";
+        script.src = "/nmns/js/sales.mobile.min.js";
         script.id = "salesScript";
         document.body.appendChild(script);
 
         script.onload = function() {
-          NMNS.socket.emit("get sales list", {
-            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
-            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
-            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
-          });
+          $("#salesSearchButton").removeClass('disabled')
         };
         
         $("#salesSearchName").autocomplete({
@@ -2812,33 +2825,33 @@
             }
         }, NMNS.socket);
         
-        flatpickr("#salesSearchStartDate", {
-            dateFormat: "Y. m. d",
-            defaultDate: moment().startOf('month').toDate(),
-            locale: "ko"
+        $("#salesSearchStartDate").val(moment().startOf('month').format('YYYY. MM. DD'));
+        $("#salesSearchEndDate").val(moment().format('YYYY. MM. DD'));
+        flatpickr("#salesCalendar", {
+          dateFormat: "Y. m. d",
+          defaultDate: [moment().startOf('month').toDate(), new Date()],
+          mode:'range',
+          disableMobile: true,
+          appendTo:document.getElementById('salesCalendarArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            if(selectedDates.length === 2){
+              $("#salesCalendarModal").modal('hide');
+            }
+          }
         });
-        flatpickr("#salesSearchEndDate", {
-            dateFormat: "Y. m. d",
-            defaultDate: new Date(),
-            locale: "ko"
-        });
-        if(!NMNS.salesList || NMNS.salesList.length === 0){
-          NMNS.socket.emit('get sales list', {
-            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
-            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
-            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
-          });
-        }
         var now = moment();
         $("#mainSalesSearch .activable").each(function(index, button){
-          button.innerText = now.format('M월');
+          button.innerHTML = '<span class="montserrat">'+now.format('M')+'</span>월';
           now.add(-1, 'month');
         });
         $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
           $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
+      }else{
+        $(".salesMenu .menuTitle").removeClass('fixedScroll');
+        $(".salesSearchSwitch").hide();
+        $("#mainSalesSearch").show();
       }
     });
     
@@ -2856,10 +2869,10 @@
         $(".menuLinkActive").removeClass("menuLinkActive");
         $(this).addClass("menuLinkActive");
         // hide mainTask field
-        $("#mainCalendarArea").css('minWidth', '');
-        $("#mainContents").css("minWidth", '100%');
-        $("#mainAside").css('minWidth', 'unset');
         $("#mainTask").removeClass("show");
+        $(".calendarMenu").removeClass('fixedScroll');
+        document.scrollingElement.scrollTop = 0;
+        $("#mainAside").toggleClass('sidebar-toggled');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
@@ -2889,13 +2902,6 @@
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
-          if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
-            if($("#mainTask").hasClass("show")){
-              $("#mainAside").css('minWidth', '270px');
-            }
-          }else{// about to hide aside
-            $("#mainAside").css('minWidth', 'unset');
-          }
           $('#mainAside').toggleClass('sidebar-toggled');
         });
         $(".announcementMenuLink").popover({
@@ -2989,7 +2995,7 @@
           }
         });
         $(".menuLink").on("touch click", switchMenu);
-        $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
+        // $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
         $("input[pattern]").each(function(index, input){
           setNumericInput(input);
         })
@@ -3004,8 +3010,28 @@
     var target = $(".menuLink[data-link='"+link+"']");
     if(target.length){
       switchMenu.call(target[0], null, true);
-    }else if(state.state.link === 'noShowSearchMenu'){
+    }else if(link === 'noShowSearchMenu'){
       switchMenu.call(document.getElementById('searchNoShow'), null, true);
     }
+    if(link === 'salesMenu'){
+      if(state.state.subLink === 'search'){//result page
+        $(".salesMenu .menuTitle").addClass('fixedScroll');
+        $("#mainSalesSearch").hide();
+        $(".salesSearchSwitch").show();
+      }else{//search page
+        $(".salesMenu .menuTitle").removeClass('fixedScroll');
+        $(".salesSearchSwitch").hide();
+        $("#mainSalesSearch").show();
+      }
+    }
   }
+  $(document).on("scroll", function(){
+    if($("#mainCalendar").is(":visible")){
+      if(document.scrollingElement.scrollTop > document.getElementById('mainSearchArea').offsetHeight){
+        $(".calendarMenu").addClass('fixedScroll');
+      }else{
+        $(".calendarMenu").removeClass('fixedScroll');
+      }
+    }
+  });
 })(jQuery);

@@ -13,6 +13,9 @@
     $("#salesSummaryTotalMembership").text((e.data.totalSalesMembership || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesSummaryTotalAmount").text((e.data.totalSalesAmount || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesToolsSticky").show();
+    if(!$("#mainSalesTools").data('initialHeight')){
+      $("#mainSalesTools").data('initialHeight', document.getElementById("mainSalesTools").offsetHeight);
+    }
     $("#salesSearchButton").removeClass('disabled');
     $("#salesSearchPeriod").text(moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYY. MM. DD - ') + moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYY. MM. DD'));
   }));
@@ -242,7 +245,7 @@
         if(document.scrollingElement.scrollTop > 0){
           $(".salesMenu .menuTitle").addClass('fixedScroll');
           $("#menuTitleSticky").removeClass('d-none');
-          if(document.scrollingElement.scrollTop > 223){
+          if(document.scrollingElement.scrollTop > $("#mainSalesTools").data('initialHeight') - document.getElementById('salesToolsSticky').offsetHeight){
             $("#mainSalesTools").addClass('fixedScroll');
           }else{
             $("#mainSalesTools").removeClass('fixedScroll');

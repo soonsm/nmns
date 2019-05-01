@@ -48,7 +48,7 @@
 .ps--focus > .ps__rail-y,
 .ps--scrolling-x > .ps__rail-x,
 .ps--scrolling-y > .ps__rail-y {
-  opacity: 0.05;
+  opacity: 0.5;
 }
 
 .ps .ps__rail-x:hover,
@@ -58,7 +58,7 @@
 .ps .ps__rail-x.ps--clicking,
 .ps .ps__rail-y.ps--clicking {
   background-color: transparent;
-  opacity: 0.1;
+  opacity: 1;
 }
 
 /*
@@ -91,21 +91,21 @@
 .ps__rail-x:hover > .ps__thumb-x,
 .ps__rail-x:focus > .ps__thumb-x,
 .ps__rail-x.ps--clicking .ps__thumb-x {
-  background-color: #393535;
+  background-color: #EBEAEA;
   height: 11px;
 }
 
 .ps__rail-y:hover > .ps__thumb-y,
 .ps__rail-y:focus > .ps__thumb-y,
 .ps__rail-y.ps--clicking .ps__thumb-y {
-  background-color: #393535;
+  background-color: #EBEAEA;
   width: 11px;
 }
 .ps--active-y:hover .ps__thumb-y{
-  background-color: #393535;
+  background-color: #EBEAEA;
 }
 .ps--active-x:hover .ps__thumb-x{
-  background-color: #393535;
+  background-color: #EBEAEA;
 }
 /* MS supports */
 @supports (-ms-overflow-style: none) {
