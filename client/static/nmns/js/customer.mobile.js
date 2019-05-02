@@ -351,7 +351,7 @@
               goalIndex = Math.min(currentCustomerCount === 0? currentCustomerCount + Math.max(20, (5 + Math.ceil($('#mainCustomerList').height() / 48) - $("#mainCustomerList .customer").length)) : currentCustomerCount, NMNS.customerList.length);
               html += generateCustomerRow(0, goalIndex)
           } else {
-              html += "<p>아직 등록된 고객이 없습니다. 새로운 고객을 등록하여 방문 및 매출내역을 기록, 관리해보세요!</p>";
+              html += "<p class='m-auto'>아직 등록된 고객이 없습니다.<br>새로운 고객을 등록하여 방문 및 매출내역을<br>기록, 관리해보세요!</p>";
           }
       }else if(NMNS.customerList){//additional loading
           goalIndex = Math.min(currentCustomerCount + Math.max(20, (5 + Math.ceil($('#mainCustomerList').height() / 48) - $("#mainCustomerList .customer").length)), NMNS.customerList.length);//최대 20개씩 신규로 로딩
