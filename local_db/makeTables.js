@@ -1,4 +1,3 @@
-'use strict';
 
 var AWS = require("aws-sdk");
 var moment = require('moment');
@@ -9,7 +8,7 @@ AWS.config.update({
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-let create = function(params){
+var create = function(params){
     dynamodb.createTable(params, function(err, data) {
         if (err) {
             console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
@@ -17,7 +16,7 @@ let create = function(params){
             console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
         }
     });
-}
+};
 
 (async function(){
     var params = {
@@ -161,7 +160,7 @@ let create = function(params){
     }
 })();
 
-let newWebUser = function (user) {
+var newWebUser = function (user) {
     return {
         email: user.email,
         authStatus: 'EMAIL_VERIFICATED',
@@ -205,8 +204,8 @@ let newWebUser = function (user) {
 };
 
 (async function(){
-    let email = 'wowwow@ksm.com';
-    let password = 'asdasd';
+    let email = 'happy@store.com';
+    let password = 'xptmxm1!';
     let shopName = '와우네일샵';
     docClient.put({
         TableName: "WebSecheduler",
