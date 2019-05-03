@@ -162,20 +162,6 @@ input[type=checkbox]+label{
 #mainRow.sidebar-toggled{
     width:calc(100% - 50px);
 }
-@media(max-width:576px){
-    #mainAside{
-        width:0;
-    }
-    #mainAside.sidebar-toggled{
-        width:100%;
-    }
-    #mainRow{
-        width:100%;
-    }
-    #mainRow.sidebar-toggled{
-        width:0;
-    }
-}
 #mainAside .topNav{
     border-bottom:0.5px solid rgba(255,255,255,0.2);
 }

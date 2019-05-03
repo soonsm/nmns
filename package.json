@@ -21,6 +21,7 @@
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
     "generate-password": "^1.4.0",
+    "global": "^4.3.2",
     "hangul-js": "^0.2.5",
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.10",
