@@ -123,7 +123,6 @@ function newAlrimTalk(reservationKey, userKey, phone, date, time){
         receiverPhone: phone,
         reservationDate: date,
         reservationTime: time,
-        isConfirmed: false,
         isSent: false,
         isCanceled: false
     }
@@ -321,6 +320,7 @@ exports.addAlrimTalk = async function(userKey, phone, date, time){
             TableName: 'KaKaoUserList',
             Item: user
         });
+        return alrimTalk;
     }else{
         console.error(`등록되지 않은 사용자가 알림톡 전송을 합니다. ${userKey}`);
     }

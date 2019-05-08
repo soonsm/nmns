@@ -881,7 +881,6 @@ function newAlrimTalk(reservationKey, userKey, phone, date, time) {
         receiverPhone: phone,
         reservationDate: date,
         reservationTime: time,
-        isConfirmed: false,
         isSent: false,
         isCanceled: false
     }

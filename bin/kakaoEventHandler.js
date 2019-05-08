@@ -184,7 +184,6 @@ exports.messageHandler = async function(userKey, content, res){
             }else{
                 if(user.onGoingAlrimTalkKey){
                     let alrimTalk = await db.getAlrimTalk(user.onGoingAlrimTalkKey);
-                    alrimTalk.isConfirmed = true;
                     const sendResult = await sendReservationConfirm(user,alrimTalk);
                     if(sendResult){
                         alrimTalk.isSent = true;

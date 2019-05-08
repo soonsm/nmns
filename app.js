@@ -43,6 +43,7 @@ const
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
     indexRouter = require('./bin/indexRouter'),
     noShowRouter = require('./bin/noShowRouter'),
+    kakaoSkills = require('./bin/kakaoSkills'),
     // kakaoReservationRouter = require('./bin/kakaoReservationRouter'),
     db = require('./bin/webDb'),
     util = require('./bin/util')
@@ -133,6 +134,7 @@ app.use(passport.session());
 
 //Web request router
 app.use('/', indexRouter(passport));
+app.use('/kakao', kakaoSkills);
 app.use('/noShow', noShowRouter);
 
 // app.use('/kakaoReservation', kakaoReservationRouter);

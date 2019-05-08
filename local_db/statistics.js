@@ -22,7 +22,7 @@ function scan(params) {
         });
     }));
 }
-
+/*
 (async function(){
     let users = await scan({
         TableName: 'WebSecheduler'
@@ -54,5 +54,21 @@ function scan(params) {
     }
 
     console.log(`total count is ${i}`);
+})();
+*/
+
+(async function(){
+    let users = await scan({
+        TableName: 'KaKaoUserList'
+    });
+
+    let count=0;
+    users.forEach(user => {
+        if(user.email){
+            count++;
+        }
+    })
+
+    console.log(`total count is ${count}`);
 })();
 

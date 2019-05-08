@@ -9,6 +9,47 @@ var docClient = new AWS.DynamoDB.DocumentClient({
 });
 var dynamodb = new AWS.DynamoDB();
 
+function query(params) {
+    return new Promise((resolve => {
+        docClient.query(params, function (err, data) {
+            if (err) {
+                console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
+                resolve(null);
+            } else {
+                console.log("Query succeeded. Data:", data.Items);
+                resolve(data.Items);
+            }
+        });
+    }));
+};
+function scan(params) {
+    return new Promise((resolve => {
+        docClient.scan(params, function (err, data) {
+            if (err) {
+                console.log("Unable to scan. Error:", JSON.stringify(err, null, 2));
+                resolve(null);
+            } else {
+                // console.log("Scan succeeded. Data:", data.Items);
+                resolve(data.Items);
+            }
+        });
+    }));
+}
+
+function update(params) {
+    return new Promise((resolve => {
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                resolve(false);
+            } else {
+                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                resolve(true);
+            }
+        });
+    }));
+}
+/*
 let createTable = async function(){
     var params = {
         TableName : "Notice",
@@ -51,4 +92,72 @@ let createTable = async function(){
         }
     });
 })();
+*/
 
+/*
+let getWebUser = async function (email) {
+    let items = await query({
+        TableName: 'WebSecheduler',
+        KeyConditionExpression: "#key = :val",
+        ExpressionAttributeNames: {
+            "#key": "email"
+        },
+        ExpressionAttributeValues: {
+            ":val": email
+        }
+    });
+
+    return items[0];
+};
+let updateWebUser = async function (email, properties) {
+    let params = {
+        TableName: 'WebSecheduler',
+        Key: {
+            'email': email
+        },
+        ExpressionAttributeValues: {},
+        ReturnValues: "NONE"
+    };
+    let updateExpression = 'set ';
+    let propertyNames = Object.getOwnPropertyNames(properties);
+    for (let i = 0; i < propertyNames.length; i++) {
+        let property = propertyNames[i];
+        updateExpression += `${property} = :${property}`;
+        if (i < propertyNames.length - 1) {
+            updateExpression += ',';
+        }
+
+        params.ExpressionAttributeValues[`:${property}`] = properties[property];
+    }
+    params.UpdateExpression = updateExpression;
+
+    return await update(params);
+};
+(async function(){
+    let user = await getWebUser('kimnari405@naver.com');
+
+    user.reservationConfirmAlrimTalkList.splice(0,110);
+
+    await updateWebUser(user.email, {reservationConfirmAlrimTalkList: user.reservationConfirmAlrimTalkList});
+})();*/
+
+
+//simbbo89@naver.com 만촌점
+
+(async function(){
+    let users = await scan({
+        TableName: 'WebSecheduler'
+    });
+
+    let i=0;
+    for (; i < users.length; i++) {
+        let user = users[i];
+
+        if(user.feedback && user.feedback.length > 0) {
+            console.log(`${user.email}'s feedback:`);
+            user.feedback.forEach(feedback => {
+                console.log(feedback);
+            })
+        }
+    }
+})();
