@@ -15,7 +15,23 @@ let create = function(params){
         }
     });
 };
-
+(async function(){
+    var params = {
+        TableName : "SessionTable",
+        KeySchema: [
+            { AttributeName: "id", KeyType: "HASH"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "id", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+/*
 (async function(){
     var params = {
         TableName : "SnsLink",
@@ -112,7 +128,7 @@ let create = function(params){
     };
     create(params);
 })();
-/*
+
 (async function(){
     var params = {
         TableName : "Notice",
