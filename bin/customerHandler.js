@@ -1,9 +1,9 @@
 'use strict';
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const util = require('./util');
 const hangul = require('hangul-js');
-const sha256 = require('js-sha256');
 
 exports.getCustomerDetail = async function(data){
     let email = this.email;
@@ -28,10 +28,11 @@ exports.getCustomerDetail = async function(data){
             }
             if(member){
                 member.manager = member.managerId;
-                let noShow = await db.getNoShow(contact) || {noShowCount: 0};
-                member.totalNoShow = noShow.noShowCount;
-                let key = sha256(contact);
-                member.myNoShow = user.noShowList.filter(noShow => noShow.noShowKey === key).length;
+                let noShowList = await newDb.getNoShow(contact);
+
+                member.totalNoShow = noShowList.length;
+                member.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
+
                 let reservationList = user.reservationList.filter(reservation => reservation.memberId === member.id);
                 reservationList.sort((a, b) =>  b.start - a.start );
                 if(reservationList.length > 0){
@@ -158,20 +159,9 @@ exports.getCustomerList = async function(data){
             member.myNoShow = 0;
             member.totalNoShow = 0;
             if(member.contact){
-                let totalNoShow = await db.getNoShow(member.contact);
-                if(totalNoShow){
-                    member.totalNoShow = totalNoShow.noShowCount;
-                }
-                let myNoShowList = await db.getMyNoShow(email);
-                let key = sha256(member.contact);
-                let myNoShowCount = 0;
-                for (let i = 0; i < myNoShowList.length; i++) {
-                    let noShow = myNoShowList[i];
-                    if (noShow.noShowKey === key) {
-                        myNoShowCount++;
-                    }
-                }
-                member.myNoShow = myNoShowCount;
+                let noShowList = await newDb.getNoShow(member.contact);
+                member.totalNoShow = noShowList.length;
+                member.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
             }
 
             member.history = [];
@@ -338,10 +328,7 @@ let saveCustomer = async function(data){
         resultData.id = id;
         resultData.totalNoShow = 0;
         if(contact){
-            let totalNoShow = await db.getNoShow(contact);
-            if(totalNoShow){
-                resultData.totalNoShow = totalNoShow.noShowCount;
-            }
+            resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
         }
     }
 

@@ -1,5 +1,5 @@
 const
-    db = require('./db'),
+    newDb = require('./newDb'),
     util = require('./util');
 
 function phoneJob(afterValidation){
@@ -20,19 +20,17 @@ function phoneJob(afterValidation){
 
 exports.getNoShow = phoneJob(async function(phone){
     let result = {};
-    let noShow = await db.getNoShow(phone);
-    if(noShow && noShow.noShowCount > 0){
-        const lastNoShowDate = noShow.lastNoShowDate;
-        result.noShowCount = noShow.noShowCount;
-        result.lastNoShowDate = lastNoShowDate;
-    }else{
-        result.noShowCount=0;
-    }
+    let noShowList = await newDb.getNoShow(phone);
+    let numOfNoShow = noShowList.length;
+
+    result.noShowCount = numOfNoShow;
+    result.lastNoShowDate = noShowList[numOfNoShow-1].date;
+
     return result;
 })
 
 exports.addNoShow = phoneJob(async function(phone){
-    if(await db.addToNoShowList(phone)){
+    if(await newDb.addNoShow(phone)){
         return {result: 'ok'};
     }else{
         return {result: 'fail'};

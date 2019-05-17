@@ -2,10 +2,9 @@
 
 const logger = global.nmns.LOGGER;
 
-const db = require('./webDb');
+const newDb = require('./newDb');
 const moment = require('moment');
 const util = require('./util');
-const sha256 = require('js-sha256');
 
 exports.getNoShow = async function(data) {
     let status = true,
@@ -18,7 +17,6 @@ exports.getNoShow = async function(data) {
 
     if (!contact) {
         status = false;
-        // message = '노쇼 조회에 필요한 데이터가 없습니다. ({"contact":${고객 모바일, string})';
         message = '조회할 전화번호를 입력하세요.';
     }
     else if (!util.phoneNumberValidation(contact)) {
@@ -35,25 +33,14 @@ exports.getNoShow = async function(data) {
             },
             detail: []
         };
-        let summary = await db.getNoShow(contact);
-        if (summary) {
-            resultData.summary.noShowCount = summary.noShowCount;
-            resultData.summary.lastNoShowDate = summary.lastNoShowDate;
+        let noShowList = await newDb.getNoShow(contact);
+        let numOfNoShow = noShowList.length;
 
-            let myNoShowList = await db.getMyNoShow(email);
-            let key = sha256(contact);
-            let filteredList = [];
-            for (let i = 0; i < myNoShowList.length; i++) {
-                let noShow = myNoShowList[i];
-                if (noShow.noShowKey === key) {
-                    filteredList.push(noShow);
-                }
-            }
-            await filteredList.sort((a,b)=>{
-               return a.date - b.date;
-            });
-            resultData.detail = filteredList;
+        resultData.summary.noShowCount = numOfNoShow;
+        if(numOfNoShow > 0){
+            resultData.summary.lastNoShowDate = noShowList[numOfNoShow-1].date;
         }
+        resultData.detail = noShowList.filter(noShow => noShow.email === email);
     }
 
     return {
@@ -71,6 +58,7 @@ exports.addNoShow = async function(data) {
     const contact = data.contact;
     const noShowCase = data.noShowCase;
     const noShowDate = data.date;
+    const name = data.name;
 
     //validation
     if (!contact || !id) {
@@ -87,7 +75,15 @@ exports.addNoShow = async function(data) {
         message = `날짜 형식이 올바르지 않습니다.(${noShowDate})`;
 
     }
-    resultData = await db.addToNoShowList(this.email, contact, noShowCase, noShowDate, id);
+    resultData = await newDb.addNoShow(this.email, contact, noShowDate, noShowCase, id, name);
+
+    if(!resultData){
+        status = false;
+        message = '노쇼 아이디가 겹칩니다.';
+    }else{
+        resultData.noShowCount = (await newDb.getNoShow(contact)).length;
+        resultData.contact = contact;
+    }
 
     return {
         status: status,
@@ -101,14 +97,12 @@ exports.delNoShow = async function(data) {
         message = null;
     const id = data.id;
 
-    //validation
     if (!id) {
         status = false;
-        // message = '노쇼 삭제에 필요한 데이터가 없습니다. ({"id":${노쇼ID, string}})';
         message = '노쇼 삭제를 위해 아이디가 필요합니다.';
     }
 
-    let deleteResult = await db.deleteNoShow(this.email, id);
+    let deleteResult = await newDb.delNoShow(id);
     if (!deleteResult) {
         status = false;
         message = '내가 추가한 노쇼만 삭제 할 수 있습니다.';

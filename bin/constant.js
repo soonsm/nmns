@@ -20,7 +20,11 @@
 
     o.TABLE = {
         WebSecheduler: 'WebSecheduler',
-        NoShowList: 'NoShowList'
+        NoShowList: 'NoShowList',
+        NoShow: 'NoShow',
+        NoShowId: 'NoShowId',
+        VisitLog: 'VisitLog',
+        Customer: 'Customer'
     }
 
     o.MODE = {

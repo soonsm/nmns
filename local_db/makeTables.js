@@ -1,8 +1,12 @@
 'use strict';
 var AWS = require("aws-sdk");
 var moment = require('moment');
+// AWS.config.update({
+//     region: "ap-northeast-2"
+// });
 AWS.config.update({
-    region: "ap-northeast-2"
+    region: "eu-west-2",
+    endpoint: "http://localhost:8000"
 });
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
@@ -15,6 +19,7 @@ let create = function(params){
         }
     });
 };
+/*
 (async function(){
     var params = {
         TableName : "SessionTable",
@@ -31,7 +36,6 @@ let create = function(params){
     };
     create(params);
 })();
-/*
 (async function(){
     var params = {
         TableName : "SnsLink",
@@ -145,8 +149,77 @@ let create = function(params){
     };
     create(params);
 })();
+(async function(){
+    var params = {
+        TableName : "NoShow",
+        KeySchema: [
+            { AttributeName: "noShowKey", KeyType: "HASH"},
+            { AttributeName: "timestamp", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "noShowKey", AttributeType: "S" },
+            { AttributeName: "timestamp", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+(async function(){
+    var params = {
+        TableName : "NoShowId",
+        KeySchema: [
+            { AttributeName: "id", KeyType: "HASH"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "id", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+(async function(){
+    var params = {
+        TableName : "VisitLog",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "timestamp", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "timestamp", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
  */
-
+(async function(){
+    var params = {
+        TableName : "Customer",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "id", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "id", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
 //-----------------------Data Insert------------------------------//
 /*
 (async function(){
