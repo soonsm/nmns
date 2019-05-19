@@ -635,15 +635,12 @@
 
     function drawAlrimList(alrims) {
         var list = $("#alrimHistoryList");
-        /*if (!list.hasClass("ps")) {
-            list.data("scroll", new PerfectScrollbar("#alrimHistoryList"));
-        }*/
         if (alrims && alrims.length > 0) {
             var html = "";
             var base = $("#alrimHistoryList .alrimRow").length
             alrims.forEach(function(item, index) {
-                html += '<div class="row alrimRow col mx-0 px-0" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-2 pr-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 offset-2 ellipsis">' + item.name + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1"></div></div>' +
-                    '<div class="row alrimDetailRow collapse mx-0 col-12" id="alrimDetail' + (index+base) + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
+                html += '<div class="d-flex alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-4 pl-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 px-0 ellipsis">' + item.name + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1 px-0"></div></div>' +
+                    '<div class="row alrimDetailRow collapse col-12" id="alrimDetail' + (index+base) + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
                 if (index > 0 && index % 50 === 0) {
                     $("#alrimHistoryList").append(html);
                     html = "";
@@ -656,7 +653,6 @@
         } else {
             list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
         }
-        // list.data("scroll").update();
     }
 
     function refreshAlrimModal() {
@@ -671,7 +667,7 @@
         $("#alrimShopName").val(NMNS.info.shopName || "");
         $("#alrimCancelDue").val(NMNS.info.alrimTalkInfo.cancelDue || "");
         $("#alrimNotice").val(NMNS.info.alrimTalkInfo.notice || "");
-        $("#noticeByteCount").text($("#alrimNotice").val().length);
+        // $("#noticeByteCount").text($("#alrimNotice").val().length);
     }
 
     function submitAlrimModal() {
@@ -2299,9 +2295,10 @@
       $("#labelAlrimUseYn").on("touch click", function(){
         $(this).next().children('label').trigger('click');
       })
-      $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
-          $("#noticeByteCount").text($(this).val().length);
-      }).on("blur", function(){
+      // $("#alrimNotice").off("keyup keydown paste cut change").on("keyup keydown paste cut change", function() {
+      //     $("#noticeByteCount").text($(this).val().length);
+      // });
+			$("#alrimNotice").on("blur", function(){
           $(this).val(removeNonCharacter($(this).val()));
       });
       $("#alrimUseYn").off("change").on("change", function() {

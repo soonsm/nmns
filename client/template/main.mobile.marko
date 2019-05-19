@@ -644,11 +644,11 @@
         </div>
         
         <div id="alrimModal" class="switchingMenu alrimMenu">
-          <div class="d-flex menuTitle">
-            <div class="row mx-0 col-12" style="padding:25px 30px 0 30px">
-              <ul id="alrimTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">
-                <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimTab" data-toggle="tab" aria-label="알림톡 정보">알림톡 정보</a></li>
-                <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimHistoryTab" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>
+          <div class="d-flex horizontalTab">
+            <div class="row col-12">
+              <ul id="alrimTabList" class="nav nav-pills" role="tabList">
+                <li class="nav-item"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimTab" data-toggle="tab" aria-label="알림톡 정보">알림톡 정보</a></li>
+                <li class="nav-item"><a class="nav-link pt-0 rounded-0" href="#" data-target="#alrimHistoryTab" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>
               </ul>
             </div>
           </div>
@@ -657,7 +657,7 @@
 
               <div id="alrimTab" class="tab-pane col-12 px-0 fade" role="tabpanel">
                 <div class="fix-bottom">
-                  <button type="button" class="btn btn-white-primary col mr-1" data-dismiss="modal">취소</button>
+                  <button type="button" class="btn btn-white-primary col mr-1" id="cancelAlrimBtn">취소</button>
                   <button type="button" class="btn btn-accent col ml-1" id="alrimInfoBtn">저장</button>
                 </div>
                 <form id="alrimForm">
@@ -673,12 +673,12 @@
                       <div id="alrimScreen"></div>
                       <div class="mt-2 mb-3">매장 이름</div>
                       <input id="alrimShopName" name="shopName" type="text" placeholder="고객에게 보여질 매장 이름을 입력해주세요." class="form-control form-control-sm han mb-4"/>
-                      <div class="pt-2 mb-3">휴대폰 번호<span class="align-middle subText">고객이 예약취소 버튼을 눌렀을 때 알림톡을 보내드릴 휴대폰 번호</span></div>
+                      <div class="pt-2 mb-3">휴대폰 번호<span class="align-middle subText">고객이 예약취소를 했을 때 알림톡을 보내드려요.</span></div>
                       <input id="alrimCallbackPhone" name="callbackPhone" type="text" pattern="[0-9]*" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4 montserrat"/>
-                      <div class="pt-2 mb-3">알림 안내문구<span class="align-middle subText">고객에게 보낼 알림톡 안내문구</span><span class="float-right"><span class="montserrat font-weight-bold"><span id="noticeByteCount">0</span> / 700</span>자</span></div>
+                      <div class="pt-2 mb-3">알림 안내문구<span class="align-middle subText">고객에게 보낼 알림톡 안내문구</span></div>
                       <textarea id="alrimNotice" name="notice" placeholder="예시.\n예약해주셔서 감사합니다.\n취소할 때에는 꼭 [예약취소] 버튼을 눌러 주세요!" class="form-control form-control-sm han mb-4"/>
-                      <div class="pt-2 mb-3">예약취소 가능시간<span class="subText">[예약취소는 n시간 전까지 가능합니다.] 라는 문구로 자동표기 됩니다.</span></div>
-                      <input id="alrimCancelDue" name="cancelDue" type="text" placeholder="3시간 << 이렇게 텍스트로 입력해주세요!" class="form-control form-control-sm han"/>
+                      <div class="pt-2 mb-3">예약취소 가능시간<br><span class="subText" style="margin-left:0">[예약취소는 n시간 전까지 가능합니다.] 라는 문구로 자동표기 됩니다.</span></div>
+                      <input id="alrimCancelDue" name="cancelDue" type="text" placeholder="3시간 << 이렇게 텍스트로 입력해주세요." class="form-control form-control-sm han"/>
                     </div>
                   </div>
                 </form>                
@@ -688,19 +688,16 @@
                 <div>알림톡 검색</div>
                 <div class="row col-12 px-0 my-3 mx-0">
                   <input type="text" class="form-control form-control-sm col" id="alrimHistoryTarget" placeholder="고객 이름 또는 연락처를 검색하세요." autocomplete="false">
-                  <button type="button" id="alrimHistorySearch" class="btn btn-sm btn-primary shadow-none ml-3">검색</button>
+                  <button type="button" id="alrimHistorySearch" class="btn btn-sm btn-primary shadow-none ml-1">검색</button>
                 </div>
-                <div class="row col-12 px-0 text-center" style="margin:25px 0">
-                  <span class="col-2 px-0">날짜</span>
-                  <span class="col-3 offset-2">고객이름</span>
-                  <span class="col-4 px-0">연락처</span>
-                  <span class="col-2"></span>
+                <div class="d-flex col-12 justify-center" style="margin:20px 0 10px 0;padding:15px 0;border-bottom:1px solid #707070">
+                  <div class="col-4 pl-0 text-center" style="padding-left:25px">날짜</div>
+                  <div class="col-3 px-0 text-center">고객이름</div>
+                  <div class="col-4 px-0 text-center">연락처</div>
+                  <div class="col-1 px-0"></div>
                 </div>
                 <div id="alrimHistoryList" class="row col-12 px-0 mx-0 mb-1 text-center"></div>
 
-                <div class="row mx-0 mt-5">
-                  <button type="button" class="btn btn-white col mr-1" data-dismiss="modal">닫기</button>
-                </div>
               </div>
 
             </div>
