@@ -5,6 +5,8 @@ const newDb = require('./newDb');
 const util = require('./util');
 const hangul = require('hangul-js');
 
+const logger = global.nmns.LOGGER;
+
 exports.getCustomerDetail = async function(data){
     let email = this.email;
     let status = true, message, resultData = {};
@@ -339,9 +341,58 @@ let saveCustomer = async function(data){
     }
 }
 
-exports.addCustomer = saveCustomer;
+exports.addCustomer = async function(data){
+    let email = this.email;
+    let status = false,
+        message = '',
+        resultData = {id: data.id, totalNoShow: 0};
 
-exports.updateCustomer = saveCustomer;
+    try{
+        await newDb.saveCustomer(email, data.id, data.name, data.contact, data.managerId === '' ? undefined : data.managerId, data.etc);
+        status = true;
+        if(contact){
+            resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
+        }
+    }catch(e){
+        status = false;
+        message = e;
+        logger.error(e);
+    }
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    }
+};
+
+exports.updateCustomer = async function(data){
+    let email = this.email;
+    let status = false,
+        message = '',
+        resultData = {id: data.id};
+
+    try{
+        let memberList = await newDb.getCustomerList(email);
+        if(memberList.find(member => member.name === data.name && member.contact === data.contact && member.id !== data.id)){
+            resultData.reason = 'DUPLICATED';
+            throw '이미 이름과 연락처가 동일한 고객이 존재합니다.';
+        }
+
+        await newDb.saveCustomer(email, data.id, data.name, data.contact, data.managerId === '' ? undefined : data.managerId, data.etc);
+        status = true;
+    }catch(e){
+        status = false;
+        message = e;
+        logger.error(e);
+    }
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    }
+};
 
 exports.deleteCustomer = async function(data){
     let status = false,

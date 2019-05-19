@@ -327,6 +327,7 @@ const reservationValidationForUdate = function (email, data) {
             message = `휴대전화번호 형식이 올바르지 않습니다.(${data.contact})`;
         }
         else if (data.status && (data.status !== process.nmns.RESERVATION_STATUS.RESERVED && data.status !== process.nmns.RESERVATION_STATUS.CANCELED && data.status !== process.nmns.RESERVATION_STATUS.DELETED && data.status !== process.nmns.RESERVATION_STATUS.NOSHOW && data.status !== process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED)) {
+            // message = 'status값이 올바르지 않습니다.("status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW}})';
             message = '예약상태 값이 올바르지 않습니다.';
         }
         else {

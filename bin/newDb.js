@@ -133,13 +133,14 @@ function update(params) {
 
 function del(param) {
     return new Promise((resolve => {
+        param.ReturnValues = 'ALL_OLD'
         docClient.delete(param, function (err, data) {
             if (err) {
-                logger.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
+                logger.error("Unable to delete item. Error JSON:", JSON.stringify(err), " param: ", param);
                 resolve(false);
             } else {
-                logger.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
-                resolve(true);
+                logger.log("DeleteItem succeeded:", JSON.stringify(data));
+                resolve(data.Attributes);
             }
         });
     }));
@@ -251,7 +252,7 @@ exports.delNoShow = async function(id){
         throw '노쇼 아이디가 필요합니다.';
     }
 
-    let noShowId = await get({
+    let noShowId = await del({
         TableName: process.nmns.TABLE.NoShowId,
         Key: {
             'id': id
@@ -262,7 +263,7 @@ exports.delNoShow = async function(id){
         let noShowKey = noShowId.noShowKey;
         let timestamp = noShowId.timestamp;
 
-        await del({
+        return await del({
             TableName: process.nmns.TABLE.NoShow,
             Key: {
                 'noShowKey': noShowKey,
@@ -270,15 +271,7 @@ exports.delNoShow = async function(id){
             }
         });
 
-        return await del({
-            TableName: process.nmns.TABLE.NoShowId,
-            Key: {
-                'id': id
-            }
-        });
     }
-
-    return false;
 }
 
 exports.delNoShowWithPhone = async function(phone, email){
@@ -402,7 +395,11 @@ exports.exitLog = async function(visitLog){
  * etc: 고객 메모
  * managerId: 담당 매니저 아이디
  */
-exports.addCustomer = async function(email, id, contact, name, etc, managerId){
+
+/**
+ * 고객 추가 및 업데이트
+ */
+exports.saveCustomer = async function(email, id, name, contact, managerId, etc){
 
     if(!email || !id ){
         throw 'email, 고객 아이디는 필수입니다.';
@@ -427,6 +424,86 @@ exports.addCustomer = async function(email, id, contact, name, etc, managerId){
             managerId: managerId
         }
     });
+};
+
+exports.getCustomerList = async function(email, contact, name){
+
+    if(!email){
+        throw 'email이 필요합니다.';
+    }
+
+    if(contact && !nmnsUtil.phoneNumberValidation(contact)){
+        throw `전화번호가 올바르지 않습니다.(${contact})`;
+    }
+
+    let param = {
+        TableName: process.nmns.TABLE.Customer,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    };
+
+    if(contact){
+        param.FilterExpression = '#contact = :contact';
+        param.ExpressionAttributeNames['#contact'] = 'contact';
+        param.ExpressionAttributeValues[':contact'] = contact;
+    }
+    if(name){
+        let fe = '';
+        if(contact){
+            fe = param.FilterExpression + ' and ';
+        }
+        param.FilterExpression = fe + '#name = :name';
+        param.ExpressionAttributeNames['#name'] = 'name';
+        param.ExpressionAttributeValues[':name'] = name;
+    }
+
+    return await query(param);
+};
+
+exports.deleteCustomer = async function(email, id){
+    if(!email || !id){
+        throw 'email, 고객 아이디가 필요합니다.';
+    }
+
+    return await del({
+        TableName: process.nmns.TABLE.Customer,
+        Key: {
+            'email': email,
+            'id': id
+        }
+    });
+};
+
+exports.deleteAllCustomer = async function(email){
+    if(!email){
+        throw 'email이 필요합니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Customer,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    });
+
+    for(const customer of list){
+        await del({
+            TableName: process.nmns.TABLE.Customer,
+            Key: {
+                'email': customer.email,
+                'id': customer.id
+            }
+        });
+    }
 }
 
 /**
