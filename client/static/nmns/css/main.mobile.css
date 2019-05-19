@@ -1,4 +1,7 @@
 /* commons */
+body{
+  background-color:#fff;
+}
 .cursor-pointer{
     cursor:pointer;
 }
@@ -949,7 +952,7 @@ button:focus {
     margin-right: 6px;
 }
 
-#infoModal .addManager p {
+.storeMenu .addManager p {
     font-size: .8rem;
 }
 
@@ -971,15 +974,15 @@ button:focus {
     margin: 2px 2.5px;
 }
 
-#infoModal .infoBizTime {
+.storeMenu .infoBizTime {
     width: calc(50% - 16px);
 }
 
-#infoModal .scroll-wrapper {
+.storeMenu .scroll-wrapper {
     max-width: 300px;
 }
 
-#infoModal i.input-group-text {
+.storeMenu i.input-group-text {
     border-width: .06rem;
     background-color: white;
 }
@@ -1551,121 +1554,62 @@ button.form-control {
 
 #snackbar {
     visibility: hidden;
-    width: calc(100% - 2rem);
-    margin-left: 1rem;
-    margin-right: 1rem;
     background-color: #323232;
     color: #fff;
     padding: 16px 24px;
     position: fixed;
     z-index: 1060;
-    bottom: 90px;
+    bottom: 0;
     font-size: .9rem;
     left: 0;
+  right:0;
 }
 
 #snackbar.show {
     visibility: visible;
-    animation: fadein 0.5s, fadeout 0.5s 4.5s;
-}
-
-@media(min-width:576px) {
-    #snackbar {
-        bottom: 30px;
-        width: auto;
-        border-radius: 2px;
-        padding-right: 50px;
-        min-width: 350px;
-    }
-    #snackbar.show {
-        animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
-    }
-}
-
-@-webkit-keyframes fadein {
-    from {
-        bottom: 60px;
-        opacity: 0;
-    }
-    to {
-        bottom: 90px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadein {
-    from {
-        bottom: 60px;
-        opacity: 0;
-    }
-    to {
-        bottom: 90px;
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes fadeout {
-    from {
-        bottom: 90px;
-        opacity: 1;
-    }
-    to {
-        bottom: 60px;
-        opacity: 0;
-    }
-}
-
-@keyframes fadeout {
-    from {
-        bottom: 90px;
-        opacity: 1;
-    }
-    to {
-        bottom: 60px;
-        opacity: 0;
-    }
+    animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
 }
 
 @-webkit-keyframes fadeinHigh {
     from {
-        bottom: 0;
+        bottom: -30px;
         opacity: 0;
     }
     to {
-        bottom: 30px;
+        bottom: 0;
         opacity: 1;
     }
 }
 
 @keyframes fadeinHigh {
     from {
-        bottom: 0;
+        bottom: -30px;
         opacity: 0;
     }
     to {
-        bottom: 30px;
+        bottom: 0;
         opacity: 1;
     }
 }
 
 @-webkit-keyframes fadeoutHigh {
     from {
-        bottom: 30px;
+        bottom: 0;
         opacity: 1;
     }
     to {
-        bottom: 0;
+        bottom: -30px;
         opacity: 0;
     }
 }
 
 @keyframes fadeoutHigh {
     from {
-        bottom: 30px;
+        bottom: 0;
         opacity: 1;
     }
     to {
-        bottom: 0;
+        bottom: -30px;
         opacity: 0;
     }
 }
@@ -1739,21 +1683,24 @@ button.form-control {
 
 /* noShow search menu */
 
-#noShowSearchList .row{
-    padding:16px 25px;
-}
-
 #noShowSearchList .noShowRow{
     margin: 5px 0;
+    padding:15px 20px;
     border-radius: 2px;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
     background-color: #ffffff;
     font-size:12px;
-    font-family: 'Montserrat';
+  position:relative;
+  text-align:left;
 }
 
 #noShowSearchList .noShowSearchDelete{
     cursor:pointer;
+  position:absolute;
+  right:20px;
+  top:20px;
+  line-height:12px;
+  font-size:24px;
 }
 
 /* commons on switching menu */
@@ -1769,6 +1716,20 @@ button.form-control {
 }
 .salesMenu .menuTitle+.menuContents{
     margin-top:30px;
+}
+.menuContents .fix-bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:82px;
+  display:flex;
+  padding:20px;
+  z-index:1;
+  background-color:#fff;
+}
+.menuContents .fix-bottom + form, .menuContents .fix-bottom + div{
+  margin-bottom:82px;
 }
 /* noShow menu */
 

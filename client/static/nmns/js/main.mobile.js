@@ -733,7 +733,7 @@
             NMNS.socket.emit("update alrim", parameters);
         }
         if (Object.keys(parameters).length || diff) {
-            $("#alrimModal").modal("hide");
+            history.back();
         } else {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
@@ -1994,8 +1994,12 @@
     }));
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
+      e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
+      e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
+      e.data.summary.lastNoShowDate = '20190103';
+      e.data.summary.noShowCount = 2;
         if (e.data.summary.noShowCount > 0) {
-          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
+          
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
           if(!$("#noShowDirtyImage").attr('src')){
             $("#noShowDirtyImage").attr('src', '/nmns/img/badperson.png');
@@ -2006,9 +2010,9 @@
             $("#noShowSearchSummary").text("마지막 노쇼는 "+ moment(e.data.summary.lastNoShowDate, 'YYYYMMDD').format('YYYY년 M월 D일입니다.') );
           }
           if (e.data.detail.length > 0) {
-            var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
+            var html = "";
             e.data.detail.forEach(function(item) {
-                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
+                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col-3 px-0'>노쇼 날짜</div><div class='col-9 pl-0 montserrat'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col-3 px-0'>전화번호</div><div class='col-9 pl-0 montserrat'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col-3 px-0'>노쇼 사유</div><div class='col-9 pl-0'>" + (item.noShowCase || "")+ "</div><div class='noShowSearchDelete'><span title='삭제'>&times;</span></div></div>";
             });
             $("#noShowSearchList").html(html);
             $("#noShowSearchList .noShowSearchDelete").on("touch click", function(){
@@ -2036,7 +2040,7 @@
         if (e && e.data) { 
             var origin = NMNS.history.find(function(item) { return item.id === e.data.id });
             if (origin) {
-                var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col col-3'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col col-3'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + origin.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>");
+                var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col-3 px-0'>노쇼 날짜</div><div class='col-9 pl-0 montserrat'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col-3 px-0'>전화번호</div><div class='col-9 pl-0 montserrat'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col-3 px-0'>노쇼 사유</div><div class='col-9 pl-0'>" + (origin.noShowCase || "")+ "</div><div class='noShowSearchDelete'><span title='삭제'>&times;</span></div></div>");
                 newRow.find(".noShowSearchDelete").off("touch click").on("touch click", function() {
                     deleteNoShow($(this));
                 });
@@ -2233,32 +2237,35 @@
       })
     });
     
-    $("#infoModal").on("hide.bs.modal", function() {
-        if (document.activeElement.tagName === "INPUT") {
-            return false;
-        }
-        var changed = false;
+    $("#cancelStoreBtn").on("touch click", function() {
+      if (document.activeElement.tagName === "INPUT") {
+          return false;
+      }
+      var changed = false;
 
-        if ($("#infoBizBeginTime").val() !== (NMNS.info.bizBeginTime)) {
-            changed = true;
-        }
-        if (!changed && $("#infoBizEndTime").val() !== (NMNS.info.bizEndTime)) {
-            changed = true;
-        }
-        if (!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")) {
-            changed = true;
-        }
-        if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
-            changed = true;
-        }
-        if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
-            return false;
-        }
-    }).one('show.bs.modal', function(){
-      $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
-    }).on('show.bs.modal', refreshInfoModal);
+      if ($("#infoBizBeginTime").val() !== (NMNS.info.bizBeginTime)) {
+          changed = true;
+      }
+      if (!changed && $("#infoBizEndTime").val() !== (NMNS.info.bizEndTime)) {
+          changed = true;
+      }
+      if (!changed && $("#infoShopName").val() !== (NMNS.info.shopName || "")) {
+          changed = true;
+      }
+      if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
+          changed = true;
+      }
+      if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 계속 하시겠어요?")) {
+        $(this).blur();
+          return false;
+      }
+      history.back();
+    })
+    $(".storeLink").one('touch click', function(){
+      $("#storeBtn").off("touch click").on("touch click", submitInfoModal);
+    }).on('touch click', refreshInfoModal);
     
-    $("#alrimModal").on("hide.bs.modal", function() {
+    $("#cancelAlrimBtn").on("touch click", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
         }
@@ -2283,11 +2290,12 @@
                 return false;
             }
         }
-    }).on("shown.bs.modal", function() {
-        if ($("body .popover").length) {
-            $("body .popover").popover("update");
-        }
-    }).one('show.bs.modal', function(){
+      history.back();
+    })
+    $(".alrimLink").on("touch click", function() {
+      refreshAlrimModal();
+      $("#alrimTabList a[data-target='#alrimTab']").tab('show');
+    }).one('touch click', function(){
       $("#labelAlrimUseYn").on("touch click", function(){
         $(this).next().children('label').trigger('click');
       })
@@ -2318,10 +2326,6 @@
           $("#alrimHistorySearch").trigger("click");
         }
       });
-    }).on("show.bs.modal", function(){
-      $("#alrimTabList a[data-target='#alrimTab']").tab('show');
-    }).on("hidden.bs.modal", function(){
-      refreshAlrimModal();
     });
     
     $("#noShowModal").on("hide.bs.modal", function() {
@@ -2480,7 +2484,7 @@
       $("#scheduleBtn").text('예약 추가 완료');
       $("#scheduleModal").removeClass('update').modal('show');
     });*/
-    $("#userModal").one('show.bs.modal', function(){
+    $(".userLink").one('touch click', function(){
       //passwordTab
       $("#resetPasswordBtn").on("touch click", function(){
         if($("#currentPassword").val().length === 0){
@@ -2500,7 +2504,6 @@
         $("#currentPassword").val("");
         $("#newPassword").val("");
         $("#renewPassword").val("");
-        $("#infoModal").modal('hide');
       })
       $("#naverBtn").on("touch click", function(e){
         if($(this).hasClass('connected')){
@@ -2509,7 +2512,7 @@
         }
         e.preventDefault();
       });
-    }).on('show.bs.modal', function(){
+    }).on('touch click', function(){
       if(NMNS.info.kakaotalk){
         $("#kakaoBtn").addClass('connected').find('span').text('카카오 계정 연동 완료')
       }
@@ -2565,7 +2568,6 @@
           });
         };
       }
-    }).on("hidden.bs.modal", function(){
       $("#currentPassword").val("");
       $("#newPassword").val("");
       $("#renewPassword").val("");
@@ -2872,7 +2874,7 @@
         $("#mainTask").removeClass("show");
         $(".calendarMenu").removeClass('fixedScroll');
         document.scrollingElement.scrollTop = 0;
-        $("#mainAside").toggleClass('sidebar-toggled');
+        $("#mainAside").removeClass('sidebar-toggled');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
@@ -2921,16 +2923,32 @@
           sanitize:false,
           placement:'auto'
         })
-        $("#mainMenu").popover({
-          template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
-          html:true,
-          sanitize:false,
-          placement:'bottom'
-        })
+        // $("#mainMenu").popover({
+        //   template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
+        //   html:true,
+        //   sanitize:false,
+        //   placement:'bottom'
+        // })
         $("#searchNoShow").on("keyup", function(e){
           if(e.keyCode === 13 || e.which === 13){
             if($(this).val().length === 11 || $(this).val().length === 10){
-              switchMenu.apply(this, e);
+              // switchMenu.apply(this, e);
+              if(!$(".calendarMenuLink").hasClass("menuLinkActive")){
+                $(".switchingMenu:not(.calendarMenu)").hide();
+                $("#mainRow").removeClass('fixedScroll');
+                $(".menuLinkActive").removeClass("menuLinkActive");
+                $(".calendarMenuLink").addClass("menuLinkActive");
+                // hide mainTask field
+                $("#mainTask").removeClass("show");
+              }
+              $(".calendarMenu").removeClass('fixedScroll');
+              $("#mainSearchNoShow").prev().hide().prev().hide();
+              $("#mainSearchNoShow").show();
+              document.scrollingElement.scrollTop = 0;
+              $("#mainAside").removeClass('sidebar-toggled');
+              if(location.pathname !== '/search'){
+                history.pushState({link:'calendarMenu', subLink:'search'}, "", 'search');
+              }
               NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
             }else{
               showSnackBar("전화번호를 정확히 입력해주세요.");
@@ -3010,8 +3028,6 @@
     var target = $(".menuLink[data-link='"+link+"']");
     if(target.length){
       switchMenu.call(target[0], null, true);
-    }else if(link === 'noShowSearchMenu'){
-      switchMenu.call(document.getElementById('searchNoShow'), null, true);
     }
     if(link === 'salesMenu'){
       if(state.state.subLink === 'search'){//result page
@@ -3022,6 +3038,13 @@
         $(".salesMenu .menuTitle").removeClass('fixedScroll');
         $(".salesSearchSwitch").hide();
         $("#mainSalesSearch").show();
+      }
+    }else if(link === 'calendarMenu'){
+      if(state.state && state.state.subLink === 'search'){//search result
+        $("#mainSearchNoShow").prev().hide().prev().hide();
+        $("#mainSearchNoShow").show();
+      }else{//calendar mode
+        $("#mainSearchNoShow").hide().prev().show().prev().show();
       }
     }
   }

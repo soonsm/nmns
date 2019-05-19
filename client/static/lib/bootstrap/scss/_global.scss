@@ -58,6 +58,18 @@ section {
   background-color: $textPrimary;
   border-color: $textPrimary;
 }
+.btn-white-primary:not(:disabled):not(.disabled) {
+  background-color: #fff;
+  border-color: $primary;
+  &:hover,
+  &:focus {
+    background-color: $primary;
+    border-color: $primary;
+    color: white;
+  }
+  color: $primary;
+}
+
 input:invalid{
   border-color:$accent;
 }

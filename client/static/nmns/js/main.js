@@ -2464,7 +2464,7 @@
         $("#currentPassword").val("");
         $("#newPassword").val("");
         $("#renewPassword").val("");
-        $("#infoModal").modal('hide');
+        $("#userModal").modal('hide');
       })
       $("#naverBtn").on("touch click", function(e){
         if($(this).hasClass('connected')){
