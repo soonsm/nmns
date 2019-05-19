@@ -999,7 +999,7 @@ button:focus {
     height: 150px;
 }
 
-#alrimModal .subText, #scheduleModal .subText, #customerModal .subText{
+#alrimTab .subText, #scheduleModal .subText, #customerModal .subText{
     opacity:0.5;
     font-size:11px;
     line-height:1.18;
