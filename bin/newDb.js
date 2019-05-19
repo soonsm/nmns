@@ -84,6 +84,31 @@ async function query(params){
     return items;
 }
 
+//page: 1~
+async function queryPaging(params, pageSize, targetPage){
+    let lastEvaluatedKey;
+
+    params.Limit = pageSize;
+    let currentPage = 0;
+
+    do{
+        currentPage += 1;
+
+        let data = await queryRaw(params);
+
+        if(currentPage === targetPage){
+            return data.Items;
+        }
+
+        lastEvaluatedKey = data.LastEvaluatedKey;
+        if(lastEvaluatedKey){
+            params.ExclusiveStartKey = lastEvaluatedKey;
+        }
+    }while(lastEvaluatedKey);
+
+    return [];
+}
+
 
 
 function scanRaw(params) {
@@ -625,16 +650,107 @@ exports.deleteAllAlrimTalk = async function(email){
     }
 }
 /**
-
  *
  * PushList(푸쉬 리스트)
  * email: Partition Key
- * pushId: Range Key, moment().format('YYYYMMDDHHmmssSSS')
+ * id: Range Key, moment().format('YYYYMMDDHHmmssSSS')
+ * registeredDate: YYYYMMDDHHmm
  * title
  * contents
  * data: {type: 'cancel reserv', id: reservation.id, manager: reservation.manager}
- * confirmed
- *
+ * isRead
+ * type: SCHEDULE_ADDED, SCHEDULE_CANCELED
+ **/
+exports.addPush = async function(data){
+
+    data.id = moment().format('YYYYMMDDHHmmssSSS');
+    data.registeredDate = moment().format('YYYYMMDDHHmm');
+
+    return await exports.addPushRaw(data);
+}
+exports.addPushRaw = async function(data){
+    let push = (({email, title, contents, data, type, isRead, id, registeredDate})=>({email, title, contents, data, type, isRead, id, registeredDate}))(data);
+
+    if(!push.email || !push.title || !push.contents || !push.type || !push.data || push.isRead === undefined){
+        throw 'email, title, contents, data, type, isRead는 필수입니다.';
+    }
+
+    if(push.isRead !== false && push.isRead !== true){
+        throw `isRead 값이 잘못되었습니다.(${push.isRead})`;
+    }
+
+    if(push.type !== 'SCHEDULE_ADDED' && push.type !== 'SCHEDULE_CANCELED'){
+        throw `type 값이 올바르지 않습니다.(${push.type})`;
+    }
+
+    if(!moment(push.id, 'YYYYMMDDHHmmssSSS').isValid()){
+        throw `push.id가 올바르지 않습니다.(${push.id})`;
+    }
+
+    if(!moment(push.registeredDate, 'YYYYMMDDHHmm').isValid()){
+        throw `push.registeredDate가 올바르지 않습니다.(${push.registeredDate})`;
+    }
+
+    return await put({
+        TableName: process.nmns.TABLE.Push,
+        Item: push
+    });
+}
+
+exports.getPushList = async function(email, pageSize, page){
+
+    if(!email){
+        throw 'email은 필수입니다.';
+    }
+
+    if(!pageSize || pageSize < 1){
+        throw `pageSize가 올바르지 않습니다.(${pageSize})`;
+    }
+    if(!page || page < 1){
+        throw `page가 올바르지 않습니다.(${page})`;
+    }
+
+    return await queryPaging({
+        TableName: process.nmns.TABLE.Push,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        },
+        ScanIndexForward: false
+    }, pageSize, page);
+}
+
+exports.deleteAllPush = async function(email){
+    if(!email){
+        throw 'email은 필수입니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Push,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    });
+
+    for(const push of list){
+        await del({
+            TableName: process.nmns.TABLE.Push,
+            Key: {
+                'email': push.email,
+                'id': push.id
+            }
+        });
+    }
+}
+
+/**
  * ReservationList(예약 리스트)
  * email: Partition Key
  * reservationKey: Range Key, Client 생성

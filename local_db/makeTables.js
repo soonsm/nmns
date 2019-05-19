@@ -219,7 +219,6 @@ let create = function(params){
     };
     create(params);
 })();
- */
 (async function(){
     var params = {
         TableName : "AlrimTalkHist",
@@ -230,6 +229,25 @@ let create = function(params){
         AttributeDefinitions: [
             { AttributeName: "email", AttributeType: "S" },
             { AttributeName: "sendDate", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+ */
+(async function(){
+    var params = {
+        TableName : "Push",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "id", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "id", AttributeType: "S" },
         ],
         ProvisionedThroughput: {
             ReadCapacityUnits: 5,
