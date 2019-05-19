@@ -66,6 +66,27 @@ exports.sendReservationConfirm = async function (user, reservation) {
     }
 };
 
+/**
+ * 모바일 전용 알림톡 전송
+ */
+exports.sendReservationConfirmKaKao =  async function(user, alrimTalk) {
+
+    let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(alrimTalk.reservationDate, 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(alrimTalk.reservationTime,'HHmm').format('HH[시]mm[분]')}\n안내말씀: ${user.messageWithConfirm}\n- 예약취소는 ${user.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
+
+    return await sendAlrimTalk({
+        phone: alrimTalk.receiverPhone,
+        callback: '01028904311',
+        msg: msg,
+        template_code: 'A002',
+        btn_types: '웹링크',
+        btn_txts: '예약취소',
+        btn_urls1: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls2: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        apiVersion: 1,
+        client_id: apiStoreId
+    });
+};
+
 exports.sendReservationCancelNotify =async function (user, reservation){
 
     let msg = `[${user.shopName} 예약취소알림]\n예약 취소를 알려드립니다.\n예약날짜: ${moment(reservation.start.substring(4,8), 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(reservation.start.substring(8,12),'HHmm').format('HH[시]mm[분]')} \n예약자 전화번호: ${util.formatPhone(reservation.contact)}`;

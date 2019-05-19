@@ -58,3 +58,7 @@ exports.formatPhone = function(phone){
 exports.sha512 = function(plain){
     return require('sha512')(plain).toString('hex');
 }
+
+exports.formatDate = function(data){
+
+}

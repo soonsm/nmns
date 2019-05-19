@@ -239,6 +239,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                     }
                 }
                 user.redNoticeList = redNoticeList;
+            }else{
+                noticeList = [];
             }
 
             let pushList = user.pushList || [];

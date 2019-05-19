@@ -1,3 +1,4 @@
+'use strict';
 
 var AWS = require("aws-sdk");
 var moment = require('moment');
@@ -8,7 +9,7 @@ AWS.config.update({
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-var create = function(params){
+let create = function(params){
     dynamodb.createTable(params, function(err, data) {
         if (err) {
             console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
@@ -17,7 +18,7 @@ var create = function(params){
         }
     });
 };
-
+/*
 (async function(){
     var params = {
         TableName : "SnsLink",
@@ -136,10 +137,10 @@ var create = function(params){
     };
     create(params);
 })();
-
-
+*/
 
 //-----------------------Data Insert------------------------------//
+/*
 (async function(){
     for(let i=50; i< 70; i++){
         docClient.put({
@@ -160,7 +161,7 @@ var create = function(params){
     }
 })();
 
-var newWebUser = function (user) {
+let newWebUser = function (user) {
     return {
         email: user.email,
         authStatus: 'EMAIL_VERIFICATED',
@@ -219,7 +220,7 @@ var newWebUser = function (user) {
     });
 
 })();
-
+*/
 
 //--------------------------Data delete-----------------------------
 /*
