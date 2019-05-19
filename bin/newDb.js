@@ -86,11 +86,15 @@ async function query(params){
 
 //page: 1~
 async function queryPaging(params, pageSize, targetPage){
-    let lastEvaluatedKey;
 
-    params.Limit = pageSize;
+    if(!pageSize || pageSize < 1 || !targetPage || targetPage < 1){
+        throw `pageSize/targetPage error(pageSize:${pageSize}, targetPage:${targetPage})`;
+    }
+
+    let lastEvaluatedKey;
     let currentPage = 0;
 
+    params.Limit = pageSize;
     do{
         currentPage += 1;
 
@@ -753,12 +757,12 @@ exports.deleteAllPush = async function(email){
 /**
  * ReservationList(예약 리스트)
  * email: Partition Key
- * reservationKey: Range Key, Client 생성
+ * start: 시작일시, string, YYYYMMDDHHmm
+ * end: YYYYMMDDHHmm,
+ * reservationKey: Client 생성
  * type: 'R',
  * memberId: 고객 아이디,
  * name: 고객 혹은 일정 이름,
- * start: reservation.start,
- * end: reservation.end,
  * isAllDay: YYYYMMDDHHmm,
  * contents: YYYYMMDDHHmm,
  * manager: 담당 매니저 아이디,
@@ -766,7 +770,11 @@ exports.deleteAllPush = async function(email){
  * contact: 연락처,
  * status: 예역 상태,
  * cancelDate: null
- *
+ * **/
+
+
+ /**
  * SalesHist(매출내역) 미정
  * PointHist(포인트 내역) 미정
  **/
+
