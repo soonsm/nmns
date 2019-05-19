@@ -509,14 +509,121 @@ exports.deleteAllCustomer = async function(email){
 /**
  * AlrimTalkHist(알림톡 사용 내역)
  * email: Partition Key
- * sendDate: YYYYMMDDhhmmssSSS
+ * sendDate: YYYYMMDDhhmmssSSS,
+ * date: YYYYMMDD
  * isCancel: boolean, 취소알림톡여부
  * contact: 전화번호
  * name: 고객 이름
- * msg: 내용
+ * contents: 내용
  * reservationKey: 예약키
  **/
+exports.addAlrmTalkRaw = async function(data){
+    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey}) => ({email, isCancel, contact, name, contents, date, sendDate, reservationKey}))(data);
 
+    if(!alrimTalk.email){
+        throw 'email은 필수입니다.';
+    }
+    if(![undefined, false, true].includes(alrimTalk.isCancel)){
+        throw `isCancel은 true, false, undefined 값만 가질 수 있습니다.(${alrimTalk.isCancel})`;
+    }
+    if(!alrimTalk.contact || !nmnsUtil.phoneNumberValidation(alrimTalk.contact)){
+        throw `연락처가 올바르지 않습니다.(${contact})`;
+    }
+    if(!alrimTalk.reservationKey){
+        throw '예약키는 필수입니다.';
+    }
+    if(!alrimTalk.date || !moment(alrimTalk.date, 'YYYYMMDD').isValid()){
+        throw `date가 올바르지 않습니다.(${alrimTalk.date})`;
+    }
+    if(!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDhhmmssSSS').isValid()){
+        throw `sendDate가 올바르지 않습니다.(${alrimTalk.sendDate})`;
+    }
+
+    return await put({
+        TableName: process.nmns.TABLE.AlrimTalkHist,
+        Item: alrimTalk
+    });
+}
+
+exports.addAlrmTalk = async function(data){
+
+    data.date = moment().format('YYYYMMDD');
+    data.sendDate = moment().format('YYYYMMDDhhmmssSSS');
+
+    return exports.addAlrmTalkRaw(data);
+}
+
+exports.getAlrimTalkList = async function(email, start, end, contact){
+
+    if(!email){
+        throw 'email은 필수입니다.';
+    }
+
+    if(start && !moment(start,'YYYYMMDD').isValid()){
+        throw `start 날짜 형식이 맞지 않습니다.(${start})`;
+    }
+    if(end && !moment(end,'YYYYMMDD').isValid()){
+        throw `end 날짜 형식이 맞지 않습니다.(${end})`;
+    }
+    if(contact && !nmnsUtil.phoneNumberValidation(contact)){
+        throw `contact 형식이 맞지 않습니다.(${contact})`;
+    }
+
+    if(start){
+        start += '000000000';
+    }else{
+        start = '20180101000000000';
+    }
+    if(end){
+        end += '235959999';
+    }else{
+        end = '29991231235959999';
+    }
+
+    let param = {
+        TableName: process.nmns.TABLE.AlrimTalkHist,
+        KeyConditionExpression: "email = :email and sendDate between :start and :end",
+        ExpressionAttributeValues: {
+            ":email": email,
+            ':start': start,
+            ':end': end
+        }
+    };
+    if(contact){
+        param.FilterExpression = '#contact = :contact';
+        param.ExpressionAttributeNames = {'#contact' : 'contact'};
+        param.ExpressionAttributeValues[':contact'] = contact;
+    }
+
+    return await query(param);
+}
+
+exports.deleteAllAlrimTalk = async function(email){
+    if(!email){
+        throw 'email이 필요합니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.AlrimTalkHist,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    });
+
+    for(const alrimTalk of list){
+        await del({
+            TableName: process.nmns.TABLE.AlrimTalkHist,
+            Key: {
+                'email': alrimTalk.email,
+                'sendDate': alrimTalk.sendDate
+            }
+        });
+    }
+}
 /**
 
  *

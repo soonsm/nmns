@@ -24,7 +24,8 @@
         NoShow: 'NoShow',
         NoShowId: 'NoShowId',
         VisitLog: 'VisitLog',
-        Customer: 'Customer'
+        Customer: 'Customer',
+        AlrimTalkHist: 'AlrimTalkHist'
     }
 
     o.MODE = {
