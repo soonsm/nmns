@@ -232,12 +232,14 @@
     </aside>
     
     <nav class="navbar topNav bg-primary" id="mainNav">
-      <button class="btn btn-flat px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom">
+      <button class="btn btn-flat px-0 position-relative announcementMenuLink menuLink" type="button" title="알림" data-link="announcementMenu" data-history="announcement">
         <span id="announcementIcon" class="icon-announcement" aria-label="알림"></span>
         <span class="badge bg-accent announcementCount position-absolute"></span>
       </button>
-      <div class="topNav" style="padding:30px">
-        <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:auto;vertical-align:initial"/></a>
+			<button class="btn btn-flat px-0" type="button" title="뒤로가기" id="exitDetailMenu" style="display:none"><span class="icon-arrow-white icon-arrow-left" style="width:15px"></span></button>
+      <div class="topNav" style="height:19px;line-height:19px">
+        <a class="montserrat menu-collapsed" href="/" aria-label="WA:SHOW" style="vertical-align:sub"><img src="/nmns/img/washow_BI.svg" id="logo" style="height:auto;vertical-align:initial"/></a>
+				<span id="detailMenuTitle" class="font-weight-bold" style="font-size:22px;display:none"></span>
       </div>
       <span id="sidebarToggler" class="float-right cursor-pointer" style="line-height:15px">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11"><g id="menu" transform="translate(-232.5 -40)"><line data-name="선 2" x2="14" transform="translate(232.5 40.5)" fill="none" stroke="#fff" stroke-width="1"/><line data-name="선 3" x2="14" transform="translate(232.5 45.5)" fill="none" stroke="#fff" stroke-width="1"/><line data-name="선 4" x2="14" transform="translate(232.5 50.5)" fill="none" stroke="#fff" stroke-width="1"/></g></svg>
@@ -704,7 +706,20 @@
           </div>
           
         </div>
-        
+
+				<div class="switchingMenu announcementMenu" style="margin:0 -5px">
+					<div style="min-height:calc(100vh - 64px)" class="row mx-0" id="announcementArea">
+						<div class="flex-column text-center w-100" style="align-self:center">
+							<div class="bouncingLoader">
+								<div></div>
+								<div></div>
+								<div></div>
+							</div> 
+							<span>알림 내역을 불러오는 중입니다...</span>
+						</div>
+					</div>
+				</div>
+
       </div>
       
       <!-- modal area -->

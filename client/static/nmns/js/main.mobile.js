@@ -1773,7 +1773,7 @@
             list += '<div class="notification"><div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat notificationTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + (item.contents?'<br>예약내용 : '+item.contents : '') +'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">예약 등록</span></div></div>'
             break;
           case 'SCHEDULE_CANCELED':
-            list += '<div class="notification"><div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat notificationTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div></div>'
+            list += '<div class="notification"><div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat notificationTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:11px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div></div>'
             break;
           case 'ANNOUNCEMENT':
           default:
@@ -1860,37 +1860,42 @@
           showSnackBar('<span>노쇼로 등록하였습니다.</span>');
           $("#noShowScheduleList .row[data-id='" + e.data.id + "']").remove();
           $("#noShowScheduleBtn span").css('opacity', 0.35)
-        }
+        } else if($("#announcementArea").is(":visible") && $("#announcementArea .addAnnouncementNoShow[data-schedule-id='"+e.data.id+"']").length){//직전취소로 노쇼등록
+					showSnackBar('<span>노쇼로 등록하였습니다.</span>');
+					$("#announcementArea .addAnnouncementNoShow[data-schedule-id='"+e.data.id+"']").hide();
+				}
     }, function(e) {
         var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
-        if(origin.category === 'task'){
-          if(typeof origin.isDone === 'boolean'){
-            $("#mainTaskContents .task[data-id='"+origin.id+"'] input").prop('checked', origin.isDone);
-          }
-        }else{
-          if ((origin.status || origin.raw.status) === "DELETED") {
-              drawSchedule([origin]);
-              refreshScheduleVisibility();
-          } else {
-            if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
-                NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
-                origin.category = origin.category === 'task' ? 'task' : 'time';
-                origin.dueDateClass = '';
-                origin.calendarId = origin.selectedCal ? origin.selectedCal.id : origin.calendarId;
-                origin.start = (typeof origin.start === "string" ? moment(origin.start, "YYYYMMDDHHmm").toDate() : origin.start);
-                origin.end = (typeof origin.end === "string" ? moment(origin.end, "YYYYMMDDHHmm").toDate() : origin.end);
-                origin.color = origin.color || origin.selectedCal.color;
-                origin.bgColor = origin.bgColor || origin.selectedCal.bgColor;
-                origin.borderColor = origin.borderColor || origin.selectedCal.borderColor;
-                NMNS.calendar.createSchedules([origin]);
-            } else {
-                if (typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
-                if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
-                NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
-            }
-          }
-        }
+				if(origin){
+					if(origin.category === 'task'){
+						if(typeof origin.isDone === 'boolean'){
+							$("#mainTaskContents .task[data-id='"+origin.id+"'] input").prop('checked', origin.isDone);
+						}
+					}else{
+						if ((origin.status || origin.raw.status) === "DELETED") {
+								drawSchedule([origin]);
+								refreshScheduleVisibility();
+						} else {
+							if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
+									NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
+									origin.category = origin.category === 'task' ? 'task' : 'time';
+									origin.dueDateClass = '';
+									origin.calendarId = origin.selectedCal ? origin.selectedCal.id : origin.calendarId;
+									origin.start = (typeof origin.start === "string" ? moment(origin.start, "YYYYMMDDHHmm").toDate() : origin.start);
+									origin.end = (typeof origin.end === "string" ? moment(origin.end, "YYYYMMDDHHmm").toDate() : origin.end);
+									origin.color = origin.color || origin.selectedCal.color;
+									origin.bgColor = origin.bgColor || origin.selectedCal.bgColor;
+									origin.borderColor = origin.borderColor || origin.selectedCal.borderColor;
+									NMNS.calendar.createSchedules([origin]);
+							} else {
+									if (typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
+									if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
+									NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
+							}
+						}
+					}
+				}        
     }));
 
     NMNS.socket.on("get task", socketResponse("일정 가져오기", function(e){
@@ -2137,25 +2142,17 @@
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
-      if($('#notificationBody').children().length === 0){
-        $('#notificationBody').html('');//대기문구 삭제
-      }
-      // e.data.schedule.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
-      // e.data.schedule.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
-      
+       e.data.announcement.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
+       e.data.announcement.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
+      $("#announcementArea .flex-column").remove();
       if(e.data.announcement.length > 0){
-        $("#announcementArea").parent().removeClass('d-none');
-        $("#announcementArea").append(drawNotificationList(e.data.announcement));
+				var list = $(drawNotificationList(e.data.announcement));
+				list.find('.addAnnouncementNoShow').on("touch click", function(){
+					NMNS.socket.emit("update reserv", {id:$(this).data('schedule-id'), status:"NOSHOW", noShowCase:"직전취소"});
+				});
+        $("#announcementArea").append(list);
       }else if(NMNS.announcementPage === 1){
-        $("#announcementArea").parent().addClass('d-none');
-      }
-      $("#notificationBody").find('.flex-column').remove();
-      if(e.data.schedule.length > 0){
-        $("#notificationEmpty").hide();
-        $("#notificationBody").append(drawNotificationList(e.data.schedule)).show();
-      }else if(NMNS.announcementPage === 1){
-        $("#notificationBody").hide();
-        $("#notificationEmpty").css('display', 'flex');
+        $("#announcementArea").append("<div class='m-auto text-center' style='font-size:14px;line-height:1.71'>아직 알림내역이 없어요.<br>공지사항, 예약 등록 내역, 예약 취소<br>내역이 보여집니다.</div>");
       }
       
       var count = NMNS.info.newAnnouncement;
@@ -2377,29 +2374,19 @@
             $("#tutorialModal").modal();
         }
     });
-    $('.announcementMenuLink').on('show.bs.popover', function(){
+    $('.announcementMenuLink').on('touch click', function(){
       if(!NMNS.announcementPage){
         NMNS.announcementPage = 1;
-        NMNS.socket.emit('get announcement', {page:1});
+        NMNS.socket.emit('get announcement', {page:1, combined:true});
       }
-      $(document.body).addClass('modal-open').append($('<div class="modal-backdrop fade show"></div>').on("touch click", function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        $(this).remove();
-        $(document.body).removeClass('modal-open');
-        $(".popover.show").popover('hide');
-      }));
-    }).on('shown.bs.popover', function(){
-      $('#notificationBody').parents('.popover').find('.close-button').on('touch click', function(){
-        $(this).parents('.popover').popover('hide')
-      })
-      $('#notificationBody, #announcementArea').off('scroll').on('scroll', debounce(function(){
-          var distance = Math.max(0, $(this)[0].scrollHeight - $(this).scrollTop() - $(this).innerHeight());
-          if(NMNS.expectMoreAnnouncement && distance < Math.max(100, $(this).innerHeight() * 0.2)){
-            NMNS.socket.emit('get announcement', {page:++NMNS.announcementPage})
-          }
-      }, 100));
-    })
+			$("#detailMenuTitle").html("알림").show().prev().hide();
+			$(this).hide().next().show();
+    });
+		$("#exitDetailMenu").on("touch click", function(){
+			$("#detailMenuTitle").hide().prev().show();
+			$(this).hide().prev().show();
+			history.back();
+		});
     $('#mainMenu').on('shown.bs.popover', function(){
       $(".mainMenuRow a[data-link]").off("touch click").on("touch click", function(e){
         $("#mainMenu").popover('hide')
@@ -2875,6 +2862,10 @@
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
+				if(!$(this).hasClass('announcementMenuLink') && !$(this).hasClass('scheduleDetailMenuLink') && !$(this).hasClass('customerDetailMenuLink')){// 뒤로가기 제거
+					$("#detailMenuTitle").hide().prev().show();
+					$("#exitDetailMenu").hide().prev().show();
+				}
       }
     }
     
@@ -2903,23 +2894,23 @@
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
           $('#mainAside').toggleClass('sidebar-toggled');
         });
-        $(".announcementMenuLink").popover({
-          template:
-            '<div id="announcementPopover" class="popover bg-transparent" role="tooltip" style="display:flex;width:831px;padding-right:91px;box-shadow:none"><div class="arrow"></div>\
-              <div class="col px-0 d-none"><div id="announcementArea" class="col px-0 mr-2"></div></div>\
-              <div class="col px-0">\
-                <div id="notificationArea" class="col px-0 ml-2">\
-                  <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">\
-                    <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div>\
-                  <div id="notificationBody"><div class="flex-column m-auto text-center py-5"><div class="bouncingLoader"><div></div><div></div><div></div></div><span>새로운 알림을 불러오는 중입니다...</span></div></div>\
-                  <div id="notificationEmpty">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div>\
-                </div>\
-              </div>\
-            </div>',
-          html:true,
-          sanitize:false,
-          placement:'auto'
-        })
+        // $(".announcementMenuLink").popover({
+        //   template:
+        //     '<div id="announcementPopover" class="popover bg-transparent" role="tooltip" style="display:flex;width:831px;padding-right:91px;box-shadow:none"><div class="arrow"></div>\
+        //       <div class="col px-0 d-none"><div id="announcementArea" class="col px-0 mr-2"></div></div>\
+        //       <div class="col px-0">\
+        //         <div id="notificationArea" class="col px-0 ml-2">\
+        //           <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">\
+        //             <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div>\
+        //           <div id="notificationBody"><div class="flex-column m-auto text-center py-5"><div class="bouncingLoader"><div></div><div></div><div></div></div><span>새로운 알림을 불러오는 중입니다...</span></div></div>\
+        //           <div id="notificationEmpty">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div>\
+        //         </div>\
+        //       </div>\
+        //     </div>',
+        //   html:true,
+        //   sanitize:false,
+        //   placement:'auto'
+        // })
         // $("#mainMenu").popover({
         //   template:'<div class="popover" role="tooltip"><div class="arrow"></div><div><ul style="padding: 25px 30px;margin:0"><li class="mainMenuRow"><a class="d-block" data-link="#infoModal" data-toggle="modal" href="#" aria-label="내 매장 정보">내 매장 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#alrimModal" data-toggle="modal" href="#" aria-label="알림톡 정보">알림톡 정보</a></li><li class="mainMenuRow"><a class="d-block" data-link="#userModal" data-toggle="modal" href="#" aria-label="내 계정 정보">내 계정 정보</a></li><li class="mainMenuRow"><a id="signoutLink" class="d-block" href="/signout" aria-label="로그아웃">로그아웃</a></li></ul></div></div>',
         //   html:true,
@@ -3053,5 +3044,12 @@
         $(".calendarMenu").removeClass('fixedScroll');
       }
     }
-  });
+  }).on("scroll", debounce(function(){
+		if($("#announcementArea").is(":visible")){
+			var distance = Math.max(0, $("#announcementArea")[0].scrollHeight - $("#announcementArea").scrollTop() - $("#announcementArea").innerHeight());
+			if(NMNS.expectMoreAnnouncement && distance < Math.max(100, $("#announcementArea").innerHeight() * 0.2)){
+				NMNS.socket.emit('get announcement', {page:++NMNS.announcementPage, combined:true})
+			}
+		}
+	}, 100));
 })(jQuery);

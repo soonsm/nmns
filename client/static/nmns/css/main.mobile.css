@@ -69,6 +69,9 @@ input[name='etc'],
 .icon-arrow{
   content: url('/nmns/img/arrow_bottom.svg');
 }
+.icon-arrow-white{
+  content: url('/nmns/img/arrow_bottom_white.svg');
+}
 .icon-arrow-left{
   transform:rotate(90deg);
   vertical-align: middle;
@@ -1395,28 +1398,17 @@ button.form-control {
     display: block;
 }
 */
-#announcementPopover{
-  display:flex;
-  justify-content: flex-end;
-}
 
-#notificationArea, #announcementArea{
-  box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.12);
-  background-color:#fff;
-  max-width:375px;
-  float:right;
-  border-radius: 5px;
-}
 #notificationBody, #announcementArea{
     overflow-y:auto;
-    max-height:543px;
+}
+#announcementArea .notification, #announcementArea .announcement{
+    padding: 25px 20px;
+	font-size:13px;
+	width:100%;
 }
 
-#notificationBody .notification, #announcementArea .announcement{
-    padding: 25px 30px;
-}
-
-#notificationBody .notification:not(:last-child), #announcementArea .announcement:not(:last-child){
+#announcementArea > div:not(.flex-column):not(:last-child){
     border-bottom:1px solid rgba(57, 53, 53, 0.2);
 }
 
@@ -1424,18 +1416,12 @@ button.form-control {
     font-weight: bold;
 }
 
-#notificationBody .notification .notificationTime, #announcementArea .announcement .announcementTime{
+#announcementArea .notification .notificationTime, #announcementArea .announcement .announcementTime{
     font-size:12px;
     opacity:0.5;
     font-weight:500;
 }
 
-#notificationEmpty{
-  display:none;
-  height:228px;
-  align-items:center;
-  justify-content: center;
-}
 /* alrim modal */
 
 #alrimHistoryList .alrimRow {

@@ -1831,37 +1831,42 @@
           showSnackBar('<span>노쇼로 등록하였습니다.</span>');
           $("#noShowScheduleList .row[data-id='" + e.data.id + "']").remove();
           $("#noShowScheduleBtn span").css('opacity', 0.35)
-        }
+        } else if($("#notificationBody").is(":visible") && $("#notificationBody .addAnnouncementNoShow[data-schedule-id='"+e.data.id+"']").length){//직전취소로 노쇼등록
+					showSnackBar('<span>노쇼로 등록하였습니다.</span>');
+					$("#notificationBody .addAnnouncementNoShow[data-schedule-id='"+e.data.id+"']").hide();
+				}
     }, function(e) {
         var origin = NMNS.history.find(function(history) { return (history.id === e.data.id); });
         NMNS.history.remove(e.data.id, function(item, target) { return (item.id === target); });
-        if(origin.category === 'task'){
-          if(typeof origin.isDone === 'boolean'){
-            $("#mainTaskContents .task[data-id='"+origin.id+"'] input").prop('checked', origin.isDone);
-          }
-        }else{
-          if ((origin.status || origin.raw.status) === "DELETED") {
-              drawSchedule([origin]);
-              refreshScheduleVisibility();
-          } else {
-            if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
-                NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
-                origin.category = origin.category === 'task' ? 'task' : 'time';
-                origin.dueDateClass = '';
-                origin.calendarId = origin.selectedCal ? origin.selectedCal.id : origin.calendarId;
-                origin.start = (typeof origin.start === "string" ? moment(origin.start, "YYYYMMDDHHmm").toDate() : origin.start);
-                origin.end = (typeof origin.end === "string" ? moment(origin.end, "YYYYMMDDHHmm").toDate() : origin.end);
-                origin.color = origin.color || origin.selectedCal.color;
-                origin.bgColor = origin.bgColor || origin.selectedCal.bgColor;
-                origin.borderColor = origin.borderColor || origin.selectedCal.borderColor;
-                NMNS.calendar.createSchedules([origin]);
-            } else {
-                if (typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
-                if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
-                NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
-            }
-          }
-        }
+				if(origin){
+					if(origin.category === 'task'){
+						if(typeof origin.isDone === 'boolean'){
+							$("#mainTaskContents .task[data-id='"+origin.id+"'] input").prop('checked', origin.isDone);
+						}
+					}else{
+						if ((origin.status || origin.raw.status) === "DELETED") {
+								drawSchedule([origin]);
+								refreshScheduleVisibility();
+						} else {
+							if (origin.newCalendarId && !NMNS.calendar.getSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId)) { //calendar id changed
+									NMNS.calendar.deleteSchedule(e.data.id, origin.newCalendarId, true);
+									origin.category = origin.category === 'task' ? 'task' : 'time';
+									origin.dueDateClass = '';
+									origin.calendarId = origin.selectedCal ? origin.selectedCal.id : origin.calendarId;
+									origin.start = (typeof origin.start === "string" ? moment(origin.start, "YYYYMMDDHHmm").toDate() : origin.start);
+									origin.end = (typeof origin.end === "string" ? moment(origin.end, "YYYYMMDDHHmm").toDate() : origin.end);
+									origin.color = origin.color || origin.selectedCal.color;
+									origin.bgColor = origin.bgColor || origin.selectedCal.bgColor;
+									origin.borderColor = origin.borderColor || origin.selectedCal.borderColor;
+									NMNS.calendar.createSchedules([origin]);
+							} else {
+									if (typeof origin.start === "string") origin.start = moment(origin.start, "YYYYMMDDHHmm").toDate();
+									if (typeof origin.end === "string") origin.end = moment(origin.end, "YYYYMMDDHHmm").toDate();
+									NMNS.calendar.updateSchedule(e.data.id, origin.selectedCal ? origin.selectedCal.id : origin.calendarId, origin);
+							}
+						}
+					}
+				}        
     }));
 
     NMNS.socket.on("get task", socketResponse("일정 가져오기", function(e){
@@ -2119,7 +2124,11 @@
       $("#notificationBody").find('.flex-column').remove();
       if(e.data.schedule.length > 0){
         $("#notificationEmpty").hide();
-        $("#notificationBody").append(drawNotificationList(e.data.schedule)).show();
+				var list = $(drawNotificationList(e.data.schedule));
+				list.find('.addAnnouncementNoShow').on("touch click", function(){
+					NMNS.socket.emit("update reserv", {id:$(this).data('schedule-id'), status:"NOSHOW", noShowCase:"직전취소"});
+				});
+        $("#notificationBody").append(list).show();
       }else if(NMNS.announcementPage === 1){
         $("#notificationBody").hide();
         $("#notificationEmpty").css('display', 'flex');
