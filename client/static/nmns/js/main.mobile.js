@@ -2862,7 +2862,7 @@
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
-				if(!$(this).hasClass('announcementMenuLink') && !$(this).hasClass('scheduleDetailMenuLink') && !$(this).hasClass('customerDetailMenuLink')){// 뒤로가기 제거
+				if(!$(this).data('type') === 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
 				}
