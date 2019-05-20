@@ -85,7 +85,8 @@ input[name='etc'],
 }
 .icon-announcement{
   content: url('/nmns/img/Notification_white.svg');
-  width:25px;
+  width:17px;
+	vertical-align: middle;
 }
 .icon-announcement.icon-announcement-count{
   content: url('/nmns/img/Notification_count_white.svg');
@@ -1522,11 +1523,13 @@ button.form-control {
 /* announcement */
 .btn .announcementCount, .announcementCount{
   vertical-align: super;
-  left:16px;
-  top:5px;
-  border-radius:10px;
-  min-width:16.5px;
-  line-height:11px;
+  left:11px;
+  top:8px;
+  border-radius:50%;
+  min-width:14px;
+  line-height:9px;
+	font-weight:bold;
+	font-family:'Montserrat';	
 }
 
 /* incoCenterMenu */
