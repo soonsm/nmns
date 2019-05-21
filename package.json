@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "./ddb  | NODE_ENV=development node ./app",
-    "startLocalDb": "./ddb"
+    "startLocalDb": "./ddb",
+    "test": "jasmine"
   },
   "dependencies": {
     "aws-sdk": "^2.282.1",
@@ -47,6 +48,7 @@
     "gulp-clean-css": "^3.9.4",
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.1",
-    "gulp-uglify": "^3.0.1"
+    "gulp-uglify": "^3.0.1",
+    "jasmine": "^3.4.0"
   }
 }

@@ -1,9 +1,11 @@
 'use strict';
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const util = require('./util');
 const hangul = require('hangul-js');
-const sha256 = require('js-sha256');
+
+const logger = global.nmns.LOGGER;
 
 /**
  * 고객조회
@@ -34,10 +36,11 @@ exports.getCustomerDetail = async function(data){
             }
             if(member){
                 member.manager = member.managerId;
-                let noShow = await db.getNoShow(contact) || {noShowCount: 0};
-                member.totalNoShow = noShow.noShowCount;
-                let key = sha256(contact);
-                member.myNoShow = user.noShowList.filter(noShow => noShow.noShowKey === key).length;
+                let noShowList = await newDb.getNoShow(contact);
+
+                member.totalNoShow = noShowList.length;
+                member.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
+
                 let reservationList = user.reservationList.filter(reservation => reservation.memberId === member.id);
                 reservationList.sort((a, b) =>  b.start - a.start );
                 if(reservationList.length > 0){
@@ -183,20 +186,9 @@ exports.getCustomerList = async function(data){
             member.myNoShow = 0;
             member.totalNoShow = 0;
             if(member.contact){
-                let totalNoShow = await db.getNoShow(member.contact);
-                if(totalNoShow){
-                    member.totalNoShow = totalNoShow.noShowCount;
-                }
-                let myNoShowList = await db.getMyNoShow(email);
-                let key = sha256(member.contact);
-                let myNoShowCount = 0;
-                for (let i = 0; i < myNoShowList.length; i++) {
-                    let noShow = myNoShowList[i];
-                    if (noShow.noShowKey === key) {
-                        myNoShowCount++;
-                    }
-                }
-                member.myNoShow = myNoShowCount;
+                let noShowList = await newDb.getNoShow(member.contact);
+                member.totalNoShow = noShowList.length;
+                member.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
             }
 
             member.history = [];
@@ -385,10 +377,7 @@ let saveCustomer = async function(data){
         resultData.id = id;
         resultData.totalNoShow = 0;
         if(contact){
-            let totalNoShow = await db.getNoShow(contact);
-            if(totalNoShow){
-                resultData.totalNoShow = totalNoShow.noShowCount;
-            }
+            resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
         }
     }
 
@@ -399,9 +388,58 @@ let saveCustomer = async function(data){
     }
 }
 
-exports.addCustomer = saveCustomer;
+exports.addCustomer = async function(data){
+    let email = this.email;
+    let status = false,
+        message = '',
+        resultData = {id: data.id, totalNoShow: 0};
 
-exports.updateCustomer = saveCustomer;
+    try{
+        await newDb.saveCustomer(email, data.id, data.name, data.contact, data.managerId === '' ? undefined : data.managerId, data.etc);
+        status = true;
+        if(contact){
+            resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
+        }
+    }catch(e){
+        status = false;
+        message = e;
+        logger.error(e);
+    }
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    }
+};
+
+exports.updateCustomer = async function(data){
+    let email = this.email;
+    let status = false,
+        message = '',
+        resultData = {id: data.id};
+
+    try{
+        let memberList = await newDb.getCustomerList(email);
+        if(memberList.find(member => member.name === data.name && member.contact === data.contact && member.id !== data.id)){
+            resultData.reason = 'DUPLICATED';
+            throw '이미 이름과 연락처가 동일한 고객이 존재합니다.';
+        }
+
+        await newDb.saveCustomer(email, data.id, data.name, data.contact, data.managerId === '' ? undefined : data.managerId, data.etc);
+        status = true;
+    }catch(e){
+        status = false;
+        message = e;
+        logger.error(e);
+    }
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    }
+};
 
 exports.deleteCustomer = async function(data){
     let status = false,

@@ -741,6 +741,9 @@ exports.addToNoShowList = async function (email, phone, noShowCase, date, id) {
         noShow.noShowCount += 1;
         noShow.lastNoShowDate = lastNoShowDate;
         if (noShowCase) {
+            if(!noShow.noShowCaseList){
+                noShow.noShowCaseList = [];
+            }
             noShow.noShowCaseList.push(noShowCase);
         }
     }

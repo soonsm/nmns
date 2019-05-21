@@ -3,6 +3,7 @@
 const logger = global.nmns.LOGGER;
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const moment = require('moment');
 const util = require('./util');
 const alrimTalk = require('./alrimTalkSender');
@@ -272,7 +273,7 @@ exports.updateReservation = async function(newReservation){
         if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && newReservation.status) {
             if (newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED || newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED)
             //노쇼에서 정상 또는 취소로 바꿀 때 노쇼 삭제
-                if (!await db.deleteNoShow(email, reservation.id)) {
+                if (!await newDb.delNoShow(reservation.id)) {
                     logger.log("예약변경을 통한 노쇼 삭제가 실패했습니다.");
                 }
         }
@@ -322,7 +323,7 @@ exports.updateReservation = async function(newReservation){
         } else {
             //노쇼 처리인 경우 노쇼
             if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && reservation.contact) {
-                await db.addToNoShowList(email, reservation.contact, reservation.noShowCase, reservation.start.substring(0, 8), reservation.id);
+                await newDb.addNoShow(email, reservation.contact, reservation.start.substring(0, 8), reservation.noShowCase, reservation.id);
             }
 
             //알림톡 전송

@@ -3,6 +3,7 @@
 const db = require('./webDb');
 const util = require('./util');
 
+//미사용
 exports.getAlirmTalkInfo = async function () {
     let status = true,
         message = null;

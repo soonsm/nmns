@@ -3,6 +3,7 @@
 const logger = global.nmns.LOGGER;
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const emailSender = require('./emailSender');
 const passportSocketIo = require('passport.socketio');
 const util = require('util');
@@ -83,6 +84,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         }
         //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
 
+        //방문 기록 로깅
+        const MobileDetect = require('mobile-detect');
+        let md = new MobileDetect(socket.request.headers['user-agent']);
+        let visitLog = newDb.visitLog(email, md.mobile() || 'pc');
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
@@ -95,6 +100,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         socket.on('disconnect', async function () {
             delete process.nmns.ONLINE[email];
+
+            await newDb.exitLog(visitLog);
         });
 
         const addEvent = function (eventName, fn) {
