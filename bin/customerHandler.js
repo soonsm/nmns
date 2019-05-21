@@ -395,7 +395,7 @@ exports.addCustomer = async function(data){
         resultData = {id: data.id, totalNoShow: 0};
 
     try{
-        await newDb.saveCustomer(email, data.id, data.name, data.contact, data.managerId === '' ? undefined : data.managerId, data.etc);
+        await newDb.saveCustomer({email: email, id: data.id, name: data.name, contact: data.contact, managerId:data.managerId === '' ? undefined : data.managerId, etc: data.etc});
         status = true;
         if(contact){
             resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
@@ -426,7 +426,7 @@ exports.updateCustomer = async function(data){
             throw '이미 이름과 연락처가 동일한 고객이 존재합니다.';
         }
 
-        await newDb.saveCustomer(email, data.id, data.name, data.contact, data.managerId === '' ? undefined : data.managerId, data.etc);
+        await newDb.saveCustomer({email:email, id:data.id, name:data.name, contact:data.contact, managerId:data.managerId === '' ? undefined : data.managerId, etc:data.etc});
         status = true;
     }catch(e){
         status = false;

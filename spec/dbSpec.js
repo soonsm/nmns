@@ -15,7 +15,7 @@ const moment = require('moment');
 
 
 let email = 'soonsm@gmail.com';
-/*
+
 describe("NoShow", function() {
 
     let phone = '01011112222';
@@ -122,26 +122,46 @@ describe("VisitLog", function() {
 });
 describe("Customer", function() {
 
+    let customer = {};
+
     beforeEach(async function(){
+        customer = {
+            email: 'soonsm@gmail.com',
+            id: 'aaaaa',
+            name: '김승민',
+            contact: '01028904311',
+            managerId: 'asdasdasdasdasd',
+            etc: 'etcetc',
+            pointMembership: 0,
+            cardSales: 0,
+            cashSales: 0,
+            pointSales: 0
+        };
         await db.deleteAllCustomer(email);
     });
 
     describe('getCustomerList(email, contact, name)', function(){
 
         it('여러명 있을 때 이름과 연락처로 한정하면 한 개 조회 성공', async function(){
-            await db.saveCustomer(email, 'aaaaa', '김승민', '01011112222');
-            await db.saveCustomer(email, 'aaaaabbbb', '김승민', '01011113333');
+            await db.saveCustomer(customer);
+            customer.id = 'aaaaabbbb';
+            customer.contact = '01011113333';
+            await db.saveCustomer(customer);
 
-            let list = await db.getCustomerList(email, '01011112222', '김승민');
+            let list = await db.getCustomerList(email, customer.contact, customer.name);
 
             expect(list.length).toEqual(1);
-            expect(list[0].id).toEqual('aaaaa');
+            expect(list[0].id).toEqual(customer.id);
         });
 
         it('여러명 있을 때 이름으로 사람 수 만큼 조회 성공', async function(){
-            await db.saveCustomer(email, 'aaaaa', '김승민', '01011112222');
-            await db.saveCustomer(email, 'aaaaabbbb', '김승민', '01011113333');
-            await db.saveCustomer(email, 'aaaaabccccc', '김승민', '01011113333');
+            await db.saveCustomer(customer);
+            customer.id = 'aaaaabbbb';
+            customer.contact = '01011113333';
+            await db.saveCustomer(customer);
+            customer.id = 'aaaaabccccc';
+            customer.contact = '01011113333';
+            await db.saveCustomer(customer);
 
             let list = await db.getCustomerList(email, undefined, '김승민');
 
@@ -149,11 +169,19 @@ describe("Customer", function() {
         });
 
         it('여러명 있을 때 연락처로 사람 수 만큼 조회 성공', async function(){
-            await db.saveCustomer(email, 'aaaaa', '김승만', '01011112222');
-            await db.saveCustomer(email, 'aaaaabbbb', '김승만2', '01011112222');
-            await db.saveCustomer(email, 'aaaaabccccc', '김승만3', '01011112223');
+            await db.saveCustomer(customer);
+            customer.id = 'aaaaabbbb';
+            customer.name = '김승만2';
+            await db.saveCustomer(customer);
 
-            let list = await db.getCustomerList(email, '01011112222');
+            let contact = customer.contact;
+
+            customer.id = 'aaaaabccccc';
+            customer.name = '김승만3';
+            customer.contact = '01011112223';
+            await db.saveCustomer(customer);
+
+            let list = await db.getCustomerList(email, contact);
 
             expect(list.length).toEqual(2);
         });
@@ -168,9 +196,9 @@ describe("Customer", function() {
 
     describe('deleteCustomer(email,id)', function(){
        it('삭제 성공시 true 리턴', async function(){
-          await db.saveCustomer(email, 'aaa', '김승민', '01028904311');
+          await db.saveCustomer(customer);
 
-          expect((await db.deleteCustomer(email, 'aaa')).id).toEqual('aaa');
+          expect((await db.deleteCustomer(email, customer.id)).id).toEqual(customer.id);
        });
        it('삭제 실패 시 undefined 리턴', async function(){
           expect(await db.deleteCustomer(email, '121212')).toEqual(undefined);
@@ -180,16 +208,7 @@ describe("Customer", function() {
     describe('saveCustomer(email, id, name, contact, managerId, etc)', function(){
         it('성공 시 customer 리턴', async () => {
 
-            let customer = {
-                email: 'soonsm@gmail.com',
-                id: 'aaaaa',
-                name: '김승민',
-                contact: '01028904311',
-                managerId: 'asdasdasdasdasd',
-                etc: 'etcetc'
-            };
-
-            let result = await db.saveCustomer(customer.email, customer.id, customer.name, customer.contact, customer.managerId, customer.etc);
+            let result = await db.saveCustomer(customer);
 
             expect(result).toEqual(customer);
         });
@@ -197,7 +216,8 @@ describe("Customer", function() {
         it('email이나 id 없으면 exception', async function(){
 
             try{
-                await db.saveCustomer(undefined, 'asd', 'name', 'contact');
+                delete customer.id;
+                await db.saveCustomer(customer);
                 fail();
             }catch(e){
                 console.log(e);
@@ -206,28 +226,21 @@ describe("Customer", function() {
         it('name contact 모두 없으면 exception', async function(){
 
             try{
-                await db.saveCustomer('email', 'asd', undefined, undefined);
+                delete customer.name;
+                delete customer.contact;
+                await db.saveCustomer(customer);
                 fail();
             }catch(e){
                 console.log(e);
             }
         });
         it('이미 있으면 업데이트', async function(){
-            let customer = {
-                email: 'soonsm@gmail.com',
-                id: 'aaaaa',
-                name: '김승민',
-                contact: '01028904311',
-                managerId: 'asdasdasdasdasd',
-                etc: 'etcetc'
-            };
-
-            let result = await db.saveCustomer(customer.email, customer.id, customer.name, customer.contact, customer.managerId, customer.etc);
+            let result = await db.saveCustomer(customer);
 
             expect(result).toEqual(customer);
 
-            customer.etc = 'etc';
-            result = await db.saveCustomer(customer.email, customer.id, customer.name, customer.contact, customer.managerId, customer.etc);
+            customer.etc = 'etc3';
+            result = await db.saveCustomer(customer);
 
             expect(result).toEqual(customer);
         });
@@ -713,7 +726,6 @@ describe('Reservation', function () {
        })
     });
 });
-*/
 
 describe('Task', function () {
     let task;

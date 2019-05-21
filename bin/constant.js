@@ -72,7 +72,9 @@
         AlrimTalkHist: 'AlrimTalkHist',
         Push: 'Push',
         Reservation: 'Reservation',
-        Task: 'Task'
+        Task: 'Task',
+        Sales: 'Sales',
+        Point: 'Point'
     }
 
     o.MODE = {

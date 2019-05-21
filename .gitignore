@@ -14,3 +14,4 @@ client/static/lib/material-floating-button/mfb.css*
 client/static/lib/material-floating-button/mfb.js*
 bin/addMemberId.js
 goorm.manifest
+bin/logs/*

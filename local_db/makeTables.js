@@ -311,6 +311,24 @@ let create = function(params){
     create(params);
 })();
  */
+(async function(){
+    var params = {
+        TableName : "Sales",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "id", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "id", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
 //-----------------------Data Insert------------------------------//
 /*
 (async function(){

@@ -422,37 +422,72 @@ exports.exitLog = async function (visitLog) {
  * name
  * etc: 고객 메모
  * managerId: 담당 매니저 아이디
+ * pointMembership: 보유 포인트
+ * cardSales: 카드 매출 총액
+ * cashSales: 현금 매출 총액
+ * pointSales: 포인트 사용 총액
  */
 
 /**
  * 고객 추가 및 업데이트
  */
-exports.saveCustomer = async function (email, id, name, contact, managerId, etc) {
+exports.saveCustomer = async function (data) {
 
-    if (!email || !id) {
+    let item = (({email, id, name, contact, managerId, etc, pointMembership, cardSales, cashSales, pointSales})=>({email, id, name, contact, managerId, etc, pointMembership, cardSales, cashSales, pointSales}))(data);
+
+    if (!item.email || !item.id) {
         throw 'email, 고객 아이디는 필수입니다.';
     }
 
-    if (!contact && !name) {
+    if (!item.contact && !item.name) {
         throw '이름과 연락처 둘 중 하나는 필수입니다.';
     }
 
-    if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
+    if (item.contact && !nmnsUtil.phoneNumberValidation(item.contact)) {
         throw `연락처가 올바르지 않습니다.(${contact})`;
+    }
+
+    if(item.pointMembership && isNaN(item.pointMembership)){
+        throw `pointMembership은 숫자만 가능합니다.(${item.pointMembership})`;
+    }
+    if(item.cardSales && isNaN(item.cardSales)){
+        throw `cardSales은 숫자만 가능합니다.(${item.cardSales})`;
+    }
+    if(item.cashSales && isNaN(item.cashSales)){
+        throw `cashSales은 숫자만 가능합니다.(${item.cashSales})`;
+    }
+    if(item.pointSales && isNaN(item.pointSales)){
+        throw `pointSales은 숫자만 가능합니다.(${item.pointSales})`;
+    }
+
+    let old = await exports.getCustomer(item.email, item.id);
+    if(old){
+        for (let x in old) {
+            if (!item.hasOwnProperty(x)) {
+                item[x] = old[x];
+            }
+        }
     }
 
     return await put({
         TableName: process.nmns.TABLE.Customer,
-        Item: {
-            email: email,
-            id: id,
-            contact: contact,
-            name: name,
-            etc: etc,
-            managerId: managerId
-        }
+        Item: item
     });
 };
+
+exports.getCustomer = async function(email, id){
+    if (!email || !id) {
+        throw 'email, id는 필수입니다';
+    }
+
+    return await get({
+        TableName: process.nmns.TABLE.Customer,
+        Key: {
+            'email': email,
+            'id': id
+        }
+    });
+}
 
 exports.getCustomerList = async function (email, contact, name) {
 
@@ -849,7 +884,29 @@ exports.addReservation = async function (data) {
         Item: item
     });
 }
+exports.getReservation = async function(email, id){
+    if (!email || !id) {
+        throw 'email과 id은 필수입니다.';
+    }
 
+    let list = await query({
+        TableName: process.nmns.TABLE.Reservation,
+        KeyConditionExpression: "email = :email",
+        FilterExpression: '#id <> :id',
+        ExpressionAttributeNames: {
+            "#id": "id",
+        },
+        ExpressionAttributeValues: {
+            ":id": id,
+        },
+    });
+
+    if(list.length > 0){
+        return list[0];
+    }else{
+        return null;
+    }
+}
 exports.getReservationList = async function (email, start, end) {
     if (!email) {
         throw 'email은 필수입니다.';
@@ -1041,7 +1098,263 @@ exports.deleteAllTask = async function (email) {
     }
 };
 /**
- * SalesHist(매출내역) 미정
- * PointHist(포인트 내역) 미정
+ * Sales(매출내역/포인트 증감내역)
+ * email: Partition Key
+ * date: 매출날짜(YYYYMMDD)
+ * time: 매출 시간(hhmmss)
+ * id: timestamp(YYYYMMDDhhmmssSSS), Range Key, Client 생성
+ * item: 매출내용/멤버십 변동
+ * price
+ * customerId: 고객 아이디
+ * payment: 결제수단(멤버십 적립의 경우 결제한 수단)
+ * managerId
+ * type: CARD(카드매출), CASH(현금매출), MEMBERSHIP(멤버십 사용), MEMBERSHIP_ADD(적립), MEMBERSHIP_INCREMENT(증가), MEMBERSHIP_DECREMENT(감소)
+ * scheduleId: 관련 예약 아이디
+ * membershipChange: 멤버십 변동
+ * balanceMembership: 멤버십 잔액
  **/
+let commonValidationForMembershipModify = function(data){
+    if(isNaN(data.membershipChange) || data.membershipChange <= 0){
+        throw `멤버십 변경 값은 양수 정수입니다.(${data.membershipChange})`;
+    }
+};
+let changeMemberSalesStatistic = function(customer, isRefund, sales){
+
+    let multiply = isRefund === true ? 1 : -1;
+
+    switch(sales.type){
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
+            customer.pointMembership += multiply * sales.membershipChange;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
+            customer.pointMembership -= multiply * sales.membershipChange;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
+            customer.pointMembership = customer.pointMembership - multiply*sales.membershipChange;
+            if(sales.payment === process.nmns.PAYMENT_METHOD.CARD){
+                customer.cardSales -= sales.price * multiply;
+            }else if(sales.payment === process.nmns.PAYMENT_METHOD.CASH){
+                customer.cashSales -= sales.price * multiply;
+            }
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
+            customer.pointMembership += multiply * sales.price;
+            customer.pointSales -= sales.price * multiply;
+            break;
+        case process.nmns.SALE_HIST_TYPE.SALES_CARD:
+            customer.cardSales -= sales.price * multiply;
+            break;
+        case process.nmns.SALE_HIST_TYPE.SALES_CASH:
+            customer.cashSales -= sales.price * multiply;
+            break;
+    }
+    return customer;
+}
+
+exports.saveSales = async function(data){
+    let sales = (({email, id, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}) => ({email, id, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}))(data);
+    if (!sales.email || !sales.id || !sales.customerId || !sales.item) {
+        throw 'email, id, customerId, item는 필수입니다.'
+    }
+
+    let customer = await exports.getCustomer(sales.email, sales.customerId);
+    if(!customer){
+        throw `고객 아이디로 조회되는 고객이 없습니다.(${sales.customerId})`;
+    }
+
+    let type = sales.type;
+    if(!type || !process.nmns.isValidSaleHistType(type)){
+        throw `올바른 매출 종류가 아닙니다.(${type})`;
+    }
+
+    switch(type){
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
+            commonValidationForMembershipModify(sales);
+            sales.balanceMembership = customer.pointMembership - sales.membershipChange;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
+            commonValidationForMembershipModify(sales);
+            sales.balanceMembership = customer.pointMembership + sales.membershipChange;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
+            commonValidationForMembershipModify(sales);
+            if(isNaN(data.price) || data.price <= 0){
+                throw `멤버십 적립 시에는 양수 정수인 금액 값이 필요합니다.(${data.price})`;
+            }else if(![process.nmns.PAYMENT_METHOD.CASH, process.nmns.PAYMENT_METHOD.CARD].includes(data.payment)){
+                throw `멤버십 적립 시에는 결제수단이 필요합니다. (${data.payment})`;
+            }
+
+            data.balanceMembership = customer.pointMembership + data.membershipChange;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
+            data.balanceMembership = customer.pointMembership - data.membershipChange;
+        case process.nmns.SALE_HIST_TYPE.SALES_CARD:
+        case process.nmns.SALE_HIST_TYPE.SALES_CASH:
+            if(!await exports.getReservation(sales.email, sales.scheduleId)){
+                throw `예약아아디가 없거나 예약아이디로 예약이 조회되지 않습니다.(${sales.scheduleId})`;
+            }else if(!sales.managerId){
+                throw '매출내역 추가에 매니저 아이디가 필요합니다.';
+            }else if(isNaN(sales.price) || sales.price <= 0){
+                throw `매출내역 추가에 양수 정수인 금액 값이 필요합니다.(${sales.price})`;
+            }
+            sales.payment = sales.type;
+            break;
+    }
+
+    changeMemberSalesStatistic(customer, false, sales);
+
+    sales.date = moment().format('YYYYMMDD');
+    sales.time = moment().format('HHmm');
+
+    return await put({
+        TableName: process.nmns.TABLE.Sales,
+        Item: sales
+    });
+}
+/**
+ *
+ * @param email
+ * @param options(start, end, customerId, customerName, item, scheduleId, managerId, priceStart, priceEnd, paymentList)
+ * @returns {Promise<void>}
+ */
+exports.getSalesHist = async function(email, options){
+    if(!email){
+        throw 'email은 필수입니다.';
+    }
+
+    let start = options.start || '20180101';
+    let end = options.end || '20991231';
+
+    if(start && !moment(start, 'YYYYMMDD').isValid()){
+        throw `start 값이 올바르지 않습니다.(${start})`;
+    }
+    if(end && !moment(end, 'YYYYMMDD').isValid()){
+        throw `end 값이 올바르지 않습니다.(${end})`;
+    }
+
+    start += '000000000';
+    end += '235959999';
+
+    let param = {
+        TableName: process.nmns.TABLE.Sales,
+        KeyConditionExpression: "email = :email and #id between :start and :end",
+        ExpressionAttributeNames: {
+            '#id': 'id'
+        },
+        ExpressionAttributeValues: {
+            ':start': start,
+            ':end': end
+        }
+    };
+
+    if(options.customerName){
+        let list = await exports.getCustomerList(email, undefined, options.customerName);
+        if(list.length > 0){
+            options.customerId = list[0].id;
+        }
+    }
+
+    if (options.customerId) {
+        param.FilterExpression = 'customerId = :customerId';
+        param.ExpressionAttributeValues[':customerId'] = options.customerId;
+    }
+    if (options.item) {
+        let fe = '';
+        if (param.FilterExpression && param.FilterExpression.length > 0) {
+            fe = param.FilterExpression + ' and ';
+        }
+        param.FilterExpression = fe + 'contains(#item, :item)';
+        param.ExpressionAttributeNames['#item'] = 'item';
+        param.ExpressionAttributeValues[':item'] = options.item;
+    }
+
+    if (options.scheduleId) {
+        let fe = '';
+        if (param.FilterExpression && param.FilterExpression.length > 0) {
+            fe = param.FilterExpression + ' and ';
+        }
+        param.FilterExpression = fe + '#scheduleId = :scheduleId';
+        param.ExpressionAttributeNames['#scheduleId'] = 'scheduleId';
+        param.ExpressionAttributeValues[':scheduleId'] = options.scheduleId;
+    }
+
+    if (options.managerId) {
+        let fe = '';
+        if (param.FilterExpression && param.FilterExpression.length > 0) {
+            fe = param.FilterExpression + ' and ';
+        }
+        param.FilterExpression = fe + '#managerId = :managerId';
+        param.ExpressionAttributeNames['#managerId'] = 'managerId';
+        param.ExpressionAttributeValues[':managerId'] = options.managerId;
+    }
+
+    if (options.priceStart) {
+        let fe = '';
+        if (param.FilterExpression && param.FilterExpression.length > 0) {
+            fe = param.FilterExpression + ' and ';
+        }
+        param.FilterExpression = fe + '#price >= :priceStart';
+        param.ExpressionAttributeNames['#price'] = 'price';
+        param.ExpressionAttributeValues[':priceStart'] = options.priceStart;
+    }
+
+    if (options.priceEnd) {
+        let fe = '';
+        if (param.FilterExpression && param.FilterExpression.length > 0) {
+            fe = param.FilterExpression + ' and ';
+        }
+        param.FilterExpression = fe + '#price <= :priceEnd';
+        param.ExpressionAttributeNames['#price'] = 'price';
+        param.ExpressionAttributeValues[':priceEnd'] = options.priceEnd;
+    }
+
+    let list = await query(param).filter(sales => {
+        if(options.paymentList && !options.paymentList.includes(sales.payment)){
+            return false;
+        }
+        return true;
+    });
+
+    return list;
+}
+exports.getSales = async function(email, id){
+    if (!email || !id) {
+        throw 'email, id는 필수입니다.';
+    }
+
+    return await get({
+        TableName: process.nmns.TABLE.Sales,
+        Key: {
+            'email': email,
+            'id': id
+        }
+    })
+}
+exports.deleteAllSales = async function (email) {
+    if (!email) {
+        throw 'email은 필수입니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Task,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    });
+
+    for (const item of list) {
+        await del({
+            TableName: process.nmns.TABLE.Task,
+            Key: {
+                'email': item.email,
+                'timestamp': item.timestamp
+            }
+        });
+    }
+};
+
 
