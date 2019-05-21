@@ -6,7 +6,6 @@ server.js
 README.md
 package-lock.json
 expressworks/*
-spec/*
 **/*.marko.js
 client/static/lib/bootstrap/css/nmns.css
 yarn.lock
