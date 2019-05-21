@@ -255,7 +255,6 @@ let create = function(params){
     };
     create(params);
 })();
- */
 (async function(){
     var params = {
         TableName : "Push",
@@ -266,6 +265,43 @@ let create = function(params){
         AttributeDefinitions: [
             { AttributeName: "email", AttributeType: "S" },
             { AttributeName: "id", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+ */
+(async function(){
+    var params = {
+        TableName : "Reservation",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "timestamp", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "timestamp", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+(async function(){
+    var params = {
+        TableName : "Task",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "timestamp", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "timestamp", AttributeType: "S" },
         ],
         ProvisionedThroughput: {
             ReadCapacityUnits: 5,

@@ -26,7 +26,9 @@
         VisitLog: 'VisitLog',
         Customer: 'Customer',
         AlrimTalkHist: 'AlrimTalkHist',
-        Push: 'Push'
+        Push: 'Push',
+        Reservation: 'Reservation',
+        Task: 'Task'
     }
 
     o.MODE = {

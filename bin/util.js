@@ -58,3 +58,33 @@ exports.formatPhone = function(phone){
 exports.sha512 = function(plain){
     return require('sha512')(plain).toString('hex');
 }
+
+exports.extract = function(input, paramList){
+    let result = {};
+    let err;
+    for(let param of paramList){
+        let data = input[param.name];
+        let optional = input[param.optional] || false;
+        let validator = input[param.validator];
+        if(data === undefined && optional === false){
+            err = `${param.name}은 필수입니다.`;
+            break;
+        }
+        if(validator){
+            try{
+                if(!validator(data)){
+                    throw 'error';
+                }
+            }catch(e){
+                err = `${param.name}값이 올바르지 않습니다.(${data})`;
+                break;
+            }
+        }
+        result[param.name] = data;
+    }
+
+    return {
+        err: err,
+        val: result
+    };
+}

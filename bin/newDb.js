@@ -601,7 +601,7 @@ exports.getAlrimTalkList = async function(email, start, end, contact){
     if(start){
         start += '000000000';
     }else{
-        start = '20180101000000000';
+        start = '20000101000000000';
     }
     if(end){
         end += '235959999';
@@ -755,23 +755,153 @@ exports.deleteAllPush = async function(email){
 }
 
 /**
- * ReservationList(예약 리스트)
+ * Reservation(예약 리스트)
  * email: Partition Key
- * start: 시작일시, string, YYYYMMDDHHmm
+ * start: 시작일시, string, YYYYMMDDHHmm(user input)
+ * timstamp: RANGE KEY, start(user input, YYYYMMDDHHmm) + moment().format('YYYYMMDDHHmmssSSS')
  * end: YYYYMMDDHHmm,
- * reservationKey: Client 생성
- * type: 'R',
- * memberId: 고객 아이디,
- * name: 고객 혹은 일정 이름,
- * isAllDay: YYYYMMDDHHmm,
- * contents: YYYYMMDDHHmm,
+ * id: Client 생성
+ * member: 고객 아이디,
+ * contentList: list, 일정 리스트,
  * manager: 담당 매니저 아이디,
- * etc: 메모,
- * contact: 연락처,
- * status: 예역 상태,
- * cancelDate: null
+ * etc: 고객 메모
+ * isAllDay: boolean
+ * status: 예역 상태, RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED
+ * cancelDate: moment().format('YYYYMMDDHHmmss')
+ * type: 'R',
  * **/
 
+exports.addReservation = async function(data){
+    let item = (({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate})=>({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate}))(data);
+    if(!item.email || !item.start || !item.end || !item.id || !item.member || !item.manager){
+        throw 'email, start, end, id, member, manager는 필수입니다.'
+    }
+
+    if(!moment(item.start,'YYYYMMDDHHmm').isValid() || !moment(item.end,'YYYYMMDDHHmm').isValid()){
+        throw `start/end 값이 올바르지 않습니다.(start:${item.start}, end:${item.end})`;
+    }
+
+    if(item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined){
+        throw `isAllday 값이 올바르지 않습니다.(${item.isAllDay})`;
+    }
+
+    if(item.type !== 'R' && item.type !== 'T' && item.type !== undefined){
+        throw `type 값이 올바르지 않습니다.(${item.type})`;
+    }
+
+    if(!item.type){
+        item.type = 'R';
+    }
+
+    if(item.status !== process.nmns.RESERVATION_STATUS.DELETED &&
+        item.status !== process.nmns.RESERVATION_STATUS.NOSHOW &&
+        item.status !== process.nmns.RESERVATION_STATUS.CANCELED &&
+        item.status !== process.nmns.RESERVATION_STATUS.RESERVED &&
+        item.status !== process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED ){
+        throw `status 값이 올바르지 않습니다.(${item.status})`;
+    }
+
+    if(item.contentList && !Array.isArray(item.contentList)){
+        throw `contentList 값이 올바르지 않습니다.(${item.contentList})`;
+    }
+
+    if(item.cancelDate && ! !moment(item.cancelDate,'YYYYMMDDHHmmss').isValid()){
+        throw `cancelDate 값이 올바르지 않습니다.(${item.cancelDate})`;
+    }
+
+    if(!item.timestamp){
+        item.timestamp = item.start + moment().format('YYYYMMDDHHmmssSSS');
+    }
+
+    return await put({
+        TableName: process.nmns.TABLE.Reservation,
+        Item: item
+    });
+}
+
+exports.getReservationList = async function(email, start, end){
+    if(!email){
+        throw 'email은 필수입니다.';
+    }
+
+    if(!moment(start, 'YYYYMMDD').isValid() || !moment(end, 'YYYYMMDD').isValid()){
+        throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
+    }
+
+    let list =  await query({
+        TableName: process.nmns.TABLE.Reservation,
+        KeyConditionExpression: "email = :email and #timestamp <= :end",
+        ExpressionAttributeNames: {
+        "#timestamp": "timestamp"
+        },
+        ExpressionAttributeValues: {
+            ":email": email,
+            ":end": end + '2359'
+        }
+    });
+
+    list = list.filter(function(reservation){
+        if(reservation.status === process.nmns.RESERVATION_STATUS.DELETED){
+            return false;
+        }
+        if (start && end) {
+            if(reservation.end <= end && reservation.end >= start){
+                return true;
+            }else if(reservation.start >= start && reservation.start <= end ){
+                return true;
+            }else if(reservation.start <= start && reservation.end >= end){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return true;
+        }
+    });
+
+    return list;
+}
+
+exports.deleteAllReservation = async function(email){
+    if(!email){
+        throw 'email은 필수입니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Reservation,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    });
+
+    for(const item of list){
+        await del({
+            TableName: process.nmns.TABLE.Reservation,
+            Key: {
+                'email': item.email,
+                'timestamp': item.timestamp
+            }
+        });
+    }
+};
+
+
+/**
+ * Task(일정 리스트)
+ * email: Partition Key
+ * start: 시작일시, string, YYYYMMDDHHmm(user input)
+ * timstamp: RANGE KEY, start(user input, YYYYMMDDHHmm) + moment().format('YYYYMMDDHHmmssSSS')
+ * end: YYYYMMDDHHmm,
+ * isDone: boolean
+ * contents: 일정
+ * manager: 매니저 아이디
+ * etc: 부가정보
+ * status: 예역 상태, RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED
+ */
 
  /**
  * SalesHist(매출내역) 미정
