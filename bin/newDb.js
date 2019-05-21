@@ -67,27 +67,27 @@ function queryRaw(params) {
     }));
 };
 
-async function query(params){
+async function query(params) {
     let items = [];
     let lastEvaluatedKey;
 
-    do{
+    do {
         let data = await queryRaw(params);
         items = items.concat(data.Items);
 
         lastEvaluatedKey = data.LastEvaluatedKey;
-        if(lastEvaluatedKey){
+        if (lastEvaluatedKey) {
             params.ExclusiveStartKey = lastEvaluatedKey;
         }
-    }while(lastEvaluatedKey);
+    } while (lastEvaluatedKey);
 
     return items;
 }
 
 //page: 1~
-async function queryPaging(params, pageSize, targetPage){
+async function queryPaging(params, pageSize, targetPage) {
 
-    if(!pageSize || pageSize < 1 || !targetPage || targetPage < 1){
+    if (!pageSize || pageSize < 1 || !targetPage || targetPage < 1) {
         throw `pageSize/targetPage error(pageSize:${pageSize}, targetPage:${targetPage})`;
     }
 
@@ -95,24 +95,23 @@ async function queryPaging(params, pageSize, targetPage){
     let currentPage = 0;
 
     params.Limit = pageSize;
-    do{
+    do {
         currentPage += 1;
 
         let data = await queryRaw(params);
 
-        if(currentPage === targetPage){
+        if (currentPage === targetPage) {
             return data.Items;
         }
 
         lastEvaluatedKey = data.LastEvaluatedKey;
-        if(lastEvaluatedKey){
+        if (lastEvaluatedKey) {
             params.ExclusiveStartKey = lastEvaluatedKey;
         }
-    }while(lastEvaluatedKey);
+    } while (lastEvaluatedKey);
 
     return [];
 }
-
 
 
 function scanRaw(params) {
@@ -129,19 +128,19 @@ function scanRaw(params) {
     }));
 }
 
-async function scan(params){
+async function scan(params) {
     let items = [];
     let lastEvaluatedKey;
 
-    do{
+    do {
         let data = await scanRaw(params);
         items = items.concat(data.Items);
 
         lastEvaluatedKey = data.LastEvaluatedKey;
-        if(lastEvaluatedKey){
+        if (lastEvaluatedKey) {
             params.ExclusiveStartKey = lastEvaluatedKey;
         }
-    }while(lastEvaluatedKey);
+    } while (lastEvaluatedKey);
 
     return items;
 }
@@ -184,27 +183,27 @@ function del(param) {
  * noShowCase
  * id: NoShowId 테이블의 Partition Key
  * name
- * 
+ *
  * NoShowId(노쇼 매핑 아이디)
  * id: Partition Key
  * noShowKey: NoShow 테이블의 Partition Key
  * timestamp: NoShow 테이블의 Range Key
  **/
-exports.addNoShow = async function(email, phone, noShowDate, noShowCase, id, name){
+exports.addNoShow = async function (email, phone, noShowDate, noShowCase, id, name) {
 
-    if(!nmnsUtil.phoneNumberValidation(phone)){
+    if (!nmnsUtil.phoneNumberValidation(phone)) {
         throw `전화번호가 올바르지 않습니다.(${phone})`;
     }
 
-    if(!noShowDate){
+    if (!noShowDate) {
         noShowDate = moment().format('YYYYMMDD');
     }
 
-    if(!moment(noShowDate, 'YYYYMMDD').isValid()){
+    if (!moment(noShowDate, 'YYYYMMDD').isValid()) {
         throw `노쇼 날짜가 올바르지 않습니다.(${noShowDate})`;
     }
 
-    if(!id){
+    if (!id) {
         id = email + moment().format('YYYYMMDDhhmmssSSS') + Math.random() * 100;
     }
 
@@ -218,7 +217,7 @@ exports.addNoShow = async function(email, phone, noShowDate, noShowCase, id, nam
         }
     });
 
-    if(oldOne){
+    if (oldOne) {
         return false;
     }
 
@@ -245,8 +244,8 @@ exports.addNoShow = async function(email, phone, noShowDate, noShowCase, id, nam
     });
 };
 
-exports.getNoShow = async function(phone, email){
-    if(!nmnsUtil.phoneNumberValidation(phone)){
+exports.getNoShow = async function (phone, email) {
+    if (!nmnsUtil.phoneNumberValidation(phone)) {
         throw `전화번호가 올바르지 않습니다.(${phone})`;
     }
 
@@ -261,7 +260,7 @@ exports.getNoShow = async function(phone, email){
         }
     };
 
-    if(email){
+    if (email) {
         param.FilterExpression = '#email = :email';
         param.ExpressionAttributeNames['#email'] = 'email';
         param.ExpressionAttributeValues[':email'] = email;
@@ -276,8 +275,8 @@ exports.getNoShow = async function(phone, email){
 
 }
 
-exports.delNoShow = async function(id){
-    if(!id){
+exports.delNoShow = async function (id) {
+    if (!id) {
         throw '노쇼 아이디가 필요합니다.';
     }
 
@@ -288,7 +287,7 @@ exports.delNoShow = async function(id){
         }
     });
 
-    if(noShowId){
+    if (noShowId) {
         let noShowKey = noShowId.noShowKey;
         let timestamp = noShowId.timestamp;
 
@@ -296,25 +295,25 @@ exports.delNoShow = async function(id){
             TableName: process.nmns.TABLE.NoShow,
             Key: {
                 'noShowKey': noShowKey,
-                'timestamp' : timestamp
+                'timestamp': timestamp
             }
         });
 
     }
 }
 
-exports.delNoShowWithPhone = async function(phone, email){
-    if(!nmnsUtil.phoneNumberValidation(phone)){
+exports.delNoShowWithPhone = async function (phone, email) {
+    if (!nmnsUtil.phoneNumberValidation(phone)) {
         throw `전화번호가 올바르지 않습니다.(${phone})`;
     }
 
-    if(!email){
+    if (!email) {
         throw 'email이 필요합니다.';
     }
 
     let noShowList = await exports.getNoShow(phone, email);
 
-    if(noShowList.length > 0){
+    if (noShowList.length > 0) {
         let lastOne = noShowList[noShowList.length - 1];
 
         await del({
@@ -328,7 +327,7 @@ exports.delNoShowWithPhone = async function(phone, email){
             TableName: process.nmns.TABLE.NoShow,
             Key: {
                 'noShowKey': sha256(phone),
-                'timestamp' : lastOne.timestamp
+                'timestamp': lastOne.timestamp
             }
         });
     }
@@ -336,14 +335,14 @@ exports.delNoShowWithPhone = async function(phone, email){
     return false;
 }
 
-exports.delAllNoShowWithPhone = async function(phone){
-    if(!nmnsUtil.phoneNumberValidation(phone)){
+exports.delAllNoShowWithPhone = async function (phone) {
+    if (!nmnsUtil.phoneNumberValidation(phone)) {
         throw `전화번호가 올바르지 않습니다.(${phone})`;
     }
 
     let list = await exports.getNoShow(phone);
 
-    for(const noShow of list){
+    for (const noShow of list) {
         await del({
             TableName: process.nmns.TABLE.NoShow,
             Key: {
@@ -370,9 +369,9 @@ exports.delAllNoShowWithPhone = async function(phone){
  * endTimestamp: YYYYMMDDhhmmss
  * device: device 종류
  **/
-exports.visitLog = async function(email, device){
-    try{
-        if(!email){
+exports.visitLog = async function (email, device) {
+    try {
+        if (!email) {
             throw 'email이 필요합니다.';
         }
 
@@ -386,31 +385,31 @@ exports.visitLog = async function(email, device){
                 device: device
             }
         });
-    }catch(e){
+    } catch (e) {
         logger.error(e);
     }
 }
 
-exports.exitLog = async function(visitLog){
-    try{
-        if(!visitLog){
+exports.exitLog = async function (visitLog) {
+    try {
+        if (!visitLog) {
             throw 'visitLog가 필요합니다.';
         }
-        if(!visitLog.email || !visitLog.timestamp || !moment(visitLog.timestamp, 'YYYYMMDDhhmmssSSS').isValid()){
+        if (!visitLog.email || !visitLog.timestamp || !moment(visitLog.timestamp, 'YYYYMMDDhhmmssSSS').isValid()) {
             return `visitLog가 올바르지 않습니다. ${JSON.stringify(visitLog)}`;
         }
 
         let exitTimestamp = moment().format('YYYYMMDDhhmmssSSS');
         visitLog.exitTimestamp = exitTimestamp;
 
-        let diff = moment(exitTimestamp,'YYYYMMDDhhmmssSSS').diff(moment(visitLog.timestamp,'YYYYMMDDhhmmssSSS'), 's');
+        let diff = moment(exitTimestamp, 'YYYYMMDDhhmmssSSS').diff(moment(visitLog.timestamp, 'YYYYMMDDhhmmssSSS'), 's');
         visitLog.diff = diff;
 
         return await put({
             TableName: process.nmns.TABLE.VisitLog,
             Item: visitLog
         });
-    }catch(e){
+    } catch (e) {
         logger.error(e);
     }
 }
@@ -428,17 +427,17 @@ exports.exitLog = async function(visitLog){
 /**
  * 고객 추가 및 업데이트
  */
-exports.saveCustomer = async function(email, id, name, contact, managerId, etc){
+exports.saveCustomer = async function (email, id, name, contact, managerId, etc) {
 
-    if(!email || !id ){
+    if (!email || !id) {
         throw 'email, 고객 아이디는 필수입니다.';
     }
 
-    if(!contact && !name){
+    if (!contact && !name) {
         throw '이름과 연락처 둘 중 하나는 필수입니다.';
     }
 
-    if(contact && !nmnsUtil.phoneNumberValidation(contact)){
+    if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
         throw `연락처가 올바르지 않습니다.(${contact})`;
     }
 
@@ -455,13 +454,13 @@ exports.saveCustomer = async function(email, id, name, contact, managerId, etc){
     });
 };
 
-exports.getCustomerList = async function(email, contact, name){
+exports.getCustomerList = async function (email, contact, name) {
 
-    if(!email){
+    if (!email) {
         throw 'email이 필요합니다.';
     }
 
-    if(contact && !nmnsUtil.phoneNumberValidation(contact)){
+    if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
         throw `전화번호가 올바르지 않습니다.(${contact})`;
     }
 
@@ -476,14 +475,14 @@ exports.getCustomerList = async function(email, contact, name){
         }
     };
 
-    if(contact){
+    if (contact) {
         param.FilterExpression = '#contact = :contact';
         param.ExpressionAttributeNames['#contact'] = 'contact';
         param.ExpressionAttributeValues[':contact'] = contact;
     }
-    if(name){
+    if (name) {
         let fe = '';
-        if(contact){
+        if (contact) {
             fe = param.FilterExpression + ' and ';
         }
         param.FilterExpression = fe + '#name = :name';
@@ -494,8 +493,8 @@ exports.getCustomerList = async function(email, contact, name){
     return await query(param);
 };
 
-exports.deleteCustomer = async function(email, id){
-    if(!email || !id){
+exports.deleteCustomer = async function (email, id) {
+    if (!email || !id) {
         throw 'email, 고객 아이디가 필요합니다.';
     }
 
@@ -508,8 +507,8 @@ exports.deleteCustomer = async function(email, id){
     });
 };
 
-exports.deleteAllCustomer = async function(email){
-    if(!email){
+exports.deleteAllCustomer = async function (email) {
+    if (!email) {
         throw 'email이 필요합니다.';
     }
 
@@ -524,7 +523,7 @@ exports.deleteAllCustomer = async function(email){
         }
     });
 
-    for(const customer of list){
+    for (const customer of list) {
         await del({
             TableName: process.nmns.TABLE.Customer,
             Key: {
@@ -546,25 +545,34 @@ exports.deleteAllCustomer = async function(email){
  * contents: 내용
  * reservationKey: 예약키
  **/
-exports.addAlrmTalkRaw = async function(data){
-    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey}) => ({email, isCancel, contact, name, contents, date, sendDate, reservationKey}))(data);
+exports.addAlrmTalkRaw = async function (data) {
+    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey}) => ({
+        email,
+        isCancel,
+        contact,
+        name,
+        contents,
+        date,
+        sendDate,
+        reservationKey
+    }))(data);
 
-    if(!alrimTalk.email){
+    if (!alrimTalk.email) {
         throw 'email은 필수입니다.';
     }
-    if(![undefined, false, true].includes(alrimTalk.isCancel)){
+    if (![undefined, false, true].includes(alrimTalk.isCancel)) {
         throw `isCancel은 true, false, undefined 값만 가질 수 있습니다.(${alrimTalk.isCancel})`;
     }
-    if(!alrimTalk.contact || !nmnsUtil.phoneNumberValidation(alrimTalk.contact)){
+    if (!alrimTalk.contact || !nmnsUtil.phoneNumberValidation(alrimTalk.contact)) {
         throw `연락처가 올바르지 않습니다.(${contact})`;
     }
-    if(!alrimTalk.reservationKey){
+    if (!alrimTalk.reservationKey) {
         throw '예약키는 필수입니다.';
     }
-    if(!alrimTalk.date || !moment(alrimTalk.date, 'YYYYMMDD').isValid()){
+    if (!alrimTalk.date || !moment(alrimTalk.date, 'YYYYMMDD').isValid()) {
         throw `date가 올바르지 않습니다.(${alrimTalk.date})`;
     }
-    if(!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDhhmmssSSS').isValid()){
+    if (!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDhhmmssSSS').isValid()) {
         throw `sendDate가 올바르지 않습니다.(${alrimTalk.sendDate})`;
     }
 
@@ -574,7 +582,7 @@ exports.addAlrmTalkRaw = async function(data){
     });
 }
 
-exports.addAlrmTalk = async function(data){
+exports.addAlrmTalk = async function (data) {
 
     data.date = moment().format('YYYYMMDD');
     data.sendDate = moment().format('YYYYMMDDhhmmssSSS');
@@ -582,30 +590,30 @@ exports.addAlrmTalk = async function(data){
     return exports.addAlrmTalkRaw(data);
 }
 
-exports.getAlrimTalkList = async function(email, start, end, contact){
+exports.getAlrimTalkList = async function (email, start, end, contact) {
 
-    if(!email){
+    if (!email) {
         throw 'email은 필수입니다.';
     }
 
-    if(start && !moment(start,'YYYYMMDD').isValid()){
+    if (start && !moment(start, 'YYYYMMDD').isValid()) {
         throw `start 날짜 형식이 맞지 않습니다.(${start})`;
     }
-    if(end && !moment(end,'YYYYMMDD').isValid()){
+    if (end && !moment(end, 'YYYYMMDD').isValid()) {
         throw `end 날짜 형식이 맞지 않습니다.(${end})`;
     }
-    if(contact && !nmnsUtil.phoneNumberValidation(contact)){
+    if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
         throw `contact 형식이 맞지 않습니다.(${contact})`;
     }
 
-    if(start){
+    if (start) {
         start += '000000000';
-    }else{
+    } else {
         start = '20000101000000000';
     }
-    if(end){
+    if (end) {
         end += '235959999';
-    }else{
+    } else {
         end = '29991231235959999';
     }
 
@@ -618,17 +626,17 @@ exports.getAlrimTalkList = async function(email, start, end, contact){
             ':end': end
         }
     };
-    if(contact){
+    if (contact) {
         param.FilterExpression = '#contact = :contact';
-        param.ExpressionAttributeNames = {'#contact' : 'contact'};
+        param.ExpressionAttributeNames = {'#contact': 'contact'};
         param.ExpressionAttributeValues[':contact'] = contact;
     }
 
     return await query(param);
 }
 
-exports.deleteAllAlrimTalk = async function(email){
-    if(!email){
+exports.deleteAllAlrimTalk = async function (email) {
+    if (!email) {
         throw 'email이 필요합니다.';
     }
 
@@ -643,7 +651,7 @@ exports.deleteAllAlrimTalk = async function(email){
         }
     });
 
-    for(const alrimTalk of list){
+    for (const alrimTalk of list) {
         await del({
             TableName: process.nmns.TABLE.AlrimTalkHist,
             Key: {
@@ -665,33 +673,42 @@ exports.deleteAllAlrimTalk = async function(email){
  * isRead
  * type: SCHEDULE_ADDED, SCHEDULE_CANCELED
  **/
-exports.addPush = async function(data){
+exports.addPush = async function (data) {
 
     data.id = moment().format('YYYYMMDDHHmmssSSS');
     data.registeredDate = moment().format('YYYYMMDDHHmm');
 
     return await exports.addPushRaw(data);
 }
-exports.addPushRaw = async function(data){
-    let push = (({email, title, contents, data, type, isRead, id, registeredDate})=>({email, title, contents, data, type, isRead, id, registeredDate}))(data);
+exports.addPushRaw = async function (data) {
+    let push = (({email, title, contents, data, type, isRead, id, registeredDate}) => ({
+        email,
+        title,
+        contents,
+        data,
+        type,
+        isRead,
+        id,
+        registeredDate
+    }))(data);
 
-    if(!push.email || !push.title || !push.contents || !push.type || !push.data || push.isRead === undefined){
+    if (!push.email || !push.title || !push.contents || !push.type || !push.data || push.isRead === undefined) {
         throw 'email, title, contents, data, type, isRead는 필수입니다.';
     }
 
-    if(push.isRead !== false && push.isRead !== true){
+    if (push.isRead !== false && push.isRead !== true) {
         throw `isRead 값이 잘못되었습니다.(${push.isRead})`;
     }
 
-    if(push.type !== 'SCHEDULE_ADDED' && push.type !== 'SCHEDULE_CANCELED'){
+    if (push.type !== 'SCHEDULE_ADDED' && push.type !== 'SCHEDULE_CANCELED') {
         throw `type 값이 올바르지 않습니다.(${push.type})`;
     }
 
-    if(!moment(push.id, 'YYYYMMDDHHmmssSSS').isValid()){
+    if (!moment(push.id, 'YYYYMMDDHHmmssSSS').isValid()) {
         throw `push.id가 올바르지 않습니다.(${push.id})`;
     }
 
-    if(!moment(push.registeredDate, 'YYYYMMDDHHmm').isValid()){
+    if (!moment(push.registeredDate, 'YYYYMMDDHHmm').isValid()) {
         throw `push.registeredDate가 올바르지 않습니다.(${push.registeredDate})`;
     }
 
@@ -701,16 +718,16 @@ exports.addPushRaw = async function(data){
     });
 }
 
-exports.getPushList = async function(email, pageSize, page){
+exports.getPushList = async function (email, pageSize, page) {
 
-    if(!email){
+    if (!email) {
         throw 'email은 필수입니다.';
     }
 
-    if(!pageSize || pageSize < 1){
+    if (!pageSize || pageSize < 1) {
         throw `pageSize가 올바르지 않습니다.(${pageSize})`;
     }
-    if(!page || page < 1){
+    if (!page || page < 1) {
         throw `page가 올바르지 않습니다.(${page})`;
     }
 
@@ -727,8 +744,8 @@ exports.getPushList = async function(email, pageSize, page){
     }, pageSize, page);
 }
 
-exports.deleteAllPush = async function(email){
-    if(!email){
+exports.deleteAllPush = async function (email) {
+    if (!email) {
         throw 'email은 필수입니다.';
     }
 
@@ -743,7 +760,7 @@ exports.deleteAllPush = async function(email){
         }
     });
 
-    for(const push of list){
+    for (const push of list) {
         await del({
             TableName: process.nmns.TABLE.Push,
             Key: {
@@ -771,45 +788,59 @@ exports.deleteAllPush = async function(email){
  * type: 'R',
  * **/
 
-exports.addReservation = async function(data){
-    let item = (({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate})=>({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate}))(data);
-    if(!item.email || !item.start || !item.end || !item.id || !item.member || !item.manager){
+exports.addReservation = async function (data) {
+    let item = (({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate}) => ({
+        email,
+        timestamp,
+        start,
+        end,
+        id,
+        member,
+        contentList,
+        manager,
+        isAllDay,
+        status,
+        type,
+        etc,
+        cancelDate
+    }))(data);
+    if (!item.email || !item.start || !item.end || !item.id || !item.member || !item.manager) {
         throw 'email, start, end, id, member, manager는 필수입니다.'
     }
 
-    if(!moment(item.start,'YYYYMMDDHHmm').isValid() || !moment(item.end,'YYYYMMDDHHmm').isValid()){
+    if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${item.start}, end:${item.end})`;
     }
 
-    if(item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined){
+    if (item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined) {
         throw `isAllday 값이 올바르지 않습니다.(${item.isAllDay})`;
     }
 
-    if(item.type !== 'R' && item.type !== 'T' && item.type !== undefined){
+    if (item.type !== 'R' && item.type !== 'T' && item.type !== undefined) {
         throw `type 값이 올바르지 않습니다.(${item.type})`;
     }
 
-    if(!item.type){
+    if (!item.type) {
         item.type = 'R';
     }
 
-    if(item.status !== process.nmns.RESERVATION_STATUS.DELETED &&
+    if (item.status !== process.nmns.RESERVATION_STATUS.DELETED &&
         item.status !== process.nmns.RESERVATION_STATUS.NOSHOW &&
         item.status !== process.nmns.RESERVATION_STATUS.CANCELED &&
         item.status !== process.nmns.RESERVATION_STATUS.RESERVED &&
-        item.status !== process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED ){
+        item.status !== process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED) {
         throw `status 값이 올바르지 않습니다.(${item.status})`;
     }
 
-    if(item.contentList && !Array.isArray(item.contentList)){
+    if (item.contentList && !Array.isArray(item.contentList)) {
         throw `contentList 값이 올바르지 않습니다.(${item.contentList})`;
     }
 
-    if(item.cancelDate && ! !moment(item.cancelDate,'YYYYMMDDHHmmss').isValid()){
+    if (item.cancelDate && !!moment(item.cancelDate, 'YYYYMMDDHHmmss').isValid()) {
         throw `cancelDate 값이 올바르지 않습니다.(${item.cancelDate})`;
     }
 
-    if(!item.timestamp){
+    if (!item.timestamp) {
         item.timestamp = item.start + moment().format('YYYYMMDDHHmmssSSS');
     }
 
@@ -819,51 +850,47 @@ exports.addReservation = async function(data){
     });
 }
 
-exports.getReservationList = async function(email, start, end){
-    if(!email){
+exports.getReservationList = async function (email, start, end) {
+    if (!email) {
         throw 'email은 필수입니다.';
     }
 
-    if(!moment(start, 'YYYYMMDD').isValid() || !moment(end, 'YYYYMMDD').isValid()){
+    if (!moment(start, 'YYYYMMDD').isValid() || !moment(end, 'YYYYMMDD').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
     }
 
-    let list =  await query({
+    let list = await query({
         TableName: process.nmns.TABLE.Reservation,
         KeyConditionExpression: "email = :email and #timestamp <= :end",
+        FilterExpression: '#status <> :status',
         ExpressionAttributeNames: {
-        "#timestamp": "timestamp"
+            "#timestamp": "timestamp",
+            "#status": "status"
         },
         ExpressionAttributeValues: {
             ":email": email,
-            ":end": end + '2359'
-        }
+            ":end": end + '2359',
+            ":status": 'DELETED'
+        },
     });
 
-    list = list.filter(function(reservation){
-        if(reservation.status === process.nmns.RESERVATION_STATUS.DELETED){
-            return false;
-        }
-        if (start && end) {
-            if(reservation.end <= end && reservation.end >= start){
-                return true;
-            }else if(reservation.start >= start && reservation.start <= end ){
-                return true;
-            }else if(reservation.start <= start && reservation.end >= end){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
+    list = list.filter(function (reservation) {
+        if (reservation.end <= end && reservation.end >= start) {
             return true;
+        } else if (reservation.start >= start && reservation.start <= end) {
+            return true;
+        } else if (reservation.start <= start && reservation.end >= end) {
+            return true;
+        } else {
+            return false;
         }
     });
 
     return list;
 }
 
-exports.deleteAllReservation = async function(email){
-    if(!email){
+exports.deleteAllReservation = async function (email) {
+    if (!email) {
         throw 'email은 필수입니다.';
     }
 
@@ -878,7 +905,7 @@ exports.deleteAllReservation = async function(email){
         }
     });
 
-    for(const item of list){
+    for (const item of list) {
         await del({
             TableName: process.nmns.TABLE.Reservation,
             Key: {
@@ -888,7 +915,6 @@ exports.deleteAllReservation = async function(email){
         });
     }
 };
-
 
 /**
  * Task(일정 리스트)
@@ -902,8 +928,119 @@ exports.deleteAllReservation = async function(email){
  * etc: 부가정보
  * status: 예역 상태, RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED
  */
+exports.saveTask = async function (data) {
+    let item = (({email, timestamp, start, end, id, contents, manager, isAllDay, status, type, etc, isDone}) => ({email, timestamp, start, end, id, contents, manager, isAllDay, status, type, etc, isDone}))(data);
+    if (!item.email || !item.start || !item.end || !item.id || !item.manager) {
+        throw 'email, start, end, id, member, manager는 필수입니다.'
+    }
 
- /**
+    if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
+        throw `start/end 값이 올바르지 않습니다.(start:${item.start}, end:${item.end})`;
+    }
+
+    if (item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined) {
+        throw `isAllday 값이 올바르지 않습니다.(${item.isAllDay})`;
+    }
+
+    if (item.isDone !== true && item.isDone !== false && item.isDone !== undefined) {
+        throw `isDone 값이 올바르지 않습니다.(${item.isDone})`;
+    }
+
+    if(item.isDone === undefined){
+        item.isDone = false;
+    }
+
+    if (item.type !== 'R' && item.type !== 'T' && item.type !== undefined) {
+        throw `type 값이 올바르지 않습니다.(${item.type})`;
+    }
+
+    if (!item.type) {
+        item.type = 'T';
+    }
+
+    if (item.status !== process.nmns.RESERVATION_STATUS.DELETED &&
+        item.status !== process.nmns.RESERVATION_STATUS.NOSHOW &&
+        item.status !== process.nmns.RESERVATION_STATUS.CANCELED &&
+        item.status !== process.nmns.RESERVATION_STATUS.RESERVED &&
+        item.status !== process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED) {
+        throw `status 값이 올바르지 않습니다.(${item.status})`;
+    }
+
+
+    if (!item.timestamp) {
+        item.timestamp = item.start + moment().format('YYYYMMDDHHmmssSSS');
+    }
+
+    return await put({
+        TableName: process.nmns.TABLE.Task,
+        Item: item
+    });
+}
+exports.getTaskList = async function (email, start, end) {
+    if (!email) {
+        throw 'email은 필수입니다.';
+    }
+
+    if (!moment(start, 'YYYYMMDD').isValid() || !moment(end, 'YYYYMMDD').isValid()) {
+        throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Task,
+        KeyConditionExpression: "email = :email and #timestamp <= :end",
+        FilterExpression: '#status <> :status',
+        ExpressionAttributeNames: {
+            "#timestamp": "timestamp",
+            "#status": "status"
+        },
+        ExpressionAttributeValues: {
+            ":email": email,
+            ":end": end + '2359',
+            ":status": 'DELETED'
+        },
+    });
+
+    list = list.filter(function (reservation) {
+        if (reservation.end <= end && reservation.end >= start) {
+            return true;
+        } else if (reservation.start >= start && reservation.start <= end) {
+            return true;
+        } else if (reservation.start <= start && reservation.end >= end) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    return list;
+}
+exports.deleteAllTask = async function (email) {
+    if (!email) {
+        throw 'email은 필수입니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Task,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": email
+        }
+    });
+
+    for (const item of list) {
+        await del({
+            TableName: process.nmns.TABLE.Task,
+            Key: {
+                'email': item.email,
+                'timestamp': item.timestamp
+            }
+        });
+    }
+};
+/**
  * SalesHist(매출내역) 미정
  * PointHist(포인트 내역) 미정
  **/
