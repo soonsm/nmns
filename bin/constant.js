@@ -64,7 +64,15 @@
     o.TABLE = {
         WebSecheduler: 'WebSecheduler',
         NoShowList: 'NoShowList',
-        SnsLink: 'SnsLink'
+        SnsLink: 'SnsLink',
+        NoShow: 'NoShow',
+        NoShowId: 'NoShowId',
+        VisitLog: 'VisitLog',
+        Customer: 'Customer',
+        AlrimTalkHist: 'AlrimTalkHist',
+        Push: 'Push',
+        Reservation: 'Reservation',
+        Task: 'Task'
     }
 
     o.MODE = {

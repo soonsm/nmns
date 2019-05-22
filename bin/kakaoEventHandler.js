@@ -1,6 +1,7 @@
 const
     message = require('./message'),
     db = require('./db'),
+    newDb = require('./newDb'),
     userStatus = require('./userStatus'),
     request = require('request'),
     moment = require('moment'),
@@ -208,7 +209,7 @@ exports.messageHandler = async function(userKey, content, res){
                 case userStatus.beforeRegister:
 
                     if(util.phoneNumberValidation(content)){
-                        await db.addToNoShowList(user, content);
+                        await newDb.addNoShow(user.email, content);
                         returnMessage = message.messageWithHomeKeyboard('등록되었습니다.');
                         await db.setUserStatus(userKey, userStatus.beforeSelection, 'registerCount');
                     }else{
@@ -219,22 +220,25 @@ exports.messageHandler = async function(userKey, content, res){
                     if(util.phoneNumberValidation(content)){
 
                         let resultMessage = "노쇼전적\n";
-                        let myNoShow = await db.getMyNoShow(user, content);
-                        if(myNoShow){
-                            const lastNoShowDate = myNoShow.lastNoShowDate;
-                            const lastNoShowDateStr = `${lastNoShowDate.substring(0,4)}년 ${lastNoShowDate.substring(4,6)}월 ${lastNoShowDate.substring(6)}일`;
-                            resultMessage += `우리 매장에서 ${myNoShow.noShowCount}번\n마지막 노쇼: ${lastNoShowDateStr}\n`;
-                        }
 
-                        let noShow = await db.getNoShow(content);
-                        if(noShow && noShow.noShowCount > 0){
-                            const lastNoShowDate = noShow.lastNoShowDate;
-                            const lastNoShowDateStr = `${lastNoShowDate.substring(0,4)}년 ${lastNoShowDate.substring(4,6)}월 ${lastNoShowDate.substring(6)}일`;
-                            resultMessage += `전체 매장에서 ${noShow.noShowCount}번\n마지막 노쇼: ${lastNoShowDateStr}`;
+                        let noShowList = await newDb.getNoShow(content);
+                        if(noShowList.length > 0){
+
+                            let myNoShowList = noShowList.filter(noshow => noshow.email === user.email);
+                            let numOfMyNoShow = myNoShowList.length;
+                            if(numOfMyNoShow > 0){
+                                let last = myNoShowList[numOfMyNoShow -1];
+                                resultMessage += `우리 매장에서 ${numOfMyNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY년MM월DD일')}\n`;
+                            }
+
+                            let numOfNoShow = noShowList.length;
+                            let last = noShowList[numOfNoShow - 1];
+                            resultMessage += `전체 매장에서 ${numOfNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY년MM월DD일')}`;
                             returnMessage = message.messageWithHomeKeyboard(resultMessage);
                         }else{
                             returnMessage = message.messageWithHomeKeyboard('노쇼 전적이 없습니다.');
                         }
+
                         await db.setUserStatus(userKey, userStatus.beforeSelection, 'searchCount');
                     }else{
                         returnMessage = message.messageWithTyping('잘못입력하였습니다. 다시 입력하세요.\n(처음으로 돌아가려면 \'1\' 입력).');
