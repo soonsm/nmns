@@ -307,7 +307,7 @@
             item.color = item.color;
         });
 
-        $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
+        // $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
         /*if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
         }*/
@@ -558,7 +558,7 @@
         }
         return "";
     }
-
+		/*
     function generateLnbManagerList(managerList) {
         var html = "";
         managerList.forEach(function(item) {
@@ -568,7 +568,7 @@
                   "<div class='dropdown-menu dropdown-menu-right'><a class='dropdown-item updateManagerLink' href='#'>이름/컬러 변경</a><a class='dropdown-item removeManagerLink' href='#'>삭제</a></div></div></div>";
         });
         return html;
-    }
+    }*/
     
     function updateManager(e){
       if(e.stopPropagation){
@@ -1923,7 +1923,7 @@
       });
       
     }));
-    
+    /*
     NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e) {
         NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().filter(function(item) {
             return item.id !== e.data.id;
@@ -1940,9 +1940,9 @@
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
-            /*if($("#sidebarContainer").data('scroll')){
+            if($("#sidebarContainer").data('scroll')){
               $("#sidebarContainer").data('scroll').update();
-            }*/
+            }
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -1964,7 +1964,7 @@
           NMNS.history.remove(e.data.id, findById);
         }
     }));
-
+*/
     NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function() {
         showSnackBar("<span>정상적으로 매장 정보를 변경하였습니다.</span>");
         NMNS.history.remove("info", findById);
@@ -2356,9 +2356,6 @@
         $("#noMoreTips").remove();
         $("#tipsModal").modal("show");
     });*/
-    $("#lnbLastMenu a").on("touch click", function(e) {
-        e.preventDefault();
-    });
     
     $("#showTutorial").on("touch click", function(){
        if (!document.getElementById("tutorialScript")) {
@@ -2567,6 +2564,7 @@
     });*/
 
     //mobile horizontal scroll handling end
+	/*
     function initLnbManagerForm(){
       if(NMNS.initedLnbManagerForm){
         return;
@@ -2609,9 +2607,9 @@
         //create
         id = NMNS.email + generateRandom();
         $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
-        /*if($("#sidebarContainer").data('scroll')){
+        if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
-        }*/
+        }
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2645,7 +2643,7 @@
         return;
       }
       $("#lnbManagerForm").data('id', null).hide();
-    }).one("touch click", initLnbManagerForm);
+    }).one("touch click", initLnbManagerForm);*/
     
     $("#mainCalendarRange").on("touch click", function(){
       $("#mainCalendarCarousel, #mainCalendarCalendar").toggle();
@@ -2846,6 +2844,8 @@
         e.preventDefault();
       }
       if(!$(this).hasClass("menuLinkActive")){
+				$(".modal-backdrop.show").remove();
+				$(document.body).removeClass('modal-open');
         $(".switchingMenu:not(."+$(this).data('link')+")").hide();
         if($("."+$(this).data('link')).show().hasClass('salesMenu')){
             $("#mainRow").addClass('fixedScroll');
@@ -2892,7 +2892,14 @@
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
-          $('#mainAside').toggleClass('sidebar-toggled');
+          $('#mainAside').addClass('sidebar-toggled');
+					$(document.body).addClass('modal-open').append($('<div class="modal-backdrop fade show" style="z-index:2"></div>').on("touch click", function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						$(this).remove();
+						$(document.body).removeClass('modal-open');
+						$("#mainAside").removeClass('sidebar-toggled')
+					}));
         });
         // $(".announcementMenuLink").popover({
         //   template:
