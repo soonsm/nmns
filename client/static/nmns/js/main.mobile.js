@@ -272,9 +272,29 @@
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
             });
         }
-        //tutorial & tip start
-        if (NMNS.info.isFirstVisit) {
-            if (!document.getElementById("tutorialScript")) {
+        //welcome popup
+				if(localStorage.getItem("notAnyMore") !== 'true'){
+					$(document.body).append('<div id="welcomeModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="환영 팝업" aria-hidden="true">\
+						<div class="modal-dialog modal-dialog-centered" role="document">\
+							<div class="modal-content rounded-0">\
+								<div class="modal-body flex-column" style="padding:20px">\
+									<div><img src="/nmns/img/goodperson.png" style="width:100%"/></div>\
+									<div style="text-align:center;margin:20px 0 33px 0;font-size:14px">\
+										왓쇼에 오신걸 환영해요 &gt;_&lt;<br><br>모바일 버전에서는<br>노쇼, 예약, 일정, 고객, 메뉴 추가 기능을 뺀<br>모든 서비스를 이용할 수 있어요.<br>추가 기능은 PC에서 이용할 수 있답니다!\
+									</div>\
+								</div>\
+								<div class="modal-footer" style="padding:0 25px;height:57px"><input type="checkbox" id="notAnyMore"><label for="notAnyMore"></label><label for="notAnyMore" style="font-size:12px;height:22px;line-height:27px;margin-left:0">다시 보지 않기</label><button type="button" class="btn btn-flat ml-auto px-0" style="font-size:14px" data-dismiss="modal">닫기</button></div>\
+							</div>\
+						</div>\
+					</div>');
+					$("#notAnyMore").on("change", function(){
+						localStorage.setItem("notAnyMore", "true");
+						$("#welcomeModal").modal("hide");
+					});
+					$("#welcomeModal").modal("show");
+				}
+					
+            /*if (!document.getElementById("tutorialScript")) {
                 var script = document.createElement("script");
                 script.src = "/nmns/js/tutorial.min.js";
                 script.id = "tutorialScript";
@@ -283,8 +303,7 @@
                 script.onload = function() {
                     $("#tutorialModal").modal();
                 };
-            }
-        }
+            }*/
         /*else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
             $("#tipsModal").modal("show");
         }*/
