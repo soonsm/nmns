@@ -898,6 +898,7 @@ exports.getReservation = async function(email, id){
         },
         ExpressionAttributeValues: {
             ":id": id,
+            ':email': email
         },
     });
 
@@ -1152,9 +1153,19 @@ let changeMemberSalesStatistic = function(customer, isRefund, sales){
 }
 
 exports.saveSales = async function(data){
-    let sales = (({email, id, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}) => ({email, id, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}))(data);
-    if (!sales.email || !sales.id || !sales.customerId || !sales.item) {
-        throw 'email, id, customerId, item는 필수입니다.'
+    let sales = (({email, id, date, time, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}) => ({email, id, date, time, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}))(data);
+    if (!sales.email || !sales.id || !sales.customerId || !sales.item || !sales.date || !sales.time) {
+        throw 'email, id, date, time, customerId, item는 필수입니다.'
+    }
+
+    if(!moment(sales.id, 'YYYYMMDDHHmmssSSS').isValid()){
+        throw `id 값 형식이 올바르지 않습니다.(${sales.id})`;
+    }
+    if(!moment(sales.date, 'YYYYMMDD').isValid()){
+        throw `date 값 형식이 올바르지 않습니다.(${sales.date})`;
+    }
+    if(!moment(sales.time, 'HHmm').isValid()){
+        throw `time 값 형식이 올바르지 않습니다.(${sales.time})`;
     }
 
     let customer = await exports.getCustomer(sales.email, sales.customerId);
@@ -1178,16 +1189,17 @@ exports.saveSales = async function(data){
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
             commonValidationForMembershipModify(sales);
-            if(isNaN(data.price) || data.price <= 0){
-                throw `멤버십 적립 시에는 양수 정수인 금액 값이 필요합니다.(${data.price})`;
+            if(isNaN(sales.price) || sales.price <= 0){
+                throw `멤버십 적립 시에는 양수 정수인 금액 값이 필요합니다.(${sales.price})`;
             }else if(![process.nmns.PAYMENT_METHOD.CASH, process.nmns.PAYMENT_METHOD.CARD].includes(data.payment)){
-                throw `멤버십 적립 시에는 결제수단이 필요합니다. (${data.payment})`;
+                throw `멤버십 적립 시에는 결제수단이 필요합니다. (${sales.payment})`;
             }
 
-            data.balanceMembership = customer.pointMembership + data.membershipChange;
+            sales.balanceMembership = customer.pointMembership + sales.membershipChange;
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
-            data.balanceMembership = customer.pointMembership - data.membershipChange;
+            sales.membershipChange = sales.price;
+            sales.balanceMembership = customer.pointMembership - sales.price;
         case process.nmns.SALE_HIST_TYPE.SALES_CARD:
         case process.nmns.SALE_HIST_TYPE.SALES_CASH:
             if(!await exports.getReservation(sales.email, sales.scheduleId)){
@@ -1202,9 +1214,8 @@ exports.saveSales = async function(data){
     }
 
     changeMemberSalesStatistic(customer, false, sales);
+    await exports.saveCustomer(customer);
 
-    sales.date = moment().format('YYYYMMDD');
-    sales.time = moment().format('HHmm');
 
     return await put({
         TableName: process.nmns.TABLE.Sales,
@@ -1242,6 +1253,7 @@ exports.getSalesHist = async function(email, options){
             '#id': 'id'
         },
         ExpressionAttributeValues: {
+            ':email': email,
             ':start': start,
             ':end': end
         }
@@ -1308,7 +1320,7 @@ exports.getSalesHist = async function(email, options){
         param.ExpressionAttributeValues[':priceEnd'] = options.priceEnd;
     }
 
-    let list = await query(param).filter(sales => {
+    let list = (await query(param)).filter(sales => {
         if(options.paymentList && !options.paymentList.includes(sales.payment)){
             return false;
         }
@@ -1336,7 +1348,7 @@ exports.deleteAllSales = async function (email) {
     }
 
     let list = await query({
-        TableName: process.nmns.TABLE.Task,
+        TableName: process.nmns.TABLE.Sales,
         KeyConditionExpression: "#email = :email",
         ExpressionAttributeNames: {
             "#email": "email"
@@ -1348,10 +1360,10 @@ exports.deleteAllSales = async function (email) {
 
     for (const item of list) {
         await del({
-            TableName: process.nmns.TABLE.Task,
+            TableName: process.nmns.TABLE.Sales,
             Key: {
                 'email': item.email,
-                'timestamp': item.timestamp
+                'id': item.id
             }
         });
     }
