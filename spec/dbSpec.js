@@ -1325,24 +1325,28 @@ describe('Sales', function () {
             sales.id = '20190524103055000';
             sales.date = '20190524';
             sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CARD;
             sales.payment = process.nmns.PAYMENT_METHOD.CARD;
             await db.saveSales(sales);
 
             sales.id = '20190525103055000';
             sales.date = '20190525';
             sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CARD;
             sales.payment = process.nmns.PAYMENT_METHOD.CARD;
             await db.saveSales(sales);
 
             sales.id = '20190526103055000';
             sales.date = '20190526';
             sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CASH;
             sales.payment = process.nmns.PAYMENT_METHOD.CASH;
             await db.saveSales(sales);
 
             sales.id = '20190527103055000';
             sales.date = '20190527';
             sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE;
             sales.payment = process.nmns.PAYMENT_METHOD.MEMBERSHIP;
             await db.saveSales(sales);
 
