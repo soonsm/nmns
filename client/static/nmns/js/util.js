@@ -240,9 +240,6 @@ var socketResponse = function(requestName, successCallback, failCallback, silent
 var snackbar = [];
 //snackbar handling start
 function showSnackBar(innerHtml) {
-    if (document.getElementById("floatingButton")) {
-        document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
-    }
     var x = document.getElementById("snackbar");
     if (!x) {
         x = document.createElement("div");
@@ -258,14 +255,21 @@ function showSnackBar(innerHtml) {
     } else if (x.classList.contains("show")) {
         snackbar.push(innerHtml);
     }
-    x.innerHTML = innerHtml;
+    x.innerHTML = ("<div style='overflow:hidden;word-break:break-all;max-height:35px'>"+innerHtml +"</div>"+ "<div class='close'>&times;</div>");
     x.classList.add("show");
-    setTimeout(function() {
+		var event = setTimeout(function() {
         x.classList.remove("show");
         if (snackbar.length > 0) {
             showSnackBar(snackbar.splice(0, 1)[0]);
         }
     }, 5000);
+		$(x).on('touch click', ".close", function(){
+			clearTimeout(event);
+			x.classList.remove("show");
+			if (snackbar.length > 0) {
+					showSnackBar(snackbar.splice(0, 1)[0]);
+			}
+		});    
 }
 //snackbar handling end
 

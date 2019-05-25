@@ -20,7 +20,7 @@ let create = function(params){
         }
     });
 };
-/*
+
 (async function(){
     var params = {
         TableName : "SessionTable",
@@ -310,7 +310,7 @@ let create = function(params){
     };
     create(params);
 })();
- */
+
 //-----------------------Data Insert------------------------------//
 /*
 (async function(){

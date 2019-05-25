@@ -1555,17 +1555,30 @@ button.form-control {
 
 #snackbar {
     visibility: hidden;
-    width: calc(100% - 2rem);
-    margin-left: 1rem;
-    margin-right: 1rem;
-    background-color: #323232;
+    background-color: #334150;
     color: #fff;
-    padding: 16px 24px;
+    padding: 30px 55px;
     position: fixed;
     z-index: 1060;
-    bottom: 90px;
+    bottom: 30px;
     font-size: .9rem;
-    left: 0;
+    left: 300px;
+	right:30px;
+	font-size:13px;
+}
+
+#snackbar .close{
+	position:absolute;
+	color:#fff;
+	opacity:1;
+	top:20px;
+	right:20px;
+	font-weight:400;
+	text-shadow:none;
+	cursor:pointer;
+}
+#mainAside.sidebar-toggled + #mainRow #snackbar{
+	left: 104px;
 }
 
 #snackbar.show {
@@ -1575,44 +1588,44 @@ button.form-control {
 
 @-webkit-keyframes fadein {
     from {
-        bottom: 60px;
+        bottom: 0px;
         opacity: 0;
     }
     to {
-        bottom: 90px;
+        bottom: 30px;
         opacity: 1;
     }
 }
 
 @keyframes fadein {
     from {
-        bottom: 60px;
+        bottom: 0px;
         opacity: 0;
     }
     to {
-        bottom: 90px;
+        bottom: 30px;
         opacity: 1;
     }
 }
 
 @-webkit-keyframes fadeout {
     from {
-        bottom: 90px;
+        bottom: 30px;
         opacity: 1;
     }
     to {
-        bottom: 60px;
+        bottom: 0px;
         opacity: 0;
     }
 }
 
 @keyframes fadeout {
     from {
-        bottom: 90px;
+        bottom: 30px;
         opacity: 1;
     }
     to {
-        bottom: 60px;
+        bottom: 0px;
         opacity: 0;
     }
 }
