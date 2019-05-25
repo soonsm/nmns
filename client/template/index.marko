@@ -55,7 +55,7 @@
 
 <body>
 
-<section class="washow-main-wrapper overflow-hidden" role="main" id="page-top">
+<section class="washow-main-wrapper overflow-hidden relative" role="main" id="page-top">
 
   <section class="fit flex bg-primary relative items-center justify-center sm-full-height">
     <header class="content pb4 absolute left-0 right-0 top-0" style="padding-top:50px;margin:0 auto">
@@ -63,8 +63,8 @@
         <a href="/index" class="inline-block text-decoration-none left white montserrat" style="content:url('/nmns/img/washow_BI.svg')">
           <img src="/nmns/img/washow_BI.svg" id="logo" class="align-middle"/>
         </a>
-        <a href="/signin" class="inline-block right white link text-decoration-none">로그인</a>
-        <a href="/signup" class="inline-block right white link text-decoration-none mr3">회원가입</a>
+        <a href="/signin" class="inline-block right white link text-decoration-none signinLink">로그인</a>
+        <a href="/signup" class="inline-block right white link text-decoration-none mr3 signupLink">회원가입</a>
       </div>
     </header>
 
@@ -295,6 +295,114 @@
       </div>
     </div>
   </section>
+	
+	<div id="backdrop"></div>
+	<div id="signinModal" class="modal">
+		<div class="modal-header"><div class="modal-title">로그인</div><button type="button" class="close">&times;</button></div>
+		<div class="modal-body">
+			<input type="hidden" name="kakaotalk" value="${input.kakaotalk}" if(input.kakaotalk) />
+			<input type="email" name="email" class="form-control" placeholder="이메일을 입력하세요." value="${input.email}"/>
+			<input type="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요."/>
+			<div class="text-left">
+				<input type="checkbox" class="form-check-input" id="rememberMeCheck" name="rememberMe" value="true" checked="checked"/>
+				<label for="rememberMeCheck"></label>
+				<label class="text-top mb3" for="rememberMeCheck">로그인 상태 유지</label>
+				<div class="ml-auto link" id="passwordLink">비밀번호 찾기</div>
+			</div>
+			<button type="button" class="btn btn-accent col">로그인</button>
+			<hr class='hr-text' data-content='또는'>
+			<div>
+				<button type="button" class="btn btn-form col mr1" id="kakaoBtn"><img id="kakaoImg" src="/nmns/img/kakaolink_btn_medium.png"><span>카카오 계정 연결하기</span></button>
+				<button type="button" class="btn btn-form col ml1" id="naverBtn"><img id="naverImg" src="/nmns/img/naver.svg"><div id="naverIdLogin"></div><span>네이버 계정 연결하기</span></button>
+			</div>
+		</div>
+		<div id="signupLinkArea">계정이 없으신가요? <span class="link signupLink">회원가입 하기</span></div>
+	</div>
+
+	<div id="signupModal" class="modal">		
+		<div class="modal-header"><div class="modal-title">회원가입</div><button type="button" class="close">&times;</button></div>
+		<div class="modal-body">
+			<form method="post" action="/signup">
+				<div>
+					<input type="checkbox" class="form-check-input" id="contract" name="contract" value="true" checked="checked"/>
+					<label for="contract"></label>
+					<label class="text-top mb3" for="contract"><span class="link" id="contractLink">이용약관</span>을 꼭 읽어주시고 동의하신다면 체크해주세요!(필수)</label>
+				</div>
+				<div>
+					이메일 주소
+					<input type="hidden" name="kakaotalk" value="${input.kakaotalk}" if(input.kakaotalk) />
+					<input type="email" name="email" class="form-control" placeholder="이메일을 입력하세요." value="${input.email}"/>
+				</div>
+				<div>
+					비밀번호
+					<input type="hidden" name="kakaotalk" value="${input.kakaotalk}" if(input.kakaotalk) />
+					<input type="password" name="password" class="form-control" placeholder="비밀번호는 하나 이상의 숫자와 특수문자를 포함해야 합니다."/>
+					<input type="password" name="repassword" class="form-control" placeholder="비밀번호를 한번 더 입력해주세요."/>
+				</div>
+				<div>
+					매장 이름
+					<input type="text" name="shopName" class="form-control" placeholder="매장 이름을 입력하세요."/>
+				</div>
+				<div>
+					로고이미지 등록
+					<input type="file" name="logo" class="form-control" placeholder="130 X 130 사이즈가 넘지 않고 JPG, PNG로 등록 해주세요!"/>
+					<button id="addLogo" type="button" class="btn btn-primary">첨부</button>
+				</div>
+				<div>
+					매장 운영 시간
+					<select class="form-control select" name="bizStartTime"></select>
+					<span id="period">~</span>
+					<select class="form-control select" name="bizEndTime"></select>
+				</div>
+				<div>
+					업종
+					<input type="text" name="bizType" class="form-control" placeholder="업종을 입력하세요."/>
+				</div>
+				<div>
+					<label for="alrimUseYn">알림톡 사용여부</label>
+					<div class="custom-control custom-switch d-inline">
+						<input type="checkbox" class="custom-control-input" id="alrimUseYn">
+						<label class="custom-control-label" for="alrimUseYn"></label>
+					</div>
+					<span class="subText">회원가입 완료 후 [알림톡 정보]에서 세부사항을 설정할 수 있어요.</span>
+				</div>
+			</form>
+		</div>
+		<div class="modal-footer">
+			<div>
+				<button type="button" class="btn btn-accent col" id="signup">회원가입</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="emailModal" class="modal">
+		<div class="modal-header"><div class="modal-title">이메일 인증</div><button type="button" class="close">&times;</button></div>
+		<div class="modal-body">
+			<div id="emailModalBody">입력하신 이메일로 인증을 위한 메일을 보내드렸으니 확인해주세요.<br>이메일이 인증되어야 모든 서비스를 이용하실 수 있어요!</div>
+		</div>
+		<div class="modal-footer">
+			<div>
+				<button type="button" class="btn btn-white col mr1" id="resendEmail">인증 메일 다시보내기</button>
+				<button type="button" class="btn btn-accent col ml1 signinLink">인증 완료</button>
+			</div>
+		</div>
+	</div>
+	<div id="passowrdModal" class="modal">
+		<div class="modal-header"><div class="modal-title">비밀번호 찾기</div><button type="button" class="close">&times;</button></div>
+		<div class="modal-body">
+			<div>가입시 등록하신 이메일 주소를 입력해주세요. 재설정 메일을 보내드려요!</div>
+			<input type="email" name="email" class="form-control" placeholder="이메일을 입력하세요." value="${input.email}"/>
+			<div>
+				<div class="ml-auto link signinLink">다시 로그인하기</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div>
+				<button type="button" class="btn btn-accent col" id="resetPassword">비밀번호 재설정</button>
+			</div>
+		</div>
+	</div>
+
 </section>
 <!--[if IE 9]>
 <script type="text/jscript">
