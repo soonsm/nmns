@@ -78,36 +78,36 @@
             weekDayname: function(model) {
                 var classDate = 'tui-full-calendar-dayname-date';
                 var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar && NMNS.calendar.getViewName() === 'week' ? ' weekViewDayName' : '');
-                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.renderDate }) : undefined;
+                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.renderDate; }) : undefined;
                 if (holiday) {
                     className += " tui-full-calendar-holiday";
                     classDate += " tui-full-calendar-holiday";
                 }
 
-                return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? ("[" + holiday.title + "]") : "") + '</span>';
+                return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? ("(" + holiday.title + ")") : "") + '</span>';
             },
             monthGridHeader: function(model) {
                 var date = parseInt(model.date.split('-')[2], 10);
                 var classNames = ["tui-full-calendar-weekday-grid-date"];
 
-                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.date }) : undefined;
+                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.date; }) : undefined;
                 if (holiday) {
                     classNames.push("tui-full-calendar-holiday");
                 }
-                return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
+                return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>(" + holiday.title + ")</small>") : "") + '</span>';
             },
             monthGridHeaderExceed: function(){
-              return ''
+              return '';
             },
             monthGridFooterExceed: function(hiddenSchedules) {
                 return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <span class="icon-arrow icon-arrow-right"></span></span>';
             },
             monthMoreTitleDate: function(date, dayname) {
                 var dateFormat = date.split(".").join("-");
-                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === dateFormat }) : undefined;
+                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === dateFormat; }) : undefined;
                 var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일" ? " tui-full-calendar-holiday-sun" : "") + (holiday ? " tui-full-calendar-holiday" : "") + (dayname === "토" ? " tui-full-calendar-holiday-sat" : "");
 
-                return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
+                return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'>(" + holiday.title + ")</small>") : "") + '</span>';
             },
             monthlyDetailPopup: function(schedules, date){
               var html = "<div class='d-flex flex-column position-relative'><button type='button' class='tui-full-calendar-popup-close close p-0 ml-auto my-0 mr-0 position-absolute' aria-label='닫기' style='right:0'><span aria-hidden='true' style='vertical-align:top;font-size:12px'>&times;</span></button>", contents;
@@ -493,8 +493,8 @@
         if (viewName === 'day') {
             var today = moment(NMNS.calendar.getDate().getTime());
             html += today.format('YYYY. MM. DD');
-            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
-            html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
+            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD'); }) : undefined;
+            html += "<span class='flex-column base-font ml-3 position-relative'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>";
             renderRange.style.width = '280px';
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
@@ -2621,6 +2621,12 @@
       });
     }
     $(".addManager").on("touch click", function() {
+			if($("#mainAside").hasClass('sidebar-toggled')){
+				$("#mainAside").removeClass('sidebar-toggled');
+				setTimeout(function(){
+					document.getElementById("sidebarContainer").scrollTop = 0;
+				}, 300);
+			}
       if($("#lnbManagerForm").data('id')){//was updating
         $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
       }
@@ -2836,6 +2842,9 @@
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
+					if($("#lnbManagerForm").is(":visible")){
+						$(".addManager").trigger("click");
+					}
           if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
             if($("#mainTask").hasClass("show")){
               $("#mainAside").css('minWidth', '270px');

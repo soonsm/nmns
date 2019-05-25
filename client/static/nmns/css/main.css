@@ -538,14 +538,18 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #renderRange {
     font-size: 28px;
     font-weight:bold;
-    width:280px;
+	display:flex;
+	justify-content:center;
 }
 
 #renderRange .render-range-text-holiday{
     font-size:11px;
     color:#fd5b77;
-    line-height:3;
-    height:13px;
+    position:absolute;
+	top:-18px;
+	width:100%;
+	overflow-x:hidden;
+	white-space:nowrap;
 }
 
 #renderRange .render-range-text-holiday + span{
