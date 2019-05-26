@@ -638,12 +638,88 @@
 					</div>
 				</div>
 
+        <div class="switchingMenu scheduleMenu">
+          <div class="menuContents">
+            <form id="scheduleForm" class="mb-1">
+              <div class="updateScheduleElement row mx-0" style="margin-bottom:35px">
+                <div>예약 상태</div>
+                <div style="margin-left:35px" id="scheduleStatus">
+                  <input type="radio" name="scheduleStatus" value="RESERVED" id="scheduleStatusReserved">
+                  <label for="scheduleStatusReserved" class="align-middle mr-1"></label>
+                  <label for="scheduleStatusReserved" style="margin-right:30px">정상</label>
+                  <input type="radio" name="scheduleStatus" value="CANCELED" id="scheduleStatusCanceled">
+                  <label for="scheduleStatusCanceled" class="align-middle mr-1"></label>
+                  <label for="scheduleStatusCanceled" style="margin-right:30px">취소</label>
+                  <input type="radio" name="scheduleStatus" value="NOSHOW" id="scheduleStatusNoShow">
+                  <label for="scheduleStatusNoShow" class="align-middle mr-1"></label>
+                  <label for="scheduleStatusNoShow">노쇼</label>
+                </div>
+              </div>
+              <div>고객 이름</div>
+              <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
+              <div style="margin-top:35px">고객 연락처</div>
+              <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
+              <div style="margin-top:35px">예약시간
+                <span class="float-right">
+                  <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>
+                  <label for="scheduleAllDay"></label>
+                  <label for="scheduleAllDay">하루종일</label>
+                </span>
+              </div>
+              <div class="d-flex col-12 px-0 align-items-center mt-3">
+                <div class="select mr-1">
+                  <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
+                </div>
+                <div class="select ml-1">
+                  <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                </div>
+                <span class="px-2 mx-3">~</span>
+                <div class="select mr-1">
+                  <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
+                </div>
+                <div class="select ml-1">
+                  <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                </div>
+              </div>
+              <div style="margin-top:35px">예약 내용</div>
+              <div class="flex-column mx-0 col-12 px-0 mt-3" id="scheduleTabContents"></div>
+              <div class="col-12 text-center">
+                <button type="button" class="btn btn-sm btn-flat" id="scheduleAddContents">
+                  <span class="icon-plus">+</span> 내용 추가
+                </button>
+              </div>
+              <datalist id="scheduleTabContentList"></datalist>
+              <div class="row mx-0" style="margin-top:35px">
+                <div class="col mr-1 px-0 flex-column">
+                  <div class="d-flex">담당자</div>
+                  <div class="d-flex mt-3">
+                    <button id="scheduleManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자 선택">
+                      <span>담당자 선택</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="scheduleManager" role="menu" id="scheduleManagerList"></div>
+                  </div>
+                </div>
+                <div class="col ml-1 px-0 flex-column">
+                  <div class="d-flex">고객 메모</div>
+                  <input type="text" class="form-control form-control-sm han mt-3" id="scheduleEtc" name="etc" aria-label="고객 메모" placeholder="고객 메모">
+                </div>
+              </div>
+                
+            </form>
+            <div class="row mx-0 mt-5">
+              <button type="button" class="btn btn-white updateScheduleElement col mr-1" id="deleteScheduleBtn">삭제</button>
+              <button type="button" class="btn btn-primary updateScheduleElement col mx-1" id="resendAlrimScheduleBtn">알림톡 재전송</button>
+              <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">예약 추가 완료</button>
+            </div>
+          </div>
+        </div>
+
       </div>
       
       <!-- modal area -->
       
       
-      <div id="noShowModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="노쇼 추가" aria-hidden="true">
+      <!--<div id="noShowModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="노쇼 추가" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header p-0 mx-0">
@@ -706,7 +782,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
             
       <div id="scheduleModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
