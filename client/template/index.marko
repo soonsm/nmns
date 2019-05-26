@@ -685,13 +685,19 @@
 		});
 		addEvent(document.getElementById('logo'), 'change', function() {
 			var file = this.files[0];
-
-			// Max 2 Mb allowed
-			if(file.size > 2*1024*1024) {
-				alert('Error : Exceeded size 2MB');
-				return;
+			if(file){
+				var img = document.createElement('img');
+				img.onload = function(){
+					if(img.naturalWidth <= 130 && img.naturalHeight <= 130){
+						document.getElementById('signupForm').logoFileName.value = file.name;
+					}else{
+						alert('이미지의 크기가 130 X 130보다 큽니다.\n작은 이미지로 올려주세요.');
+						document.getElementById('logo').reset();
+					}
+					img.remove();
+				}
+				img.setAttribute('src', (window.URL || window.webkitURL).createObjectURL(file));
 			}
-			document.getElementById('signupForm').logoFileName.value = file.name;
 		});
 		addEvent(document.getElementById('signupBtn'), "click touchend", function(){
 			if(!document.getElementById('contract').checked){
