@@ -319,7 +319,7 @@
 					<hr class='hr-text' data-content='또는'>
 					<div class="flex">
 						<button type="button" class="btn btn-form col-6" id="kakaoBtn" style="margin-right:5px"><img id="kakaoImg" src="/nmns/img/kakaolink_btn_medium.png" style="width:20px;vertical-align:middle;margin-right:10px"><span>카카오 계정 로그인</span></button>
-						<button type="button" class="btn btn-form col-6" id="naverBtn" style="margin-left:5px"><div id="naverIdLogin"></div><img id="naverImg" src="/nmns/img/naver.svg" style="width:20px;vertical-align:middle;margin-right:10px"><span>네이버 계정 로그인</span></button>
+						<button type="button" class="btn btn-form col-6" id="naverBtn" style="margin-left:5px"><div id="naverIdLogin" style="width:20px;vertical-align:middle;margin-right:10px;display:inline-block"></div><span>네이버 계정 로그인</span></button>
 					</div>
 				</div>
 			</div>
@@ -455,10 +455,16 @@
   });
 	(function(){
     var addEvent = function (el, type, fn) {
-      if (el.addEventListener)
-        el.addEventListener(type, fn, false);
-  		else
-  			el.attachEvent('on'+type, fn);
+			var types = type.split(" ");
+      if (el.addEventListener){
+				for(var i=0;i<types.length;i++){
+					el.addEventListener(types[i], fn, false);	
+				}
+			}else{
+				for(var i=0;i<types.length;i++){
+					el.attachEvent('on'+types[i], fn);
+				}
+			}
     };
     
     window.fitText = function (el, kompressor) {
@@ -475,8 +481,7 @@
           el.style.fontSize = Math.max(Math.min(el.clientWidth / (compressor*10), parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)) + 'px';
         };
         resizer();
-        addEvent(window, 'resize', resizer);
-        addEvent(window, 'orientationchange', resizer);
+        addEvent(window, 'resize orientationchange', resizer);
       };
   
       if (el.length)
@@ -495,12 +500,7 @@
 			document.getElementById('backdrop').style.display = 'none';//remove backdrop
 			document.body.classList.remove('overflow-hidden');//restore scrollability
 		}
-		addEvent(document.getElementById('backdrop'), 'click', function(e){
-			if(e.target.id === 'backdrop'){
-				closeModal();
-			}			
-		});
-		addEvent(document.getElementById('backdrop'), 'touchend', function(e){
+		addEvent(document.getElementById('backdrop'), 'click touchend', function(e){
 			if(e.target.id === 'backdrop'){
 				closeModal();
 			}			
@@ -518,20 +518,16 @@
 		}
 		var targets = document.getElementsByClassName('signupLink');
 		for(var i=0;i<targets.length;i++){
-			addEvent(targets[i], 'click', showModal('signupModal'));
-			addEvent(targets[i], 'touchend', showModal('signupModal'));
+			addEvent(targets[i], 'click touchend', showModal('signupModal'));
 		}
-		addEvent(document.getElementById('passwordLink'), 'click', showModal('passwordModal'));
-		addEvent(document.getElementById('passwordLink'), 'touchend', showModal('passwordModal'));
+		addEvent(document.getElementById('passwordLink'), 'click touchend', showModal('passwordModal'));
 		targets = document.getElementsByClassName('signinLink');
 		for(var i=0;i<targets.length;i++){
-			addEvent(targets[i], 'click', showModal('signinModal'));
-			addEvent(targets[i], 'touchend', showModal('signinModal'));
+			addEvent(targets[i], 'click touchend', showModal('signinModal'));
 		}
 		targets = document.getElementsByClassName('close');
 		for(var i=0;i<targets.length;i++){
-			addEvent(targets[i], 'click', closeModal);
-			addEvent(targets[i], 'touchend', closeModal);
+			addEvent(targets[i], 'click touchend', closeModal);
 		}
 		function submitSignin(){
 			var form = document.getElementById('signinForm');
@@ -550,8 +546,7 @@
 			form.submit();
 			return false;
 		}
-		addEvent(document.getElementById('signinBtn'), 'touchend', submitSignin);
-		addEvent(document.getElementById('signinBtn'), 'click', submitSignin);
+		addEvent(document.getElementById('signinBtn'), 'click touchend', submitSignin);
 		addEvent(document.getElementById('signinForm').password, 'keyup', function(e){
 			if(e.which === 13){
 				submitSignin();
@@ -562,10 +557,53 @@
 				document.getElementById('signinForm').password.focus();
 			}
 		});
+		// error message handling
 		if("${input.message}" !== "undefined"){
 			document.getElementsByClassName('signinLink')[0].click();
 			alert("${input.message}");			
 		}
+		var script = document.createElement("script");
+		script.src = "/nmns/js/naver.min.js";
+		script.id = "naverScript";
+		document.body.appendChild(script);
+
+		script.onload = function() {
+			var naverLogin = new naver.LoginWithNaverId({
+					clientId: "5dHto9KiEXdHoHJBDcqE",
+					callbackUrl: window.location.origin + '/naver',
+					isPopup: true, 
+					loginButton: {color:'green', type:1, height:20}
+			});
+			naverLogin.init();
+		};
+		var script2 = document.createElement("script");
+		script2.src = "/nmns/js/kakao.min.js";
+		script2.id = "kakaoScript";
+		document.body.appendChild(script2);
+
+		script2.onload = function() {
+			Kakao.init('0bc4ec615d313261ebfd5ac0fe9c055f');
+			// 카카오 로그인 버튼을 생성합니다.
+			addEvent(document.getElementById("kakaoBtn"), "click touchend", function(){
+				Kakao.Auth.login({
+					success: function(authObj) {
+						Kakao.API.request({url:'/v2/user/me', success:function(res){
+							NMNS.socket.emit('link sns', {
+								snsLinkId:res.for_partner.uuid,
+								snsEmail:res.for_partner.properties.email,
+								snsType: 'KAKAO'
+							});
+						}, fail: function(error){
+							alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
+						}})
+					},
+					fail: function(err) {
+						alert('연결이 취소되었습니다.');
+						console.log(JSON.stringify(err));
+					}
+				});
+			});
+		};
   })();
   window.fitText(document.getElementById('caption1'));
   window.fitText(document.getElementById('caption2'));
