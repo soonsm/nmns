@@ -11,6 +11,7 @@ require('./../bin/constant');
 process.env.NODE_ENV = process.nmns.MODE.DEVELOPMENT;
 
 const db = require('./../bin/newDb');
+const webDb = require('./../bin/webDb');
 const handler = require('./../bin/salesHistHandler');
 const moment = require('moment');
 
@@ -66,6 +67,25 @@ describe('Sales', function () {
         await db.deleteAllSales(email);
         await db.deleteAllReservation(email);
         await db.deleteAllCustomer(email);
+
+        let user = await webDb.getWebUser(email);
+        user.menuList = [
+            {
+                "name": "네일케어",
+                "priceCard": 11000,
+                "id": "1",
+                "priceMembership": 10000,
+                "priceCash": 10500
+            },
+            {
+                "name": "페디케어",
+                "priceCard": 21000,
+                "id": "2",
+                "priceMembership": 20000,
+                "priceCash": 20500
+            }
+        ];
+        await webDb.updateWebUser(email, {menuList: user.menuList});
     });
     describe('saveSales', () => {
         it('type이 SALES_CARD, MEMBERSHIP_USER, SALES_CASH 아니면 exception', async function(){
@@ -302,6 +322,7 @@ describe('Sales', function () {
     });
 
     describe('getSalesForReservation', function(){
+
         it('예약 아이디 없으면 exception', async function(){
            try{
                let fn = handler.getSalesForReservation;

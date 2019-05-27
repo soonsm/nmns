@@ -48,7 +48,7 @@ let setMenu = function(menuList, data){
     if(data.action === 'delete'){
         let index = menuList.findIndex(menu => menu.id === data.id);
         if(index === -1){
-            throw `${data.id}로 조회되는 메뉴가 없습니다.`;
+            throw `${data.id}로 조회되는 메뉴가 없습니다.(${JSON.stringify(data)})`;
         }
         menuList.splice(index, 1);
         user.menuList = menuList;
@@ -97,9 +97,8 @@ exports.saveMenu = async function(data){
 
     try{
         user.menuList = setMenu(user.menuList || [], data);
-
-        await db.setWebUser(user);
-
+        await db.updateWebUser(this.email, {menuList: user.menuList});
+        status = true;
     }catch(e){
         status = false;
         message = e;
@@ -141,16 +140,13 @@ exports.updateMenuList = async function(data){
     let status = false, message = null, resultData = undefined;
 
     try{
-        let user = await db.getWebUser(this.email);
         let newMenulist = [];
         for(let i=0;i<data.length;i++){
-            if(data.action !== 'delete'){
+            if(data[i].action !== 'delete'){
                 newMenulist = setMenu(newMenulist, data[i]);
             }
         }
-        user.menuList = newMenulist;
-
-        await db.setWebUser(user);
+        await db.updateWebUser(this.email, {menuList: newMenulist});
         status = true;
     }catch(e){
         status = false;

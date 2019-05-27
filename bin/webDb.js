@@ -99,7 +99,7 @@ function update(params) {
                 logger.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
                 resolve(false);
             } else {
-                logger.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                // logger.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
                 resolve(true);
             }
         });
