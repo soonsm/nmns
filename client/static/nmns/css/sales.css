@@ -7,6 +7,9 @@
   top: 78px;
   padding:52px 30px 42px 30px;
 }
+#mainAside.sidebar-toggled + #mainRow .salesMenu .menuTitle.fixedScroll{
+	left:74px;
+}
 #mainSalesSearch input, #mainSalesSearch .input-group-text, #mainSalesSearch button:not(:focus):not(:hover):not(:active){
   background-color:transparent;
 }
