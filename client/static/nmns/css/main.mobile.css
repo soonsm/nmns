@@ -21,6 +21,7 @@ input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-i
 }
 input[type=checkbox]:not(.custom-control-input) + label{width:11px;height:11px;line-height:11px;margin-right:8px;position:relative}input[type=checkbox]:not(.custom-control-input) + label:before{display: inline-block;background-image:url('/nmns/img/uncheck.svg');background-size:11px;position:absolute;width:11px;height:11px;line-height:11px;content:'';background-repeat:no-repeat;margin-right:8px}input[type=checkbox]:not(.custom-control-input):checked + label:before{background-image: url('/nmns/img/check.svg')}
 input[type=checkbox]:not(.custom-control-input) + label + label{vertical-align:middle}
+@supports (-webkit-overflow-scrolling: touch){.form-control{font-size:16px;padding-top:8px;padding-bottom:8px;line-height:22px}#searchNoShow,#searchCustomer{font-size:16px}}
 .new {
     font-size: .65rem;
     padding: 0;
