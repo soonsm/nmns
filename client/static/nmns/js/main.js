@@ -84,7 +84,7 @@
                     classDate += " tui-full-calendar-holiday";
                 }
 
-                return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? ("(" + holiday.title + ")") : "") + '</span>';
+                return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? (" (" + holiday.title + ")") : "") + '</span>';
             },
             monthGridHeader: function(model) {
                 var date = parseInt(model.date.split('-')[2], 10);
@@ -94,7 +94,7 @@
                 if (holiday) {
                     classNames.push("tui-full-calendar-holiday");
                 }
-                return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>(" + holiday.title + ")</small>") : "") + '</span>';
+                return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'> (" + holiday.title + ")</small>") : "") + '</span>';
             },
             monthGridHeaderExceed: function(){
               return '';
@@ -107,7 +107,7 @@
                 var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === dateFormat; }) : undefined;
                 var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일" ? " tui-full-calendar-holiday-sun" : "") + (holiday ? " tui-full-calendar-holiday" : "") + (dayname === "토" ? " tui-full-calendar-holiday-sat" : "");
 
-                return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'>(" + holiday.title + ")</small>") : "") + '</span>';
+                return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'> (" + holiday.title + ")</small>") : "") + '</span>';
             },
             monthlyDetailPopup: function(schedules, date){
               var html = "<div class='d-flex flex-column position-relative'><button type='button' class='tui-full-calendar-popup-close close p-0 ml-auto my-0 mr-0 position-absolute' aria-label='닫기' style='right:0'><span aria-hidden='true' style='vertical-align:top;font-size:12px'>&times;</span></button>", contents;
