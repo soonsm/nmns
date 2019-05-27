@@ -69,11 +69,12 @@ input[name='etc'],
   content: url('/nmns/img/arrow_bottom.svg');
 }
 .icon-arrow-left{
-  transform:rotate(90deg);
+  content: url('/nmns/img/Calendar_left.svg');
   vertical-align: middle;
 }
 .icon-arrow-right{
-  transform:rotate(-90deg);
+  content: url('/nmns/img/Calendar_left.svg');
+  transform:rotate(180deg);
   vertical-align: middle;
 }
 .icon-email-ok{
@@ -462,6 +463,9 @@ input[type=checkbox]+label{
 
 #mainRow #mainTask #mainTaskContents{
     margin-top:30px;
+    height:100%;
+    left:20px;
+    right:20px;
 }
 
 #mainRow #mainTask .task{
@@ -543,10 +547,11 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }
 
 #renderRange .render-range-text-holiday{
-    font-size:11px;
-    color:#fd5b77;
-    position:absolute;
-	top:-18px;
+  font-size:11px;
+  color:#fd5b77;
+	height:18px;
+	line-height:18px;
+	margin-bottom:-12px;
 	width:100%;
 	overflow-x:hidden;
 	white-space:nowrap;

@@ -315,7 +315,7 @@
             delete NMNS.needInit;
             setSchedules();
         }
-        $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
+        //$('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
         $("#mainTaskContents input").on('change', function(e){
           e.stopPropagation();
           var data = $(this).parent();
@@ -589,7 +589,7 @@
           }
         })
       }else{
-        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:100%'>등록된 일정이 없어요.</div>"
+        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:100%;font-size:13px'>등록된 일정이 없어요.</div>"
       }
       return html;
     }
@@ -1877,7 +1877,12 @@
           e.data.find(function(date){return date.date === moment().format('YYYYMMDD')}).task.length
         )
       }
-      $('#mainTaskContents').html(generateTaskList(e.data))
+      $('#mainTaskContents').html(generateTaskList(e.data));
+      if(e.data.length === 0){
+        $("#mainTaskContents").addClass('position-absolute');
+      }else{
+        $("#mainTaskContents").removeClass('position-absolute');
+      }
       $("#mainTaskContents input").on('change', function(e){
         e.stopPropagation();
         var data = $(this).parent();

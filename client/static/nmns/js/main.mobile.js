@@ -279,7 +279,7 @@
 						<div class="modal-dialog modal-dialog-centered" role="document">\
 							<div class="modal-content rounded-0">\
 								<div class="modal-body flex-column" style="padding:20px">\
-									<div><img src="/nmns/img/goodperson.png" style="width:100%"/></div>\
+									<div><img src="/nmns/img/mobile_welcome.png" style="width:100%"/></div>\
 									<div style="text-align:center;margin:20px 0 33px 0;font-size:14px">\
 										왓쇼에 오신걸 환영해요 &gt;_&lt;<br><br>모바일 버전에서는<br>노쇼, 예약, 일정, 고객, 메뉴 추가 기능을 뺀<br>모든 서비스를 이용할 수 있어요.<br>추가 기능은 PC에서 이용할 수 있답니다!\
 									</div>\

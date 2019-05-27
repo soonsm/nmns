@@ -73,11 +73,12 @@ input[name='etc'],
   content: url('/nmns/img/arrow_bottom_white.svg');
 }
 .icon-arrow-left{
-  transform:rotate(90deg);
+  content: url('/nmns/img/Calendar_left.svg');
   vertical-align: middle;
 }
 .icon-arrow-right{
-  transform:rotate(-90deg);
+  content: url('/nmns/img/Calendar_left.svg');
+  transform:rotate(180deg);
   vertical-align: middle;
 }
 .icon-email-ok{
