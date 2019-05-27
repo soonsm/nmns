@@ -207,9 +207,10 @@
       clickSchedule: function(e){
         NMNS.scheduleTarget = e;
         initScheduleTab(e);
-        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
-        $("#scheduleBtn").text('저장');
-        $("#scheduleModal").addClass('update').modal('show');
+        /*$("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
+        $("#scheduleBtn").text('저장');*/
+        // $("#scheduleModal").addClass('update').modal('show');
+        switchMenu.call($(".scheduleLink"), e);
       },
       beforeCreateSchedule: function(e) {
         NMNS.scheduleTarget = e;
@@ -1516,7 +1517,7 @@
               });
           }
       
-          $("#scheduleModal").modal('hide');
+          history.back();
         })
       }
       refreshScheduleTab(e);
@@ -1690,7 +1691,7 @@
                   status: "RESERVED"
               });
           }
-          $("#scheduleModal").modal("hide");
+          history.back();
         });
       }
       refreshTaskTab(task);
@@ -2395,8 +2396,6 @@
         NMNS.announcementPage = 1;
         NMNS.socket.emit('get announcement', {page:1, combined:true});
       }
-			$("#detailMenuTitle").html("알림").show().prev().hide();
-			$(this).hide().next().show();
     });
 		$("#exitDetailMenu").on("touch click", function(){
 			$("#detailMenuTitle").hide().prev().show();
@@ -2884,9 +2883,13 @@
 				if(!$(this).data('type') === 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
+				}else{
+				  $("#detailMenuTitle").html($(this).data('title')).show().prev().hide();
+			    $(".announcementMenuLink").hide().next().show();
 				}
       }
     }
+    NMNS.switchMenu = switchMenu;
     
     //menu switch end
     //set event listeners
