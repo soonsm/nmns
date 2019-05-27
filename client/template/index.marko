@@ -54,7 +54,7 @@
 <![endif]-->
 </head>
 
-<body>
+<body class="left-0 right-0">
 
 <section class="washow-main-wrapper overflow-hidden relative" role="main" id="page-top">
 
@@ -536,7 +536,7 @@
 		}
 		addEvent(document.getElementById('backdrop'), 'click', function(e){
 			if(e.target.id === 'backdrop'){
-				closeModal();
+				closeModal(e);
 			}			
 		});
 		function showModal(modalId){
