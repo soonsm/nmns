@@ -140,7 +140,12 @@
                 <!--<small class="badge new card-subtitle">new</small>-->
               </div>
             </a>
-          </li>          
+          </li>
+          <li class="d-none">
+            <div class="menuLink scheduleLink" data-link="scheduleMenu" data-history="schedule" data-type="detail" data-title="예약 상세"></div>
+            <div class="menuLink customerDetailLink" data-link="customerDetailMenu" data-history="customer/detail" data-type="detail" data-title="고객 상세"></div>
+            <div class="menuLink menuDetailLink" data-link="menuDetailMenu" data-history="menu/detail" data-type="detail" data-title="메뉴 상세"></div>
+          </li>
           <div class="mt-auto" style="margin-bottom:20px">
 						<div class="menuLink storeLink" data-link="storeMenu" data-history="store" aria-label="내 매장 정보">
 							<span>
@@ -639,11 +644,11 @@
 				</div>
 
         <div class="switchingMenu scheduleMenu">
-          <div class="menuContents">
+          <div class="menuContents px-3">
             <form id="scheduleForm" class="mb-1">
-              <div class="updateScheduleElement row mx-0" style="margin-bottom:35px">
+              <div class="updateScheduleElement row mx-0" style="margin:35px 0">
                 <div>예약 상태</div>
-                <div style="margin-left:35px" id="scheduleStatus">
+                <div style="margin-left:auto" id="scheduleStatus">
                   <input type="radio" name="scheduleStatus" value="RESERVED" id="scheduleStatusReserved">
                   <label for="scheduleStatusReserved" class="align-middle mr-1"></label>
                   <label for="scheduleStatusReserved" style="margin-right:30px">정상</label>
@@ -660,24 +665,24 @@
               <div style="margin-top:35px">고객 연락처</div>
               <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
               <div style="margin-top:35px">예약시간
-                <span class="float-right">
+                <span class="float-right" style="font-size:11px">
                   <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>
                   <label for="scheduleAllDay"></label>
                   <label for="scheduleAllDay">하루종일</label>
                 </span>
               </div>
-              <div class="d-flex col-12 px-0 align-items-center mt-3">
-                <div class="select mr-1">
+              <div class="row mx-0 col-12 px-0 align-items-center mt-3">
+                <div class="select mr-1 col-7 px-0">
                   <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
                 </div>
-                <div class="select ml-1">
+                <div class="select ml-1 col px-0">
                   <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
-                <span class="px-2 mx-3">~</span>
-                <div class="select mr-1">
+                <span class="px-2 col-12 text-center" style="height:35px;line-height:35px">~</span>
+                <div class="select mr-1 col-7 px-0">
                   <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
                 </div>
-                <div class="select ml-1">
+                <div class="select ml-1 col px-0">
                   <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
               </div>
@@ -689,8 +694,8 @@
                 </button>
               </div>
               <datalist id="scheduleTabContentList"></datalist>
-              <div class="row mx-0" style="margin-top:35px">
-                <div class="col mr-1 px-0 flex-column">
+              <div class="row mx-0" style="margin-top:30px">
+                <div class="col-12 px-0 flex-column">
                   <div class="d-flex">담당자</div>
                   <div class="d-flex mt-3">
                     <button id="scheduleManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left" aria-label="담당자 선택">
@@ -699,17 +704,18 @@
                     <div class="dropdown-menu" aria-labelledby="scheduleManager" role="menu" id="scheduleManagerList"></div>
                   </div>
                 </div>
-                <div class="col ml-1 px-0 flex-column">
+              </div>
+              <div class="row mx-0" style="margin-top:35px">
+                <div class="col-12 px-0 flex-column">
                   <div class="d-flex">고객 메모</div>
                   <input type="text" class="form-control form-control-sm han mt-3" id="scheduleEtc" name="etc" aria-label="고객 메모" placeholder="고객 메모">
                 </div>
               </div>
-                
             </form>
             <div class="row mx-0 mt-5">
-              <button type="button" class="btn btn-white updateScheduleElement col mr-1" id="deleteScheduleBtn">삭제</button>
+              <!--<button type="button" class="btn btn-white updateScheduleElement col mr-1" id="deleteScheduleBtn">삭제</button>-->
               <button type="button" class="btn btn-primary updateScheduleElement col mx-1" id="resendAlrimScheduleBtn">알림톡 재전송</button>
-              <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">예약 추가 완료</button>
+              <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">저장</button>
             </div>
           </div>
         </div>
@@ -784,7 +790,7 @@
         </div>
       </div>-->
             
-      <div id="scheduleModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
+      <!--<div id="scheduleModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header p-0">
@@ -938,7 +944,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
     
       <div id="salesCalendarModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="매출 조회기간 설정" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -950,7 +956,7 @@
         </div>
       </div>
 
-      <div id="tutorialModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
+      <!--<div id="tutorialModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -1003,7 +1009,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
       
     </div>
   </div>

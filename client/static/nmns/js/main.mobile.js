@@ -284,7 +284,7 @@
 										왓쇼에 오신걸 환영해요 &gt;_&lt;<br><br>모바일 버전에서는<br>노쇼, 예약, 일정, 고객, 메뉴 추가 기능을 뺀<br>모든 서비스를 이용할 수 있어요.<br>추가 기능은 PC에서 이용할 수 있답니다!\
 									</div>\
 								</div>\
-								<div class="modal-footer" style="padding:0 25px;height:57px"><input type="checkbox" id="notAnyMore"><label for="notAnyMore"></label><label for="notAnyMore" style="font-size:12px;height:22px;line-height:27px;margin-left:0">다시 보지 않기</label><button type="button" class="btn btn-flat ml-auto px-0" style="font-size:14px" data-dismiss="modal">닫기</button></div>\
+								<div class="modal-footer" style="padding:0 25px;height:57px"><input type="checkbox" id="notAnyMore"><label for="notAnyMore"></label><label for="notAnyMore" style="font-size:12px;margin-left:0">다시 보지 않기</label><button type="button" class="btn btn-flat ml-auto px-0" style="font-size:14px" data-dismiss="modal">닫기</button></div>\
 							</div>\
 						</div>\
 					</div>');
@@ -494,6 +494,7 @@
         });
         
         $(id).val(null);
+        setSchedules();
       };
     }
 
@@ -1139,8 +1140,7 @@
         NMNS.socket.emit('get menu list');//TODO : needed api alignment
         $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
-      $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
-      
+
       $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
         if(e.schedule){// update schedule
@@ -2398,8 +2398,8 @@
       }
     });
 		$("#exitDetailMenu").on("touch click", function(){
-			$("#detailMenuTitle").hide().prev().show();
-			$(this).hide().prev().show();
+			/*$("#detailMenuTitle").hide().prev().show();
+			$(this).hide().prev().show();*/
 			history.back();
 		});
     $('#mainMenu').on('shown.bs.popover', function(){
@@ -2878,7 +2878,7 @@
         document.scrollingElement.scrollTop = 0;
         $("#mainAside").removeClass('sidebar-toggled');
         if(!isHistory){
-          history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
+          history.pushState({link:$(this).data('link'), type:$(this).data('type'), title:$(this).data('title')}, "", $(this).data('history'));
         }
 				if(!$(this).data('type') === 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
@@ -3064,6 +3064,13 @@
         $("#mainSearchNoShow").hide().prev().show().prev().show();
       }
     }
+    if(!state.state || state.state.type !== 'detail'){// 뒤로가기 제거
+			$("#detailMenuTitle").hide().prev().show();
+			$("#exitDetailMenu").hide().prev().show();
+		}else{
+		  $("#detailMenuTitle").html(state.state.title).show().prev().hide();
+	    $(".announcementMenuLink").hide().next().show();
+		}
   }
   $(document).on("scroll", function(){
     if($("#mainCalendar").is(":visible")){

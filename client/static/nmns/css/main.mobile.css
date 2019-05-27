@@ -19,7 +19,8 @@ body{
 input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator{
     display:none;
 }
-
+input[type=checkbox]:not(.custom-control-input) + label{width:11px;height:11px;line-height:11px;margin-right:8px;position:relative}input[type=checkbox]:not(.custom-control-input) + label:before{display: inline-block;background-image:url('/nmns/img/uncheck.svg');background-size:11px;position:absolute;width:11px;height:11px;line-height:11px;content:'';background-repeat:no-repeat;margin-right:8px}input[type=checkbox]:not(.custom-control-input):checked + label:before{background-image: url('/nmns/img/check.svg')}
+input[type=checkbox]:not(.custom-control-input) + label + label{vertical-align:middle}
 .new {
     font-size: .65rem;
     padding: 0;
@@ -79,6 +80,16 @@ input[name='etc'],
 .icon-arrow-right{
   content: url('/nmns/img/Calendar_left.svg');
   transform:rotate(180deg);
+  vertical-align: middle;
+}
+.icon-arrow-white.icon-arrow-left{
+  content: url('/nmns/img/arrow_bottom_white.svg');
+  transform:rotate(90deg);
+  vertical-align: middle;
+}
+.icon-arrow-white.icon-arrow-right{
+  content: url('/nmns/img/arrow_bottom_white.svg');
+  transform:rotate(-90deg);
   vertical-align: middle;
 }
 .icon-email-ok{
@@ -868,7 +879,7 @@ button:focus {
     height: 150px;
 }
 
-#alrimTab .subText, #scheduleModal .subText, #customerModal .subText{
+#alrimTab .subText, .scheduleMenu .subText, #customerModal .subText{
     opacity:0.5;
     font-size:11px;
     line-height:1.18;
@@ -1610,7 +1621,7 @@ button.form-control {
     opacity:1;
 }
 
-#scheduleModal #scheduleTabContents input:not(:last-child){
+#scheduleTabContents input:not(:last-child){
     margin-bottom:10px;
 }
 
@@ -1626,21 +1637,6 @@ button.form-control {
 #scheduleTabContents{
   max-height:200px;
   overflow-y:auto;
-}
-
-#scheduleModal .updateScheduleElement{
-  display:none;
-}
-
-#scheduleModal.update .updateScheduleElement{
-  display:inline-flex;
-}
-#scheduleModal.update button.updateScheduleElement{
-  display:inline-block;
-}
-
-#scheduleModal.update .createScheduleElement{
-  display:none;
 }
 
 #salesLoading{
