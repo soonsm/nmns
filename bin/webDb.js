@@ -71,7 +71,7 @@ function query(params) {
                 logger.log("Unable to query. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                logger.log("Query succeeded. Data:", util.format(data.Items));
+                // logger.log("Query succeeded. Data:", util.format(data.Items));
                 resolve(data.Items);
             }
         });

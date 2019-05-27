@@ -350,8 +350,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         /**
          * 매출내역
          */
-        addEvent(GetSalesList, salesHandler.getDaySalesHist);
-        addEvent(GetReservationSales, salesHandler.getSalesHistForReservation);
+        addEvent(GetSalesList, salesHandler.getSalesHist);
+        addEvent(GetReservationSales, salesHandler.getSalesForReservation);
         addEvent(GetMembershipHistory, salesHandler.getMembershipHistory);
         addEvent(SaveSales, salesHandler.saveSales);
         addEvent(AddMembership, salesHandler.addMembershipHistory);

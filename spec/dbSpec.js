@@ -13,9 +13,10 @@ process.env.NODE_ENV = process.nmns.MODE.DEVELOPMENT;
 const db = require('./../bin/newDb');
 const moment = require('moment');
 
+const logger = global.nmns.LOGGER;
 
 let email = 'soonsm@gmail.com';
-/*
+
 describe("NoShow", function() {
 
     let phone = '01011112222';
@@ -616,9 +617,9 @@ describe('Reservation', function () {
         await db.deleteAllReservation(email);
     });
 
-    describe('addReservation(data)', function () {
+    describe('saveReservation(data)', function () {
         it('추가 시 리턴 값 확인', async function () {
-            let result = await db.addReservation(reservation);
+            let result = await db.saveReservation(reservation);
             delete result.timestamp;
             delete result.isAllDay;
             delete result.type;
@@ -627,11 +628,11 @@ describe('Reservation', function () {
             expect(result).toEqual(reservation);
         });
         it('수정 시 리턴 값 확인', async function () {
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             reservation.etc = 'etc2';
 
-            let result = await db.addReservation(reservation);
+            let result = await db.saveReservation(reservation);
             delete result.timestamp;
             delete result.isAllDay;
             delete result.type;
@@ -642,7 +643,7 @@ describe('Reservation', function () {
         it('에러 시 exception', async function () {
             try {
                 delete reservation.email;
-                await db.addReservation(reservation);
+                await db.saveReservation(reservation);
                 fail();
             } catch (e) {
                 expect(e).toBeTruthy();
@@ -654,15 +655,15 @@ describe('Reservation', function () {
        it('start와 end사이 조회 성공', async function(){
            reservation.start = '201905101230';
            reservation.end = '201905201330';
-           await db.addReservation(reservation);
+           await db.saveReservation(reservation);
 
            reservation.start = '201906101230';
            reservation.end = '201906201330';
-           await db.addReservation(reservation);
+           await db.saveReservation(reservation);
 
            reservation.start = '201907101230';
            reservation.end = '201907201330';
-           await db.addReservation(reservation);
+           await db.saveReservation(reservation);
 
            let list = await db.getReservationList(email, '201905211330', '201906091230');
            expect(list.length).toEqual(0);
@@ -684,15 +685,15 @@ describe('Reservation', function () {
 
             reservation.start = '201906101230';
             reservation.end = '201906201330';
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             reservation.start = '201907101230';
             reservation.end = '201907201330';
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             reservation.start = '201905101230';
             reservation.end = '201905201330';
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             let list = await db.getReservationList(email, '201905101230', '201907201330');
 
@@ -709,16 +710,16 @@ describe('Reservation', function () {
         it('조회시 삭제 된거 빼고 리턴', async function(){
             reservation.start = '201906101230';
             reservation.end = '201906201330';
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             reservation.start = '201907101230';
             reservation.end = '201907201330';
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             reservation.start = '201905101230';
             reservation.end = '201905201330';
             reservation.status = 'DELETED'
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             let list = await db.getReservationList(email, '201905101230', '201907201330');
 
@@ -853,7 +854,7 @@ describe('Task', function () {
         });
     });
 });
-*/
+
 describe('Sales', function () {
     let sales, customer, reservation;
     beforeEach(async () => {
@@ -868,7 +869,7 @@ describe('Sales', function () {
             payment: process.nmns.PAYMENT_METHOD.CARD,
             managerId: 'managerId',
             type: process.nmns.SALE_HIST_TYPE.SALES_CARD,
-            scheduleId: 'scheduleId',
+            scheduleId: 'reservationId',
             membershipChange: 0,
             balanceMembership: 0
         };
@@ -904,6 +905,7 @@ describe('Sales', function () {
         await db.deleteAllCustomer(email);
     });
     describe('saveSales', () => {
+
         it('email 없으면 exception', async () => {
             try {
                 await db.saveSales({});
@@ -933,7 +935,7 @@ describe('Sales', function () {
 
         it('매출 내역 저장 확인', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
             let result = await db.saveSales(sales);
 
             let search = await db.getSales(email, sales.id);
@@ -944,7 +946,7 @@ describe('Sales', function () {
 
         it('카드 매출 시 고객 원장의 매출 변동', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
             await db.saveSales(sales);
 
             let member = await db.getCustomer(email, customer.id);
@@ -953,7 +955,7 @@ describe('Sales', function () {
 
         it('현금 매출 시 고객 원장의 매출 변동', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.type = process.nmns.SALE_HIST_TYPE.SALES_CASH;
             await db.saveSales(sales);
@@ -968,7 +970,7 @@ describe('Sales', function () {
 
         it('카드 및 현금 매출 시 고객 원장의 매출 변동', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.type = process.nmns.SALE_HIST_TYPE.SALES_CASH;
             await db.saveSales(sales);
@@ -986,7 +988,7 @@ describe('Sales', function () {
         it('포인트 사용 시 고객 원장의 매출 변동', async () => {
             customer.pointMembership = 100000;
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE;
             await db.saveSales(sales);
@@ -1002,7 +1004,7 @@ describe('Sales', function () {
 
         it('포인트 누적 시 고객 원장의 매출 변동', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD;
             sales.membershipChange = 40000;
@@ -1020,7 +1022,7 @@ describe('Sales', function () {
         it('포인트 증가 시 고객 원장의 매출 변동', async () => {
             customer.pointMembership = 100000;
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT;
             sales.membershipChange = 40000;
@@ -1038,7 +1040,7 @@ describe('Sales', function () {
         it('포인트 감소 시 고객 원장의 매출 변동', async () => {
             customer.pointMembership = 100000;
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT;
             sales.membershipChange = 40000;
@@ -1052,17 +1054,60 @@ describe('Sales', function () {
             expect(member.pointMembership).toEqual(60000);
             expect(result.balanceMembership).toEqual(member.pointMembership);
         });
+
+        it('기존 포인트 누적을 수정 할 때 환불되고 다시 적용되는지 확인', async () => {
+            await db.saveCustomer(customer);
+            await db.saveReservation(reservation);
+
+            sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD;
+            sales.payment = process.nmns.PAYMENT_METHOD.CARD;
+            sales.membershipChange = 40000;
+            sales.price = 30000;
+            await db.saveSales(sales);
+
+            let result = await db.getSales(email, sales.id);
+            let member = await db.getCustomer(email, customer.id);
+
+            expect(member.pointMembership).toEqual(40000);
+            expect(result.balanceMembership).toEqual(40000);
+            expect(member.cardSales).toEqual(30000);
+
+            sales.membershipChange = 30000;
+            sales.price = 25000;
+            await db.saveSales(sales);
+
+            result = await db.getSales(email, sales.id);
+            member = await db.getCustomer(email, customer.id);
+
+            expect(member.pointMembership).toEqual(30000);
+            expect(result.balanceMembership).toEqual(30000);
+            expect(member.cardSales).toEqual(25000);
+
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CASH;
+            sales.payment = process.nmns.PAYMENT_METHOD.CASH;
+            sales.membershipChange = 40000;
+            sales.price = 50000;
+            await db.saveSales(sales);
+
+            result = await db.getSales(email, sales.id);
+            member = await db.getCustomer(email, customer.id);
+
+            expect(member.pointMembership).toEqual(0);
+            expect(result.balanceMembership).toEqual(0);
+            expect(member.cardSales).toEqual(0);
+            expect(member.cashSales).toEqual(50000);
+        });
     });
 
     describe('getSalesHist', () => {
-        it('없으면 빈 array 반환', async ()=>{
-           let list = await db.getSalesHist(email, {});
-           expect(list.length).toEqual(0);
+        it('없으면 빈 array 반환', async () => {
+            let list = await db.getSalesHist(email, {});
+            expect(list.length).toEqual(0);
         });
 
-        it('조회 기간에 맞게 조회 되는지 확인', async ()=>{
+        it('조회 기간에 맞게 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1103,12 +1148,12 @@ describe('Sales', function () {
             expect(list.length).toEqual(0);
         });
 
-        it('customerName 조회 되는지 확인', async ()=>{
+        it('customerName 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
             customer.id = 'customerId2';
             customer.name = '이연복';
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1140,12 +1185,12 @@ describe('Sales', function () {
             expect(list.length).toEqual(3);
         });
 
-        it('item 조회 되는지 확인', async ()=>{
+        it('item 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
             customer.id = 'customerId2';
             customer.name = '이연복';
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1181,12 +1226,12 @@ describe('Sales', function () {
             expect(list.length).toEqual(4);
         });
 
-        it('customerName, item 조회 되는지 확인', async ()=>{
+        it('customerName, item 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
             customer.id = 'customerId2';
             customer.name = '이연복';
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1215,11 +1260,11 @@ describe('Sales', function () {
             expect(list.length).toEqual(1);
         });
 
-        it('scheduleId 조회 되는지 확인', async ()=>{
+        it('scheduleId 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
             reservation.id = 'reservationId2';
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1247,9 +1292,9 @@ describe('Sales', function () {
             expect(list[0].id).toEqual('20190527103055000');
         });
 
-        it('managerId 조회 되는지 확인', async ()=>{
+        it('managerId 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1277,9 +1322,9 @@ describe('Sales', function () {
             expect(list[0].id).toEqual('20190527103055000');
         });
 
-        it('priceStart, priceEnd 조회 되는지 확인', async ()=>{
+        it('priceStart, priceEnd 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1318,9 +1363,9 @@ describe('Sales', function () {
             expect(list.length).toEqual(0);
         });
 
-        it('paymentList 조회 되는지 확인', async ()=>{
+        it('paymentList 조회 되는지 확인', async () => {
             await db.saveCustomer(customer);
-            await db.addReservation(reservation);
+            await db.saveReservation(reservation);
 
             sales.id = '20190524103055000';
             sales.date = '20190524';
@@ -1351,6 +1396,45 @@ describe('Sales', function () {
             await db.saveSales(sales);
 
             let list = await db.getSalesHist(email, {paymentList: [process.nmns.PAYMENT_METHOD.CARD, process.nmns.PAYMENT_METHOD.MEMBERSHIP]});
+            expect(list.length).toEqual(3);
+        });
+
+        it('typeList 조회 되는지 확인', async () => {
+            await db.saveCustomer(customer);
+            await db.saveReservation(reservation);
+
+            sales.id = '20190524103055000';
+            sales.date = '20190524';
+            sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CARD;
+            sales.payment = process.nmns.PAYMENT_METHOD.CARD;
+            await db.saveSales(sales);
+
+            sales.id = '20190525103055000';
+            sales.date = '20190525';
+            sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CARD;
+            sales.payment = process.nmns.PAYMENT_METHOD.CARD;
+            await db.saveSales(sales);
+
+            sales.id = '20190526103055000';
+            sales.date = '20190526';
+            sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.SALES_CASH;
+            sales.payment = process.nmns.PAYMENT_METHOD.CASH;
+            await db.saveSales(sales);
+
+            sales.id = '20190527103055000';
+            sales.date = '20190527';
+            sales.time = '1030';
+            sales.type = process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE;
+            sales.payment = process.nmns.PAYMENT_METHOD.MEMBERSHIP;
+            await db.saveSales(sales);
+
+            let list = await db.getSalesHist(email, {typeList: [process.nmns.PAYMENT_METHOD.CARD]});
+            expect(list.length).toEqual(2);
+
+            list = await db.getSalesHist(email, {typeList: [process.nmns.PAYMENT_METHOD.CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE]});
             expect(list.length).toEqual(3);
         });
     });

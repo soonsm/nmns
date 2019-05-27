@@ -28,7 +28,7 @@ function get(param) {
     return new Promise((resolve) => {
         docClient.get(param, (err, data) => {
             if (!err) {
-                logger.log("GetItem succeeded:", JSON.stringify(data.Item, null, 2));
+                // logger.log("GetItem succeeded:", JSON.stringify(data.Item, null, 2));
                 resolve(data.Item);
             } else {
                 logger.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
@@ -46,7 +46,7 @@ function put(param) {
                 logger.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2), " param: ", param);
                 resolve(null);
             } else {
-                logger.log("Added item:", JSON.stringify(param.Item));
+                // logger.log("Added item:", JSON.stringify(param.Item));
                 resolve(param.Item);
             }
         });
@@ -60,7 +60,7 @@ function queryRaw(params) {
                 logger.log("Unable to query. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                logger.log("Query succeeded. Data:", util.format(data.Items));
+                // logger.log("Query succeeded. Data:", util.format(data.Items));
                 resolve(data);
             }
         });
@@ -121,7 +121,7 @@ function scanRaw(params) {
                 logger.log("Unable to scan. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                logger.log("Scan succeeded. Data:", util.format(data.Items));
+                // logger.log("Scan succeeded. Data:", util.format(data.Items));
                 resolve(data.Items);
             }
         });
@@ -152,7 +152,7 @@ function update(params) {
                 logger.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
                 resolve(false);
             } else {
-                logger.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                // logger.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
                 resolve(true);
             }
         });
@@ -167,7 +167,7 @@ function del(param) {
                 logger.error("Unable to delete item. Error JSON:", JSON.stringify(err), " param: ", param);
                 resolve(false);
             } else {
-                logger.log("DeleteItem succeeded:", JSON.stringify(data));
+                // logger.log("DeleteItem succeeded:", JSON.stringify(data));
                 resolve(data.Attributes);
             }
         });
@@ -814,7 +814,8 @@ exports.deleteAllPush = async function (email) {
  * end: YYYYMMDDHHmm,
  * id: Client 생성
  * member: 고객 아이디,
- * contentList: list, 일정 리스트,
+ * contentList: list, 예약 리스트
+ * salesList: list, 연결된 매출 리스트
  * manager: 담당 매니저 아이디,
  * etc: 고객 메모
  * isAllDay: boolean
@@ -823,7 +824,7 @@ exports.deleteAllPush = async function (email) {
  * type: 'R',
  * **/
 
-exports.addReservation = async function (data) {
+exports.saveReservation = async function (data) {
     let item = (({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate}) => ({
         email,
         timestamp,
@@ -871,6 +872,10 @@ exports.addReservation = async function (data) {
         throw `contentList 값이 올바르지 않습니다.(${item.contentList})`;
     }
 
+    if (item.salesList && !Array.isArray(item.salesList)) {
+        throw `salesList 값이 올바르지 않습니다.(${item.salesList})`;
+    }
+
     if (item.cancelDate && !!moment(item.cancelDate, 'YYYYMMDDHHmmss').isValid()) {
         throw `cancelDate 값이 올바르지 않습니다.(${item.cancelDate})`;
     }
@@ -892,7 +897,7 @@ exports.getReservation = async function(email, id){
     let list = await query({
         TableName: process.nmns.TABLE.Reservation,
         KeyConditionExpression: "email = :email",
-        FilterExpression: '#id <> :id',
+        FilterExpression: '#id = :id',
         ExpressionAttributeNames: {
             "#id": "id",
         },
@@ -1119,6 +1124,27 @@ let commonValidationForMembershipModify = function(data){
         throw `멤버십 변경 값은 양수 정수입니다.(${data.membershipChange})`;
     }
 };
+let changePointBalance = function(customer, isRefund, sales){
+    let type = sales.type;
+    let multiply = isRefund === true ? -1 : 1;
+    switch(type){
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
+            sales.balanceMembership = customer.pointMembership - sales.membershipChange * multiply;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
+            sales.balanceMembership = customer.pointMembership + sales.membershipChange * multiply;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
+            sales.balanceMembership = customer.pointMembership + sales.membershipChange * multiply;
+            break;
+        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
+            sales.balanceMembership = customer.pointMembership - sales.membershipChange * multiply;
+            break;
+        default:
+            break;
+    }
+    return sales;
+}
 let changeMemberSalesStatistic = function(customer, isRefund, sales){
 
     let multiply = isRefund === true ? 1 : -1;
@@ -1153,7 +1179,8 @@ let changeMemberSalesStatistic = function(customer, isRefund, sales){
 }
 
 exports.saveSales = async function(data){
-    let sales = (({email, id, date, time, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}) => ({email, id, date, time, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}))(data);
+    let sales = (({email, id, date, time, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}) =>
+        ({email, id, date, time, item, price, customerId, payment, managerId, type, scheduleId, membershipChange, balanceMembership}))(data);
     if (!sales.email || !sales.id || !sales.customerId || !sales.item || !sales.date || !sales.time) {
         throw 'email, id, date, time, customerId, item는 필수입니다.'
     }
@@ -1180,12 +1207,8 @@ exports.saveSales = async function(data){
 
     switch(type){
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
-            commonValidationForMembershipModify(sales);
-            sales.balanceMembership = customer.pointMembership - sales.membershipChange;
-            break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
             commonValidationForMembershipModify(sales);
-            sales.balanceMembership = customer.pointMembership + sales.membershipChange;
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
             commonValidationForMembershipModify(sales);
@@ -1195,11 +1218,9 @@ exports.saveSales = async function(data){
                 throw `멤버십 적립 시에는 결제수단이 필요합니다. (${sales.payment})`;
             }
 
-            sales.balanceMembership = customer.pointMembership + sales.membershipChange;
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
             sales.membershipChange = sales.price;
-            sales.balanceMembership = customer.pointMembership - sales.price;
         case process.nmns.SALE_HIST_TYPE.SALES_CARD:
         case process.nmns.SALE_HIST_TYPE.SALES_CASH:
             if(!await exports.getReservation(sales.email, sales.scheduleId)){
@@ -1213,9 +1234,22 @@ exports.saveSales = async function(data){
             break;
     }
 
-    changeMemberSalesStatistic(customer, false, sales);
-    await exports.saveCustomer(customer);
+    let old = await exports.getSales(sales.email, sales.id);
+    if(old){
+        //수정인 경우 기존꺼 환불처리 해야 함
+        old = changePointBalance(customer, true, old);
+        await put({
+            TableName: process.nmns.TABLE.Sales,
+            Item: old
+        });
+        customer = changeMemberSalesStatistic(customer, true, old);
+        await exports.saveCustomer(customer);
+    }
 
+    changePointBalance(customer, false, sales);
+    changeMemberSalesStatistic(customer, false, sales);
+
+    await exports.saveCustomer(customer);
 
     return await put({
         TableName: process.nmns.TABLE.Sales,
@@ -1322,6 +1356,9 @@ exports.getSalesHist = async function(email, options){
 
     let list = (await query(param)).filter(sales => {
         if(options.paymentList && !options.paymentList.includes(sales.payment)){
+            return false;
+        }
+        if(options.typeList && !options.typeList.includes(sales.type)){
             return false;
         }
         return true;

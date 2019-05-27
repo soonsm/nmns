@@ -3,24 +3,8 @@
 const logger = global.nmns.LOGGER;
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const moment = require('moment');
-
-
-/**
- 매출 조회 Data Model
- id: 매출 id(서버 생성)
- type: MEMBERSHIP_ADD(멤버십 적립), MEMBERSHIP_USE(멤버십 사용), MEMBERSHIP_INCREMENT(멤버십 수정 증가), MEMBERSHIP_DECREMENT(멤버십 수정 감소), SALES_CARD(카드매출), SALES_CASH(현금매출)
- date: 매출날짜
- time: 매출시간
- scheduleId: 예약 아이디
- customerId: 고객 아이디
- item: 매출 내용
- payment: 결제수단, CASH, CARD, MEMBERSHIP
- price: 금액(멤버십 사용의 경우 사용된 멤버십 금액)
- membershipChange: 멤버십 변동값
- managerId: 매니저 아이디
- isDeleted: 삭제여부 boolean
- */
 
 /**
  * 함수 생성기
@@ -33,6 +17,10 @@ let fnTemplate = function(preFn, mainFn, postFn, exceptionFn){
         let status=false,resultData, message;
         try{
 
+            if(!user){
+                throw 'user가 없습니다.';
+            }
+
             if(preFn){
                 data = await preFn(user, data);
             }
@@ -40,7 +28,7 @@ let fnTemplate = function(preFn, mainFn, postFn, exceptionFn){
             resultData = await mainFn(user, data);
 
             if(postFn){
-                resultData = await postFn(user, resultData);
+                resultData = await postFn(user, resultData, data);
             }
             status = true;
         }catch(e){
@@ -61,85 +49,28 @@ let fnTemplate = function(preFn, mainFn, postFn, exceptionFn){
     return returnFn;
 }
 
-/**
- * 매출 조회
- * @param
- * id, typeList(매출내역에 포함 할 매출 type list), start(매출날짜 시작일), end(매출날짜 종료일),
- * scheduleId(예약아이디), customerId(고객 아이디), item(매출 내용),
- * paymentList(매출내역에 포함 할 결제수단 리스트), priceStart(매출 가격 조회 최소 금액), priceEnd(매출 가격 조회 최대 금액),
- * managerId(매니저 아이디)
- * @returns {Promise<void>}
- */
-let getSalesHistList = async function(user, data){
-    if(!user){
-        throw '사용자 정보가 없습니다.';
-    }
-
-    let saleHistList = user.saleHistList || [];
-
-    saleHistList = await saleHistList.filter(saleHist => {
-        if(saleHist.isDeleted){
-            return false;
-        }else if(data.id && data.id !== saleHist.id){
-            return false;
-        }else if(data.typeList && !data.typeList.includes(saleHist.type)){
-            return false;
-        }else if(data.start && saleHist.date < data.start){
-            return false;
-        }else if(data.end && saleHist.date > data.end){
-            return false;
-        }else if(data.scheduleId && data.scheduleId !== saleHist.scheduleId){
-            return false;
-        }else if(data.customerId && data.customerId !== saleHist.customerId){
-            return false;
-        }else if(data.item && !saleHist.item.includes(data.item)){
-            return false;
-        }else if(data.paymentList && !data.paymentList.includes(saleHist.payment)){
-            return false;
-        }else if(data.priceStart && data.priceStart > saleHist.price){
-            return false;
-        }else if(data.priceEnd && data.priceEnd < saleHist.price){
-            return false;
-        }else if(data.managerId && data.managerId !== saleHist.managerId) {
-            return false;
-        }else if(data.customerName){
-            let memberList = user.memberList || [];
-            let ids = memberList.filter(member => member.name && member.name.includes(data.customerName)).map(member => member.id);
-            if(ids.includes(saleHist.customerId)){
-                return true;
-            }
-            return false;
-        }
-        return true;
-    });
-
-    return saleHistList;
-};
 
 /**
- * 일별 매출내역 조회(카드 매출, 현금 매출, 멤버십 충전)
- * get sales list
- * @param data
- * @returns {Promise<void>}
+ 매출 조회(카드매출/현금매출/멤버십 적립)
+ 요청 위치 : 'get sales list',
+ 데이터 : {'start':${조회 시작일(YYYYMMDD), string}, 'end':${조회 종료일(YYYYMMDD), string}, 'customerName': ${고객이름(특정 고객에 대해서 조회 할 때), string, optional}, 'customerId': ${고객아이디(특정 고객에 대해서 조회 할 때), string, optional}, 'item': ${시술 내용, string, optional}, 'scheduleId' : ${매출과 연관된 예약 아이디, string, optional}, 'paymentList': ${조회에 포함 할 결제수단 리스트, list[string], optional, 값: CASH, CARD, MEMBERSHIP, optional}, 'priceStart' : ${조회에 포함 할 매출 최소 가격, number, optional}, 'priceEnd' : ${조회에 포함 할 매출 최대 가격, number, optional}, 'managerId' : ${담당자 아이디(특정 담당자의 매출에 대해 조회 할 때), string, optional}}
+ 응답 형식 : 'data': {"totalSalesCount":${총 검색된 매출 건수, number}, "totalSalesAmount":${총 검색된 매출액 합계, number}, "totalSalesCard":${총 검색된 카드매출 건수, number}, "totalSalesCash":${총 검색된 현금매출 건수, number}, "totalSalesMembership":${총 검색된 매출 중 멤버십 충전 건수, number}, "sales":[{ 'id' : ${매출 id, string}, 'type' : ${매출 종류, string, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용)}, **'date' : ${매출날짜(YYYYMMDD), string}, 'time' : ${매출시간(hhmmss), string}, ** 'scheduleId' : ${매출과 연관된 예약 아이디, string}, 'customerId' : ${매출을 일으킨 고객 아이디, string}, 'customerName':${고객 이름, string}, 'item' : ${매출 내용, string}, 'payment' : ${결제수단(CASH, CARD, MEMBERSHIP), string}, 'price' : ${금액(멤버십 사용의 경우 사용된 멤버십), number}, 'managerId': ${담당자 아이디(매출관 연관된), string}} ]}
  */
-exports.getDaySalesHist = fnTemplate((user, data) => {
+exports.getSalesHist = fnTemplate(null, async function(user, data){
     if(!data.start || !moment(data.start, 'YYYYMMDD').isValid()){
-        throw `올바른 날짜가 아닙니다.(${data.start})`;
+        throw `올바른 날짜가 아닙니다.(start: ${data.start})`;
     }
 
     if(!data.end || !moment(data.end, 'YYYYMMDD').isValid()){
-        throw `올바른 매출 날짜가 아닙니다.(${data.end})`;
+        throw `올바른 날짜가 아닙니다.(end: ${data.end})`;
     }
 
     data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH];
 
-    delete data.id;
-
-    return data;
-}, getSalesHistList, async function(user, list){
+    return await newDb.getSalesHist(user.email, data);
+}, async function(user, list){
     let totalSalesCount = list.length, totalSalesAmount =0;
     let totalSalesCard=0, totalSalesCash=0,totalSalesMembership=0;
-    let salesList = [];
 
     list.forEach(sales => {
         totalSalesAmount += sales.price;
@@ -151,16 +82,14 @@ exports.getDaySalesHist = fnTemplate((user, data) => {
             totalSalesMembership += sales.price;
         }
         sales.customerName = user.memberList.find(member => member.id === sales.customerId);
-        salesList.push(sales);
     });
-    salesList.sort((s1,s2) => s2.date - s1.date);
     return {
         totalSalesCount: totalSalesCount,
         totalSalesAmount: totalSalesAmount,
         totalSalesCard: totalSalesCard,
         totalSalesCash: totalSalesCash,
         totalSalesMembership: totalSalesMembership,
-        sales: salesList
+        sales: list
     };
 });
 
@@ -200,33 +129,36 @@ exports.getDaySalesHist = fnTemplate((user, data) => {
  * priceCard, priceCash, priceMembership의 경우는 item이 메뉴에 등록되어 있는 경우에 제공된다.
  * @type {Promise<*>}
  */
-exports.getSalesHistForReservation = fnTemplate((user, data) => {
+exports.getSalesForReservation = fnTemplate(async (user, data) => {
     let scheduleId = data.scheduleId;
-    let reservation = user.reservationList.find(reservation => reservation.id === scheduleId);
+    if(!scheduleId){
+        throw '예약아이디는 필수 입니다.';
+    }
+    let reservation = await newDb.getReservation(user.email, scheduleId);
     if(!reservation){
         throw `예약아이디 ${scheduleId}로 조회되는 예약이 없습니다.`;
     }
 
     data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH];
-
+    data.reservation = reservation;
     delete data.id;
 
     return data;
 }, async function(user, data){
-    let list = await getSalesHistList(user, data);
-    let reservation = user.reservationList.find(reservation => reservation.id === data.scheduleId);
-
-    if((!list || list.length === 0) && reservation.type === 'R'){
+    let list = await newDb.getSalesHist(user.email, {scheduleId: data.scheduleId, typeList: data.typeList});
+    if(list.length == 0){
+        let reservation = data.reservation;
         let contentList = reservation.contentList || [];
-
+        let customer = await newDb.getCustomer(user.email, reservation.member);
         let salesTemplateList = [];
 
         for(let i=0; i<contentList.length; i++){
-            let content = contentList[i].value;
+            let content = contentList[i];
             let template = {
                 item: content,
-                customerId: reservation.memberId,
-                managerId: reservation.manager
+                customerId: reservation.member,
+                managerId: reservation.manager,
+                balanceMembership: customer.pointMembership
             };
 
             salesTemplateList.push(template);
@@ -236,11 +168,9 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
     }
 
     if(list && list.length > 0){
-        let balanceMembership = user.memberList.find(member => member.id === reservation.memberId).pointMembership || 0;
         let menuList = user.menuList || [];
         for(let i=0; i<list.length; i++){
             let menu = menuList.find(menu => menu.name === list[i].item);
-            list[i].balanceMembership = balanceMembership;
             if(menu){
                 list[i].priceCash =  menu.priceCash;
                 list[i].priceCard = menu.priceCard;
@@ -259,180 +189,30 @@ exports.getSalesHistForReservation = fnTemplate((user, data) => {
  * 응답 형식 : 'data': [ 'id' : ${id, string}, 'customerId' : ${멤버십을 소유한 고객 아이디, string}, 'type' : ${종류, string, MEMBERSHIP_ADD(적립), MEMBERSHIP_INCREMENT(증가), MEMBERSHIP_DECREMENT(감소), MEMBERSHIP(사용)}, 'date' : ${날짜(YYYYMMDD), string}, 'time' : ${시간(hhmmss), string}, 'scheduleId' : ${멤버십 사용인 경우 연관된 예약 아이디, string, optional}, 'item' : ${멤버십 증감 내용, string}, 'payment' : ${멤버십 적립 결제수단(CASH, CARD), string, optional}, 'price' : ${ 멤버십 적립 시 계산한 금액, number, optional}, 'membershipChange' : ${멤버십 증감 값, number} 'managerId': ${멤버십 사용인 경우 연관된 담당자 아이디, string, optional}]
  * @type {Promise<function(*=): {status: boolean, data: *, message: *}>}
  */
-exports.getMembershipHistory = fnTemplate((user, data) => {
+exports.getMembershipHistory = fnTemplate(null, async (user, data) => {
     let customerId = data.customerId;
-    let customer = user.memberList.find(member => member.id === customerId);
+    if(!customerId){
+        throw '고객 아이디는 필수입니다.';
+    }
+    let customer = await newDb.getCustomer(user.email, customerId);
     if(!customer){
         throw `고객아이디 ${customerId}로 조회되는 고객이 없습니다.`;
     }
 
     data.typeList = [process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT];
 
-    delete data.id;
-
-    return data;
-
-}, getSalesHistList, async function(user, list){
-    list.forEach(sales => {
-        sales.balanceMembership = sales.pointMembershipAtThatTime || 0;
-        if(sales.type === process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE){
-            sales.membershipChange = sales.price;
-        }
-    });
-    return list;
+    return await newDb.getSalesHist(user.email, data);
 });
 
-/**
- * 고객의 누적 포인트, 누적 카드 매출, 누적 현금 매출 변경
- * @param member
- * @param isRefund
- * @param saleHist
- * @returns {*}
- */
-let changeMemberSalesStatistic = function(member, isRefund, saleHist){
-
-    let multiply = isRefund === true ? 1 : -1;
-
-    switch(saleHist.type){
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
-            member.pointMembership += multiply * saleHist.membershipChange;
-            break;
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
-            member.pointMembership -= multiply * saleHist.membershipChange;
-            break;
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
-            member.pointMembership = member.pointMembership - multiply*saleHist.membershipChange;
-            if(saleHist.payment === process.nmns.PAYMENT_METHOD.CARD){
-                member.cardSales -= saleHist.price * multiply;
-            }else if(saleHist.payment === process.nmns.PAYMENT_METHOD.CASH){
-                member.cashSales -= saleHist.price * multiply;
-            }
-            break;
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
-            member.pointMembership += multiply * saleHist.price;
-            break;
-        case process.nmns.SALE_HIST_TYPE.SALES_CARD:
-            member.cardSales -= saleHist.price * multiply;
-            break;
-        case process.nmns.SALE_HIST_TYPE.SALES_CASH:
-            member.cashSales -= saleHist.price * multiply;
-            break;
-    }
-    return member;
-}
 
 /**
- * 매출 저장(data.id 없으면 추가, 있으면 업데이트)
- * @param email
- * @param data
- * @returns {Promise<void>}
+ 요청 위치 : 'save sales'
+ 데이터 : [{'id':${매출 아이디, optional, 매출 내역을 저장하는 timestamp로써 YYYYMMDDHHmmssSSS 형태여야 함}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'price': ${결제 금액, number}}]
+ 응답 형식: 'data':[{'id':${매출 아이디}, 'date':${매출 날짜(YYYYMMDD), string}, 'time':${매출시간(hhmmss), string}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'price': ${결제 금액, number}}]
+ 요청 데이터에 id가 없으면 매출 내역을 추가한다.
+ 요청 데이터에 id가 있으면 기존 매출 내역을 수정한다.
  */
-let saveSalesHist = function(user, data){
-    if(!user){
-        throw '사용자 정보가 없습니다.';
-    }
-
-    let type = data.type;
-    if(!type || !process.nmns.isValidSaleHistType(type)){
-        throw `올바른 매출 종류가 아닙니다.(${type})`;
-    }
-
-    if(!data.date || !moment(data.date, 'YYYYMMDD').isValid()){
-        throw `올바른 매출 날짜가 아닙니다.(${data.date})`;
-    }
-
-    if(!data.time || !moment(data.time, 'hhmmss').isValid()){
-        throw `올바른 매출 시간이 아닙니다.(${data.time})`;
-    }
-
-    if(!data.customerId) {
-        throw '고객 아이디가 없습니다.';
-    }
-
-    if(!data.item){
-        throw '매출 내용이 있어야 합니다.';
-    }
-
-    let member = user.memberList.find(member => member.id === data.customerId);
-    if(!member){
-        throw `고객 아이디로 조회되는 고객이 없습니다.(${data.customerId})`;
-    }
-
-    member.pointMembership = member.pointMembership || 0;
-    member.cardSales = member.cardSales || 0;
-    member.cashSales = member.cashSales || 0;
-
-    let commonValidationForMembership = function(data){
-        if(isNaN(data.membershipChange) || data.membershipChange <= 0){
-            throw `멤버십 변경 값은 양수 정수입니다.(${data.membershipChange})`;
-        }
-    };
-
-    let commonValidationForReservation = function(data){
-        if(!user.reservationList.find(reservation => reservation.id === data.scheduleId)){
-            throw `예약아아디가 없거나 예약아이디로 예약이 조회되지 않습니다.(${data.scheduleId})`;
-        }else if(!data.managerId){
-            throw '매출내역 추가에 매니저 아이디가 필요합니다.';
-        }else if(isNaN(data.price) || data.price <= 0){
-            throw `매출내역 추가에 양수 정수인 금액 값이 필요합니다.(${data.price})`;
-        }else if(!data.itemId){
-            throw '매출내역에 시술 아이디가 필요합니다.';
-        }
-        data.payment = data.type;
-    }
-
-    switch(type){
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT:
-            commonValidationForMembership(data);
-            data.pointMembershipAtThatTime = member.pointMembership - data.membershipChange;
-            break;
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT:
-            commonValidationForMembership(data);
-            data.pointMembershipAtThatTime = member.pointMembership + data.membershipChange;
-            break;
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
-            commonValidationForMembership(data);
-            if(isNaN(data.price) || data.price <= 0){
-                throw `멤버십 적립 시에는 양수 정수인 금액 값이 필요합니다.(${data.price})`;
-            }else if(![process.nmns.PAYMENT_METHOD.CASH, process.nmns.PAYMENT_METHOD.CARD].includes(data.payment)){
-                throw `멤버십 적립 시에는 결제수단이 필요합니다. (${data.payment})`;
-            }
-
-            data.pointMembershipAtThatTime = member.pointMembership + data.membershipChange;
-            break;
-        case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE:
-            data.pointMembershipAtThatTime = member.pointMembership - data.membershipChange;
-        case process.nmns.SALE_HIST_TYPE.SALES_CARD:
-        case process.nmns.SALE_HIST_TYPE.SALES_CASH:
-            commonValidationForReservation(data);
-            break;
-    }
-
-    changeMemberSalesStatistic(member, false, data);
-
-
-    let saleHistList = user.saleHistList || [];
-    if(data.id){
-        let salesHist = saleHistList.find(salesHist => salesHist.id === data.id);
-        if(salesHist){
-            salesHist.isDeleted = false;
-            for(let key in salesHist){
-                salesHist[key] = data[key];
-            }
-        }else{
-            saleHistList.push(data);
-        }
-    }else{
-        data.id =  moment().format('YYYYMMDDhhmmss.SSS');
-        saleHistList.push(data);
-    }
-
-    user.saleHistList = saleHistList;
-
-    return data;
-}
-
-let saveSalesHistList = async function(user, list){
+exports.saveSales = fnTemplate(null, async function(user, list){
     for(let i =0; i<list.length; i++){
         let data = list[i];
 
@@ -441,34 +221,20 @@ let saveSalesHistList = async function(user, list){
         }
 
         data.date = moment().format('YYYYMMDD');
-        data.time = moment().format('hhmmss');
+        data.time = moment().format('HHmmss');
 
-        data = saveSalesHist(user, data);
+        data.email = user.email;
+        await newDb.saveSales(data);
     }
 
     return list;
-}
-
-/**
- * 예약에서 매출 저장하기
- * 요청 위치 : 'save sales',
- * 데이터 : [{'id':${매출 아이디, optional}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'payment': ${결제수단, CASH, CARD, MEMBERSHIP, string}, 'price': ${결제 금액, number}}]
- * 응답 형식: [{'id':${매출 아이디}, 'date':${매출 날짜(YYYYMMDD), string}, 'time':${매출시간(hhmmss), string}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'payment': ${결제수단, CASH, CARD, MEMBERSHIP, string}, 'price': ${결제 금액, number}}]
- * 요청 데이터에 id가 없으면 매출 내역을 추가한다.
- * 요청 데이터에 id가 있으면 기존 매출 내역을 업데이트 한다.
- * @param data
- * @returns {Promise<void>}
- */
-exports.saveSales = fnTemplate(null, saveSalesHistList, async function(user, data){
-    await db.setWebUser(user);
-    return data;
 });
 
 /**
- * 멤버십 증감 내역 추가하기(멤버십 적립, 멤버십 수정(증/감))
- * add membership
- * @param data
- * @returns {Promise<void>}
+ * 멤버십 적립: 돈을 내고 멤버십을 적립하는 경우
+ * 멤버십 임의 수정: 매장에서 고객에게 멤버십을 환불해주거나, 멤버십 적립 시 오기입으로 인해 수정이 필요 할 때 사용
+ * 요청 위치 : 'add membership', 데이터: {'id':${리턴으로 돌려줘야 하는 값, string}, 'type':${종류, MEMBERSHIP_ADD(적립), MEMBERSHIP_INCREMENT(증가), MEMBERSHIP_DECREMENT(감소), string}, 'customerId':${멤버십 보유 고객 아이디, string}, 'item':${멤버십 증감 내용, string}, 'payment': ${멤버십 적립의 경우 결제수단, CASH, CARD, string, optional}, 'price': ${결제 금액, number}, 'membershipChange': ${멤버십 변동 값(항상 양수), number}}
+ * 응답 형식: 'data':{'id':${요청시 전송한 값}, 'date':${날짜(YYYYMMDD), string}, 'time':${시간(hhmmss), string}, 'type':${종류, MEMBERSHIP_ADD(적립), MEMBERSHIP_INCREMENT(증가), MEMBERSHIP_DECREMENT(감소), string}, 'customerId':${멤버십 보유 고객 아이디, string}, 'item':${멤버십 증감 내용, string}, 'payment': ${멤버십 적립의 경우 결제수단, CASH, CARD, string, optional}, 'price': ${결제 금액, number}, 'membershipChange': ${멤버십 변동 값(항상 양수), number}, 'balanceMembership':${남은 멤버십 잔액, number}}
  */
 exports.addMembershipHistory = fnTemplate((user, data) => {
     if(![process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT].includes(data.type)){
@@ -476,119 +242,16 @@ exports.addMembershipHistory = fnTemplate((user, data) => {
     }
 
     data.uuid = data.id;
-    delete data.id;
+    data.id = moment().format('YYYYMMDDhhmmssSSS');
 
     data.date = moment().format('YYYYMMDD');
-    data.time = moment().format('hhmmss');
-
+    data.time = moment().format('HHmmss');
+    data.email = user.email;
     return data;
-}, saveSalesHist, async function(user, data){
-    await db.setWebUser(user);
-
-    let member = user.memberList.find(member => member.id === data.customerId);
-    if(member){
-        data.balanceMembership = member.pointMembership;
-    }
-
-    data.id = data.uuid;
-
-    return data;
-}, async function(user, data){
-
-    data.id = data.uuid;
-
-    return data;
-});
-
-/**
- * 매출 수정
- * 변경 가능한 항목
- * - 매출내용, 고객, 담당자, 매출날짜, 매출시간, 결제수단, 금액, 삭제여부
- * @param user
- * @param data
- * @returns {Promise<void>}
- */
-let modifySalesHist = async function(user, data){
-    if(!user){
-        throw '사용자 정보가 없습니다.';
-    }
-
-    let type = data.type;
-    if(![process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.SALES_CASH, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE].includes(type)){
-        throw `매출종류값이 올바르지 않습니다.(${type}})`;
-    }
-
-    let id = data.id;
-    let saleHistList = user.saleHistList || [];
-    let saleHist = saleHistList.find(saleHist => saleHist.id === id);
-    if(!saleHist){
-        throw `${id}로 조회되는 매출내역이 없습니다.`;
-    }
-    if(data.action === 'delete'){
-        let member = user.memberList.find(member => member.id === saleHist.customerId);
-        changeMemberSalesStatistic(member, true, saleHist);
-
-        saleHist.isDeleted = true;
-
-        return data;
-    }
-
-    if(data.customerId && !user.memberList.find(member => member.id === data.customerId)){
-        throw `아이디 ${data.customerId}로 조회되는 고객이 없습니다.`;
-    }
-
-    if(data.managerId && !user.staffList.find(staff => staff.id === data.managerId)){
-        throw `아이디 ${data.managerId}로 조회되는 담당자가 없습니다.`;
-    }
-
-    if(data.date && !moment(data.date, 'YYYYMMDD').isValid()){
-        throw `올바른 매출 날짜가 아닙니다.(${data.date})`;
-    }
-
-    if(data.time && !moment(data.time, 'hhmmss').isValid()){
-        throw `올바른 매출 시간이 아닙니다.(${data.time})`;
-    }
-
-    if(data.payment && ![process.nmns.PAYMENT_METHOD.CARD, process.nmns.PAYMENT_METHOD.CARD].includes(data.payment)){
-        throw `결제수단 값이 올바르지 않습니다. (${data.payment})`;
-    }
-
-    if(data.price && (isNaN(data.price) || data.price <= 0)){
-        throw `금액 값이 올바르지 않습니다.(${data.price})`;
-    }
-
-    if(data.customerId && data.customerId !== saleHist.customerId){
-        //고객이 바뀐 경우 기존 고객은 환불, 새 고객은 기존 고객의 매출을 그대로 승계
-        changeMemberSalesStatistic(user.memberList.find(member => member.id === saleHist.customerId), true, saleHist);
-        changeMemberSalesStatistic(user.memberList.find(member => member.id === data.customerId), false, saleHist);
-        saleHist.customerId = data.customerId;
-    }
-    if((data.payment && data.payment !== saleHist.payment) ||(data.price && data.price !== saleHist.price)){
-        //고객의 기존 데이터는 환불처리, 새 데이터로 입력
-        changeMemberSalesStatistic(user.memberList.find(member => member.id === saleHist.customerId), true, saleHist);
-        changeMemberSalesStatistic(user.memberList.find(member => member.id === saleHist.customerId), false, data);
-    }
-
-    let modifyAvailableProperties = ['item', 'customerId', 'managerId', 'date', 'time', 'payment', 'price', 'isDeleted'];
-
-    modifyAvailableProperties.forEach(propertyName => {
-        if(data[propertyName]){
-            saleHist[propertyName] = data[propertyName];
-        }
-    });
-
-    return data;
-}
-
-exports.updateSalesHist = modifySalesHist;
-
-/**
- * 매출내역 변경 외부 API
- * modify sales
- * @param data
- * @returns {Promise<void>}
- */
-exports.modifySalesHistApi = fnTemplate((user, data)=>{}, modifySalesHist, async function(user, data){
-    await db.setWebUser(user);
-    return data;
+}, async (user, data)=> {
+    return await newDb.saveSales(data);
+}, async function(user, resultData, inputData){
+    resultData.serverId = resultData.id;
+    resultData.id = inputData.uuid;
+    return resultData;
 });
