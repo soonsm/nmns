@@ -436,6 +436,7 @@
 
     function onClickTask(e){ // handle event when click today's task text
       if($(window).width() < 1600){
+				$(document.body).toggleClass('overflow-y-hidden');
         if($("#mainTask").hasClass("show")){// about to hide task
           $("#mainCalendarArea").css('minWidth', '');
           $("#mainContents").css("minWidth", '100%');
@@ -482,7 +483,7 @@
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
         
-        $('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
+        //$('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
     }
 
     function setRenderRangeText() {
@@ -2818,6 +2819,7 @@
         $("#mainContents").css("minWidth", '100%');
         $("#mainAside").css('minWidth', 'unset');
         $("#mainTask").removeClass("show");
+				$(document.body).removeClass('overflow-y-hidden');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
