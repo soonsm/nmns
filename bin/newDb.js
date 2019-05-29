@@ -937,7 +937,7 @@ exports.getReservation = async function(email, id){
         return null;
     }
 }
-exports.getReservationList = async function (email, start, end) {
+exports.getReservationList = async function (email, start, end, isAscending = true) {
     if (!email) {
         throw 'email은 필수입니다.';
     }
@@ -973,6 +973,7 @@ exports.getReservationList = async function (email, start, end) {
             ":end": end,
             ":status": 'DELETED'
         },
+        ScanIndexForward: isAscending
     });
 
     list = list.filter(function (reservation) {

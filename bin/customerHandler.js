@@ -8,293 +8,267 @@ const hangul = require('hangul-js');
 const logger = global.nmns.LOGGER;
 
 /**
- * 고객조회
- * get customer
- * @param data
- * @returns {Promise<{status: boolean, message: *, data}>}
+ * 고객 조회
+ * 요청 위치 : "get customer",
+ * 데이터 : {"name":${고객 이름, string}, "contact":${고객 모바일, string}}
+ * 응답 형식 : "data":{"id": ${아이디, string}, "contact":${고객 모바일, string}, "name":${고객이름, string, optional}, "totalNoShow":${총 노쇼 횟수, number, optional}, "myNoShow":${내 매장 노쇼 횟수, number, optional}, "isAllDay":${마지막예약이 하루종일인지, boolean, optional}, "manager":${고객원장의 담당자 id, string, optional}, contents: ${시술 혹은 일정 리스트, json string, ex: "[{'id': 0, 'value':'네일케어'},{'id': 1, 'value':'페디케어'}]", optional}, "etc":${부가정보, string}} "pointMembership":${누적 멤버십 포인트, number}, "cardSales":${누적 카드 매출, number}, "cashSales":${누적 현금 매출, number},
+ * 조회된 내용이 없어도 빈 객체로 줘야함
+ * 고객 이름 없는 경우 빈칸("")으로 나감
+ * 고객 이름이 있는 경우 고객이름&고객연락처 and조건으로 조회 / 없는 경우 고객 모바일로만 조회
  */
-exports.getCustomerDetail = async function(data){
+exports.getCustomerDetail = async function (data) {
     let email = this.email;
-    let status = true, message, resultData = {};
+    let status = false, message, customer = {};
     let contact = data.contact;
     let name = data.name;
 
-    if(!contact && !name){
-        status = false;
-        message = '고객조회를 위한 전화번호 또는 이름이 필요합니다.';
-    }else{
-        if(contact && !util.phoneNumberValidation(contact)){
-            status = false;
-            message = `전화번호 형식이 올바르지 않습니다.(${contact})`;
-        }else{
-            let user = await db.getWebUser(email);
-            let member = user.memberList.find(member => member.name === name && member.contact === contact);
-            if(!member && contact){
-                member = user.memberList.find(member => member.contact === contact);
-            }else if(!member && name){
-                member = user.memberList.find(member => member.name === name);
-            }
-            if(member){
-                member.manager = member.managerId;
+    try {
+        if (!contact && !name) {
+            throw '고객조회를 위한 전화번호 또는 이름이 필요합니다.';
+        }
+
+        let list = await newDb.getCustomerList(email, contact, name);
+        if (list.length > 0) {
+            customer = list[0];
+            customer.isAllDay = false;
+
+            if (contact) {
                 let noShowList = await newDb.getNoShow(contact);
+                customer.totalNoShow = noShowList.length;
+                customer.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
+            }
 
-                member.totalNoShow = noShowList.length;
-                member.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
+            let reservationList = await newDb.getReservationList(email, undefined, undefined, false);
+            let reservation = reservationList.find(reservation => reservation.member === customer.id);
+            if (reservation && reservation.contentList) {
+                customer.contents = JSON.stringify(reservation.contentList);
+            }
 
-                let reservationList = user.reservationList.filter(reservation => reservation.memberId === member.id);
-                reservationList.sort((a, b) =>  b.start - a.start );
-                if(reservationList.length > 0){
-                    let reservation = reservationList[0];
-                    member.isAllDay = reservation.isAllDay;
-                    if(reservation.type === 'R' && reservation.contentList){
-                        member.contents = JSON.stringify(reservation.contentList);
-                    }else{
-                        member.contents = reservation.contents;
-                    }
-                }
-                member.contents = member.contents || '';
-                member.etc = member.etc || '';
-                member.pointMembership = member.pointMembership || 0;
-                member.cardSales = member.cardSales || 0;
-                member.cashSales = member.cashSales || 0;
-                resultData = member;
+            if (!customer.name) {
+                customer.name = '';
             }
         }
+        status = true;
+    } catch (e) {
+        status = false;
+        message = e;
     }
+
     return {
         status: status,
         message: message,
-        data: resultData
+        data: customer
     };
 };
 
 /**
- * 고객정보 조회(자동완성용)
- * get customer info
- * @param data
- * @returns {Promise<{status: boolean, data, message: string}>}
+ * 고객 정보 조회(자동완성용)(클라이언트 완료)
+ * 요청 위치 : "get customer info",
+ * 데이터 : {**"target":${조회할 전화번호 혹은 고객이름, string, optional}, **"id":${클라이언트로 그대로 넘겨줄 값, string}, "name":${이름, string, optional}, "contact":${전화번호, string, optional}}
+ * 응답 형식 : "data" : {"id":${요청시 받은 id, string}, "query":${요청시 받은 전화번호 혹은 이름, string, optional}, "result":{[{"contact":${고객전화번호, string}, "name":${고객이름, string, optional}]}
+ * 고객 이름이 없는 경우도 있을 수 있음(예약할때 이름 비우고 넣은 경우에도 기 입력 정보로 포함)
+ * target, contact와 name 셋 중 하나는 반드시 포함
  */
-exports.getCustomerInfo = async function (data) {
 
+exports.getCustomerInfo = async function (data) {
     let email = this.email;
-    let status = true,
-        message = '',
-        resultData = {};
-    let id = data.id;
+    let status = false, message, resultData = {}, list = [];
     let target = data.target;
-    if(!target){
+    if (!target) {
         target = data.contact || data.name;
     }
 
-    if (!id || (!target)) {
-        status = false;
-        // message = 'id는 필수이고 contact와 name은 둘 중 하나는 있어야 합니다.';
-        message = '연락처 혹은 고객 이름 둘 중 하나는 필수입니다.';
-    }
-
-    if (status) {
-        resultData.id = id;
-        resultData.query = target;
-        let user = await db.getWebUser(email);
-        if (user) {
-            let memberList = user.memberList;
-            let returnMemberList = [];
-            for (let i = 0; i < memberList.length; i++) {
-                let member = memberList[i];
-                if (member.contact && member.contact.includes(target)) {
-                    returnMemberList.push(member);
-                }
-                else {
-                    if (hangul.search(member.name, target) !== -1) {
-                        returnMemberList.push(member);
-                    }
-                    else {
-                        //초성검색
-                        let names = await hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
-                        if (names.includes(hangul.disassemble(target).join(''))) {
-                            returnMemberList.push(member);
-                        }
-                    }
-                }
-            }
-            returnMemberList.sort(function(m1, m2){
-                let name1 = m1.name || 'Z';
-                let name2 = m2.name || 'Z';
-                return name1.localeCompare(name2);
-            });
-            resultData.result = returnMemberList;
+    try {
+        if (!target) {
+            throw '연락처 혹은 이름 둘 중 하나는 필수입니다.';
         }
+
+        list = await newDb.getCustomerList(email);
+        list = list.filter((member) => {
+            if (member.contact && member.contact.includes(target)) {
+                return true;
+            }
+
+            if (hangul.search(member.name, target) !== -1) {
+                return true;
+            }
+
+            //초성검색
+            let names = hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
+            if (names.includes(hangul.disassemble(target).join(''))) {
+                return true;
+            }
+
+            return false;
+        });
+
+        list.sort(function (m1, m2) {
+            let name1 = m1.name || 'Z';
+            let name2 = m2.name || 'Z';
+            return name1.localeCompare(name2);
+        });
+        status = true;
+    } catch (e) {
+        status = false;
+        message = e;
     }
 
+    resultData.id = data.id;
+    resultData.query = target;
+    resultData.result = list;
     return {
         status: status,
         data: resultData,
         message: message
     };
-};
+}
+
+
 
 /**
- * 고객목록 조회
- * get customer list
- * @param data
- * @returns {Promise<{status: boolean, data: Array, message: string}>}
+ * 고객 목록 조회
+ * 요청 위치 : "get customer list",
+ * 데이터 : {"type":${검색타입, string}, "target":${검색어, string, optional}, "sort":${고객 정렬 방법, string, optional}}
+ * 응답 형식 : "data":[{"id": ${아이디, string}, "name": ${고객 이름, string, optional}, "contact":${고객 연락처, string, optional}, "reservCount":${총 예약 횟수, number}, "totalNoShow":${총 노쇼횟수, number}, "myNoShow":${내 매장 노쇼횟수, number}, "etc":${고객메모, string, optional}, "managerId":${매니저 아이디, string, optional}, "pointMembership":${누적 멤버십 포인트, number}, "cardSales":${누적 카드 매출, number}, "cashSales":${누적 현금 매출, number}, "history":[{"start":${예약시작일시, YYYYMMDDHHmm, string}, "end":${예약종료일시, YYYYMMDDHHmm, string}, "managerId":${담당자 id, string, optional}, "managerName":${담당자 이름, string, optional}, "managerColor":${담당자 색깔 '#RRGGBB'형식, string, optional}, contents: ${시술 혹은 일정 리스트, json string, ex: "[{'id': 0, 'value':'네일케어'},{'id': 1, 'value':'페디케어'}]", optional}, "status":${예약상태, string}, "price":${해당 예약에서의 매출액, number, optional}}]}]
+ * 요청의 정렬타입(sort)는 "sort-name", "sort-date", "sort-manager" 중 1가지; 각각은 이름(오름차순), 마지막 방문일(내림차순), 매니저 이름(오름차순)을 나타냄. 값이 비어있을 경우 기본으로 sort-name; sort-name은 값이 없는경우 가장 마지막에. 값이 같을 경우 마지막 방문일 내림차순, 방문일도 같을 경우 매니저 이름 오름차순. sort-date는 값이 없는 경우 가장 마지막에. 값이 같을 경우 이름 오름차순, 이름도 같을 경우 매니저 이름 오름차순. sort-manager는 값이 없는 경우 가장 마지막에, 값이 같을 경우 이름 오름차순, 이름도 같을 경우 마지막 방문일 내림차순.
+ * 고객별 히스토리도 방문일시 내림차순으로 정렬
+ * history 없으면 빈 array 줘야함
+ * number항목 숫자로 줘야함(없으면 0)
+ * 응답에서 담당자 id아니고 이름과 색깔임(삭제 고려)
+ * 요청의 검색타입은 "all", "name", "contact", "manager"중 1가지(추가 가능)
  */
-exports.getCustomerList = async function(data){
+exports.getCustomerList = async function (data) {
     let email = this.email;
-    let status = true,
-        message = '',
-        resultData = [];
+    let status = false, message, list = [];
+    try {
+        let type = data.type;
+        if(type !== 'all' && type !== 'name' && type !== 'contact' && type !== 'manager'){
+            throw `type이 올바르지 않습니다.(${type})`;
+        }
+        let sort = data.sort || 'sort-name';
+        if(sort !== 'sort-name' && sort !== 'sort-date' && sort !== 'sort-manager'){
+            throw `sort 값이 올바르지 않습니다.(${sort})`;
+        }
+        let target = data.target;
 
-    let type = data.type;
-    let target = data.target;
-    let sort = data.sort || 'sort-name';
-
-    if(!type){
-        status = false;
-        message = '검색 타입을 지정하세요.';
-    }else{
-        let user = await db.getWebUser(email);
-        let memberList = user.memberList;
-        let reservationList = await db.getReservationList(email);
+        list = await newDb.getCustomerList(email);
         let staffList = await db.getStaffList(email);
-
-        if(target && target.trim().length > 0) {
-            let filteredList = [];
-            for (let i = 0; i < memberList.length; i++) {
-                let member = memberList[i];
-                if(!member.id){
-                    continue;
+        if(target && target.trim().length > 0){
+            list = list.filter(customer => {
+                if ((type === 'name' || type === 'all') && customer.name && customer.name.includes(target)) {
+                    return true;
                 }
-                if ((type === 'name' || type === 'all') && member.name && member.name.includes(target)) {
-                    filteredList.push(member);
+                if ((type === 'contact' || type === 'all') && customer.contact && customer.contact.includes(target)) {
+                    return true;
                 }
-                if ((type === 'contact' || type === 'all') && member.contact && member.contact.includes(target)) {
-                    filteredList.push(member);
-                }
-                if ((type === 'manager' || type === 'all') && member.managerId) {
-                    let staff = staffList.find(staff => staff.id === member.managerId);
-                    if(staff && staff.name.includes(target)){
-                        filteredList.push(member);
+                if ((type === 'manager' || type === 'all') && customer.managerId) {
+                    let staff = staffList.find(staff => staff.id === customer.managerId);
+                    if (staff && staff.name.includes(target)) {
+                        return true;
                     }
-                }
-            }
-            memberList = filteredList;
-        }
-
-        for(let i=0;i<memberList.length; i++){
-            let member = memberList[i];
-            member.myNoShow = 0;
-            member.totalNoShow = 0;
-            if(member.contact){
-                let noShowList = await newDb.getNoShow(member.contact);
-                member.totalNoShow = noShowList.length;
-                member.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
-            }
-
-            member.history = [];
-            await reservationList.forEach(async function(reservation){
-                if(reservation.memberId === member.id){
-
-                    let manager = {};
-
-                    for(let j=0; j<staffList.length;j++){
-                        let staff = staffList[j];
-                        if(staff.id === reservation.manager){
-                            manager = staff;
-                            break;
-                        }
-                    }
-
-                    let totalSales = 0;
-                    let salesHistList = user.saleHistList.filter(sales => sales.scheduleId === reservation.id);
-                    if(salesHistList){
-                        salesHistList.forEach(sales => {
-                            if([process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH].includes(sales.type)){
-                                totalSales += sales.price;
-                            }
-                        })
-                    }
-
-                    member.history.push({
-                        start: reservation.start,
-                        end: reservation.end,
-                        contents: (reservation.type === 'R' && reservation.contentList) ? JSON.stringify(reservation.contentList) : reservation.contents,
-                        status: reservation.status,
-                        managerName: manager.name,
-                        managerColor: manager.color,
-                        managerId: manager.id,
-                        price: totalSales
-                    });
                 }
             });
-            member.reservCount = member.history.length;
-
-            await member.history.sort(function(r1,r2){
-                return r2.start - r1.start;
-            });
-
-            member.pointMembership = member.pointMembership || 0;
-            member.cardSales = member.cardSales || 0;
-            member.cashSales = member.cashSales || 0;
         }
 
-        memberList.sort(getSortFunc(sort));
-        resultData = memberList;
+        for(let customer of list) {
+            customer.totalNoShow = 0;
+            customer.myNoShow = 0;
+            if (customer.contact) {
+                let noShowList = await newDb.getNoShow(customer.contact);
+                customer.totalNoShow = noShowList.length;
+                customer.myNoShow = (noShowList.filter(noShow => noShow.email === email)).length;
+            }
+
+            let reservationList = await newDb.getReservationList(email, undefined, undefined, false);
+            reservationList = reservationList.filter(item => item.member === customer.id);
+            customer.reservCount = reservationList.length;
+            customer.history = reservationList;
+
+            let staff = staffList.find(staff => staff.id === customer.managerId);
+            if(staff){
+                customer.managerName = staff.name;
+            }
+
+            for(let reservation of customer.history){
+                reservation.managerId = reservation.manager;
+
+                let staff = staffList.find(staff => staff.id === reservation.managerId);
+                if(staff){
+                    reservation.managerName = staff.name;
+                    reservation.managerColor= staff.color;
+                }
+
+                if(reservation.contentList){
+                    reservation.contents = JSON.stringify(reservation.contentList);
+                }
+
+                reservation.price = 0;
+                let salesList = await newDb.getSalesHist(email, {scheduleId: reservation.id});
+                for(let sales of salesList){
+                    reservation.price += sales.price;
+                }
+            }
+        }
+        list.sort(getSortFunc(sort));
+        status = true;
+    } catch (e) {
+        status = false;
+        message = e;
     }
 
     return {
         status: status,
-        data: resultData,
-        message: message
-    }
+        message: message,
+        data: list
+    };
+
 };
 
-function getSortFunc(action){
+function getSortFunc(action) {
     switch (action) {
         case 'sort-date':
-            return function(a, b){
-                if(!a.history || a.history.length === 0){
-                    if(b.history && b.history.length > 0){
-                        return 1;
-                    }else{
-                        return getSortFunc("sort-name")(a, b);
-                    }
-                } else if(!b.history || b.history.length === 0){
-                    return -1;
+            return function (a, b) {
+                let aDate = '0';
+                let bDate = '0';
+                if (!a.history || a.history.length > 0) {
+                    aDate = a.history[0].start;
                 }
-                return (a.history[0].date < b.history[0].date ?1:(a.history[0].date > b.history[0].date?-1:getSortFunc("sort-name")(a, b)));
+                if (!b.history || b.history.length > 0) {
+                    bDate = b.history[0].start;
+                }
+                let result = bDate - aDate;
+                return result === 0 ? getSortFunc("sort-name")(a, b) : result;
             };
         case 'sort-manager':
-            return function(a, b){
-                if(!a.manager){
-                    if(b.manager){
-                        return 1;
-                    }else{
-                        return getSortFunc("sort-name")(a,b);
-                    }
-                } else if(!b.manager){
+            return function (a, b) {
+                let a1 = a.managerName || 'Z';
+                let b1 = b.managerName || 'Z';
+                if(a1 < b1){
                     return -1;
+                }else if(a1 > b1){
+                    return 1;
+                }else{
+                    return getSortFunc("sort-name")(a, b);
                 }
-                return (a.manager.name < b.manager.name ?-1:(a.manager.name > b.manager.name?1:getSortFunc("sort-name")(a, b)));
             };
         case 'sort-name':
         default:
-            return function(a, b){
-                if(!a.name){
-                    if(b.name){
+            return function (a, b) {
+                if (!a.name) {
+                    if (b.name) {
                         return 1;
-                    }else{
+                    } else {
                         return 0;
                     }
-                } else if(!b.name){
+                } else if (!b.name) {
                     return -1;
                 }
-                return (a.name < b.name?-1:(a.name > b.name?1:0));
+                return (a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
             };
     }
 }
 
-function getDummy(){
+function getDummy() {
     return {
         name: '김승민',
         contact: '01028904311',
@@ -318,7 +292,7 @@ function getDummy(){
                 status: 'RESERVED'
             }
         ]
-    },{
+    }, {
         name: '정태호',
         contact: '01011112222',
         reservCount: 3,
@@ -344,63 +318,27 @@ function getDummy(){
     };
 }
 
-/**
- * 고객 추가/고객 수정
- * add customer/update customer
- * @param data
- * @returns {Promise<{status: boolean, data: {id}, message: string}>}
- */
-let saveCustomer = async function(data){
-    let email = this.email;
-    let status = false,
-        message = '',
-        resultData = {id: data.id};
-    let id = data.id;
-    let name = data.name;
-    let contact = data.contact;
-    let managerId = data.managerId === '' ? undefined : data.managerId;
 
-    let user = await db.getWebUser(email);
-    let memberList = user.memberList;
-
-    if(!id && !name && !contact){
-        message = '이름과 연락처 중 하나는 필수입니다.';
-    }else if(contact && !util.phoneNumberValidation(contact)){
-        message = '연락처가 올바르지 않습니다.(휴대전화번호로 숫자만 입력하세요.)';
-    }else if(memberList.find(member => member.name === name && member.contact === contact && member.id !== id) !== undefined){
-        message = '이미 존재하는 고객입니다.';
-        resultData.reason = 'DUPLICATED';
-    }else if(!(await db.addCustomer(email, id, name, contact, managerId, data.etc))){
-        message = '시스템 에러로 추가하지 못했습니다.';
-    }else{
-        status = true;
-        resultData.id = id;
-        resultData.totalNoShow = 0;
-        if(contact){
-            resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
-        }
-    }
-
-    return {
-        status: status,
-        data: resultData,
-        message: message
-    }
-}
-
-exports.addCustomer = async function(data){
+exports.addCustomer = async function (data) {
     let email = this.email;
     let status = false,
         message = '',
         resultData = {id: data.id, totalNoShow: 0};
 
-    try{
-        await newDb.saveCustomer({email: email, id: data.id, name: data.name, contact: data.contact, managerId:data.managerId === '' ? undefined : data.managerId, etc: data.etc});
+    try {
+        await newDb.saveCustomer({
+            email: email,
+            id: data.id,
+            name: data.name,
+            contact: data.contact,
+            managerId: data.managerId === '' ? undefined : data.managerId,
+            etc: data.etc
+        });
         status = true;
-        if(contact){
+        if (contact) {
             resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
         }
-    }catch(e){
+    } catch (e) {
         status = false;
         message = e;
         logger.error(e);
@@ -413,22 +351,29 @@ exports.addCustomer = async function(data){
     }
 };
 
-exports.updateCustomer = async function(data){
+exports.updateCustomer = async function (data) {
     let email = this.email;
     let status = false,
         message = '',
         resultData = {id: data.id};
 
-    try{
+    try {
         let memberList = await newDb.getCustomerList(email);
-        if(memberList.find(member => member.name === data.name && member.contact === data.contact && member.id !== data.id)){
+        if (memberList.find(member => member.name === data.name && member.contact === data.contact && member.id !== data.id)) {
             resultData.reason = 'DUPLICATED';
             throw '이미 이름과 연락처가 동일한 고객이 존재합니다.';
         }
 
-        await newDb.saveCustomer({email:email, id:data.id, name:data.name, contact:data.contact, managerId:data.managerId === '' ? undefined : data.managerId, etc:data.etc});
+        await newDb.saveCustomer({
+            email: email,
+            id: data.id,
+            name: data.name,
+            contact: data.contact,
+            managerId: data.managerId === '' ? undefined : data.managerId,
+            etc: data.etc
+        });
         status = true;
-    }catch(e){
+    } catch (e) {
         status = false;
         message = e;
         logger.error(e);
@@ -441,25 +386,25 @@ exports.updateCustomer = async function(data){
     }
 };
 
-exports.deleteCustomer = async function(data){
+exports.deleteCustomer = async function (data) {
     let status = false,
         message = '',
         resultData = {id: data.id};
 
-    if(!data.id){
+    if (!data.id) {
         message = '고객 삭제를 위해서는 아이디가 필수입니다.';
-    }else{
+    } else {
         let user = await db.getWebUser(this.email);
         let memberList = user.memberList.filter(member => member.id !== data.id);
 
-        if(await db.updateWebUser(this.email, {memberList: memberList})){
+        if (await db.updateWebUser(this.email, {memberList: memberList})) {
             status = true;
-        }else{
+        } else {
             message = '시스템 에러로 고객을 삭제하지 못했습니다.';
         }
     }
 
-    return{
+    return {
         status: status,
         data: resultData,
         message: message
@@ -472,7 +417,7 @@ exports.deleteCustomer = async function(data){
  * @param data
  * @returns {Promise<{status: boolean, data: {id}, message: string}>}
  */
-exports.mergeCustomer = async function(data){
+exports.mergeCustomer = async function (data) {
     let email = this.email;
     let status = false,
         message = '',
@@ -486,22 +431,22 @@ exports.mergeCustomer = async function(data){
     let user = await db.getWebUser(email);
     let memberList = user.memberList;
     let targetMember = memberList.find(member => member.name === name && member.contact === contact && member.id !== data.id);
-    if(!targetMember){
+    if (!targetMember) {
         message = '합치려고 하는 고객 정보가 없습니다.';
-    }else{
+    } else {
         //소스 멤버의 예약리스트, 예약확인 알림톡 리스트, 예약취소 알림톡 리스트의 고객 아이디를 타겟 멤버의 아이디로 수정
-        await user.reservationList.forEach(function(reservation){
-            if(reservation.memberId === data.id){
+        await user.reservationList.forEach(function (reservation) {
+            if (reservation.memberId === data.id) {
                 reservation.memberId = targetMember.id;
             }
         });
-        await user.reservationConfirmAlrimTalkList.forEach(function(alrim){
-            if(alrim.reservation.memberId === data.id){
+        await user.reservationConfirmAlrimTalkList.forEach(function (alrim) {
+            if (alrim.reservation.memberId === data.id) {
                 alrim.reservation.memberId = targetMember.id;
             }
         });
-        await user.cancelAlrimTalkList.forEach(function(alrim){
-            if(alrim.reservation.memberId === data.id){
+        await user.cancelAlrimTalkList.forEach(function (alrim) {
+            if (alrim.reservation.memberId === data.id) {
                 alrim.reservation.memberId = targetMember.id;
             }
         });
@@ -512,17 +457,17 @@ exports.mergeCustomer = async function(data){
 
         //소스 멤버 삭제
         let deleteIndex = memberList.findIndex(member => member.id === data.id);
-        user.memberList.splice(deleteIndex,1);
+        user.memberList.splice(deleteIndex, 1);
 
-        if(await db.setWebUser(user)){
+        if (await db.setWebUser(user)) {
             status = true;
             resultData.targetId = targetMember.id;
-        }else{
+        } else {
             message = '시스템 에러로 인해 실패하였습니다.';
         }
     }
 
-    return{
+    return {
         status: status,
         data: resultData,
         message: message
