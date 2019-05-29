@@ -214,7 +214,7 @@
         <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" title="메뉴" data-toggle="popover" data-placement="bottom" aria-label="메뉴 열기/닫기">
           <div>
             <span>
-              <div id="mainShopCapital" class="rounded-circle" style="line-height:32px;display:inline-block;vertical-align:middle;background-color:#f1f2f3"><if(input.user.shopName)>${input.user.shopName.substring(0,1)}</if><else>${input.user.email.substring(0,1)}</else></div>
+              <div id="mainShopCapital" class="rounded-circle" style="line-height:32px;display:inline-block;vertical-align:middle;text-align:center;background-color:#f1f2f3"><if(input.user.shopName)>${input.user.shopName.substring(0,1)}</if><else>${input.user.email.substring(0,1)}</else></div>
               <img id="mainShopIcon" src="" class="rounded-circle d-none">
             </span>
             <span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]><if(input.user.shopName)>${input.user.shopName}</if><else>${input.user.email}</else></span>

@@ -317,6 +317,9 @@
           $("#announcementIcon").removeClass('icon-announcement-count');
         }
         //announcement end
+        if(NMNS.info.logo){
+          changeMainShopLogo(true, NMNS.info.logo);
+        }
     }));
 
     NMNS.socket.on("get manager", socketResponse("담당자 정보 받아오기", function(e) {
@@ -652,6 +655,17 @@
 
     function changeMainShopName(shopName) {
       $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
+      $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1));
+    }
+    
+    function changeMainShopLogo(isImage, shopName){
+      if(isImage){
+        $("#mainShopCapital").addClass('d-none');
+        $("#mainShopIcon").removeClass('d-none').attr('src', shopName);
+      }else{
+        $("#mainShopIcon").addClass('d-none');
+        $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1)).removeClass('d-none');
+      }
     }
 
     function drawAlrimList(alrims) {

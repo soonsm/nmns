@@ -270,10 +270,10 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     white-space:nowrap;
 }
 
-#mainRow #mainNav #mainMenu #mainShopIcon{
-    width:32px;
-    height:32px;
-    margin-right:10px;
+#mainShopIcon, #mainShopCapital{
+    width:35px;
+    height:35px;
+    margin-right:15px;
 }
 
 #mainRow #mainTask{

@@ -149,7 +149,8 @@
           <div class="mt-auto" style="margin-bottom:20px">
 						<div class="menuLink storeLink" data-link="storeMenu" data-history="store" aria-label="내 매장 정보">
 							<span>
-								<img id="mainShopIcon" src="/nmns/img/person_01.svg" class="rounded-circle" style="width:35px;height:35px;margin-right:15px">
+							  <div id="mainShopCapital" class="rounded-circle" style="line-height:35px;display:inline-block;vertical-align:middle;background-color:#f1f2f3;text-align:center;color:rgba(57,53,53,0.7)"><if(input.user.shopName)>${input.user.shopName.substring(0,1)}</if><else>${input.user.email.substring(0,1)}</else></div>
+								<img id="mainShopIcon" src="" class="rounded-circle d-none">
 							</span>
 							<div id="mainShopName" class=[(!input.user.shopName && 'montserrat'), 'ellipsis']><if(input.user.shopName)>${input.user.shopName}</if><else>${input.user.email}</else></div>
 							<span class="icon-arrow-white icon-arrow-right" style="margin-left:8px"></span>
