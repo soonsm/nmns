@@ -1141,7 +1141,7 @@
         $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
 
-      $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
+      $(".scheduleMenu").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
         if(e.schedule){// update schedule
           $("#scheduleStatus input[type='radio']").prop('checked', false);
@@ -1173,38 +1173,6 @@
             $("#resendAlrimScheduleBtn").removeClass('d-none');
           }
           calendar = findManager(e.schedule.calendarId);
-        }else if(e.customer){// customer modal trigger
-          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start);
-          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end);
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.start)));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.end)));
-    
-          $('#scheduleName').val(e.customer.name);
-          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
-            removeContent(this);
-          });
-          
-          $('#scheduleContact').val(e.customer.contact);
-          $('#scheduleEtc').val(e.customer.etc);
-          $('#scheduleAllDay').attr('checked', false);
-          
-          calendar = findManager(e.customer.managerId) || NMNS.calendar.getCalendars()[0];
-        }else{// dragged calendar
-          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start.toDate());
-          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end.toDate());
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.start.toDate())));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.end.toDate())));
-    
-          $('#scheduleName').val('');
-          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
-            removeContent(this);
-          });
-          
-          $('#scheduleContact').val('');
-          $('#scheduleEtc').val('');
-          $('#scheduleAllDay').attr('checked', e.isAllDay);
-          
-          calendar = NMNS.calendar.getCalendars()[0];
         }
         
         if (!calendar) {
@@ -1213,49 +1181,40 @@
           calendar = $('#scheduleManagerList').find("button[data-calendar-id='" + calendar.id + "']");
           $('#scheduleManager').html(calendar.html()).data('calendar-id', calendar.data('calendarId')).data('color', calendar.data('color'));
         }
-      }else if(typeof e === 'string'){//switching from task tab : copy data
-        document.getElementById("scheduleStartDate")._flatpickr.setDate(document.getElementById('taskStartDate')._flatpickr.selectedDates[0]);
-        $("#scheduleStartTime").val($("#taskStartTime").val());
-        document.getElementById("scheduleEndDate")._flatpickr.setDate(document.getElementById('taskEndDate')._flatpickr.selectedDates[0]);
-        $("#scheduleEndTime").val($("#taskEndTime").val());
-        $("#scheduleAllDay").prop('checked', $("#taskAllDay").prop('checked'));
-        calendar = $("#taskManager");
-        $("#scheduleManager").data("calendar-id", calendar.data("calendar-id")).data("color", calendar.data("color")).html(calendar.html());
-      }else{// creating...
-        var now = moment();
-        if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-            now = moment(NMNS.info.bizBeginTime, "HHmm");
-        } else {
-            now.minute(Math.ceil(now.minute() / 10) * 10);
-        }
-        document.getElementById("scheduleStartDate")._flatpickr.setDate(now.toDate());
-        $("#scheduleStartTime").val(getTimeFormat(now));
-        document.getElementById("scheduleEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
-        $("#scheduleEndTime").val(getTimeFormat(now));
-
-        $('#scheduleName').val('');
-        $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
-          removeContent(this);
-        });;
-        $('#scheduleContact').val('');
-        $('#scheduleAllDay').attr('checked', false);
-        
-        calendar = NMNS.calendar.getCalendars()[0].id;
-        $('#scheduleManager').html($('#scheduleManager').next().find("button[data-calendar-id='" + calendar + "']").html()).data('calendarid', calendar);
       }
     }
 
     function initScheduleTab(e){
-      if(!$("#scheduleStartDate")[0]._flatpickr){
-        var datetimepickerOption = {
-            dateFormat: "Y. m. d",
-            defaultDate: new Date(),
-            locale: "ko"
-        };
-        flatpickr("#scheduleStartDate", datetimepickerOption);
-        flatpickr("#scheduleEndDate", datetimepickerOption);
+      if(!$(".scheduleMenu").data('inited')){
+        $(".scheduleMenu").data('inited', true);
+        $("#scheduleStartDate").on("touch click", function(){
+          $("#endCalendarArea").hide();
+          $("#startCalendarArea").show();
+          this._flatpickr.setDate(moment($(this).val(), 'YYYY. MM. DD').toDate());
+        });
+        $("#scheduleEndDate").on("touch click", function(){
+          $("#startCalendarArea").hide();
+          $("#endCalendarArea").show();
+          this._flatpickr.setDate(moment($(this).val(), 'YYYY. MM. DD').toDate());
+        });
+        flatpickr("#scheduleStartDate", {
+          dateFormat: "Y. m. d",
+          disableMobile: true,
+          appendTo:document.getElementById('startCalendarArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            $("#calendarModal").modal('hide');
+          }
+        });
+        flatpickr("#scheduleEndDate", {
+          dateFormat: "Y. m. d",
+          disableMobile: true,
+          appendTo:document.getElementById('endCalendarArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            $("#calendarModal").modal('hide');
+          }
+        });
         $("#scheduleAddContents").on("touch click", function(){
           $("#scheduleTabContents").append($(generateContentsList('')).on('touch click', 'button', function(){
             removeContent(this);
@@ -1268,8 +1227,8 @@
           triggerSelectOnValidInput: false,
           zIndex:1060
         };        
-        $('#scheduleStartTime').autocomplete(autoCompleteOption);
-        $("#scheduleEndTime").autocomplete(autoCompleteOption);
+        // $('#scheduleStartTime').autocomplete(autoCompleteOption);
+        // $("#scheduleEndTime").autocomplete(autoCompleteOption);
         var timeout;
         function onContactBlur() {
             clearTimeout(timeout);
@@ -2092,7 +2051,7 @@
     }, true));
 
     NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e) {
-        var popup = $("#scheduleTab");
+        var popup = $(".scheduleMenu");
         if(popup.is(":visible")){
           if ((e.data.contact === popup.find("#scheduleContact").val() && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#scheduleName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
               if (e.data.etc) {

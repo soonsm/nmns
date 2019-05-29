@@ -673,14 +673,14 @@
               </div>
               <div class="row mx-0 col-12 px-0 align-items-center mt-3">
                 <div class="select mr-1 col-7 px-0">
-                  <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
+                  <input id="scheduleStartDate" name="start" readonly="readonly" data-toggle="modal" data-target="#calendarModal" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
                   <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
                 <span class="px-2 col-12 text-center" style="height:35px;line-height:35px">~</span>
                 <div class="select mr-1 col-7 px-0">
-                  <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
+                  <input id="scheduleEndDate" name="end" readonly="readonly" data-toggle="modal" data-target="#calendarModal" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
                   <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
@@ -951,6 +951,17 @@
           <div class="modal-content rounded-0">
             <div class="modal-body p-0 flex-column">
               <div id="salesCalendarArea"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div id="calendarModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="날짜 선택" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content rounded-0">
+            <div class="modal-body p-0 flex-column">
+              <div id="startCalendarArea" class="position-relative"></div>
+              <div id="endCalendarArea" class="position-relative"></div>
             </div>
           </div>
         </div>
