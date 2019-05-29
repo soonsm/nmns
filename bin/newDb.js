@@ -177,7 +177,7 @@ function del(param) {
 /**
  * NoShow(노쇼 리스트)
  * noShowKey: Partition Key, 전화번호 해쉬 값
- * timestamp: Range Key, YYYYMMDDhhmmssSSS
+ * timestamp: Range Key, YYYYMMDDHHmmssSSS
  * date: YYYYMMDD, 노쇼한 날짜
  * email
  * noShowCase
@@ -204,11 +204,11 @@ exports.addNoShow = async function (email, phone, noShowDate, noShowCase, id, na
     }
 
     if (!id) {
-        id = email + moment().format('YYYYMMDDhhmmssSSS') + Math.random() * 100;
+        id = email + moment().format('YYYYMMDDHHmmssSSS') + Math.random() * 100;
     }
 
     let noShowKey = sha256(phone);
-    let timestamp = moment().format('YYYYMMDDhhmmssSSS');
+    let timestamp = moment().format('YYYYMMDDHHmmssSSS');
 
     let oldOne = await get({
         TableName: process.nmns.TABLE.NoShowId,
@@ -365,8 +365,8 @@ exports.delAllNoShowWithPhone = async function (phone) {
 /**
  * VisitLog(방문기록)
  * email: Partition Key
- * startTimestamp: Range Key, YYYYMMDDhhmmss
- * endTimestamp: YYYYMMDDhhmmss
+ * startTimestamp: Range Key, YYYYMMDDHHmmss
+ * endTimestamp: YYYYMMDDHHmmss
  * device: device 종류
  **/
 exports.visitLog = async function (email, device) {
@@ -375,7 +375,7 @@ exports.visitLog = async function (email, device) {
             throw 'email이 필요합니다.';
         }
 
-        let timestamp = moment().format('YYYYMMDDhhmmssSSS');
+        let timestamp = moment().format('YYYYMMDDHHmmssSSS');
 
         return await put({
             TableName: process.nmns.TABLE.VisitLog,
@@ -395,14 +395,14 @@ exports.exitLog = async function (visitLog) {
         if (!visitLog) {
             throw 'visitLog가 필요합니다.';
         }
-        if (!visitLog.email || !visitLog.timestamp || !moment(visitLog.timestamp, 'YYYYMMDDhhmmssSSS').isValid()) {
+        if (!visitLog.email || !visitLog.timestamp || !moment(visitLog.timestamp, 'YYYYMMDDHHmmssSSS').isValid()) {
             return `visitLog가 올바르지 않습니다. ${JSON.stringify(visitLog)}`;
         }
 
-        let exitTimestamp = moment().format('YYYYMMDDhhmmssSSS');
+        let exitTimestamp = moment().format('YYYYMMDDHHmmssSSS');
         visitLog.exitTimestamp = exitTimestamp;
 
-        let diff = moment(exitTimestamp, 'YYYYMMDDhhmmssSSS').diff(moment(visitLog.timestamp, 'YYYYMMDDhhmmssSSS'), 's');
+        let diff = moment(exitTimestamp, 'YYYYMMDDHHmmssSSS').diff(moment(visitLog.timestamp, 'YYYYMMDDHHmmssSSS'), 's');
         visitLog.diff = diff;
 
         return await put({
@@ -417,7 +417,7 @@ exports.exitLog = async function (visitLog) {
 /**
  * Customer(고객 리스트)
  * email: Partition Key
- * id: Range Key, moment().format('YYYYMMDDhhmmssSSS') + Math.random() * 100;
+ * id: Range Key, moment().format('YYYYMMDDHHmmssSSS') + Math.random() * 100;
  * contact
  * name
  * etc: 고객 메모
@@ -585,7 +585,7 @@ exports.deleteAllCustomer = async function (email) {
 /**
  * AlrimTalkHist(알림톡 사용 내역)
  * email: Partition Key
- * sendDate: YYYYMMDDhhmmssSSS,
+ * sendDate: YYYYMMDDHHmmssSSS,
  * date: YYYYMMDD
  * isCancel: boolean, 취소알림톡여부
  * contact: 전화번호
@@ -620,7 +620,7 @@ exports.addAlrmTalkRaw = async function (data) {
     if (!alrimTalk.date || !moment(alrimTalk.date, 'YYYYMMDD').isValid()) {
         throw `date가 올바르지 않습니다.(${alrimTalk.date})`;
     }
-    if (!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDhhmmssSSS').isValid()) {
+    if (!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDHHmmssSSS').isValid()) {
         throw `sendDate가 올바르지 않습니다.(${alrimTalk.sendDate})`;
     }
 
@@ -632,8 +632,8 @@ exports.addAlrmTalkRaw = async function (data) {
 
 exports.addAlrmTalk = async function (data) {
 
-    data.date = moment().format('YYYYMMDD');
-    data.sendDate = moment().format('YYYYMMDDhhmmssSSS');
+    data.date = moment().format('YYYYMMDDHHmm');
+    data.sendDate = moment().format('YYYYMMDDHHmmssSSS');
 
     return exports.addAlrmTalkRaw(data);
 }
@@ -672,7 +672,8 @@ exports.getAlrimTalkList = async function (email, start, end, contact) {
             ":email": email,
             ':start': start,
             ':end': end
-        }
+        },
+        ScanIndexForward: false
     };
     if (contact) {
         param.FilterExpression = '#contact = :contact';
@@ -955,7 +956,7 @@ exports.getReservationList = async function (email, start, end) {
         end += '2359';
     }
 
-    if (!moment(start, 'YYYYMMDDhhmm').isValid() || !moment(end, 'YYYYMMDDhhmm').isValid()) {
+    if (!moment(start, 'YYYYMMDDHHmm').isValid() || !moment(end, 'YYYYMMDDHHmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
     }
 
@@ -1121,7 +1122,7 @@ exports.getTaskList = async function (email, start, end) {
         end += '2359';
     }
 
-    if (!moment(start, 'YYYYMMDDhhmm').isValid() || !moment(end, 'YYYYMMDDhhmm').isValid()) {
+    if (!moment(start, 'YYYYMMDDHHmm').isValid() || !moment(end, 'YYYYMMDDHHmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
     }
 
@@ -1184,8 +1185,8 @@ exports.deleteAllTask = async function (email) {
  * Sales(매출내역/포인트 증감내역)
  * email: Partition Key
  * date: 매출날짜(YYYYMMDD)
- * time: 매출 시간(hhmmss)
- * id: timestamp(YYYYMMDDhhmmssSSS), Range Key, Client 생성
+ * time: 매출 시간(HHmmss)
+ * id: timestamp(YYYYMMDDHHmmssSSS), Range Key, Client 생성
  * item: 매출내용/멤버십 변동
  * price
  * customerId: 고객 아이디

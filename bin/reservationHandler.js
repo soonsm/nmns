@@ -27,7 +27,7 @@ let sendPush = function (socket, message) {
 }
 
 let newCustomerId = function (email) {
-    return email + moment().format('YYYYMMDDhhmmss.SSS') + Math.random() * 100;
+    return email + moment().format('YYYYMMDDHHmmss.SSS') + Math.random() * 100;
 }
 
 /**

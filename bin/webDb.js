@@ -961,7 +961,7 @@ exports.addFriend = async function (userKey) {
 exports.addAlrimTalk = async function (userKey, phone, date, time) {
     let user = await exports.getUser(userKey);
     if (user) {
-        let reservationKey = moment().format('YYYYMMDDhhmmss.SSS') + userKey + sha256(phone);
+        let reservationKey = moment().format('YYYYMMDDHHmmss.SSS') + userKey + sha256(phone);
         const alrimTalk = newAlrimTalk(reservationKey, userKey, phone, date, time);
         await put({
             TableName: 'AlrimTalk',

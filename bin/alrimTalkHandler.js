@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const util = require('./util');
 
 //미사용
@@ -64,120 +65,25 @@ exports.updateAlrimTalkInfo = async function (data) {
     };
 };
 
+/**
+ * 알림톡 이력 조회
+ 요청 위치 : "get alrim history",
+ 데이터 : {"start":${조회 시작일자, YYYYMMDD, string, optional}, "end":${조회 종료일자, YYYYMMDD, string, optional}, "contact":${보낸 연락처, string, optional}}
+ 응답 형식 : "data":[{"date":${전송 일시, YYYYMMDDHHmm, string}, "name":${고객 이름, string}, "contact":${고객 연락처, string}, "contents": ${알림톡 내용, string, optional}}]
+ 취소알림이나 예약알림이나 상관없이 전송일시 내림차순 정렬 / 취소알림일 경우 매장이름을 고객이름에 넣어줌
+ 요청 데이터 없으면 전체 조회
+ */
 exports.getAlrimTalkHistory = async function (data) {
     let email = this.email;
-    let status = true,
-        message = null;
-    let user = await db.getWebUser(email);
+    let status, message, list;
 
-    if(data.start){
-        data.start = data.start + '0000';
+    try{
+        list = await newDb.getAlrimTalkList(email, data.start, data.end);
+        status = true;
+    }catch(e){
+        status = false;
+        message = e;
     }
-    if(data.end){
-        data.end = data.end + '9999';
-    }
-
-    let alrimTalkList = await user.reservationConfirmAlrimTalkList.filter(function (item) {
-        let include = true;
-
-        if (item.reservation) {
-            if (data.contact && data.contact !== item.reservation.contact) {
-                include = false;
-            }
-            if (item.sendDate) {
-                if (data.start && data.start > item.sendDate) {
-                    include = false;
-                }
-                if (data.end && data.end < item.sendDate) {
-                    include = false;
-                }
-            }else{
-                if (data.start && data.start > item.reservation.end) {
-                    include = false;
-                }
-                if (data.end && data.end < item.reservation.start) {
-                    include = false;
-                }
-            }
-            if (data.name && data.name !== item.reservation.name) {
-                include = false;
-            }
-            if(data.id && data.id !== item.reservation.memberId){
-                include = false;
-            }
-        }else{
-            include = false;
-        }
-
-        return include;
-    }).map(function (item) {
-        if(item.reservation){
-            return {
-                date: item.sendDate || item.reservation.start ,
-                name: item.reservation.name,
-                contact: item.reservation.contact,
-                contents: item.msg
-            }
-        }
-    }).filter(item => item !== undefined) || [];
-
-    let cancelTalkList = await user.cancelAlrimTalkList.filter(function (item) {
-        let include = true;
-
-        if(item.reservation){
-            if (data.contact && data.contact !== item.reservation.contact) {
-                include = false;
-            }
-            if (item.sendDate) {
-                if (data.start && data.start > item.sendDate) {
-                    include = false;
-                }
-                if (data.end && data.end < item.sendDate) {
-                    include = false;
-                }
-            }else{
-                if (data.start && data.start > item.reservation.cancelDate) {
-                    include = false;
-                }
-                if (data.end && data.end < item.reservation.cancelDate) {
-                    include = false;
-                }
-            }
-            if (data.name && data.name !== item.reservation.name) {
-                include = false;
-            }
-            if(data.id && data.id !== item.reservation.memberId){
-                include = false;
-            }
-        }else{
-            include = false;
-        }
-
-        return include;
-    }).map(function (item) {
-        if(item.reservation){
-            let date = item.sendDate;
-            if (!date) {
-                date = item.reservation.cancelDate + '1330';
-            }
-            return {
-                date: date,
-                name: user.shopName,
-                contact: item.reservation.contact,
-                contents: item.msg
-            }
-        }
-    }).filter(item => item !== undefined) || [];
-
-    let list = await alrimTalkList.concat(cancelTalkList).filter(function(item){
-        if(item){
-            return true;
-        }
-    });
-
-    await list.sort(function (r1, r2) {
-        return r2.date - r1.date;
-    });
 
     return {
         status: status,

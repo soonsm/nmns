@@ -105,7 +105,7 @@ describe("VisitLog", function() {
 
         expect(visitLog.email).toEqual(email);
         expect(visitLog.device).toEqual(device);
-        expect(visitLog.timestamp).toContain(moment().format('YYYYMMDDhhmm'));
+        expect(visitLog.timestamp).toContain(moment().format('YYYYMMDDHHmm'));
     });
 
     it('exitLog(visitLog)', async function(){

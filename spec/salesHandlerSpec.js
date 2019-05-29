@@ -196,7 +196,7 @@ describe('Sales', function () {
                 expect(returnData.id).toEqual('id from client');
 
                 let search = await db.getSales(email, returnData.serverId);
-                expect(moment(search.id, 'YYYYMMDDhhmmssSSS').isValid()).toEqual(true);
+                expect(moment(search.id, 'YYYYMMDDHHmmssSSS').isValid()).toEqual(true);
 
                 returnData.id = returnData.serverId;
                 delete returnData.serverId;
