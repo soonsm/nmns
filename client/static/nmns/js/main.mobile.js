@@ -1182,9 +1182,9 @@
           $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
           
           if(moment(e.schedule.start.toDate()).isBefore(moment())){
-            $("#resendAlrimScheduleBtn").addClass('d-none');
+            $("#resendAlrimScheduleBtn").addClass('d-none').next().removeClass('ml-1');
           }else{
-            $("#resendAlrimScheduleBtn").removeClass('d-none');
+            $("#resendAlrimScheduleBtn").removeClass('d-none').next().addClasS('ml-1');
           }
           calendar = findManager(e.schedule.calendarId);
         }
