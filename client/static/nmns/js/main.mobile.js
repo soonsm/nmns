@@ -2853,7 +2853,7 @@
         if(!isHistory){
           history.pushState({link:$(this).data('link'), type:$(this).data('type'), title:$(this).data('title')}, "", $(this).data('history'));
         }
-				if(!$(this).data('type') === 'detail'){// 뒤로가기 제거
+				if($(this).data('type') !== 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
 				}else{

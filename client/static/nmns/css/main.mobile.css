@@ -1436,7 +1436,6 @@ button.form-control {
     font-size: 13px;
     left: 20px;
   right:20px;
-  height:95px;
 }
 #snackbar .close{
 	position:absolute;
@@ -1449,7 +1448,7 @@ button.form-control {
 	cursor:pointer;
 }
 #snackbar > div:not(.close){
-    height:55px;
+    max-height:55px;
     line-height:1.54;
     overflow:hidden;
     word-break: break-all;
