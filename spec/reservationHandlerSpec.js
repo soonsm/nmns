@@ -706,3 +706,192 @@ describe('Task', function(){
         });
     });
 });
+
+describe('Task, Reservation', function(){
+    let reservation, customer, task;
+    beforeEach(async () => {
+        customer = {
+            email: 'soonsm@gmail.com',
+            id: 'customerId',
+            name: '김승민',
+            contact: '01028904311',
+            managerId: 'asdasdasdasdasd',
+            etc: 'etcetc',
+            pointMembership: 0,
+            cardSales: 0,
+            cashSales: 0,
+            pointSales: 0
+        };
+
+        reservation = {
+            email: email,
+            start: '201905191230',
+            end: '201905191330',
+            id: 'reservationId',
+            contact: '01028904311',
+            name: '김승민',
+            member: 'customerId',
+            manager: 'managerId',
+            etc: 'etc',
+            isAllDay: false,
+            status: process.nmns.RESERVATION_STATUS.RESERVED
+        };
+        task = {
+            email: email,
+            start: '201905191230',
+            end: '201905191330',
+            id: 'aaaaa',
+            name: '관리비 내기',
+            manager: 'managerId',
+            contents: 'contents',
+            contact: '01011112222',
+            etc: 'etc',
+            isDone: false,
+            type: 'T',
+            status: process.nmns.RESERVATION_STATUS.RESERVED
+
+        };
+        await db.deleteAllTask(email);
+        await db.deleteAllReservation(email);
+        await db.deleteAllCustomer(email);
+    });
+
+    it('add with 일정', async function () {
+        try {
+            let fn = handler.add;
+            fn.email = email;
+            let result = await fn.call(fn, task);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            let data = await db.getTask(email, task.id);
+            expect(data.id).toEqual(task.id);
+            expect(data.type).toEqual('T');
+            expect(data.name).toEqual(task.name);
+            expect(data.contact).toEqual(task.contact);
+            expect(data.start).toEqual(task.start);
+            expect(data.isAllDay).toEqual(false);
+            expect(data.isDone).toEqual(task.isDone);
+            expect(data.manager).toEqual(task.manager);
+            expect(data.status).toEqual(task.status);
+            expect(data.contents).toEqual(task.contents);
+
+        } catch (e) {
+            fail();
+            logger.error(e);
+        }
+    });
+
+    it('add with 예약', async function () {
+        try {
+            reservation.contents = '[{"id": 0, "value":"네일케어"},{"id": 1, "value":"페디케어"}]';
+
+            let fn = handler.add;
+            fn.email = email;
+            let result = await fn.call(fn, reservation);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            let data = await db.getReservation(email, reservation.id);
+
+            reservation.contentList = [{"id": 0, "value":"네일케어"},{"id": 1, "value":"페디케어"}];
+            reservation.type = 'R';
+            delete reservation.contents;
+            delete data.timestamp;
+
+            expect(data).toEqual(reservation);
+        } catch (e) {
+            fail();
+            logger.error(e);
+        }
+    });
+
+    it('update with 예약', async function () {
+        try {
+            reservation.contents = '[{"id": 0, "value":"네일케어"},{"id": 1, "value":"페디케어"}]';
+            let fn = handler.add;
+            fn.email = email;
+            let result = await fn.call(fn, reservation);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            reservation.contents = '[{"id": 0, "value":"네일케어2"},{"id": 1, "value":"페디케어2"}]';
+            reservation.etc = 'sdfsdf';
+            fn = handler.update;
+            fn.email = email;
+            result = await fn.call(fn, reservation);
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            let data = await db.getReservation(email, reservation.id);
+            delete reservation.contents;
+            reservation.contentList = [{"id": 0, "value":"네일케어2"},{"id": 1, "value":"페디케어2"}];
+            expect(data).toEqual(reservation);
+        } catch (e) {
+            logger.error(e);
+            fail();
+        }
+    });
+
+    it('update with 일정', async function () {
+        try{
+            let fn = handler.add;
+            fn.email = email;
+            let result = await fn.call(fn, task);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+            let data = await db.getTask(email, task.id);
+            expect(data.id).toEqual(task.id);
+            expect(data.type).toEqual('T');
+            expect(data.name).toEqual(task.name);
+            expect(data.contact).toEqual(task.contact);
+            expect(data.start).toEqual(task.start);
+            expect(data.isAllDay).toEqual(false);
+            expect(data.isDone).toEqual(task.isDone);
+            expect(data.manager).toEqual(task.manager);
+            expect(data.status).toEqual(task.status);
+            expect(data.contents).toEqual(task.contents);
+
+            fn = handler.update;
+            fn.email = email;
+            task.name = 'cccccc';
+            task.contents = 'wowwowowow';
+            task.isDone = true;
+            task.isAllDay = true;
+            result = await fn.call(fn, task);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+            data = await db.getTask(email, task.id);
+            expect(data.id).toEqual(task.id);
+            expect(data.type).toEqual('T');
+            expect(data.name).toEqual(task.name);
+            expect(data.contact).toEqual(task.contact);
+            expect(data.start).toEqual(task.start);
+            expect(data.isAllDay).toEqual(true);
+            expect(data.isDone).toEqual(task.isDone);
+            expect(data.manager).toEqual(task.manager);
+            expect(data.status).toEqual(task.status);
+            expect(data.contents).toEqual(task.contents);
+        }catch(e){
+            logger.error(e);
+            fail();
+        }
+    });
+});

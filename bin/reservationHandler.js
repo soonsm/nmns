@@ -130,6 +130,7 @@ exports.update = async function (data) {
     if (!type) {
         type = 'R';
     }
+    exports.email = this.email;
     if (type === 'R') {
         return await exports.updateReservation(data);
     } else if (type === 'T') {
@@ -301,6 +302,7 @@ exports.add = async function (data) {
     if (!type) {
         type = 'R';
     }
+    exports.email = this.email;
     if (type === 'R') {
         return await exports.addReservation(data);
     } else if (type === 'T') {
