@@ -469,6 +469,19 @@ exports.saveCustomer = async function (data) {
         }
     }
 
+    if(!item.pointMembership){
+        item.pointMembership = 0;
+    }
+    if(!item.cardSales){
+        item.cardSales = 0;
+    }
+    if(!item.cashSales){
+        item.cashSales = 0;
+    }
+    if(!item.pointSales){
+        item.pointSales = 0;
+    }
+
     return await put({
         TableName: process.nmns.TABLE.Customer,
         Item: item
@@ -814,6 +827,8 @@ exports.deleteAllPush = async function (email) {
  * end: YYYYMMDDHHmm,
  * id: Client 생성
  * member: 고객 아이디,
+ * name: 고객 이름 또는 일정 이름
+ * contact: 연락처
  * contentList: list, 예약 리스트
  * salesList: list, 연결된 매출 리스트
  * manager: 담당 매니저 아이디,
@@ -825,9 +840,11 @@ exports.deleteAllPush = async function (email) {
  * **/
 
 exports.saveReservation = async function (data) {
-    let item = (({email, timestamp, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate}) => ({
+    let item = (({email, timestamp, name, contact, start, end, id, member, contentList, manager, isAllDay, status, type, etc, cancelDate}) => ({
         email,
         timestamp,
+        name,
+        contact,
         start,
         end,
         id,
@@ -851,6 +868,9 @@ exports.saveReservation = async function (data) {
     if (item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined) {
         throw `isAllday 값이 올바르지 않습니다.(${item.isAllDay})`;
     }
+    if(item.isAllDay === undefined){
+        item.isAllDay = false;
+    }
 
     if (item.type !== 'R' && item.type !== 'T' && item.type !== undefined) {
         throw `type 값이 올바르지 않습니다.(${item.type})`;
@@ -858,6 +878,22 @@ exports.saveReservation = async function (data) {
 
     if (!item.type) {
         item.type = 'R';
+    }
+
+    if(item.type === 'R' && !item.contact){
+        throw `예약 저장 시 연락처는 필수입니다.`;
+    }
+
+    if(item.type === 'T' && !item.name){
+        throw '일정저장 시 이름은 필수입니다.'
+    }
+
+    if(item.contact && !nmnsUtil.phoneNumberValidation(item.contact)){
+        throw `휴대전화번호 형식이 올바르지 않습니다.(${item.contact})`;
+    }
+
+    if(!item.status){
+        item.status = process.nmns.RESERVATION_STATUS.RESERVED;
     }
 
     if (item.status !== process.nmns.RESERVATION_STATUS.DELETED &&
@@ -918,7 +954,21 @@ exports.getReservationList = async function (email, start, end) {
         throw 'email은 필수입니다.';
     }
 
-    if (!moment(start, 'YYYYMMDD').isValid() || !moment(end, 'YYYYMMDD').isValid()) {
+    if(!start){
+        start = '20000101';
+    }
+    if(!end){
+        end = '29991231';
+    }
+
+    if(start.length === 8){
+        start += '0000';
+    }
+    if(end.length === 8){
+        end += '2359';
+    }
+
+    if (!moment(start, 'YYYYMMDDhhmm').isValid() || !moment(end, 'YYYYMMDDhhmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
     }
 
@@ -932,7 +982,7 @@ exports.getReservationList = async function (email, start, end) {
         },
         ExpressionAttributeValues: {
             ":email": email,
-            ":end": end + '2359',
+            ":end": end,
             ":status": 'DELETED'
         },
     });

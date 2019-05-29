@@ -155,7 +155,7 @@ exports.getSalesForReservation = fnTemplate(async (user, data) => {
         for(let i=0; i<contentList.length; i++){
             let content = contentList[i];
             let template = {
-                item: content,
+                item: content.value,
                 customerId: reservation.member,
                 managerId: reservation.manager,
                 balanceMembership: customer.pointMembership

@@ -609,7 +609,9 @@ describe('Reservation', function () {
             id: 'aaaaa',
             member: 'memberId',
             manager: 'managerId',
-            contentList: ['Nail Cleaning'],
+            contentList: [{id: 0, value: 'Nail Cleaning'}],
+            contact: '01028904311',
+            name: '김승민',
             etc: 'etc',
             status: process.nmns.RESERVATION_STATUS.RESERVED
 
@@ -895,7 +897,8 @@ describe('Sales', function () {
             id: 'reservationId',
             member: 'customerId',
             manager: 'managerId',
-            contentList: ['Nail Cleaning'],
+            contact: '01028904311',
+            contentList: [{id: 0, value: 'Nail Cleaning'}],
             etc: 'etc',
             status: process.nmns.RESERVATION_STATUS.RESERVED
         };

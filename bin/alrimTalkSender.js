@@ -3,7 +3,7 @@
 const moment = require('moment');
 const util = require('./util');
 const request = require('request');
-const db = require('./webDb');
+const db = require('./newDb');
 
 const
     apiStoreId = process.env.ALRIMTALK_ID,
@@ -41,7 +41,7 @@ exports.sendReservationConfirm = async function (user, reservation) {
     if(user.alrimTalkInfo.useYn === 'Y'){
         let msg = `[${user.shopName} 예약안내]\n예약날짜: ${moment(reservation.start.substring(4,8), 'MMDD').format('MM[월]DD[일]')}\n예약시간: ${moment(reservation.start.substring(8, 12),'HHmm').format('HH[시]mm[분]')}\n안내말씀: ${user.alrimTalkInfo.notice}\n- 예약취소는 ${user.alrimTalkInfo.cancelDue}전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.`;
 
-        logger.log(msg);
+        // logger.log(msg);
 
         let param = {
             phone: reservation.contact,
@@ -58,10 +58,14 @@ exports.sendReservationConfirm = async function (user, reservation) {
         };
 
         let result = await sendAlrimTalk(param);
-        param.sendResult = result;
-        param.reservation = reservation;
-        param.sendDate = moment().format('YYYYMMDDhhmmss');
-        await db.addReservationConfirmAlrimTalkHist(user.email, param);
+        await db.addAlrmTalk({
+            email: user.email,
+            isCancel: false,
+            contact: reservation.contact,
+            name: reservation.name,
+            contents: msg,
+            reservationKey: reservation.id
+        });
         return result;
     }
 };
@@ -103,10 +107,14 @@ exports.sendReservationCancelNotify =async function (user, reservation){
     };
 
     let result = await sendAlrimTalk(param);
-    param.sendResult = result;
-    param.reservation = reservation;
-    param.sendDate = moment().format('YYYYMMDDhhmmss');
-    await db.addReservationCancelAlrimTalkHist(user.email, param);
+    await db.addAlrmTalk({
+        email: user.email,
+        isCancel: true,
+        contact: reservation.contact,
+        name: user.shopName || user.email,
+        contents: msg,
+        reservationKey: reservation.id
+    });
     return result;
 };
 

@@ -57,9 +57,10 @@ describe('Sales', function () {
             start: '201905191230',
             end: '201905191330',
             id: 'reservationId',
+            contact: '01028904311',
             member: 'customerId',
             manager: 'managerId',
-            contentList: ['Nail Cleaning'],
+            contentList: [{id: 0, value: 'Nail Cleaning'}],
             etc: 'etc',
             status: process.nmns.RESERVATION_STATUS.RESERVED
         };
@@ -458,7 +459,7 @@ describe('Sales', function () {
             try{
                 await db.saveCustomer(customer);
 
-                reservation.contentList[0] = '네일케어';
+                reservation.contentList[0] = {id: 3, value: '네일케어'};
                 await db.saveReservation(reservation);
 
                 let fn = handler.getSalesForReservation;
@@ -470,7 +471,7 @@ describe('Sales', function () {
                 let data = result.data[0];
                 logger.error(JSON.stringify(data));
                 expect(data.customerId).toEqual(reservation.member);
-                expect(data.item).toEqual(reservation.contentList[0]);
+                expect(data.item).toEqual(reservation.contentList[0].value);
                 expect(data.priceCash).toEqual(10500);
                 expect(data.priceCard).toEqual(11000);
                 expect(data.priceMembership).toEqual(10000);
@@ -486,7 +487,7 @@ describe('Sales', function () {
             try{
                 await db.saveCustomer(customer);
 
-                reservation.contentList[0] = 'aaa';
+                reservation.contentList[0] = {id: 3, value: 'aaa'};
                 await db.saveReservation(reservation);
 
                 let fn = handler.getSalesForReservation;
@@ -498,7 +499,7 @@ describe('Sales', function () {
                 let data = result.data[0];
                 logger.error(JSON.stringify(data));
                 expect(data.customerId).toEqual(reservation.member);
-                expect(data.item).toEqual(reservation.contentList[0]);
+                expect(data.item).toEqual(reservation.contentList[0].value);
                 expect(data.priceCash).toEqual(undefined);
                 expect(data.priceCard).toEqual(undefined);
                 expect(data.priceMembership).toEqual(undefined);
