@@ -1,39 +1,57 @@
 /*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
 (function() {
-    /*$("#mainRow").append($('<div id="menuModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">\
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">\
-          <div class="modal-content">\
-            <div class="modal-header">\
-              <span>\
-                <h5 class="modal-title" id="menuTitle">메뉴 추가</h5>\
-              </span>\
-              <button type="button" class="close" data-dismiss="modal" aria-label="닫기">\
-                <span aria-hidden="true">&times;</span>\
-              </button>\
+    $("#mainContents").append('<div id="menuDetailMenu" class="switchingMenu menuDetailMenu">\
+        <div class="menuContents px-3">\
+          <form id="menuForm" class="mb-1 col-12 px-0" style="padding-top:35px">\
+            <div class="form-group mb-0">\
+              <div>메뉴 이름</div>\
+              <input id="menuFormName" type="text" placeholder="메뉴 이름을 입력해주세요." class="form-control form-control-sm mt-3"/>\
+              <div style="margin-top:35px">카드 가격</div>\
+              <input id="menuFormPriceCard" type="text" pattern="[0-9]*" placeholder="카드 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+              <div style="margin-top:35px">현금 가격</div>\
+              <input id="menuFormPriceCash" type="text" pattern="[0-9]*" placeholder="현금 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+              <div style="margin-top:35px">멤버십 가격</div>\
+              <input id="menuFormPriceMembership" type="text" pattern="[0-9]*" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
             </div>\
-            <div class="modal-body">\
-              <div class="row mx-0 col-12 p-0">\
-                <form id="menuForm" class="mb-1 col-12 px-0">\
-                  <div class="form-group mb-0">\
-                    <div>메뉴 이름</div>\
-                    <input id="menuFormName" type="text" placeholder="메뉴 이름을 입력해주세요." class="form-control form-control-sm mt-3"/>\
-                    <div style="margin-top:35px">카드 가격</div>\
-                    <input id="menuFormPriceCard" type="text" pattern="[0-9]*" placeholder="카드 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
-                    <div style="margin-top:35px">현금 가격</div>\
-                    <input id="menuFormPriceCash" type="text" pattern="[0-9]*" placeholder="현금 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
-                    <div style="margin-top:35px">멤버십 가격</div>\
-                    <input id="menuFormPriceMembership" type="text" pattern="[0-9]*" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
-                  </div>\
-                </form>\
-                <div class="row mx-0 col-12 px-0 mt-5">\
-                  <button type="button" class="btn btn-accent col" id="menuFormBtn">저장</button>\
-                </div>\
-              </div>\
-            </div>\
+          </form>\
+          <div class="row mx-0 col-12 px-0 mt-5">\
+            <button type="button" class="btn btn-white col mr-1" id="menuFormCancelBtn">취소</button>\
+            <button type="button" class="btn btn-accent col ml-1" id="menuFormBtn">저장</button>\
           </div>\
         </div>\
-      </div>').one('show.bs.modal', initMenuModal));*/
+      </div>');
   
+  $("#menuFormBtn").on("touch click", function(){
+    if($("#menuFormName").val() === ''){
+      showSnackBar('메뉴 이름을 입력해주세요.');
+      return;
+    }
+    var origin = $("#menuForm").data('origin')
+    if(origin){// update
+      NMNS.history.push({id:origin.id, name:origin.name, priceCash: origin.priceCash, priceCard: origin.priceCard, priceMembership: origin.priceMembership});
+      var after = {
+        id:origin.id,
+        name:$("#menuFormName").val(),
+        priceCash:$("#menuFormPriceCash").val() === ''? null : $("#menuFormPriceCash").val()*1,
+        priceCard:$("#menuFormPriceCard").val() === ''? null : $("#menuFormPriceCard").val()*1,
+        priceMembership:$("#menuFormPriceMembersip").val() === ''? null : $("#menuFormPriceMembership").val()*1
+      };
+      NMNS.socket.emit('update menu', after);
+      origin = NMNS.menuList.find(function(item){ return item.id === after.id});
+      origin.name = after.name;
+      origin.priceCash = after.priceCash;
+      origin.priceCard = after.priceCard;
+      origin.priceMembership = after.priceMembership;
+    }
+    drawMenuList(true);
+    //history.back();
+  });
+  $("#menuModal input[pattern]").each(function(index, input){
+    setNumericInput(input);
+  })
+  $("#menuFormCancelBtn").on("touch click", function(){
+    //history.back();
+  })
   /*$("#updateMenuLink").on("touch click", function(){
     $(".menuRow .updatingMenu-collapsed").toggleClass('d-none').toggleClass('d-block');
     $(".updatingMenu-expanded").toggle();
@@ -76,7 +94,6 @@
               (item.priceCash !== null && item.priceCash !== undefined?('<div class="col-6 px-0 menuSubHead">현금 가격</div><div class="col-6 px-0 montserrat menuPrice">'+(item.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</div>') : '') +
               (item.priceMembership !== null && item.priceMembership !== undefined?('<div class="col-6 px-0 menuSubHead">멤버십 가격</div><div class="col-6 px-0 montserrat menuPrice">'+(item.priceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</div>') : '') +
               //'<div class="col-1 updatingMenu-collapsed d-none"><button type="button" class="deleteMenuLink close p-0 m-0" aria-label="삭제"><span aria-hidden="true">&times;</span></button></div>'+
-              //'<a class="menuModalLink" href="#" data-toggle="modal" data-target="#menuModal" title="상세보기"></a>'+
               '</div></div>'
       }
       return html;
@@ -98,11 +115,14 @@
           html += generateMenuRow(currentMenuCount, goalIndex)
       }
       currentMenuCount = goalIndex;
-      list.append(html);
-      /*list.append($(html).on("touch click", ".menuModalLink", function(e){
+      //list.append(html);
+      list.append($(html).on("touch click", function(e){
         e.preventDefault();
-        refreshMenuModal(NMNS.menuList[$(this).parent().data('index')*1]);
-      }).on("touch click", ".deleteMenuLink", function(e){
+        e.stopPropagation();
+        refreshMenuModal(NMNS.menuList[$(this).data('index')*1]);
+        $(".menuDetailLink").trigger("click");
+      }));
+      /*.on("touch click", ".deleteMenuLink", function(e){
         e.stopPropagation();
         $(this).parents('.menuRow').data('action', 'delete').hide();
         if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
@@ -122,63 +142,17 @@
         list.data('sortable', Sortable.create(list[0], {animation:150, disabled:true, forceFallback:true}));
       }*/
   }
-/*
+
   function refreshMenuModal(menu){
     $("#menuForm").data('origin', menu);
-    if(menu){
-      $("#menuFormName").val(menu.name);
-      $("#menuFormPriceCard").val(menu.priceCard);
-      $("#menuFormPriceCash").val(menu.priceCash);
-      $("#menuFormPriceMembership").val(menu.priceMembership);
-      $("#menuTitle").text('메뉴 상세');
-    }else{
-      $("#menuFormName").val('');
-      $("#menuFormPriceCard").val('');
-      $("#menuFormPriceCash").val('');
-      $("#menuFormPriceMembership").val('');
-      $("#menuTitle").text('메뉴 추가');
-    }
+    $("#menuFormName").val(menu.name);
+    $("#menuFormPriceCard").val(menu.priceCard);
+    $("#menuFormPriceCash").val(menu.priceCash);
+    $("#menuFormPriceMembership").val(menu.priceMembership);
   }
-
+/*
   function initMenuModal(){
-    $("#menuFormBtn").on("touch click", function(){
-      if($("#menuFormName").val() === ''){
-        showSnackBar('메뉴 이름을 입력해주세요.');
-        return;
-      }
-      var origin = $("#menuForm").data('origin')
-      if(origin){// update
-        NMNS.history.push({id:origin.id, name:origin.name, priceCash: origin.priceCash, priceCard: origin.priceCard, priceMembership: origin.priceMembership});
-        var after = {
-          id:origin.id,
-          name:$("#menuFormName").val(),
-          priceCash:$("#menuFormPriceCash").val() === ''? null : $("#menuFormPriceCash").val()*1,
-          priceCard:$("#menuFormPriceCard").val() === ''? null : $("#menuFormPriceCard").val()*1,
-          priceMembership:$("#menuFormPriceMembersip").val() === ''? null : $("#menuFormPriceMembership").val()*1
-        };
-        NMNS.socket.emit('update menu', after);
-        origin = NMNS.menuList.find(function(item){ return item.id === after.id});
-        origin.name = after.name;
-        origin.priceCash = after.priceCash;
-        origin.priceCard = after.priceCard;
-        origin.priceMembership = after.priceMembership;
-      }else{//create
-        origin = {
-          id:NMNS.email + generateRandom(),
-          name:$("#menuFormName").val(),
-          priceCash:$("#menuFormPriceCash").val() === ''? null : $("#menuFormPriceCash").val()*1,
-          priceCard:$("#menuFormPriceCard").val() === ''? null : $("#menuFormPriceCard").val()*1,
-          priceMembership:$("#menuFormPriceMembersip").val() === ''? null : $("#menuFormPriceMembership").val()*1
-        }
-        NMNS.socket.emit('add menu', origin);
-        NMNS.menuList.push(origin);
-      }
-      $("#menuModal").modal('hide');
-      drawMenuList(true);
-    });
-    $("#menuModal input[pattern]").each(function(index, input){
-      setNumericInput(input);
-    })
+    
   }
   
   $("#createMenuLink").on("touch click", function(){
@@ -200,7 +174,7 @@
       NMNS.menuList.splice(index, 1);
       drawMenuList(true);
     }
-  }));
+  }));*/
   NMNS.socket.on("update menu", socketResponse("메뉴 항목 수정", function(e){
     NMNS.history.remove(e.data.id, findById);
   }, function(e){
@@ -217,7 +191,7 @@
       NMNS.history.remove(e.data.id, findById);
       drawMenuList(true);
     }
-  }));*/
+  }));
   
   //TODO : delete these rows for test
   NMNS.menuList = [{id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 121, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 441, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 91, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 81, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 17, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 61, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 51, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 41, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 31, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 21, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 11, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 2, name:'매니큐어2', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 3, name:'매니큐어3', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 4, name:'매니큐어4', priceCash:10000, priceCard:20000, priceMembership:10000}, {id:5, name:'매니큐어5', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 6, name:'매니큐어6', priceCash:10000, priceCard:20000, priceMembership:10000}]
