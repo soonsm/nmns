@@ -596,6 +596,17 @@
 
     function changeMainShopName(shopName) {
       $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
+      $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1));
+    }
+    
+    function changeMainShopLogo(isImage, shopName){
+      if(isImage){
+        $("#mainShopCapital").hide();
+        $("#mainShopIcon").show().attr('src', shopName);
+      }else{
+        $("#mainShopIcon").hide();
+        $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1)).show();
+      }
     }
 
     function drawAlrimList(alrims) {
@@ -731,7 +742,7 @@
         }
         //validation end
         //update info start
-        var parameters = {}, diff = false,
+        var parameters = {}, diff = false, logo = false,
             history = { id: "info" };
         if ((beginTime.format("HHmm") !== NMNS.info.bizBeginTime) || (endTime.format("HHmm") !== NMNS.info.bizEndTime)) {
             history.hourStart = NMNS.info.bizBeginTime || "0900";
@@ -756,11 +767,24 @@
             NMNS.info.bizType = parameters.bizType;
             diff = true;
         }
-            
+        
+        if(document.getElementById('infoLogo').files[0] && !$("#infoLogo").data("deleted")){
+          logo = true;
+        } else if($("#infoLogo").data("deleted") && NMNS.info.logo){
+          history.logo = NMNS.info.logo;
+          parameters.logo = null;
+          changeMainShopLogo(false, NMNS.info.shopName);
+          diff = true;
+        }
+        
         if (diff) {
             NMNS.history.push(history);
             NMNS.socket.emit("update info", parameters);
-        } else {
+        } 
+        if(logo){
+          NMNS.socket.emit("upload logo", document.getElementById('infoLogo').files[0]);
+        } 
+        if( !diff && !logo ) {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
         //update info end
@@ -776,6 +800,9 @@
       $("#infoBizType").val(NMNS.info.bizType);
       $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
       $("#infoBizEndTime").val(NMNS.info.bizEndTime);
+      if(NMNS.info.logo){
+        $("#addLogo").text("삭제").prev().val(NMNS.info.logo.substring(NMNS.info.logo.lastIndexOf("/")+1));
+      }
     }
 
     function initNoShowModal() {
@@ -1952,10 +1979,17 @@
         if (history.shopName) {
             changeMainShopName(history.shopName);
         }
+        if(history.logo){
+          changeMainShopLogo(true, history.logo);
+        }
         NMNS.info.shopName = history.shopName || NMNS.info.shopName;
         NMNS.info.bizType = history.bizType;
         NMNS.history.remove("info", findById);
         NMNS.initedInfoModal = false;
+    }));
+    
+    NMNS.socket.on("upload logo", socketResponse("매장 이미지 등록하기", function(e){
+      changeMainShopLogo(true, e.data.logo);
     }));
 
     NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function() {
@@ -2200,7 +2234,7 @@
       }
     }, function(e){
       if(e.data.snsType === 'KAKAO'){
-        alert('카카오톡과의 연동을 하지 못했습니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
+        alert('카카오톡과의 연동을 하지 못했���니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
       }
     }, true));
     //websocket response end
@@ -2229,11 +2263,57 @@
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
         }
+        if (!changed && ((NMNS.info.logo && $("#infoLogo").data('deleted')) || document.getElementById('infoLogo').files[0])){
+          changed = true;
+        }
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
     }).one('show.bs.modal', function(){
       $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
+      $("#addLogo").on("touch click", function(e){
+        if($(this).text() === '삭제'){
+          $(this).text("첨부").prev().val('');
+          $("#infoLogo").data('deleted', true);
+          document.getElementById('infoLogo').value = '';
+          if(!/safari/i.test(navigator.userAgent)){
+            document.getElementById('infoLogo').type = '';
+            document.getElementById('infoLogo').type = 'file';
+          }
+        }else{
+          e.preventDefault();
+          $("#infoLogo").trigger("click");
+        }
+      }).prev().on("touch click", function(e){
+        e.preventDefault();
+        $("#infoLogo").trigger("click");
+      });
+      
+      $("#infoLogo").on("change", function(e){
+  			var file = this.files[0];
+        $(this).data('deleted', file);
+  			if(file){
+  				var img = document.createElement('img');
+  				img.onload = function(){
+  					if(img.naturalWidth <= 130 && img.naturalHeight <= 130){
+              $("#addLogo").text("삭제").prev().val(file.name);
+              $("#infoLogo").data('deleted', false);
+  					}else{
+  						alert('이미지의 크기가 130 X 130보다 큽니다.\n작은 이미지로 올려주세요.');
+  						document.getElementById('infoLogo').value = '';
+              if(!/safari/i.test(navigator.userAgent)){
+                document.getElementById('infoLogo').type = '';
+                document.getElementById('infoLogo').type = 'file';
+              }
+              $("#addLogo").text("첨부").prev().val('');
+  					}
+  					img.remove();
+  				}
+  				img.setAttribute('src', (window.URL || window.webkitURL).createObjectURL(file));
+  			}else{
+          $("#addLogo").text("첨부");
+  			}
+      });
     }).on('show.bs.modal', refreshInfoModal);
     
     $("#alrimModal").on("hide.bs.modal", function() {

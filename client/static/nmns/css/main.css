@@ -424,7 +424,7 @@ input[type=checkbox]+label{
     white-space:nowrap;
 }
 
-#mainRow #mainNav #mainMenu #mainShopIcon{
+#mainShopIcon, #mainShopCapital{
     width:32px;
     height:32px;
     margin-right:10px;
@@ -1580,6 +1580,12 @@ button.form-control {
 	font-weight:400;
 	text-shadow:none;
 	cursor:pointer;
+}
+#snackbar > div:not(.close){
+    max-height:35px;
+    line-height:1.54;
+    overflow:hidden;
+    word-break: break-all;
 }
 #mainAside.sidebar-toggled + #mainRow #snackbar{
 	left: 104px;
