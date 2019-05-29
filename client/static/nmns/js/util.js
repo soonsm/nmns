@@ -255,7 +255,7 @@ function showSnackBar(innerHtml) {
     } else if (x.classList.contains("show")) {
         snackbar.push(innerHtml);
     }
-    x.innerHTML = ("<div style='overflow:hidden;word-break:break-all;max-height:35px'>"+innerHtml +"</div>"+ "<div class='close'>&times;</div>");
+    x.innerHTML = ("<div>"+innerHtml +"</div>"+ "<div class='close'>&times;</div>");
     x.classList.add("show");
 		var event = setTimeout(function() {
         x.classList.remove("show");
