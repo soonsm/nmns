@@ -320,8 +320,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         addEvent(GetReservationSummaryList, reservationHandler.getReservationSummaryList);
         addEvent(GetTaskList, reservationHandler.getTaskList);
         addEvent(GetReservationList, reservationHandler.getReservationList);
-        addEvent(UpdateReservation, reservationHandler.updateReservation);
-        addEvent(AddReservation, reservationHandler.addReservation);
+        addEvent(UpdateReservation, reservationHandler.update);
+        addEvent(AddReservation, reservationHandler.add);
         addEvent(ResendAlrimtalk, reservationHandler.reSendReservationConfirm);
 
         /**

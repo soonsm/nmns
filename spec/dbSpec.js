@@ -738,6 +738,7 @@ describe('Task', function () {
             start: '201905191230',
             end: '201905191330',
             id: 'aaaaa',
+            name: '관리비 내기',
             manager: 'managerId',
             contents: 'contents',
             etc: 'etc',
@@ -754,6 +755,7 @@ describe('Task', function () {
             delete result.timestamp;
             delete result.isAllDay;
             delete result.type;
+            delete result.contact;
 
             expect(result).toEqual(task);
         });
@@ -766,6 +768,7 @@ describe('Task', function () {
             delete result.timestamp;
             delete result.isAllDay;
             delete result.type;
+            delete result.contact;
 
             expect(result).toEqual(task);
         });

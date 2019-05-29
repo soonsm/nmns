@@ -857,8 +857,8 @@ exports.saveReservation = async function (data) {
         etc,
         cancelDate
     }))(data);
-    if (!item.email || !item.start || !item.end || !item.id || !item.member || !item.manager) {
-        throw 'email, start, end, id, member, manager는 필수입니다.'
+    if (!item.email || !item.contact || !item.start || !item.end || !item.id || !item.member || !item.manager) {
+        throw 'email, contact, start, end, id, member, manager는 필수입니다.'
     }
 
     if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
@@ -868,27 +868,14 @@ exports.saveReservation = async function (data) {
     if (item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined) {
         throw `isAllday 값이 올바르지 않습니다.(${item.isAllDay})`;
     }
+
     if(item.isAllDay === undefined){
         item.isAllDay = false;
     }
 
-    if (item.type !== 'R' && item.type !== 'T' && item.type !== undefined) {
-        throw `type 값이 올바르지 않습니다.(${item.type})`;
-    }
+    item.type = 'R';
 
-    if (!item.type) {
-        item.type = 'R';
-    }
-
-    if(item.type === 'R' && !item.contact){
-        throw `예약 저장 시 연락처는 필수입니다.`;
-    }
-
-    if(item.type === 'T' && !item.name){
-        throw '일정저장 시 이름은 필수입니다.'
-    }
-
-    if(item.contact && !nmnsUtil.phoneNumberValidation(item.contact)){
+    if(!nmnsUtil.phoneNumberValidation(item.contact)){
         throw `휴대전화번호 형식이 올바르지 않습니다.(${item.contact})`;
     }
 
@@ -1042,9 +1029,9 @@ exports.deleteAllReservation = async function (email) {
  * status: 예역 상태, RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED
  */
 exports.saveTask = async function (data) {
-    let item = (({email, timestamp, start, end, id, contents, manager, isAllDay, status, type, etc, isDone}) => ({email, timestamp, start, end, id, contents, manager, isAllDay, status, type, etc, isDone}))(data);
-    if (!item.email || !item.start || !item.end || !item.id || !item.manager) {
-        throw 'email, start, end, id, member, manager는 필수입니다.'
+    let item = (({email, timestamp, name, contact, start, end, id, contents, manager, isAllDay, status, type, etc, isDone}) => ({email, timestamp, name, contact, start, end, id, contents, manager, isAllDay, status, type, etc, isDone}))(data);
+    if (!item.email || !item.name || !item.start || !item.end || !item.id || !item.manager) {
+        throw 'email, name, start, end, id, manager는 필수입니다.'
     }
 
     if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
@@ -1055,6 +1042,10 @@ exports.saveTask = async function (data) {
         throw `isAllday 값이 올바르지 않습니다.(${item.isAllDay})`;
     }
 
+    if(item.isAllDay === undefined){
+        item.isAllDay = false;
+    }
+
     if (item.isDone !== true && item.isDone !== false && item.isDone !== undefined) {
         throw `isDone 값이 올바르지 않습니다.(${item.isDone})`;
     }
@@ -1063,12 +1054,10 @@ exports.saveTask = async function (data) {
         item.isDone = false;
     }
 
-    if (item.type !== 'R' && item.type !== 'T' && item.type !== undefined) {
-        throw `type 값이 올바르지 않습니다.(${item.type})`;
-    }
+    item.type = 'T';
 
-    if (!item.type) {
-        item.type = 'T';
+    if(!item.status){
+        item.status = process.nmns.RESERVATION_STATUS.RESERVED;
     }
 
     if (item.status !== process.nmns.RESERVATION_STATUS.DELETED &&
@@ -1089,12 +1078,50 @@ exports.saveTask = async function (data) {
         Item: item
     });
 }
+exports.getTask = async function(email, id){
+    if (!email || !id) {
+        throw 'email과 id은 필수입니다.';
+    }
+
+    let list = await query({
+        TableName: process.nmns.TABLE.Task,
+        KeyConditionExpression: "email = :email",
+        FilterExpression: '#id = :id',
+        ExpressionAttributeNames: {
+            "#id": "id",
+        },
+        ExpressionAttributeValues: {
+            ":id": id,
+            ':email': email
+        },
+    });
+
+    if(list.length > 0){
+        return list[0];
+    }else{
+        return null;
+    }
+}
 exports.getTaskList = async function (email, start, end) {
     if (!email) {
         throw 'email은 필수입니다.';
     }
 
-    if (!moment(start, 'YYYYMMDD').isValid() || !moment(end, 'YYYYMMDD').isValid()) {
+    if(!start){
+        start = '20000101';
+    }
+    if(!end){
+        end = '29991231';
+    }
+
+    if(start.length === 8){
+        start += '0000';
+    }
+    if(end.length === 8){
+        end += '2359';
+    }
+
+    if (!moment(start, 'YYYYMMDDhhmm').isValid() || !moment(end, 'YYYYMMDDhhmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
     }
 
@@ -1108,7 +1135,7 @@ exports.getTaskList = async function (email, start, end) {
         },
         ExpressionAttributeValues: {
             ":email": email,
-            ":end": end + '2359',
+            ":end": end,
             ":status": 'DELETED'
         },
     });
