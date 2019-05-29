@@ -104,7 +104,7 @@
       }).on("touch click", ".deleteMenuLink", function(e){
         e.stopPropagation();
         $(this).parents('.menuRow').data('action', 'delete').hide();
-        /*if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
+        if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
           var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
           if (Number.isInteger(index)) {
             var menu = NMNS.menuList[index];
@@ -115,7 +115,7 @@
                 drawMenuList(true);
             }
           }
-        }*/
+        }
       }));
       if(!list.data('sortable')){
         list.data('sortable', Sortable.create(list[0], {animation:150, disabled:true, forceFallback:true}));
@@ -218,6 +218,13 @@
     }
   }));
   
+  NMNS.socket.on("delete menu", socketResponse("메뉴 항목 삭제", function(e){
+    NMNS.history.remove(e.data.id, findById);
+  }, function(e){
+    var origin = NMNS.history.find(function(item){return item.id === e.data.id});
+    NMNS.menuList.splice(origin.index, origin);
+    drawMenuList(true);
+  }));
   //TODO : delete these rows for test
   NMNS.menuList = [{id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 2, name:'매니큐어2', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 3, name:'매니큐어3', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 4, name:'매니큐어4', priceCash:10000, priceCard:20000, priceMembership:10000}, {id:5, name:'매니큐어5', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 6, name:'매니큐어6', priceCash:10000, priceCard:20000, priceMembership:10000}]
   drawMenuList(true); // this line should be remained after deleting test above line.

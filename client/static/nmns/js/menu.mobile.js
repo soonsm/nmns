@@ -14,8 +14,8 @@
               <input id="menuFormPriceMembership" type="text" pattern="[0-9]*" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
             </div>\
           </form>\
-          <div class="row mx-0 col-12 px-0 mt-5">\
-            <button type="button" class="btn btn-white col mr-1" id="menuFormCancelBtn">취소</button>\
+          <div class="row mx-0 col-12 px-0 mt-5" style="padding-bottom:20px">\
+            <button type="button" class="btn btn-white col mr-1" id="menuFormDeleteBtn">삭제</button>\
             <button type="button" class="btn btn-accent col ml-1" id="menuFormBtn">저장</button>\
           </div>\
         </div>\
@@ -43,14 +43,26 @@
       origin.priceCard = after.priceCard;
       origin.priceMembership = after.priceMembership;
     }
-    drawMenuList(true);
-    //history.back();
+    NMNS.drawMenuList(true);
+    history.back();
   });
   $("#menuModal input[pattern]").each(function(index, input){
     setNumericInput(input);
   })
-  $("#menuFormCancelBtn").on("touch click", function(){
-    //history.back();
+  $("#menuFormDeleteBtn").on("touch click", function(e){
+    e.stopPropagation();
+    if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
+      var menu = $("#menuForm").data('origin');
+      var index = $("#menuForm").data('index');
+      $("#mainMenuList .menuRow[data-index='"+index+"']").data('action', 'delete').hide();
+      if (menu) {
+          NMNS.history.push($.extend({ "index": index }, menu));
+          NMNS.socket.emit("delete menu", { "id": menu.id });
+          NMNS.menuList.remove(menu.id, function(item, target) { return item.id === target });
+          NMNS.drawMenuList(true);
+      }
+      history.back();
+    }
   })
   /*$("#updateMenuLink").on("touch click", function(){
     $(".menuRow .updatingMenu-collapsed").toggleClass('d-none').toggleClass('d-block');
@@ -120,24 +132,9 @@
         e.preventDefault();
         e.stopPropagation();
         refreshMenuModal(NMNS.menuList[$(this).data('index')*1]);
+        $("#menuForm").data('index', $(this).data('index')*1);
         $(".menuDetailLink").trigger("click");
       }));
-      /*.on("touch click", ".deleteMenuLink", function(e){
-        e.stopPropagation();
-        $(this).parents('.menuRow').data('action', 'delete').hide();
-        if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
-          var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
-          if (Number.isInteger(index)) {
-            var menu = NMNS.menuList[index];
-            if (menu) {
-                NMNS.history.push($.extend({ "index": index }, menu));
-                NMNS.socket.emit("delete menu", { "id": menu.id });
-                NMNS.menuList.remove(menu.id, function(item, target) { return item.id === target });
-                drawMenuList(true);
-            }
-          }
-        }
-      }));*/
       /*if(!list.data('sortable')){
         list.data('sortable', Sortable.create(list[0], {animation:150, disabled:true, forceFallback:true}));
       }*/
@@ -189,10 +186,18 @@
       NMNS.menuList[index].priceMembership = origin.priceMembership;
       
       NMNS.history.remove(e.data.id, findById);
-      drawMenuList(true);
+      NMNS.drawMenuList(true);
     }
   }));
-  
+
+  NMNS.socket.on("delete menu", socketResponse("메뉴 항목 삭제", function(e){
+    NMNS.history.remove(e.data.id, findById);
+  }, function(e){
+    var origin = NMNS.history.find(function(item){return item.id === e.data.id});
+    NMNS.menuList.splice(origin.index, origin);
+    NMNS.drawMenuList(true);
+    NMNS.history.remove(e.data.id, findById);
+  }));
   //TODO : delete these rows for test
   NMNS.menuList = [{id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 121, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 441, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 91, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 81, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 17, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 61, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 51, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 41, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 31, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 21, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 11, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 2, name:'매니큐어2', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 3, name:'매니큐어3', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 4, name:'매니큐어4', priceCash:10000, priceCard:20000, priceMembership:10000}, {id:5, name:'매니큐어5', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 6, name:'매니큐어6', priceCash:10000, priceCard:20000, priceMembership:10000}]
   NMNS.drawMenuList(true); 
