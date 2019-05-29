@@ -872,4 +872,121 @@ describe('customerHandler', function() {
             }
         });
     });
+
+    describe('addCustomer', ()=>{
+        it('추가 후 반환 값 확인', async function(){
+            await db.addNoShow(email, customer.contact, '20190501', '지각');
+
+            let fn = handler.addCustomer;
+            fn.email = email;
+            let result = await fn.call(fn, customer);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            let data = result.data;
+            expect(data.id).toEqual(customer.id);
+            expect(data.totalNoShow).toEqual(1);
+
+            data = await db.getCustomer(email, customer.id);
+            customer.pointSales = 0;
+            expect(customer).toEqual(data);
+        });
+    });
+
+    describe('deleteCustomer', ()=>{
+        it('삭제 후 확인', async function(){
+            let fn = handler.addCustomer;
+            fn.email = email;
+            let result = await fn.call(fn, customer);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            data = await db.getCustomer(email, customer.id);
+            customer.pointSales = 0;
+            expect(customer).toEqual(data);
+
+            fn = handler.deleteCustomer;
+            fn.email = email;
+            result = await fn.call(fn, customer);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+            data = await db.getCustomer(email, customer.id);
+            expect(data).toBeFalsy();
+
+        });
+    });
+
+    describe('updateCustomer', ()=>{
+        it('추가 후 수정 확인', async function(){
+            let fn = handler.addCustomer;
+            fn.email = email;
+            let result = await fn.call(fn, customer);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            fn = handler.updateCustomer;
+            fn.email = email;
+
+            customer.name = '와우';
+            result = await fn.call(fn, customer);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            let data = result.data;
+            expect(data.id).toEqual(customer.id);
+
+            data = await db.getCustomer(email, customer.id);
+            customer.pointSales = 0;
+            expect(customer).toEqual(data);
+        });
+
+        it('수정 할 때 이미 이름과 연락처가 겹치는 경우', async function(){
+            let fn = handler.addCustomer;
+            fn.email = email;
+            let result = await fn.call(fn, customer);
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            customer.id = 'aws';
+            customer.name = '이종현';
+            result = await fn.call(fn, customer);
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(true);
+
+            fn = handler.updateCustomer;
+            fn.email = email;
+
+            customer.name = '김승민';
+            result = await fn.call(fn, customer);
+
+            if(!result.status){
+                logger.error(result.message);
+            }
+            expect(result.status).toEqual(false);
+
+            let data = result.data;
+            expect(data.id).toEqual(customer.id);
+            expect(data.reason).toEqual('DUPLICATED');
+
+        });
+    });
 });

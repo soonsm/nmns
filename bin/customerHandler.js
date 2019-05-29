@@ -335,8 +335,8 @@ exports.addCustomer = async function (data) {
             etc: data.etc
         });
         status = true;
-        if (contact) {
-            resultData.totalNoShow = (await newDb.getNoShow(contact)).length;
+        if (data.contact) {
+            resultData.totalNoShow = (await newDb.getNoShow(data.contact)).length;
         }
     } catch (e) {
         status = false;
@@ -358,8 +358,8 @@ exports.updateCustomer = async function (data) {
         resultData = {id: data.id};
 
     try {
-        let memberList = await newDb.getCustomerList(email);
-        if (memberList.find(member => member.name === data.name && member.contact === data.contact && member.id !== data.id)) {
+        let memberList = await newDb.getCustomerList(email, data.contact, data.name);
+        if (memberList.find(member => member.id !== data.id)) {
             resultData.reason = 'DUPLICATED';
             throw '이미 이름과 연락처가 동일한 고객이 존재합니다.';
         }
@@ -387,28 +387,24 @@ exports.updateCustomer = async function (data) {
 };
 
 exports.deleteCustomer = async function (data) {
+    let email = this.email;
     let status = false,
         message = '',
         resultData = {id: data.id};
 
-    if (!data.id) {
-        message = '고객 삭제를 위해서는 아이디가 필수입니다.';
-    } else {
-        let user = await db.getWebUser(this.email);
-        let memberList = user.memberList.filter(member => member.id !== data.id);
-
-        if (await db.updateWebUser(this.email, {memberList: memberList})) {
-            status = true;
-        } else {
-            message = '시스템 에러로 고객을 삭제하지 못했습니다.';
-        }
+    try {
+        await newDb.deleteCustomer(email, data.id);
+        status = true;
+    } catch (e) {
+        status = false;
+        message = e;
     }
 
     return {
         status: status,
         data: resultData,
         message: message
-    };
+    }
 }
 
 /**
