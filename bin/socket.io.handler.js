@@ -106,7 +106,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
-                logger.log(`email: ${email} eventName: ${eventName} data: ${util.format(data)}`);
+                logger.log(`email: ${email}, eventName: ${eventName}, data: ${util.format(data)}`);
                 if (user.authStatus !== 'EMAIL_VERIFICATED' && !EVENT_LIST_NO_NEED_VERIFICATION.includes(eventName)) {
                     socket.emit(eventName, makeResponse(false, data, '이메일 인증 후 사용하시기 바랍니다.'));
                 }
@@ -118,11 +118,14 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
                         let result = await fn.apply(fn, [data]);
                         if (result) {
                             socket.emit(eventName, makeResponse(result.status, result.data, result.message));
+                            if(!result.status){
+                                logger.error(`eventName: ${eventName}, error: ${result.message}`);
+                            }
                         }
                     }
                     catch (e) {
                         socket.emit(eventName, makeResponse(false, data, '시스템 에러로 처리하지 못했습니다.'));
-                        logger.log(`email: ${email}, eventName: ${eventName}, data: ${util.format(data)}, error: ${e}`);
+                        logger.error(`email: ${email}, eventName: ${eventName}, data: ${util.format(data)}, error: ${e}`);
                     }
                 }
             });
