@@ -58,12 +58,12 @@
             </div>\
             <div class="row mx-0 col-12 px-0" id="customerScheduleList"></div>\
           </div>\
-          <div id="customerScheduleEmpty" style="display:none">예약 내역이 없어요.</div>\
+          <div id="customerScheduleEmpty" style="display:none;margin-top:-35px">예약 내역이 없어요.</div>\
         </div>\
         \
-        <div id="customerAlrim" class="tab-pane col-12 px-0 fade" role="tabpanel">\
+        <div id="customerAlrim" class="tab-pane col-12 px-0 fade" role="tabpanel" style="padding:20px 0">\
           <div id="customerAlrimNotEmpty" class="row mx-0 flex-column">\
-            <div id="customerAlrimList" class="row mx-0"></div>\
+            <div id="customerAlrimList" class="row"></div>\
           </div>\
           <div id="customerAlrimLoading" class="flex-column">\
             <div class="bouncingLoader">\
@@ -161,7 +161,7 @@
         item = alrims[index];
         html += '<div class="customerAlrim col-12 montserrat" title="눌러서 전송된 알림톡 내용 보기"><a href="#customerAlrimDetail' + index + '" class="customerAlrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="customerAlrimDetail' + (index) 
               + '"></a>' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + '</div>'+
-              '<div class="row customerAlrimDetail collapse mx-0 col-12" id="customerAlrimDetail' + index + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
+              '<div class="row customerAlrimDetail collapse mx-0 col-12" id="customerAlrimDetail' + index + '"><div>'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div></div>';
     }
     return html;
   }
@@ -430,6 +430,7 @@
       }
   }, true));
   NMNS.socket.on("get customer alrim", socketResponse("알림톡 내역 조회", function(e) {
+    e.data = [{date:'20190101123059', contents: '알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}, {date:'20190201123059', contents: '알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}, {date:'20190301123059', contents: '1123123알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}]
     $("#customerAlrimList").data('index', 0).data('item', e.data);
     drawCustomerAlrimList(true);
   }));
