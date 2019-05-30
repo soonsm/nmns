@@ -268,57 +268,16 @@ function getSortFunc(action) {
     }
 }
 
-function getDummy() {
-    return {
-        name: '김승민',
-        contact: '01028904311',
-        reservCount: 12,
-        totalNoShow: 34,
-        myNoShow: 30,
-        etc: '외로움',
-        history: [
-            {
-                data: '201809021330',
-                managerName: '김스탭',
-                managerColor: '#009688',
-                contents: '브라질리언 왁싱',
-                status: 'RESERVED'
-            },
-            {
-                data: '201809011330',
-                managerName: '정스탭',
-                managerColor: '#009688',
-                contents: '삭발',
-                status: 'RESERVED'
-            }
-        ]
-    }, {
-        name: '정태호',
-        contact: '01011112222',
-        reservCount: 3,
-        totalNoShow: 1,
-        myNoShow: 1,
-        etc: '심심함',
-        history: [
-            {
-                data: '201808231330',
-                managerName: '김스탭',
-                managerColor: '#009688',
-                contents: '쏙 젤',
-                status: 'RESERVED'
-            },
-            {
-                data: '201808221330',
-                managerName: '정스탭',
-                managerColor: '#009688',
-                contents: '손톱 다 뽑기',
-                status: 'RESERVED'
-            }
-        ]
-    };
-}
 
 
+/**
+ * 고객 추가
+ * 요청 위치 : "add customer",
+ * 데이터 : {"id":${고객 id, string}, "name":${고객 이름, string}, "contact":${고객 연락처, string}, "etc":${고객메모, string, optional}, "managerId":${매니저 아이디, string}}
+ * 응답 형식 : "data":{"id":${요청에서 넘겨준 id, string}, "totalNoShow":${총 노쇼횟수, number, optional}}
+ * name, contact 둘 중 하나는 필수
+ * 매니저가 배정되지 않은 경우 managerId는 ""로 세팅
+ */
 exports.addCustomer = async function (data) {
     let email = this.email;
     let status = false,
@@ -351,6 +310,15 @@ exports.addCustomer = async function (data) {
     }
 };
 
+/**
+ * 고객정보 수정
+ * 요청 위치 : "update customer",
+ * 데이터 : {"id":${고객 id, string}, "name":${고객 이름, string}, "contact":${고객 연락처, string}, "etc":${고객메모, string, optional}, "managerId":${매니저 아이디, string}}
+ * 수정 한 고객의 모든 정보를 업로드 한다.
+ * 응답 형식 : "data":{"id":${요청에서 넘겨준 id, string}, "reason":${실패사유, string, optional}}
+ * 응답의 실패사유는 "이미 이름과 연락처가 동일한 고객이 존재할 경우에만 세팅, 이 경우 반드시 "DUPLICATED"로 세팅
+ * 이렇게 세팅해서 줄 경우 클라이언트에서 유저에게 확인 절차 후 바로 27-1 고객정보 병합 요청을 보내도록 함
+ */
 exports.updateCustomer = async function (data) {
     let email = this.email;
     let status = false,
@@ -386,6 +354,12 @@ exports.updateCustomer = async function (data) {
     }
 };
 
+/**
+ * 고객 삭제
+ * 요청 위치 : "delete customer",
+ * 데이터 : {"id":${고객 id, string}}
+ * 응답 형식 : "data":{"id":${요청에서 넘겨준 id, string}}
+ */
 exports.deleteCustomer = async function (data) {
     let email = this.email;
     let status = false,
@@ -409,63 +383,58 @@ exports.deleteCustomer = async function (data) {
 
 /**
  * 고객정보 병합
- * merge customer
- * @param data
- * @returns {Promise<{status: boolean, data: {id}, message: string}>}
+ * 요청 위치 : "merge customer",
+ * 데이터 : {"id":${합쳐지기 이전 변경하려고 했던 고객 id, string}, "name":${합친 이후 고객 이름, string}, "contact":${합친 이후 고객 연락처, string}, "etc":${합친 이후 덮어쓸 고객메모, string}, "managerId":${매니저 아이디, string}}
+ * 응답 형식 : "data":{"id":${요청에서 전달한 고객 id, string}, "targetId":${합쳐진 고객 id, string, optional}}
+ * targetId는 실패할 경우 주지 않아도 된다.
+ * id의 고객예약/알림톡 내역을 targetId의 고객예약/알림톡 내역에 합치는것으로 이후 "id" 아이디를 가진 고객은 사라짐
+ * etc, managerId는 targetId 고객의 정보에 덮어씌우기
  */
-exports.mergeCustomer = async function (data) {
+exports.mergeCustomer = async function(data){
     let email = this.email;
     let status = false,
         message = '',
         resultData = {id: data.id};
 
-    let name = data.name;
-    let contact = data.contact;
-    let etc = data.etc;
-    let managerId = data.managerId;
-
-    let user = await db.getWebUser(email);
-    let memberList = user.memberList;
-    let targetMember = memberList.find(member => member.name === name && member.contact === contact && member.id !== data.id);
-    if (!targetMember) {
-        message = '합치려고 하는 고객 정보가 없습니다.';
-    } else {
-        //소스 멤버의 예약리스트, 예약확인 알림톡 리스트, 예약취소 알림톡 리스트의 고객 아이디를 타겟 멤버의 아이디로 수정
-        await user.reservationList.forEach(function (reservation) {
-            if (reservation.memberId === data.id) {
-                reservation.memberId = targetMember.id;
-            }
-        });
-        await user.reservationConfirmAlrimTalkList.forEach(function (alrim) {
-            if (alrim.reservation.memberId === data.id) {
-                alrim.reservation.memberId = targetMember.id;
-            }
-        });
-        await user.cancelAlrimTalkList.forEach(function (alrim) {
-            if (alrim.reservation.memberId === data.id) {
-                alrim.reservation.memberId = targetMember.id;
-            }
-        });
-
-        //타겟 멤버의 etc, managerId 업데이트
-        targetMember.etc = etc;
-        targetMember.managerId = managerId;
-
-        //소스 멤버 삭제
-        let deleteIndex = memberList.findIndex(member => member.id === data.id);
-        user.memberList.splice(deleteIndex, 1);
-
-        if (await db.setWebUser(user)) {
-            status = true;
-            resultData.targetId = targetMember.id;
-        } else {
-            message = '시스템 에러로 인해 실패하였습니다.';
+    try {
+        let list = await newDb.getCustomerList(email, data.contact, data.name);
+        let target = list.find(customer => customer.id !== data.id );
+        if(!target){
+            throw `합치려 하는 고객 정보가 없습니다.(name: ${data.name}, contact: ${data.contact})`;
         }
+        target.etc = data.etc;
+        target.managerId = data.managerId;
+
+        //예약 원장의 고객 아이디 변경
+        let reservationList = await newDb.getReservationList(email);
+        reservationList = reservationList.filter(reservation => reservation.member === data.id);
+        for(let reservation of reservationList){
+            reservation.member = target.id;
+            reservation.contact = target.contact;
+            reservation.name = target.name;
+            await newDb.saveReservation(reservation);
+        }
+
+        //매출내역의 고객 아이디 변경
+        let salesList = await newDb.getSalesHist(email, {customerId: data.id});
+        for(let sales of salesList){
+            sales.customerId = target.id;
+            await newDb.saveSales(sales);
+        }
+
+        //기존 고객 삭제
+        await newDb.deleteCustomer(email, data.id);
+
+        resultData.targetId = target.id;
+        status = true;
+    } catch (e) {
+        status = false;
+        message = e;
     }
 
     return {
         status: status,
         data: resultData,
         message: message
-    };
+    }
 }

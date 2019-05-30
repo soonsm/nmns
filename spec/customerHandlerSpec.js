@@ -989,4 +989,98 @@ describe('customerHandler', function() {
 
         });
     });
+
+    describe('mergeCustomer', function () {
+       it('merge 후 확인', async function(){
+           customer = {
+               email: 'soonsm@gmail.com',
+               id: 'customerId',
+               name: '김승민',
+               contact: '01028904311',
+               managerId: 'managerId',
+               etc: 'etcetc',
+               pointMembership: 0,
+               cardSales: 0,
+               cashSales: 0,
+               pointSales: 10
+           };
+           await db.saveCustomer(customer);
+           await db.saveReservation(reservation);
+           await db.saveSales(sales);
+
+           customer.id = 'customerId2';
+           customer.name = '김승민2';
+           await db.saveCustomer(customer);
+
+           try{
+               let fn = handler.mergeCustomer;
+               fn.email = email;
+               let result = await fn.call(fn, {
+                   id: 'customerId',
+                   name: '김승민2',
+                   contact: '01028904311',
+                   etc: 'etcetc',
+                   managerId: 'managermanager'
+               });
+               if(!result.status){
+                   logger.error(result.message);
+               }
+               expect(result.status).toEqual(true);
+
+               let data = await db.getCustomer(email, 'customerId');
+               expect(data).toBeFalsy();
+
+               data = await db.getReservation(email, reservation.id);
+               expect(data.member).toEqual('customerId2');
+               expect(data.name).toEqual('김승민2');
+
+               data = await db.getSales(email, sales.id);
+               expect(data.customerId).toEqual('customerId2');
+           }catch(e){
+               logger.error(e);
+               fail();
+           }
+       });
+        it('merge 대상 없으면 에러', async function(){
+            customer = {
+                email: 'soonsm@gmail.com',
+                id: 'customerId',
+                name: '김승민',
+                contact: '01028904311',
+                managerId: 'managerId',
+                etc: 'etcetc',
+                pointMembership: 0,
+                cardSales: 0,
+                cashSales: 0,
+                pointSales: 10
+            };
+            await db.saveCustomer(customer);
+            await db.saveReservation(reservation);
+            await db.saveSales(sales);
+
+            customer.id = 'customerId2';
+            customer.name = '김승민2';
+            await db.saveCustomer(customer);
+
+            try{
+                let fn = handler.mergeCustomer;
+                fn.email = email;
+                let result = await fn.call(fn, {
+                    id: 'customerId',
+                    name: '김승민3',
+                    contact: '01028904311',
+                    etc: 'etcetc',
+                    managerId: 'managermanager'
+                });
+                if(!result.status){
+                    logger.error(result.message);
+                }
+                expect(result.status).toEqual(false);
+
+            }catch(e){
+                logger.error(e);
+                fail();
+            }
+        });
+    });
 });
