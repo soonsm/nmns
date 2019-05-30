@@ -698,7 +698,9 @@
                 that.scroll.update();
             }else{
                 container.html(html);
-                that.scroll = new PerfectScrollbar(that.suggestionsContainer);
+                if(PerfectScrollbar) {
+                    that.scroll = new PerfectScrollbar(that.suggestionsContainer);
+                }
             }
             
             if ($.isFunction(beforeRender)) {

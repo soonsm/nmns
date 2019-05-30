@@ -78,36 +78,36 @@
             weekDayname: function(model) {
                 var classDate = 'tui-full-calendar-dayname-date';
                 var className = 'tui-full-calendar-dayname-name' + (NMNS.calendar && NMNS.calendar.getViewName() === 'week' ? ' weekViewDayName' : '');
-                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.renderDate }) : undefined;
+                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.renderDate; }) : undefined;
                 if (holiday) {
                     className += " tui-full-calendar-holiday";
                     classDate += " tui-full-calendar-holiday";
                 }
 
-                return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? ("[" + holiday.title + "]") : "") + '</span>';
+                return '<span class="' + classDate + '">' + model.date + '</span>&nbsp;&nbsp;<span class="' + className + '">' + model.dayName + (holiday ? (" (" + holiday.title + ")") : "") + '</span>';
             },
             monthGridHeader: function(model) {
                 var date = parseInt(model.date.split('-')[2], 10);
                 var classNames = ["tui-full-calendar-weekday-grid-date"];
 
-                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.date }) : undefined;
+                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === model.date; }) : undefined;
                 if (holiday) {
                     classNames.push("tui-full-calendar-holiday");
                 }
-                return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
+                return '<span class="' + classNames.join(' ') + '">' + date + (holiday ? ("<small class='d-none d-sm-inline'> (" + holiday.title + ")</small>") : "") + '</span>';
             },
             monthGridHeaderExceed: function(){
-              return ''
+              return '';
             },
             monthGridFooterExceed: function(hiddenSchedules) {
                 return '<span class="tui-full-calendar-weekday-grid-more-schedules" title="전체 예약">전체 예약 <span class="icon-arrow icon-arrow-right"></span></span>';
             },
             monthMoreTitleDate: function(date, dayname) {
                 var dateFormat = date.split(".").join("-");
-                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === dateFormat }) : undefined;
+                var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === dateFormat; }) : undefined;
                 var classDay = "tui-full-calendar-month-more-title-day" + (dayname === "일" ? " tui-full-calendar-holiday-sun" : "") + (holiday ? " tui-full-calendar-holiday" : "") + (dayname === "토" ? " tui-full-calendar-holiday-sat" : "");
 
-                return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'>[" + holiday.title + "]</small>") : "") + '</span>';
+                return '<span class="' + classDay + '">' + parseInt(dateFormat.substring(8), 10) + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + (holiday ? ("<small class='d-none d-sm-inline'> (" + holiday.title + ")</small>") : "") + '</span>';
             },
             monthlyDetailPopup: function(schedules, date){
               var html = "<div class='d-flex flex-column position-relative'><button type='button' class='tui-full-calendar-popup-close close p-0 ml-auto my-0 mr-0 position-absolute' aria-label='닫기' style='right:0'><span aria-hidden='true' style='vertical-align:top;font-size:12px'>&times;</span></button>", contents;
@@ -296,6 +296,9 @@
           $("#announcementIcon").removeClass('icon-announcement-count');
         }
         //announcement end
+        if(NMNS.info.logo){
+          changeMainShopLogo(true, NMNS.info.logo);
+        }
     }));
 
     NMNS.socket.on("get manager", socketResponse("담당자 정보 받아오기", function(e) {
@@ -315,7 +318,7 @@
             delete NMNS.needInit;
             setSchedules();
         }
-        $('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
+        //$('#mainTaskContents').html(generateTaskList([{date:'20190320', task:[{title:'aaa', manager:'happy@store.com20180907050532384', contents:'aaa', start:'201903200101', end:'201903202359'}]}, {date:'20190321', task:[{title:'abbbaa', manager:'happy@store.com20180907050532384', contents:'aabbba', start:'201903210102', end:'201903232350'}]}, {date:'20190322', task:[]}]));
         $("#mainTaskContents input").on('change', function(e){
           e.stopPropagation();
           var data = $(this).parent();
@@ -436,6 +439,7 @@
 
     function onClickTask(e){ // handle event when click today's task text
       if($(window).width() < 1600){
+				$(document.body).toggleClass('overflow-y-hidden');
         if($("#mainTask").hasClass("show")){// about to hide task
           $("#mainCalendarArea").css('minWidth', '');
           $("#mainContents").css("minWidth", '100%');
@@ -482,7 +486,7 @@
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
         
-        $('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
+        //$('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
     }
 
     function setRenderRangeText() {
@@ -493,8 +497,8 @@
         if (viewName === 'day') {
             var today = moment(NMNS.calendar.getDate().getTime());
             html += today.format('YYYY. MM. DD');
-            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD') }) : undefined;
-            html += "<span class='flex-column base-font ml-3'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>"
+            var holiday = NMNS.holiday ? NMNS.holiday.find(function(item) { return item.date === today.format('YYYY-MM-DD'); }) : undefined;
+            html += "<span class='flex-column base-font ml-3 position-relative'"+ (holiday?"" : " style='opacity:0.5'")+">"+ (holiday?"<div class='render-range-text-holiday'>" + holiday.title + "</div>":"") +"<span style='font-size:22px;vertical-align:bottom'>"+['일', '월', '화', '수', '목', '금', '토'][moment(NMNS.calendar.getDate().getTime()).day()]+"요일</span></span>";
             renderRange.style.width = '280px';
         } else if (viewName === 'month' && (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
             html += moment(NMNS.calendar.getDate().getTime()).format('YYYY. MM');
@@ -589,13 +593,24 @@
           }
         })
       }else{
-        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:100%'>등록된 일정이 없어요.</div>"
+        html = "<div class='align-items-center justify-center d-flex flex-column' style='height:100%;font-size:13px'>등록된 일정이 없어요.</div>"
       }
       return html;
     }
 
     function changeMainShopName(shopName) {
       $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
+      $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1));
+    }
+    
+    function changeMainShopLogo(isImage, shopName){
+      if(isImage){
+        $("#mainShopCapital").addClass('d-none');
+        $("#mainShopIcon").removeClass('d-none').attr('src', shopName);
+      }else{
+        $("#mainShopIcon").addClass('d-none');
+        $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1)).removeClass('d-none');
+      }
     }
 
     function drawAlrimList(alrims) {
@@ -731,7 +746,7 @@
         }
         //validation end
         //update info start
-        var parameters = {}, diff = false,
+        var parameters = {}, diff = false, logo = false,
             history = { id: "info" };
         if ((beginTime.format("HHmm") !== NMNS.info.bizBeginTime) || (endTime.format("HHmm") !== NMNS.info.bizEndTime)) {
             history.hourStart = NMNS.info.bizBeginTime || "0900";
@@ -756,11 +771,24 @@
             NMNS.info.bizType = parameters.bizType;
             diff = true;
         }
-            
+        
+        if(document.getElementById('infoLogo').files[0] && !$("#infoLogo").data("deleted")){
+          logo = true;
+        } else if($("#infoLogo").data("deleted") && NMNS.info.logo){
+          history.logo = NMNS.info.logo;
+          parameters.logo = null;
+          changeMainShopLogo(false, NMNS.info.shopName);
+          diff = true;
+        }
+        
         if (diff) {
             NMNS.history.push(history);
             NMNS.socket.emit("update info", parameters);
-        } else {
+        } 
+        if(logo){
+          NMNS.socket.emit("upload logo", document.getElementById('infoLogo').files[0]);
+        } 
+        if( !diff && !logo ) {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
         //update info end
@@ -776,6 +804,9 @@
       $("#infoBizType").val(NMNS.info.bizType);
       $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
       $("#infoBizEndTime").val(NMNS.info.bizEndTime);
+      if(NMNS.info.logo){
+        $("#addLogo").text("삭제").prev().val(NMNS.info.logo.substring(NMNS.info.logo.lastIndexOf("/")+1));
+      }
     }
 
     function initNoShowModal() {
@@ -1877,7 +1908,12 @@
           e.data.find(function(date){return date.date === moment().format('YYYYMMDD')}).task.length
         )
       }
-      $('#mainTaskContents').html(generateTaskList(e.data))
+      $('#mainTaskContents').html(generateTaskList(e.data));
+      if(e.data.length === 0){
+        $("#mainTaskContents").addClass('position-absolute');
+      }else{
+        $("#mainTaskContents").removeClass('position-absolute');
+      }
       $("#mainTaskContents input").on('change', function(e){
         e.stopPropagation();
         var data = $(this).parent();
@@ -1947,10 +1983,17 @@
         if (history.shopName) {
             changeMainShopName(history.shopName);
         }
+        if(history.logo){
+          changeMainShopLogo(true, history.logo);
+        }
         NMNS.info.shopName = history.shopName || NMNS.info.shopName;
         NMNS.info.bizType = history.bizType;
         NMNS.history.remove("info", findById);
         NMNS.initedInfoModal = false;
+    }));
+    
+    NMNS.socket.on("upload logo", socketResponse("매장 이미지 등록하기", function(e){
+      changeMainShopLogo(true, e.data.logo);
     }));
 
     NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function() {
@@ -2195,7 +2238,7 @@
       }
     }, function(e){
       if(e.data.snsType === 'KAKAO'){
-        alert('카카오톡과의 연동을 하지 못했습니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
+        alert('카카오톡과의 연동을 하지 못했���니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
       }
     }, true));
     //websocket response end
@@ -2224,11 +2267,57 @@
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
         }
+        if (!changed && ((NMNS.info.logo && $("#infoLogo").data('deleted')) || document.getElementById('infoLogo').files[0])){
+          changed = true;
+        }
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
     }).one('show.bs.modal', function(){
       $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
+      $("#addLogo").on("touch click", function(e){
+        if($(this).text() === '삭제'){
+          $(this).text("첨부").prev().val('');
+          $("#infoLogo").data('deleted', true);
+          document.getElementById('infoLogo').value = '';
+          if(!/safari/i.test(navigator.userAgent)){
+            document.getElementById('infoLogo').type = '';
+            document.getElementById('infoLogo').type = 'file';
+          }
+        }else{
+          e.preventDefault();
+          $("#infoLogo").trigger("click");
+        }
+      }).prev().on("touch click", function(e){
+        e.preventDefault();
+        $("#infoLogo").trigger("click");
+      });
+      
+      $("#infoLogo").on("change", function(e){
+  			var file = this.files[0];
+        $(this).data('deleted', file);
+  			if(file){
+  				var img = document.createElement('img');
+  				img.onload = function(){
+  					if(img.naturalWidth <= 130 && img.naturalHeight <= 130){
+              $("#addLogo").text("삭제").prev().val(file.name);
+              $("#infoLogo").data('deleted', false);
+  					}else{
+  						alert('이미지의 크기가 130 X 130보다 큽니다.\n작은 이미지로 올려주세요.');
+  						document.getElementById('infoLogo').value = '';
+              if(!/safari/i.test(navigator.userAgent)){
+                document.getElementById('infoLogo').type = '';
+                document.getElementById('infoLogo').type = 'file';
+              }
+              $("#addLogo").text("첨부").prev().val('');
+  					}
+  					img.remove();
+  				}
+  				img.setAttribute('src', (window.URL || window.webkitURL).createObjectURL(file));
+  			}else{
+          $("#addLogo").text("첨부");
+  			}
+      });
     }).on('show.bs.modal', refreshInfoModal);
     
     $("#alrimModal").on("hide.bs.modal", function() {
@@ -2621,6 +2710,12 @@
       });
     }
     $(".addManager").on("touch click", function() {
+			if($("#mainAside").hasClass('sidebar-toggled')){
+				$("#mainAside").removeClass('sidebar-toggled');
+				setTimeout(function(){
+					document.getElementById("sidebarContainer").scrollTop = 0;
+				}, 300);
+			}
       if($("#lnbManagerForm").data('id')){//was updating
         $("#lnbManagerList .lnbManagerItem[data-value='"+$("#lnbManagerForm").data('id')+"']").show();
       }
@@ -2807,6 +2902,7 @@
         $("#mainContents").css("minWidth", '100%');
         $("#mainAside").css('minWidth', 'unset');
         $("#mainTask").removeClass("show");
+				$(document.body).removeClass('overflow-y-hidden');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }
@@ -2836,6 +2932,9 @@
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
+					if($("#lnbManagerForm").is(":visible")){
+						$(".addManager").trigger("click");
+					}
           if($('#mainAside').hasClass('sidebar-toggled')){// about to show aside
             if($("#mainTask").hasClass("show")){
               $("#mainAside").css('minWidth', '270px');

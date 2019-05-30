@@ -19,7 +19,9 @@ body{
 input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator{
     display:none;
 }
-
+input[type=checkbox]:not(.custom-control-input) + label{width:11px;height:11px;line-height:11px;margin-right:8px;position:relative}input[type=checkbox]:not(.custom-control-input) + label:before{display: inline-block;background-image:url('/nmns/img/uncheck.svg');background-size:11px;position:absolute;width:11px;height:11px;line-height:11px;content:'';background-repeat:no-repeat;margin-right:8px}input[type=checkbox]:not(.custom-control-input):checked + label:before{background-image: url('/nmns/img/check.svg')}
+input[type=checkbox]:not(.custom-control-input) + label + label{vertical-align:middle}
+@supports (-webkit-overflow-scrolling: touch){.form-control{font-size:16px;padding-top:8px;padding-bottom:8px;line-height:22px}#searchNoShow,#searchCustomer{font-size:16px}}
 .new {
     font-size: .65rem;
     padding: 0;
@@ -73,10 +75,21 @@ input[name='etc'],
   content: url('/nmns/img/arrow_bottom_white.svg');
 }
 .icon-arrow-left{
-  transform:rotate(90deg);
+  content: url('/nmns/img/Calendar_left.svg');
   vertical-align: middle;
 }
 .icon-arrow-right{
+  content: url('/nmns/img/Calendar_left.svg');
+  transform:rotate(180deg);
+  vertical-align: middle;
+}
+.icon-arrow-white.icon-arrow-left{
+  content: url('/nmns/img/arrow_bottom_white.svg');
+  transform:rotate(90deg);
+  vertical-align: middle;
+}
+.icon-arrow-white.icon-arrow-right{
+  content: url('/nmns/img/arrow_bottom_white.svg');
   transform:rotate(-90deg);
   vertical-align: middle;
 }
@@ -135,10 +148,10 @@ input[type=checkbox]+label{
 #mainAside{
     width:0;
     transition:0.3s ease-in-out;
-    z-index:2;
+    z-index:3;
     position:fixed;
-    right:0;
-    top:64px;
+    left:0;
+    top:0;
     bottom:0;
     overflow:auto;
 }
@@ -151,7 +164,7 @@ input[type=checkbox]+label{
     margin:0;
 }
 #mainAside.sidebar-toggled{
-    width:100%;
+    width:77.8%;
     display:block;
 }
 #mainRow{
@@ -177,9 +190,8 @@ input[type=checkbox]+label{
 /* side bar */
 #sidebarContainer{
     display:none;
-    padding-left:30px;
-    padding-right:30px;
-    padding-top:30px;
+	padding:35px 20px 0 20px;
+	height:calc(100% - 64px);
 }
 
 #sidebarContainer .list-group-item span{
@@ -206,145 +218,10 @@ input[type=checkbox]+label{
 #sidebarContainer ul li {
     list-style: none;
 }
-#lnbManagerList .contextual{
-  content: url('/nmns/img/Contextual.svg');
-}
-#lnbManagerList .lnbManagerItem{
-    margin-top: 30px;
-}
-#lnbManagerList .dropdown-menu{
-  border-radius: 2px;
-  box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
-  min-width:97px;
-  padding:10px 15px;
-  font-size:11px;
-}
-#lnbManagerList .dropdown-item{
-  padding:0;
-}
-#lnbManagerList .dropdown-item:not(:first-child){
-  margin-top:10px;
-}
-#lnbManagerList .lnbManagerItem .menu-collapsed{
-    vertical-align: middle;
-}
 
-#lnbManagerList .lnbManagerItem label {
-    margin-bottom: 0;
-    cursor:pointer;
-}
-#lnbManagerList .lnbManagerAction:after{
-    display:none;
-}
-#lnbManagerForm label, #lnbManagerForm label+span{
-    cursor: default;
-}
-
-#lnbManagerFormName{
-  font-size:15px;
-  color:#fff;
-  height:22px;
-}
-#lnbManagerFormSubmit{
-  height:22px;
-  font-size:11px;
-  border:none;
-  color:#fff;
-  padding: 0 0 0 10px;
-}
-
-#lnbManagerColor{
-    padding:8px;
-    border-radius: 2px;
-    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
-    background-color: #ffffff;
-    display:flex;
-    flex-wrap:wrap;
-    width:136px;
-    max-width:136px;
-    margin-top:13px;
-}
-#lnbManagerColor label{
-    margin-bottom:0;
-    position:relative;
-    flex: 0 0 20%;
-    max-width:20%;
-    width:100%;
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
-    height:29px;
-}
-#lnbManagerColor label input{
-    display:none;
-}
-#lnbManagerColor label span, #lnbManagerFormColor{
-    border:none;
-    width:16px;
-    height:16px;
-    border-radius:50%;
-    cursor:pointer;
-    display:inline-block;
-}
-
-#lnbManagerFormColor{
-  margin: 0 17px 0 0;
-  cursor:default;
-}
-
-#lnbManagerColor input + span + span{
-    display:none;
-    position:absolute;
-    width:20px;
-    height:20px;
-    border-radius:50%;
-    border:1px solid;
-    background-color:transparent;
-    left:2px;
-    top:4px;
-}
-#lnbManagerColor input:checked + span + span{
-    display:inline-block;
-}
-
-#lnbManagerList .addManagerItem input[type="text"] {
-    padding-left: 0;
-    padding-right: 0;
-    height: 1.4rem;
-}
-
-#lnbManagerList .addManagerItem .addManagerColor {
-    cursor: default;
-}
-
-#lnbLastMenu a {
-    cursor: default;
-    border-bottom: 0;
-}
-
-#lnbLastMenu a div {
-    cursor: pointer;
-}
-
-.addManagerItem label {
-    width: calc(100% - 35px);
-}
-
-.addManagerItem input[type='text'] {
-    width: calc(100% - 23px);
-    font-size: .8rem;
-    display: inline-block;
-}
-
-.addManagerItem input[type='text']:focus {
-    border-color: #ced4da;
-    box-shadow: none;
-}
-
-.addManagerItem .submitAddManager,
-.addManagerItem .cancelAddManager,
-.infoManagerItem .deleteManager {
-    cursor: pointer;
+#mainShopName{
+	max-width:calc(100% - 68px);
+	display:inline-flex;
 }
 
 .tui-full-calendar-weekday-schedule {
@@ -393,10 +270,10 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     white-space:nowrap;
 }
 
-#mainRow #mainNav #mainMenu #mainShopIcon{
-    width:32px;
-    height:32px;
-    margin-right:10px;
+#mainShopIcon, #mainShopCapital{
+    width:35px;
+    height:35px;
+    margin-right:15px;
 }
 
 #mainRow #mainTask{
@@ -1003,7 +880,7 @@ button:focus {
     height: 150px;
 }
 
-#alrimTab .subText, #scheduleModal .subText, #customerModal .subText{
+#alrimTab .subText, .scheduleMenu .subText, #customerModal .subText{
     opacity:0.5;
     font-size:11px;
     line-height:1.18;
@@ -1550,17 +1427,35 @@ button.form-control {
 
 #snackbar {
     visibility: hidden;
-    background-color: #323232;
+    background-color: #334150;
     color: #fff;
-    padding: 16px 24px;
+    padding: 20px 45px;
     position: fixed;
     z-index: 1060;
-    bottom: 0;
-    font-size: .9rem;
-    left: 0;
-  right:0;
+    bottom: 20px;
+    font-size: 13px;
+    left: 20px;
+  right:20px;
 }
-
+#snackbar .close{
+	position:absolute;
+	color:#fff;
+	opacity:1;
+	top:20px;
+	right:20px;
+	font-weight:400;
+	text-shadow:none;
+	cursor:pointer;
+}
+#snackbar > div:not(.close){
+    max-height:55px;
+    line-height:1.54;
+    overflow:hidden;
+    word-break: break-all;
+    text-align:center;
+    display:flex;
+    align-items:center;
+}
 #snackbar.show {
     visibility: visible;
     animation: fadeinHigh 0.5s, fadeoutHigh 0.5s 4.5s;
@@ -1568,44 +1463,44 @@ button.form-control {
 
 @-webkit-keyframes fadeinHigh {
     from {
-        bottom: -30px;
+        bottom: -95px;
         opacity: 0;
     }
     to {
-        bottom: 0;
+        bottom: 20px;
         opacity: 1;
     }
 }
 
 @keyframes fadeinHigh {
     from {
-        bottom: -30px;
+        bottom: -95px;
         opacity: 0;
     }
     to {
-        bottom: 0;
+        bottom: 20px;
         opacity: 1;
     }
 }
 
 @-webkit-keyframes fadeoutHigh {
     from {
-        bottom: 0;
+        bottom: 20px;
         opacity: 1;
     }
     to {
-        bottom: -30px;
+        bottom: -95px;
         opacity: 0;
     }
 }
 
 @keyframes fadeoutHigh {
     from {
-        bottom: 0;
+        bottom: 20px;
         opacity: 1;
     }
     to {
-        bottom: -30px;
+        bottom: -95px;
         opacity: 0;
     }
 }
@@ -1727,6 +1622,96 @@ button.form-control {
 .menuContents .fix-bottom + form, .menuContents .fix-bottom + div{
   margin-bottom:82px;
 }
+
+#salesCalendarArea .flatpickr-month, #calendarModal .flatpickr-month{
+  font-size: 18px;
+  font-weight: 500;
+}
+#salesCalendarArea .flatpickr-prev-month,#calendarModal .flatpickr-prev-month{
+  content: url('/nmns/img/Calendar_left.svg');
+  vertical-align: middle;
+}
+#salesCalendarArea .flatpickr-next-month,#calendarModal .flatpickr-next-month{
+  content: url('/nmns/img/Calendar_left.svg');
+  transform:rotate(180deg);
+  vertical-align: middle;
+}
+#salesCalendarArea .flatpickr-current-month .numInputWrapper,#calendarModal .flatpickr-current-month .numInputWrapper{
+  width:44px;
+}
+#salesCalendarArea .flatpickr-calendar,#calendarModal .flatpickr-calendar{
+  display:block;
+  opacity:1;
+  visibility: visible;
+  position:relative;
+  border-radius:0;
+  width:100%;
+}
+#salesCalendarArea .flatpickr-calendar:before,#calendarModal .flatpickr-calendar:before,#salesCalendarArea .flatpickr-calendar:after,#calendarModal .flatpickr-calendar:after{
+    display:none;
+}
+#calendarModal .flatpickr-calendar{
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+}
+#salesCalendarArea .flatpickr-day,#calendarModal .flatpickr-day{
+  max-width:14.28571428%;
+  font-size:16px;
+  font-weight:500;
+  font-family: 'Montserrat';
+  line-height:14vw;
+  padding-bottom:14.28571428%;
+}
+#salesCalendarArea .flatpickr-day.today,#calendarModal .flatpickr-day.today{
+  border-radius:50%;
+}
+#salesCalendarArea .flatpickr-day:nth-child(7n), #salesCalendarArea .flatpickr-weekday:last-child,#calendarModal .flatpickr-day:nth-child(7n), #calendarModal .flatpickr-weekday:last-child{
+  color:#1736ff;
+}
+#salesCalendarArea .flatpickr-weekday,#calendarModal .flatpickr-weekday{
+  font-size:13px;
+  font-weight:bold;
+  flex:1 0;
+}
+#salesCalendarArea .flatpickr-day.prevMonthDay, #salesCalendarArea .flatpickr-day.nextMonthDay,#calendarModal .flatpickr-day.prevMonthDay, #calendarModal .flatpickr-day.nextMonthDay{
+  opacity:0.5;
+}
+#salesCalendarArea .flatpickr-day.inRange,#salesCalendarArea .flatpickr-day.inRange{
+  border-left:none;
+  border-right:none;
+}
+#salesCalendarArea .flatpickr-day.inRange, #salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange,#calendarModal .flatpickr-day.inRange, #calendarModal .flatpickr-day.startRange, #calendarModal .flatpickr-day.endRange{
+  background-color:#fd5b77;
+  color:#fff;
+  opacity:1;
+  box-shadow:none;
+}
+#calendarModal .flatpickr-day.selected{
+    color:#fff;
+    border-radius:50%;
+}
+#salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange,#calendarModal .flatpickr-day.startRange, #calendarModal .flatpickr-day.endRange{
+  border-top: none;
+  border-bottom: none;
+  margin-top: 2px;
+}
+#salesCalendarArea .flatpickr-day.inRange,#calendarModal .flatpickr-day.inRange{
+  border-radius:0;
+}
+#salesCalendarArea .flatpickr-day.startRange,#calendarModal .flatpickr-day.startRange{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+#salesCalendarArea .flatpickr-day.endRange,#calendarModal .flatpickr-day.endRange{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
 /* noShow menu */
 .horizontalTab .nav-item:not(:first-child){
 	margin-left:30px;
@@ -1745,7 +1730,7 @@ button.form-control {
     opacity:1;
 }
 
-#scheduleModal #scheduleTabContents input:not(:last-child){
+#scheduleTabContents input:not(:last-child){
     margin-bottom:10px;
 }
 
@@ -1761,21 +1746,6 @@ button.form-control {
 #scheduleTabContents{
   max-height:200px;
   overflow-y:auto;
-}
-
-#scheduleModal .updateScheduleElement{
-  display:none;
-}
-
-#scheduleModal.update .updateScheduleElement{
-  display:inline-flex;
-}
-#scheduleModal.update button.updateScheduleElement{
-  display:inline-block;
-}
-
-#scheduleModal.update .createScheduleElement{
-  display:none;
 }
 
 #salesLoading{

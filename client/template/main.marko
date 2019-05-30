@@ -214,7 +214,8 @@
         <button id="mainMenu" class="navbar-toggler navbar-toggler-right btn btn-flat px-0" type="button" title="메뉴" data-toggle="popover" data-placement="bottom" aria-label="메뉴 열기/닫기">
           <div>
             <span>
-              <img id="mainShopIcon" src="/nmns/img/person_01.svg" class="rounded-circle">
+              <div id="mainShopCapital" class="rounded-circle" style="line-height:32px;display:inline-block;vertical-align:middle;text-align:center;background-color:#f1f2f3"><if(input.user.shopName)>${input.user.shopName.substring(0,1)}</if><else>${input.user.email.substring(0,1)}</else></div>
+              <img id="mainShopIcon" src="" class="rounded-circle d-none">
             </span>
             <span id="mainShopName" class=[(!input.user.shopName && 'montserrat')]><if(input.user.shopName)>${input.user.shopName}</if><else>${input.user.email}</else></span>
           </div>
@@ -268,7 +269,7 @@
                     </div>
                   </div>
                 </div>
-                <div id="mainCalendar"></div>
+								<div id="mainCalendarWrapper"><div id="mainCalendar"></div></div>
               </div>
             </div>
           </div>
@@ -316,7 +317,7 @@
                   <div></div>
                   <div></div>
                 </div> 
-                <span>고객 정보를 불러오는 중입니다...</span>
+                <span>고객 목록을 불러오는 중입니다...</span>
               </div>
             </div>
             <div id="mainCustomerLoading" style="display:none">
@@ -326,7 +327,7 @@
                   <div></div>
                   <div></div>
                 </div> 
-                <span>고객 정보를 불러오는 중입니다...</span>
+                <span>고객 목록을 불러오는 중입니다...</span>
               </div>
             </div>
           </div>
@@ -411,7 +412,7 @@
                   <div></div>
                   <div></div>
                 </div> 
-                <span>메뉴 정보를 불러오는 중입니다...</span>
+                <span>메뉴 목록을 불러오는 중입니다...</span>
               </div>
             </div>
           </div>
@@ -515,7 +516,7 @@
                   <div></div>
                   <div></div>
                 </div> 
-                <span>매출 정보를 불러오는 중입니다...</span>
+                <span>매출 목록을 불러오는 중입니다...</span>
               </div>
             </div>
             <div id="mainSalesLoading" style="display:none">
@@ -525,7 +526,7 @@
                   <div></div>
                   <div></div>
                 </div> 
-                <span>매출 정보를 불러오는 중입니다...</span>
+                <span>매출 목록을 불러오는 중입니다...</span>
               </div>
             </div>
           </div>
@@ -553,6 +554,12 @@
                     <div class="mt-3 mb-4 montserrat" id="infoEmail">&nbsp;</div>
                     <div class="pt-2 mb-3">매장 이름</div>
                     <input id="infoShopName" type="text" placeholder="매장 이름을 입력해주세요" class="form-control form-control-sm han mb-4"/>
+                    <div class="pt-2 mb-3">매장 이름</div>
+                    <div class="d-flex mb-4 align-items-center">
+                      <input type="file" name="logo" id="infoLogo" class="d-none" accept="image/*">
+        							<input type="text" name="logoFileName" readonly="readonly" class="form-control col bg-white" placeholder="130 X 130 사이즈가 넘지 않고 JPG, PNG로 등록 해주세요!"/>
+        							<button id="addLogo" type="button" class="btn btn-primary" style="margin-left:10px">첨부</button>
+                    </div>
                     <div class="pt-2 mb-3">매장 운영시간</div>
                     <div class="row mx-0 mb-4 align-items-center">
                       <div class="select mr-1">

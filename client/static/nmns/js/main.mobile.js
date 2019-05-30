@@ -207,9 +207,10 @@
       clickSchedule: function(e){
         NMNS.scheduleTarget = e;
         initScheduleTab(e);
-        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
-        $("#scheduleBtn").text('저장');
-        $("#scheduleModal").addClass('update').modal('show');
+        /*$("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
+        $("#scheduleBtn").text('저장');*/
+        // $("#scheduleModal").addClass('update').modal('show');
+        switchMenu.call($(".scheduleLink"), e);
       },
       beforeCreateSchedule: function(e) {
         NMNS.scheduleTarget = e;
@@ -272,9 +273,29 @@
                 body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
             });
         }
-        //tutorial & tip start
-        if (NMNS.info.isFirstVisit) {
-            if (!document.getElementById("tutorialScript")) {
+        //welcome popup
+				if(localStorage.getItem("notAnyMore") !== 'true'){
+					$(document.body).append('<div id="welcomeModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="환영 팝업" aria-hidden="true">\
+						<div class="modal-dialog modal-dialog-centered" role="document">\
+							<div class="modal-content rounded-0">\
+								<div class="modal-body flex-column" style="padding:20px">\
+									<div><img src="/nmns/img/mobile_welcome.png" style="width:100%"/></div>\
+									<div style="text-align:center;margin:20px 0 33px 0;font-size:14px">\
+										왓쇼에 오신걸 환영해요 &gt;_&lt;<br><br>모바일 버전에서는<br>노쇼, 예약, 일정, 고객, 메뉴 추가 기능을 뺀<br>모든 서비스를 이용할 수 있어요.<br>추가 기능은 PC에서 이용할 수 있답니다!\
+									</div>\
+								</div>\
+								<div class="modal-footer" style="padding:0 25px;height:57px"><input type="checkbox" id="notAnyMore"><label for="notAnyMore"></label><label for="notAnyMore" style="font-size:12px;margin-left:0">다시 보지 않기</label><button type="button" class="btn btn-flat ml-auto px-0" style="font-size:14px" data-dismiss="modal">닫기</button></div>\
+							</div>\
+						</div>\
+					</div>');
+					$("#notAnyMore").on("change", function(){
+						localStorage.setItem("notAnyMore", "true");
+						$("#welcomeModal").modal("hide");
+					});
+					$("#welcomeModal").modal("show");
+				}
+					
+            /*if (!document.getElementById("tutorialScript")) {
                 var script = document.createElement("script");
                 script.src = "/nmns/js/tutorial.min.js";
                 script.id = "tutorialScript";
@@ -283,8 +304,7 @@
                 script.onload = function() {
                     $("#tutorialModal").modal();
                 };
-            }
-        }
+            }*/
         /*else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
             $("#tipsModal").modal("show");
         }*/
@@ -297,6 +317,9 @@
           $("#announcementIcon").removeClass('icon-announcement-count');
         }
         //announcement end
+        if(NMNS.info.logo){
+          changeMainShopLogo(true, NMNS.info.logo);
+        }
     }));
 
     NMNS.socket.on("get manager", socketResponse("담당자 정보 받아오기", function(e) {
@@ -307,7 +330,7 @@
             item.color = item.color;
         });
 
-        $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
+        // $("#lnbManagerList").html(generateLnbManagerList(e.data)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
         /*if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
         }*/
@@ -474,6 +497,7 @@
         });
         
         $(id).val(null);
+        setSchedules();
       };
     }
 
@@ -558,7 +582,7 @@
         }
         return "";
     }
-
+		/*
     function generateLnbManagerList(managerList) {
         var html = "";
         managerList.forEach(function(item) {
@@ -568,7 +592,7 @@
                   "<div class='dropdown-menu dropdown-menu-right'><a class='dropdown-item updateManagerLink' href='#'>이름/컬러 변경</a><a class='dropdown-item removeManagerLink' href='#'>삭제</a></div></div></div>";
         });
         return html;
-    }
+    }*/
     
     function updateManager(e){
       if(e.stopPropagation){
@@ -631,6 +655,17 @@
 
     function changeMainShopName(shopName) {
       $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
+      $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1));
+    }
+    
+    function changeMainShopLogo(isImage, shopName){
+      if(isImage){
+        $("#mainShopCapital").addClass('d-none');
+        $("#mainShopIcon").removeClass('d-none').attr('src', shopName);
+      }else{
+        $("#mainShopIcon").addClass('d-none');
+        $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1)).removeClass('d-none');
+      }
     }
 
     function drawAlrimList(alrims) {
@@ -1119,9 +1154,8 @@
         NMNS.socket.emit('get menu list');//TODO : needed api alignment
         $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
-      $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
-      
-      $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
+
+      $(".scheduleMenu").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
         if(e.schedule){// update schedule
           $("#scheduleStatus input[type='radio']").prop('checked', false);
@@ -1148,43 +1182,11 @@
           $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
           
           if(moment(e.schedule.start.toDate()).isBefore(moment())){
-            $("#resendAlrimScheduleBtn").addClass('d-none');
+            $("#resendAlrimScheduleBtn").addClass('d-none').next().removeClass('ml-1');
           }else{
-            $("#resendAlrimScheduleBtn").removeClass('d-none');
+            $("#resendAlrimScheduleBtn").removeClass('d-none').next().addClasS('ml-1');
           }
           calendar = findManager(e.schedule.calendarId);
-        }else if(e.customer){// customer modal trigger
-          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start);
-          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end);
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.start)));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.end)));
-    
-          $('#scheduleName').val(e.customer.name);
-          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
-            removeContent(this);
-          });
-          
-          $('#scheduleContact').val(e.customer.contact);
-          $('#scheduleEtc').val(e.customer.etc);
-          $('#scheduleAllDay').attr('checked', false);
-          
-          calendar = findManager(e.customer.managerId) || NMNS.calendar.getCalendars()[0];
-        }else{// dragged calendar
-          document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start.toDate());
-          document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end.toDate());
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.start.toDate())));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.end.toDate())));
-    
-          $('#scheduleName').val('');
-          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
-            removeContent(this);
-          });
-          
-          $('#scheduleContact').val('');
-          $('#scheduleEtc').val('');
-          $('#scheduleAllDay').attr('checked', e.isAllDay);
-          
-          calendar = NMNS.calendar.getCalendars()[0];
         }
         
         if (!calendar) {
@@ -1193,49 +1195,40 @@
           calendar = $('#scheduleManagerList').find("button[data-calendar-id='" + calendar.id + "']");
           $('#scheduleManager').html(calendar.html()).data('calendar-id', calendar.data('calendarId')).data('color', calendar.data('color'));
         }
-      }else if(typeof e === 'string'){//switching from task tab : copy data
-        document.getElementById("scheduleStartDate")._flatpickr.setDate(document.getElementById('taskStartDate')._flatpickr.selectedDates[0]);
-        $("#scheduleStartTime").val($("#taskStartTime").val());
-        document.getElementById("scheduleEndDate")._flatpickr.setDate(document.getElementById('taskEndDate')._flatpickr.selectedDates[0]);
-        $("#scheduleEndTime").val($("#taskEndTime").val());
-        $("#scheduleAllDay").prop('checked', $("#taskAllDay").prop('checked'));
-        calendar = $("#taskManager");
-        $("#scheduleManager").data("calendar-id", calendar.data("calendar-id")).data("color", calendar.data("color")).html(calendar.html());
-      }else{// creating...
-        var now = moment();
-        if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-            now = moment(NMNS.info.bizBeginTime, "HHmm");
-        } else {
-            now.minute(Math.ceil(now.minute() / 10) * 10);
-        }
-        document.getElementById("scheduleStartDate")._flatpickr.setDate(now.toDate());
-        $("#scheduleStartTime").val(getTimeFormat(now));
-        document.getElementById("scheduleEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
-        $("#scheduleEndTime").val(getTimeFormat(now));
-
-        $('#scheduleName').val('');
-        $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
-          removeContent(this);
-        });;
-        $('#scheduleContact').val('');
-        $('#scheduleAllDay').attr('checked', false);
-        
-        calendar = NMNS.calendar.getCalendars()[0].id;
-        $('#scheduleManager').html($('#scheduleManager').next().find("button[data-calendar-id='" + calendar + "']").html()).data('calendarid', calendar);
       }
     }
 
     function initScheduleTab(e){
-      if(!$("#scheduleStartDate")[0]._flatpickr){
-        var datetimepickerOption = {
-            dateFormat: "Y. m. d",
-            defaultDate: new Date(),
-            locale: "ko"
-        };
-        flatpickr("#scheduleStartDate", datetimepickerOption);
-        flatpickr("#scheduleEndDate", datetimepickerOption);
+      if(!$(".scheduleMenu").data('inited')){
+        $(".scheduleMenu").data('inited', true);
+        $("#scheduleStartDate").on("touch click", function(){
+          $("#endCalendarArea").hide();
+          $("#startCalendarArea").show();
+          this._flatpickr.setDate(moment($(this).val(), 'YYYY. MM. DD').toDate());
+        });
+        $("#scheduleEndDate").on("touch click", function(){
+          $("#startCalendarArea").hide();
+          $("#endCalendarArea").show();
+          this._flatpickr.setDate(moment($(this).val(), 'YYYY. MM. DD').toDate());
+        });
+        flatpickr("#scheduleStartDate", {
+          dateFormat: "Y. m. d",
+          disableMobile: true,
+          appendTo:document.getElementById('startCalendarArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            $("#calendarModal").modal('hide');
+          }
+        });
+        flatpickr("#scheduleEndDate", {
+          dateFormat: "Y. m. d",
+          disableMobile: true,
+          appendTo:document.getElementById('endCalendarArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            $("#calendarModal").modal('hide');
+          }
+        });
         $("#scheduleAddContents").on("touch click", function(){
           $("#scheduleTabContents").append($(generateContentsList('')).on('touch click', 'button', function(){
             removeContent(this);
@@ -1248,8 +1241,8 @@
           triggerSelectOnValidInput: false,
           zIndex:1060
         };        
-        $('#scheduleStartTime').autocomplete(autoCompleteOption);
-        $("#scheduleEndTime").autocomplete(autoCompleteOption);
+        // $('#scheduleStartTime').autocomplete(autoCompleteOption);
+        // $("#scheduleEndTime").autocomplete(autoCompleteOption);
         var timeout;
         function onContactBlur() {
             clearTimeout(timeout);
@@ -1497,7 +1490,7 @@
               });
           }
       
-          $("#scheduleModal").modal('hide');
+          history.back();
         })
       }
       refreshScheduleTab(e);
@@ -1671,7 +1664,7 @@
                   status: "RESERVED"
               });
           }
-          $("#scheduleModal").modal("hide");
+          history.back();
         });
       }
       refreshTaskTab(task);
@@ -1923,7 +1916,7 @@
       });
       
     }));
-    
+    /*
     NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e) {
         NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().filter(function(item) {
             return item.id !== e.data.id;
@@ -1940,9 +1933,9 @@
             calendars.push(manager);
             NMNS.calendar.setCalendars(calendars);
             $("#lnbManagerList").html(generateLnbManagerList(calendars)).on("touch click", ".updateManagerLink", updateManager).on("touch click", ".removeManagerLink", removeManager);
-            /*if($("#sidebarContainer").data('scroll')){
+            if($("#sidebarContainer").data('scroll')){
               $("#sidebarContainer").data('scroll').update();
-            }*/
+            }
             refreshScheduleVisibility();
             NMNS.history.remove(e.data.id, findById);
         }
@@ -1964,7 +1957,7 @@
           NMNS.history.remove(e.data.id, findById);
         }
     }));
-
+*/
     NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function() {
         showSnackBar("<span>정상적으로 매장 정보를 변경하였습니다.</span>");
         NMNS.history.remove("info", findById);
@@ -2072,7 +2065,7 @@
     }, true));
 
     NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e) {
-        var popup = $("#scheduleTab");
+        var popup = $(".scheduleMenu");
         if(popup.is(":visible")){
           if ((e.data.contact === popup.find("#scheduleContact").val() && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#scheduleName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
               if (e.data.etc) {
@@ -2356,9 +2349,6 @@
         $("#noMoreTips").remove();
         $("#tipsModal").modal("show");
     });*/
-    $("#lnbLastMenu a").on("touch click", function(e) {
-        e.preventDefault();
-    });
     
     $("#showTutorial").on("touch click", function(){
        if (!document.getElementById("tutorialScript")) {
@@ -2379,12 +2369,10 @@
         NMNS.announcementPage = 1;
         NMNS.socket.emit('get announcement', {page:1, combined:true});
       }
-			$("#detailMenuTitle").html("알림").show().prev().hide();
-			$(this).hide().next().show();
     });
 		$("#exitDetailMenu").on("touch click", function(){
-			$("#detailMenuTitle").hide().prev().show();
-			$(this).hide().prev().show();
+			/*$("#detailMenuTitle").hide().prev().show();
+			$(this).hide().prev().show();*/
 			history.back();
 		});
     $('#mainMenu').on('shown.bs.popover', function(){
@@ -2567,6 +2555,7 @@
     });*/
 
     //mobile horizontal scroll handling end
+	/*
     function initLnbManagerForm(){
       if(NMNS.initedLnbManagerForm){
         return;
@@ -2609,9 +2598,9 @@
         //create
         id = NMNS.email + generateRandom();
         $("#lnbManagerList").append($(generateLnbManagerList([{color:color, name:name, id:id, checked:true}])).on("touch click", '.updateManagerLink', updateManager).on("touch click", '.removeManagerLink', removeManager));
-        /*if($("#sidebarContainer").data('scroll')){
+        if($("#sidebarContainer").data('scroll')){
           $("#sidebarContainer").data('scroll').update();
-        }*/
+        }
         var calendars = NMNS.calendar.getCalendars();
         calendars.push({
             id: id,
@@ -2645,7 +2634,7 @@
         return;
       }
       $("#lnbManagerForm").data('id', null).hide();
-    }).one("touch click", initLnbManagerForm);
+    }).one("touch click", initLnbManagerForm);*/
     
     $("#mainCalendarRange").on("touch click", function(){
       $("#mainCalendarCarousel, #mainCalendarCalendar").toggle();
@@ -2846,6 +2835,8 @@
         e.preventDefault();
       }
       if(!$(this).hasClass("menuLinkActive")){
+				$(".modal-backdrop.show").remove();
+				$(document.body).removeClass('modal-open');
         $(".switchingMenu:not(."+$(this).data('link')+")").hide();
         if($("."+$(this).data('link')).show().hasClass('salesMenu')){
             $("#mainRow").addClass('fixedScroll');
@@ -2860,14 +2851,18 @@
         document.scrollingElement.scrollTop = 0;
         $("#mainAside").removeClass('sidebar-toggled');
         if(!isHistory){
-          history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
+          history.pushState({link:$(this).data('link'), type:$(this).data('type'), title:$(this).data('title')}, "", $(this).data('history'));
         }
-				if(!$(this).hasClass('announcementMenuLink') && !$(this).hasClass('scheduleDetailMenuLink') && !$(this).hasClass('customerDetailMenuLink')){// 뒤로가기 제거
+				if($(this).data('type') !== 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
+				}else{
+				  $("#detailMenuTitle").html($(this).data('title')).show().prev().hide();
+			    $(".announcementMenuLink").hide().next().show();
 				}
       }
     }
+    NMNS.switchMenu = switchMenu;
     
     //menu switch end
     //set event listeners
@@ -2892,7 +2887,14 @@
         
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
-          $('#mainAside').toggleClass('sidebar-toggled');
+          $('#mainAside').addClass('sidebar-toggled');
+					$(document.body).addClass('modal-open').append($('<div class="modal-backdrop fade show" style="z-index:2"></div>').on("touch click", function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						$(this).remove();
+						$(document.body).removeClass('modal-open');
+						$("#mainAside").removeClass('sidebar-toggled')
+					}));
         });
         // $(".announcementMenuLink").popover({
         //   template:
@@ -3035,6 +3037,13 @@
         $("#mainSearchNoShow").hide().prev().show().prev().show();
       }
     }
+    if(!state.state || state.state.type !== 'detail'){// 뒤로가기 제거
+			$("#detailMenuTitle").hide().prev().show();
+			$("#exitDetailMenu").hide().prev().show();
+		}else{
+		  $("#detailMenuTitle").html(state.state.title).show().prev().hide();
+	    $(".announcementMenuLink").hide().next().show();
+		}
   }
   $(document).on("scroll", function(){
     if($("#mainCalendar").is(":visible")){
