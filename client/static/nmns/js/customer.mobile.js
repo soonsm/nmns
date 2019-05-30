@@ -77,21 +77,6 @@
         </div>\
         \
         <div id="customerMembership" class="tab-pane col-12 px-0 fade" role="tabpanel">\
-          <div class="d-flex"><div class="col px-0">멤버십 결제 금액</div><div class="col px-0" style="margin-left:-45px">멤버십 적립 금액<span class="subText">적립금액은 따로 입력할 수 있어요.</span></div></div>\
-          <div class="d-flex my-3">\
-            <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm montserrat col mr-1" aria-label="멤버십 결제 금액" placeholder="결제 금액을 숫자로 입력하세요.">\
-            <input type="text" pattern="[0-9]*" id="customerMembershipChange" class="form-control form-control-sm montserrat col ml-1" aria-label="멤버십 적립 금액" placeholder="멤버십 적립 금액을 입력하세요.">\
-            <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipSales">추가</button></div>\
-          </div>\
-          <div><input type="radio" name="customerMembershipSalesType" value="CARD" id="customerMembershipCard" checked="checked"><label for="customerMembershipCard"></label><label for="customerMembershipCard" style="margin-right:30px">카드</label><input type="radio" name="customerMembershipSalesType" value="CASH" id="customerMembershipCash"><label for="customerMembershipCash"></label><label for="customerMembershipCash">현금</label></div>\
-          <div style="margin-top:30px">멤버십 금액 조절</div>\
-          <div class="d-flex my-3">\
-            <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm montserrat col" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
-            <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipAdjust">추가</button></div>\
-          </div>\
-          <div class="row mx-0 col-12 py-3 px-1 text-center customerMembershipHead" style="border-bottom:1px solid rgba(112, 112, 112, 0.35)">\
-            <div class="col-3">날짜</div><div class="col-4">내용</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0">증/감</div><div class="col-6 px-0">잔액</div></div>\
-          </div>\
           <div class="row mx-0" id="customerMembershipList"></div>\
           <div id="customerMembershipEmpty" style="text-align:center;padding:30px;display:none">멤버십 내역이 없어요.</div>\
           <div id="customerMembershipLoading" class="flex-column text-center">\
@@ -114,12 +99,16 @@
     var html = "";
     for(var index=init; index<goal; index++){
         item = memberships[index];
-        html += '<div class="customerMembership col-12" data-id="'+item.id+'">'
-          + '<div class="col-3 montserrat">' + moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')
-          + '</div><div class="col-4" title="'+item.item+'">' + item.item
-          + '</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0 montserrat">' + ((item.type === 'MEMBERSHIP_INCREMENT' || item.type === 'MEMBERSHIP_ADD')? '+ ' : '- ') + ((item.membershipChange || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-          + '</div><div class="col-6 px-0 montserrat">' + ((item.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-          + '</div></div></div>';
+        html += '<div class="customerMembership row col-12" data-index="'+index+'">'+
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">날짜</div>' + 
+          '<div class="col pr-0 montserrat" title="'+moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')+'">' + moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD') + '</div></div>' +
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">예약내용</div>' + 
+          '<div class="col pr-0" title="'+item.item+'">'+(item.item || '') + '</div></div>' +
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">증/감</div>' + 
+          '<div class="col pr-0 montserrat">'+((item.type === 'MEMBERSHIP_INCREMENT' || item.type === 'MEMBERSHIP_ADD')? '+ ' : '- ') + ((item.membershipChange || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</div></div>' +
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">잔액</div>' + 
+          '<div class="col pr-0 montserrat">'+((item.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + '</div></div>' +
+          '</div>';
     }
     return html;
   }
@@ -218,15 +207,15 @@
         }
         date = moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + (item.end?moment(item.end, 'YYYYMMDDHHmm').format(moment(item.start, 'YYYYMMDDHHmm').isSame(moment(item.end, 'YYYYMMDDHHmm'), 'day')?' - HH:mm':' - YYYY. MM. DD HH:mm'):'');
         html += '<div class="customerSchedule row col-12" data-index="'+index+'">'+
-          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">날짜</div>' + 
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">날짜</div>' + 
           '<div class="col pr-0 montserrat" title="'+date+'">' + date + '</div></div>' +
-          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">담당</div>' + 
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">담당</div>' + 
           '<div class="col pr-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div></div>'+
-          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">예약내용</div>' + 
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">예약내용</div>' + 
           '<div class="col pr-0">'+(contents || '') + '</div></div>' +
-          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">매출액</div>' + 
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">매출액</div>' + 
           '<div class="col pr-0 montserrat">'+(item.sales ? (item.sales+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
-          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">예약상태</div>' + 
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">예약상태</div>' + 
           '<div class="col pr-0">'+(item.status == 'NOSHOW'? '노쇼' : (item.status === 'CANCELED' || item.status === 'CUSTOMERCANCELED' ? '취소' : '정상')) + '</div></div>' +
           '</div>';
     }
@@ -343,7 +332,7 @@
           refreshCustomerModal($(this));
           NMNS.switchMenu.call($(".customerDetailLink"), e);
       });
-      list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
+      /*list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
           e.preventDefault();
           if (confirm("정말 이 고객을 삭제하시겠어요?")) {
               var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
@@ -357,7 +346,7 @@
                   }
               }
           }
-      });
+      });*/
   }
   NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e) {
       NMNS.customerList = e.data;
@@ -369,26 +358,6 @@
       }
       currentCustomerCount = 0;
       drawCustomerList(true);
-  }));
-  NMNS.socket.on("add customer", socketResponse("고객 추가", function(e) {
-      var index = NMNS.customerList.findIndex(function(item) {
-          return item.id === e.data.id;
-      });
-      if (Number.isInteger(index) && index > -1) {
-          NMNS.customerList[index].totalNoShow = e.data.totalNoShow || 0;
-          NMNS.customerList[index].myNoShow = 0;
-      }
-      $("#customerAddName").val('');
-      $("#customerAddContact").val('');
-      $("#customerAddEtc").val('');
-  }, function(e) {
-      var index = NMNS.customerList.findIndex(function(item) {
-          return item.id === e.data.id;
-      });
-      if (Number.isInteger(index) && index > -1) {
-          NMNS.customerList.splice(index, 1);
-          drawCustomerList(true);
-      }
   }));
   NMNS.socket.on("update customer", socketResponse("고객정보 수정", function(e) {
       var index = NMNS.customerList.findIndex(function(item) {
@@ -451,6 +420,7 @@
       history.back();
   }));
   NMNS.socket.on("get membership history", socketResponse('멤버십 내역 조회', function(e){
+    e.data = [{date:'20190101123050', item:'예약내용입니다 예약내용입니다.', balanceMembership:10000, type:'MEMBERSHIP_ADD', membershipChange: 1000}, {date:'20190103123050', item:'예약내용입니다 예약내용입니다.', balanceMembership:10000, type:'MEMBERSHIP_DECREMENT', membershipChange: 1000}]
     $("#customerMembershipList").data('index', 0).data('item', e.data);
     drawCustomerMembershipList(true);
   })).on("add membership", socketResponse("멤버십 내역 변경", function(e){
@@ -556,73 +526,6 @@
       $("#customerMembershipLoading").show();
       NMNS.socket.emit('get membership history', {customerId:id});
     }
-  }).one("show.bs.tab", function(){
-    $("#customerMembershipSales").on("keyup", function(e){
-      if(e.which === 13){
-        $(this).next().next().trigger('click');
-      }else{
-        $(this).next().removeClass('manual').val($(this).val());
-      }
-    });
-    $("#customerMembershipChange").on("keyup", function(e){
-      if(e.which === 13){
-        $(this).next().trigger('click');
-      }else{
-        $(this).addClass('manual');
-      }
-    });
-    $("#customerMembershipAdjust").on("keyup", function(e){
-      if(e.which === 13){
-        $(this).next().trigger('click');
-      }
-    });
-    $("#addCustomerMembershipAdjust").on("touch click", function(){
-      var change = $("#customerMembershipAdjust").val().match(/^\s*(\+|\-)?\s*([\d]*)\s*$/);
-      if(!change){
-        showSnackBar('조절할 금액을 정확히 입력해주세요.');
-        return;
-      }
-      var input = {
-        id: NMNS.email + generateRandom(),
-        type: change[1] === '-'? 'MEMBERSHIP_DECREMENT' : 'MEMBERSHIP_INCREMENT',
-        item: '멤버십 금액 조절',
-        customerId: $("#customerDetailMenu").data('customer').id,
-        membershipChange: change[2]*1,
-        date: moment().format('YYYYMMDD')
-      }
-      if(input.membershipChange === 0){
-        showSnackBar('조절할 금액을 0보다 크게 입력해주세요.');
-        return;
-      }
-      NMNS.socket.emit('add membership', input);
-      $("#customerMembershipList").data('item').splice(0, 0, input);
-      drawCustomerMembershipList(true);
-    });
-    $("#addCustomerMembershipSales").on("touch click", function(){
-      if($("#customerMembershipChange").val() === '' || !($("#customerMembershipChange").val() * 1)){
-        showSnackBar('적립할 금액을 입력해주세요.');
-        return;
-      }
-      var input = {
-        id: NMNS.email + generateRandom(),
-        type: 'MEMBERSHIP_ADD',
-        item: '멤버십 적립',
-        customerId: $("#customerDetailMenu").data('customer').id,
-        payment: $("#customerMembershipCard").prop('checked')? 'CARD' : ($("#customerMembershipCash").prop('checked') ? 'CASH' : null),
-        membershipChange: $("#customerMembershipChange").val() * 1,
-        price: $("#customerMembershipSales").val() * 1,
-        date: moment().format('YYYYMMDD')
-      }
-      if(!input.payment){
-        showSnackBar('적립 결제수단을 선택해주세요.');
-        return;
-      }
-      NMNS.socket.emit('add membership', input);
-      $("#customerMembershipList").data('item').splice(0, 0, input);
-      drawCustomerMembershipList(true);
-      $("#customerMembershipSales").val('');
-      $("#customerMembershipChange").val('');
-    });
   });
   $("#customerDetailMenu input[pattern]").each(function(index, input){
     setNumericInput(input);
