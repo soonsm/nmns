@@ -214,4 +214,5 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 }
 .nowrap{
   white-space:nowrap;
+  flex-wrap:nowrap;
 }

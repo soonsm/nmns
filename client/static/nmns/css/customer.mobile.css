@@ -4,7 +4,7 @@
   padding-bottom:5px;
   margin-bottom:10px;
 }
-#customerSortTypeMenu:after{
+#customerSortTypeMenu:after, #customerScheduleSortTypeMenu:after{
   content: url('/nmns/img/sort_on.svg');
   opacity:1;
   margin-left:3px;
@@ -99,20 +99,25 @@
 #customerModal #customerBalanceMembership, #customerModal #customerTotalSales{
     margin-right:5px;
 }
-#closeCustomerModal, #customerModal.addCustomer #customerTabList a:not([href="#customerInfo"]){
-    display:none;
-}
 
 #customerScheduleList{
-    max-height: calc(100vh - 310px);
+    /*max-height: calc(100vh - 310px);*/
     overflow:auto;
 }
 #customerScheduleList .customerSchedule{
     display:flex;
-    text-align:center;
-    padding:10px 5px;
+    padding:20px 0;
+    margin:0;
 }
-#customerScheduleList .customerSchedule .col{
+#customerScheduleList .customerScheduleTitle{
+  padding:0;
+  opacity:0.7;
+  width:8ch;
+}
+#customerScheduleList .customerSchedule:not(:first-child){
+  border-top:1px solid rgba(112,112,112,0.35);
+}
+#customerScheduleList .customerSchedule div{
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow:hidden;
@@ -130,7 +135,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 255px;
+    height: calc(100vh - 137px);
+    margin-top:-35px;
 }
 #customerAlrimList{
     max-height:calc(100vh - 290px);

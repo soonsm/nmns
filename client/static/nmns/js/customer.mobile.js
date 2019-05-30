@@ -1,9 +1,9 @@
 /*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
 (function() {
-  $("#mainContents").append('<div id="customerDetailmenu" class="switchingMenu customerDetailmenu">\
+  $("#mainContents").append('<div id="customerDetailMenu" class="switchingMenu customerDetailMenu">\
     <div class="d-flex horizontalTab">\
       <div class="row col-12">\
-        <ul id="customerTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">\
+        <ul id="customerTabList" class="nav nav-pills nowrap" role="tabList" style="display:inline-flex !important;height:47px;padding-right:20px">\
           <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#customerInfo" data-toggle="tab" aria-selected="true" aria-label="고객 정보">고객 정보</a></li>\
           <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerSchedule" data-toggle="tab" aria-label="예약 내역">예약 내역</a></li>\
           <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerAlrim" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>\
@@ -14,44 +14,49 @@
     <div class="menuContents px-3">\
       <div class="row mx-0 col-12 tab-content p-0">\
               \
-        <div id="customerInfo" class="tab-pane col-12 px-0 fade show active" role="tabpanel">\
-          <div class="row mx-0">\
-            <div id="customerNoShow" class="col-12 px-0">총 <span id="customerNoShowCount" class="montserrat text-accent ml-1">0</span>건의 노쇼 이력이 있는 고객님이에요.</div>\
+        <div id="customerInfo" class="tab-pane col-12 px-0 fade show active" role="tabpanel" style="font-size:15px;padding-top:35px">\
+          <div class="row mx-0 hasBottomArea">\
+            <div id="customerNoShow" class="col-12 px-0" style="margin-bottom:35px">총 <span id="customerNoShowCount" class="montserrat text-accent ml-1" style="font-weight:500">0</span>건의 노쇼 이력이 있는 고객님이에요.</div>\
             <div>고객 이름</div>\
             <input type="text" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 이름을 입력해주세요." style="margin-bottom:35px">\
             <div>고객 연락처</div>\
             <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
-            <div class="col-6 px-0">담당자</div><div class="col-6 pl-1">고객메모</div>\
-          </div>\
-          <div class="d-flex" style="margin-bottom:35px">\
-            <div class="col px-0 mr-1">\
+            <div>담당자</div>\
+            <div class="col-12 px-0" style="margin-bottom:35px">\
               <button id="customerManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자">\
                 <span>선택</span>\
               </button>\
-              <div class="dropdown-menu" aria-labelledby="customerManager" role="menu" id="customerManagerList" style="right:0"></div></div>\
-            <div class="col px-0 ml-1"><input type="text" id="customerEtc" class="form-control form-control-sm mt-3" placeholder="고객 메모를 입력해주세요."></div>\
+              <div class="dropdown-menu" aria-labelledby="customerManager" role="menu" id="customerManagerList" style="right:0"></div>\
+            </div>\
+            <div>고객메모</div>\
+            <div class="col-12 px-0" style="margin-bottom:35px"><input type="text" id="customerEtc" class="form-control form-control-sm mt-3" placeholder="고객 메모를 입력해주세요."></div>\
+            <div class="d-flex col-12 px-0">\
+              <div class="customerTitle">멤버십 잔액</div>\
+              <div class="ml-auto"><span id="customerBalanceMembership" class="montserrat mr-1">0</span>원</div>\
+            </div>\
+            <div class="d-flex col-12 px-0" style="margin-bottom:20px">\
+              <div class="customerTitle">총 매출액</div>\
+              <div class="ml-auto"><span id="customerTotalSales" class="montserrat mr-1">0</span>원</div>\
+            </div>\
           </div>\
-          <div class="d-flex updatingCustomer">\
-            <div class="customerTitle">멤버십 잔액</div>\
-            <div class="ml-auto"><span id="customerBalanceMembership" class="montserrat">0</span>원</div>\
-          </div>\
-          <div class="d-flex updatingCustomer">\
-            <div class="customerTitle">총 매출액</div>\
-            <div class="ml-auto"><span id="customerTotalSales" class="montserrat">0</span>원</div>\
-          </div>\
-          <div class="d-flex" style="margin-top:50px">\
+          <div class="bottomButtonArea">\
             <button type="button" class="btn btn-white col mr-1" id="closeCustomerModal">취소</button>\
             <button id="customerBtn" type="button" class="btn btn-accent col ml-1">저장</button>\
           </div>\
         </div>\
         \
-        <div id="customerSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel">\
+        <div id="customerSchedule" class="tab-pane col-12 px-0 fade" role="tabpanel" style="padding-top:20px">\
           <div id="customerScheduleNotEmpty" class="row mx-0 flex-column">\
-            <div class="row mx-0 col-12 px-1 pb-3 customerScheduleHead text-center" style="border-bottom:1px solid rgba(112, 112, 112, 0.35)">\
-              <div class="col-4 px-0 customerScheduleSortType active" data-action="sort-date">날짜</div><div class="col-5 px-0 d-flex"><div class="col-4 px-0 customerScheduleSortType" data-action="sort-manager">담당</div>\
-              <div class="col-8 px-0">예약내용</div></div><div class="col-3 px-0 d-flex"><div class="col-6 px-0 customerScheduleSortType" data-action="sort-sales">매출액</div><div class="col-6 px-0 customerScheduleSortType" data-action="sort-status">예약상태</div></div>\
+            <div class="col-12 position-relative">\
+              <button id="customerScheduleSortTypeMenu" type="button" class="btn btn-flat dropdown-toggle ml-auto d-flex pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="예약 내역 정렬하기" data-action="sort-date">날짜</button>\
+              <div class="dropdown-menu dropdown-menu-right text-center" aria-labelledby="customerScheduleSortTypeMenu">\
+                <a class="customerScheduleSortType dropdown-item active" href="#" data-action="sort-date" aria-label="날짜">날짜</a>\
+                <a class="customerScheduleSortType dropdown-item" href="#" data-action="sort-manager" aria-label="담당">담당</a>\
+                <a class="customerScheduleSortType dropdown-item" href="#" data-action="sort-sales" aria-label="매출액">매출액</a>\
+                <a class="customerScheduleSortType dropdown-item" href="#" data-action="sort-status" aria-label="예약 상태">예약 상태</a>\
+              </div>\
             </div>\
-            <div class="row mx-0" id="customerScheduleList"></div>\
+            <div class="row mx-0 col-12 px-0" id="customerScheduleList"></div>\
           </div>\
           <div id="customerScheduleEmpty" style="display:none">예약 내역이 없어요.</div>\
         </div>\
@@ -212,13 +217,18 @@
           contents = item.contents;
         }
         date = moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + (item.end?moment(item.end, 'YYYYMMDDHHmm').format(moment(item.start, 'YYYYMMDDHHmm').isSame(moment(item.end, 'YYYYMMDDHHmm'), 'day')?' - HH:mm':' - YYYY. MM. DD HH:mm'):'');
-        html += '<div class="customerSchedule col-12" data-index="'+index+'">'+
-          '<div class="col col-4 px-0 montserrat" title="'+date+'">' + date + '</div>' +
-          '<div class="col col-5 px-0 d-flex"><div class="col col-4 px-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div>'+
-          '<div class="col col-8">'+(contents || '') + '</div></div><div class="col-3 px-0 d-flex">' +
-          '<div class="col col-6 px-0 montserrat">'+(item.sales ? (item.sales+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div>' +
-          '<div class="col col-6 px-0">'+(item.status == 'NOSHOW'? '노쇼' : (item.status === 'CANCELED' || item.status === 'CUSTOMERCANCELED' ? '취소' : '정상')) + '</div></div>' +
-          '</div></div>';
+        html += '<div class="customerSchedule row col-12" data-index="'+index+'">'+
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">날짜</div>' + 
+          '<div class="col pr-0 montserrat" title="'+date+'">' + date + '</div></div>' +
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">담당</div>' + 
+          '<div class="col pr-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div></div>'+
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">예약내용</div>' + 
+          '<div class="col pr-0">'+(contents || '') + '</div></div>' +
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">매출액</div>' + 
+          '<div class="col pr-0 montserrat">'+(item.sales ? (item.sales+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
+          '<div class="d-flex col-12 px-0 mb-1"><div class="customerScheduleTitle">예약상태</div>' + 
+          '<div class="col pr-0">'+(item.status == 'NOSHOW'? '노쇼' : (item.status === 'CANCELED' || item.status === 'CUSTOMERCANCELED' ? '취소' : '정상')) + '</div></div>' +
+          '</div>';
     }
     return html;
   }
@@ -262,7 +272,6 @@
       } else {
         $("#customerNoShowCount").text(customer.totalNoShow).parent().show();
       }
-      $("#customerDetailMenu .updatingCustomer").addClass('d-flex');
       $("#customerBalanceMembership").text((customer.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
       $("#customerTotalSales").text(((customer.cardSales + customer.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
       var manager = NMNS.calendar.getCalendars().find(function(itema) { return itema.id === customer.managerId; });
@@ -275,9 +284,8 @@
       $("#customerManager").data("calendar-id", manager.id).data("color", manager.color)
         .html(manager.id?$("#customerManagerList button[data-calendar-id='"+manager.id+"']").html():'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot mr-3" style="background-color: #334150"></span><span class="tui-full-calendar-content">(삭제된 담당자)</span>');
       $(".addCustomerScheduleBtn").show();
-      $("#closeCustomerModal").hide();
       $("#customerTabList a[href='#customerInfo']").text('고객 상세').tab('show');
-      $("#customerDetailMenu").removeClass('addCustomer').data("customer", customer);
+      $("#customerDetailMenu").data("customer", customer);
     }
   }
 
@@ -476,6 +484,9 @@
     }
     history.back();
   });
+  $("#closeCustomerModal").on("touch click", function(){
+    history.back();
+  })
   $("#customerTabList a[href='#customerAlrim']").on("show.bs.tab", function(){
     if($(this).data('id') !== $("#customerDetailMenu").data('customer').id){
       $(this).data('id', $("#customerDetailMenu").data('customer').id);
@@ -498,6 +509,7 @@
     if($(this).data('id') !== $("#customerDetailMenu").data('customer').id){
       var customer = $("#customerDetailMenu").data('customer');
       $(this).data('id', customer.id);
+      customer.history = [{start:'20190101123059', end:'20190201123050', contents:'테스트 내용입니다.ㅎㅎ', manager:'aaa', status:'NOSHOW', sales:10000},{start:'20190103123059', end:'20190203123050', contents:'테스트 내용입니다.ㅎㅎㅎ', manager:'aaa', status:'RESERVED', sales:100000}]
       if(!customer.history || customer.history.length === 0){
         $("#customerScheduleNotEmpty").hide();
         $("#customerScheduleEmpty").show();
@@ -508,17 +520,19 @@
       }
     }
   }).one('show.bs.tab', function(){
-    $(".customerScheduleSortType").off("touch click").on("touch click", function(e) {
-        if ($(this).hasClass("active")){
+    $("#customerScheduleSortTypeMenu").next().children("a").on("touch click", function(e) { //sort type
+        e.preventDefault();
+        var target = $(e.target);
+        if (!target.hasClass("dropdown-item")) {
+            target = target.parents(".dropdown-item");
+        }
+        if($("#customerScheduleSortTypeMenu").data('action') === target.data('action')){
           $("#customerScheduleList").data('item').reverse();
         }else{
-          var action = e.target.getAttribute('data-action');
-          if (!action) {
-              action = e.target.parentElement.getAttribute('data-action');
-          }
-          $("#customerScheduleList").data('item').sort(getSortFunc(action));
+          $("#customerScheduleSortTypeMenu").html(target.html()).data('action', target.data('action'));
+          $("#customerScheduleList").data('item').sort(getSortFunc(target.data('action')));
           $(".customerScheduleSortType").removeClass("active");
-          $(".customerScheduleSortType[data-action='" + action + "']").addClass("active");
+          $(".customerScheduleSortType[data-action='" + target.data('action') + "']").addClass("active");
         }
         $("#customerScheduleList").data('index', 0);
         drawCustomerScheduleList(true);
@@ -616,6 +630,19 @@
 
   function getSortFunc(action) {
       switch (action) {
+          case 'sort-start':
+              return function(a, b) {
+                  if (!a.start) {
+                      if (b.start) {
+                          return 1;
+                      } else {
+                          return getSortFunc("sort-name")(a, b);
+                      }
+                  } else if (!b.start) {
+                      return -1;
+                  }
+                  return (a.start < b.start ? -1 : (a.start > b.start ? 1 : getSortFunc("sort-name")(a, b)));
+              };
           case 'sort-date':
               return function(a, b) {
                   if (!a.history || a.history.length === 0) {
@@ -680,6 +707,19 @@
                       return -1;
                   }
                   return (a.history.length < b.history.length ? -1 : (a.history.length > b.history.length ? 1 : getSortFunc("sort-name")(a, b)));
+              };
+          case 'sort-status':
+              return function(a, b) {
+                  if (!a.status) {
+                      if (b.status) {
+                          return 1;
+                      } else {
+                          return getSortFunc("sort-name")(a, b);
+                      }
+                  } else if (!b.status) {
+                      return -1;
+                  }
+                  return (a.status < b.status ? -1 : (a.status > b.status ? 1 : getSortFunc("sort-name")(a, b)));
               };
           case 'sort-name':
           default:

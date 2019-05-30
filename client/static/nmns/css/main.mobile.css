@@ -358,7 +358,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
 }
 
 #mainRow .horizontalTab{
-	margin:0 -5px 35px -5px;
+	margin:0 -5px;
 	padding:25px 20px 0 20px;
 	border-bottom:1px solid rgba(112,112,112,0.35);
 	overflow-x:auto;
@@ -1810,3 +1810,15 @@ button.form-control {
     animation-delay: 0.4s;
 }
 
+.hasBottomArea{
+    padding-bottom:80px;
+}
+.bottomButtonArea{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    padding:20px;
+    background-color:#fff;
+    display:flex;
+}
