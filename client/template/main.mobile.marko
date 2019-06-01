@@ -140,6 +140,7 @@
           </li>
           <li class="d-none">
             <div class="menuLink scheduleLink" data-link="scheduleMenu" data-history="schedule" data-type="detail" data-title="예약 상세"></div>
+            <div class="menuLink taskLink" data-link="taskDetailMenu" data-history="task" data-type="detail" data-title="일정 상세"></div>
             <div class="menuLink customerDetailLink" data-link="customerDetailMenu" data-history="customer/detail" data-type="detail" data-title="고객 상세"></div>
             <div class="menuLink menuDetailLink" data-link="menuDetailMenu" data-history="menu/detail" data-type="detail" data-title="메뉴 상세"></div>
           </li>
@@ -718,6 +719,47 @@
           </div>
         </div>
 
+        <div class="switchingMenu taskDetailMenu">
+          <div class="menuContents px-3">
+            <form id="taskForm" class="mb-1">
+              <div>일정 내용</div>
+              <input class="form-control form-control-sm han mt-3" id="taskName" placeholder="일정 내용" aria-label="일정 내용" type="text">
+              <div style="margin-top:35px">예약시간
+                <span class="float-right">
+                  <input id="taskAllDay" name="isAllDay" type="checkbox"/>
+                  <label for="taskAllDay"></label>
+                  <label for="taskAllDay">하루종일</label>
+                </span>
+              </div>
+              <div class="d-flex col-12 px-0 align-items-center mt-3">
+                <div class="select mr-1">
+                  <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
+                </div>
+                <div class="select ml-1">
+                  <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                </div>
+                <span class="px-2 mx-3">~</span>
+                <div class="select mr-1">
+                  <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
+                </div>
+                <div class="select ml-1">
+                  <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                </div>
+              </div>
+              <div style="margin-top:35px">담당자</div>
+              <button id="taskManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자 선택">
+                <span>담당자 선택</span>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>
+              
+            </form>
+            <div class="row mx-0 mt-5">
+              <button type="button" class="btn btn-white col mr-1" id="deleteTaskBtn">삭제</button>
+              <button type="button" class="btn btn-accent col ml-1" id="taskBtn">저장</button>
+            </div>
+          </div>
+        </div>
+
       </div>
       
       <!-- modal area -->
@@ -954,12 +996,23 @@
         </div>
       </div>
     
-      <div id="calendarModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="날짜 선택" aria-hidden="true">
+      <div id="calendarModal" class="modal fade calendarModal" tabIndex="-1" role="dialog" aria-label="날짜 선택" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content rounded-0">
             <div class="modal-body p-0 flex-column">
               <div id="startCalendarArea" class="position-relative"></div>
               <div id="endCalendarArea" class="position-relative"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div id="taskCalendarModal" class="modal fade calendarModal" tabIndex="-1" role="dialog" aria-label="날짜 선택" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content rounded-0">
+            <div class="modal-body p-0 flex-column">
+              <div id="startTaskArea" class="position-relative"></div>
+              <div id="endTaskArea" class="position-relative"></div>
             </div>
           </div>
         </div>

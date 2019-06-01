@@ -1623,23 +1623,23 @@ button.form-control {
   margin-bottom:82px;
 }
 
-#salesCalendarArea .flatpickr-month, #calendarModal .flatpickr-month{
+#salesCalendarArea .flatpickr-month, .calendarModal .flatpickr-month{
   font-size: 18px;
   font-weight: 500;
 }
-#salesCalendarArea .flatpickr-prev-month,#calendarModal .flatpickr-prev-month{
+#salesCalendarArea .flatpickr-prev-month,.calendarModal .flatpickr-prev-month{
   content: url('/nmns/img/Calendar_left.svg');
   vertical-align: middle;
 }
-#salesCalendarArea .flatpickr-next-month,#calendarModal .flatpickr-next-month{
+#salesCalendarArea .flatpickr-next-month,.calendarModal .flatpickr-next-month{
   content: url('/nmns/img/Calendar_left.svg');
   transform:rotate(180deg);
   vertical-align: middle;
 }
-#salesCalendarArea .flatpickr-current-month .numInputWrapper,#calendarModal .flatpickr-current-month .numInputWrapper{
+#salesCalendarArea .flatpickr-current-month .numInputWrapper,.calendarModal .flatpickr-current-month .numInputWrapper{
   width:44px;
 }
-#salesCalendarArea .flatpickr-calendar,#calendarModal .flatpickr-calendar{
+#salesCalendarArea .flatpickr-calendar,.calendarModal .flatpickr-calendar{
   display:block;
   opacity:1;
   visibility: visible;
@@ -1647,15 +1647,15 @@ button.form-control {
   border-radius:0;
   width:100%;
 }
-#salesCalendarArea .flatpickr-calendar:before,#calendarModal .flatpickr-calendar:before,#salesCalendarArea .flatpickr-calendar:after,#calendarModal .flatpickr-calendar:after{
+#salesCalendarArea .flatpickr-calendar:before,.calendarModal .flatpickr-calendar:before,#salesCalendarArea .flatpickr-calendar:after,.calendarModal .flatpickr-calendar:after{
     display:none;
 }
-#calendarModal .flatpickr-calendar{
+.calendarModal .flatpickr-calendar{
     top:0 !important;
     left:0 !important;
     right:0 !important;
 }
-#salesCalendarArea .flatpickr-day,#calendarModal .flatpickr-day{
+#salesCalendarArea .flatpickr-day,.calendarModal .flatpickr-day{
   max-width:14.28571428%;
   font-size:16px;
   font-weight:500;
@@ -1663,49 +1663,49 @@ button.form-control {
   line-height:14vw;
   padding-bottom:14.28571428%;
 }
-#salesCalendarArea .flatpickr-day.today,#calendarModal .flatpickr-day.today{
+#salesCalendarArea .flatpickr-day.today,.calendarModal .flatpickr-day.today{
   border-radius:50%;
 }
-#salesCalendarArea .flatpickr-day:nth-child(7n), #salesCalendarArea .flatpickr-weekday:last-child,#calendarModal .flatpickr-day:nth-child(7n), #calendarModal .flatpickr-weekday:last-child{
+#salesCalendarArea .flatpickr-day:nth-child(7n), #salesCalendarArea .flatpickr-weekday:last-child,.calendarModal .flatpickr-day:nth-child(7n), .calendarModal .flatpickr-weekday:last-child{
   color:#1736ff;
 }
-#salesCalendarArea .flatpickr-weekday,#calendarModal .flatpickr-weekday{
+#salesCalendarArea .flatpickr-weekday,.calendarModal .flatpickr-weekday{
   font-size:13px;
   font-weight:bold;
   flex:1 0;
 }
-#salesCalendarArea .flatpickr-day.prevMonthDay, #salesCalendarArea .flatpickr-day.nextMonthDay,#calendarModal .flatpickr-day.prevMonthDay, #calendarModal .flatpickr-day.nextMonthDay{
+#salesCalendarArea .flatpickr-day.prevMonthDay, #salesCalendarArea .flatpickr-day.nextMonthDay,.calendarModal .flatpickr-day.prevMonthDay, .calendarModal .flatpickr-day.nextMonthDay{
   opacity:0.5;
 }
 #salesCalendarArea .flatpickr-day.inRange,#salesCalendarArea .flatpickr-day.inRange{
   border-left:none;
   border-right:none;
 }
-#salesCalendarArea .flatpickr-day.inRange, #salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange,#calendarModal .flatpickr-day.inRange, #calendarModal .flatpickr-day.startRange, #calendarModal .flatpickr-day.endRange{
+#salesCalendarArea .flatpickr-day.inRange, #salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange,.calendarModal .flatpickr-day.inRange, .calendarModal .flatpickr-day.startRange, .calendarModal .flatpickr-day.endRange{
   background-color:#fd5b77;
   color:#fff;
   opacity:1;
   box-shadow:none;
 }
-#calendarModal .flatpickr-day.selected{
+.calendarModal .flatpickr-day.selected{
     color:#fff;
     border-radius:50%;
 }
-#salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange,#calendarModal .flatpickr-day.startRange, #calendarModal .flatpickr-day.endRange{
+#salesCalendarArea .flatpickr-day.startRange, #salesCalendarArea .flatpickr-day.endRange,.calendarModal .flatpickr-day.startRange, .calendarModal .flatpickr-day.endRange{
   border-top: none;
   border-bottom: none;
   margin-top: 2px;
 }
-#salesCalendarArea .flatpickr-day.inRange,#calendarModal .flatpickr-day.inRange{
+#salesCalendarArea .flatpickr-day.inRange,.calendarModal .flatpickr-day.inRange{
   border-radius:0;
 }
-#salesCalendarArea .flatpickr-day.startRange,#calendarModal .flatpickr-day.startRange{
+#salesCalendarArea .flatpickr-day.startRange,.calendarModal .flatpickr-day.startRange{
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-top-left-radius: 50%;
   border-bottom-left-radius: 50%;
 }
-#salesCalendarArea .flatpickr-day.endRange,#calendarModal .flatpickr-day.endRange{
+#salesCalendarArea .flatpickr-day.endRange,.calendarModal .flatpickr-day.endRange{
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: 50%;
