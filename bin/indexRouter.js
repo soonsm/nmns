@@ -21,7 +21,7 @@ const signupView = require('../client/template/signup');
 const cancelView = require('../client/template/reservationCancel');
 const naverView = require('../client/template/naver');
 
-let render = function(res, view, data) {
+let render = function (res, view, data) {
     if (!data) {
         data = {};
     }
@@ -29,12 +29,12 @@ let render = function(res, view, data) {
     res.marko(view, data);
 }
 
-module.exports = function(passport) {
+module.exports = function (passport) {
 
     /**
      * Main Page(Calendar)
      */
-    router.get("/", async function(req, res) { //main calendar page
+    router.get("/", async function (req, res) { //main calendar page
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
             if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
@@ -73,7 +73,7 @@ module.exports = function(passport) {
     /**
      * Index Page
      */
-    router.get('/index', async function(req, res) {
+    router.get('/index', async function (req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
             if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
@@ -98,7 +98,7 @@ module.exports = function(passport) {
     /**
      * Login page
      */
-    router.get('/signin', async function(req, res) {
+    router.get('/signin', async function (req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
             if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
@@ -130,12 +130,12 @@ module.exports = function(passport) {
      * 로그인 요청 json format이 잘못되었을 때: {message: 'Missing credentials'}
      * 그 외 에러: 나도 몰라, 근데 {message: 블라블라} 이런 형태로 리턴이 올 것임
      */
-    router.post("/signin", function(req, res) {
+    router.post("/signin", function (req, res) {
         logger.log(req.body);
         let email = req.body.email;
         res.cookie('email', email);
         passport.authenticate('local', (err, user, info) => {
-            req.logIn(user, async function(err) {
+            req.logIn(user, async function (err) {
                 if (err) {
                     req.session.errorMessage = info.message;
                     res.redirect("/index");
@@ -143,9 +143,9 @@ module.exports = function(passport) {
                 }
 
                 let kakaotalk = req.body.kakaotalk;
-                if(kakaotalk){
+                if (kakaotalk) {
                     let kakaoUser = await db.getUser(kakaotalk);
-                    if(kakaoUser){
+                    if (kakaoUser) {
                         kakaoUser.email = email;
                         db.saveUser(kakaoUser);
                     }
@@ -160,25 +160,25 @@ module.exports = function(passport) {
     /**
      * New Index page
      */
-    router.get('/naver', async function(req, res) {
-            /*if (req.user) {
-                let user = await db.getWebUser(req.user.email);
-                if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-                    //로그인 되있으면 main으로 이동
-                    res.redirect("/");
-                } else {
-                    render(res, signupView, {
-                        email: user.email,
-                        authRequired: true
-                    });
-                }
+    router.get('/naver', async function (req, res) {
+        /*if (req.user) {
+            let user = await db.getWebUser(req.user.email);
+            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
+                //로그인 되있으면 main으로 이동
+                res.redirect("/");
             } else {
-            }*/
-            render(res, naverView);
+                render(res, signupView, {
+                    email: user.email,
+                    authRequired: true
+                });
+            }
+        } else {
+        }*/
+        render(res, naverView);
     });
 
 
-    router.get('/index.amp', async function(req, res) {
+    router.get('/index.amp', async function (req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
             if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
@@ -203,7 +203,7 @@ module.exports = function(passport) {
     /**
      * Sign Up Page
      */
-    router.get('/signup', async function(req, res) {
+    router.get('/signup', async function (req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
@@ -225,7 +225,7 @@ module.exports = function(passport) {
         }
     });
 
-    let sendResponse = function(res, status, errorMessage) {
+    let sendResponse = function (res, status, errorMessage) {
         res.status(200).json({
             status: status ? '200' : '400',
             message: errorMessage
@@ -241,47 +241,47 @@ module.exports = function(passport) {
      * 회원가입 페이지로 redirect 할 때 서버가 client에 전달하는 데이터
      * {snsType: ${sns 종류(NAVER, KAKAO), string}, snsLinkId: ${SNS에서 부여한 id, string}, snsEmail: ${SNS email(회원가입 화면의 email input에 채워질 데이터), string, optional}}
      */
-    router.post('/sns_signin', async function(req, res){
-        if(req.user){
+    router.post('/sns_signin', async function (req, res) {
+        if (req.user) {
             res.redirect('/');
             return;
         }
         let data = req.body;
-        try{
+        try {
             let snsLinkId = data.snsLinkId;
             let snsType = data.snsType;
             let snsEmail = data.snsEmail;
-            if(!snsLinkId){
+            if (!snsLinkId) {
                 throw 'snsLinkId가 없습니다.';
-            }else if(!process.nmns.isValidSnsType(snsType)){
+            } else if (!process.nmns.isValidSnsType(snsType)) {
                 throw `snsType은 NAVER 또는 KAKAO입니다.${snsType}`;
-            }else if(snsEmail && !emailValidator.validate(snsEmail)){
+            } else if (snsEmail && !emailValidator.validate(snsEmail)) {
                 throw `snsEmail이 이메일 형식에 맞지 않습니다.${snsEmail}`;
             }
 
             let snsLink = await db.getSnsLink(snsLinkId);
-            if(!snsLink){
+            if (!snsLink) {
                 render(res, signupView, {
                     snsType: snsType,
                     snsLinkId: snsLinkId,
                     snsEmail: snsEmail
                 });
-            }else{
+            } else {
                 let user = await db.getWebUser(snsLink.email);
-                if(!user){
+                if (!user) {
                     render(res, signupView, {
                         snsType: snsType,
                         snsLinkId: snsLinkId,
                         snsEmail: snsEmail
                     });
-                }else{
-                    req.logIn(user, function() {
+                } else {
+                    req.logIn(user, function () {
                         res.redirect("/");
                     });
                 }
             }
 
-        }catch(e){
+        } catch (e) {
             return sendResponse(res, false, e);
         }
 
@@ -293,26 +293,24 @@ module.exports = function(passport) {
      * 정상 응답: 응답은 Websocket으로 41번 API 형식으로 돌려준다.
      * 로그인이 되어 있지 않은 경우 응답: HTTP status code로 응답 / {"status":${오류코드, string}, "message":${오류내용, string}}로 데이터 전달
      */
-    router.post('/naver_link', async function(req, res){
-        if(!req.user){
+    router.post('/naver_link', async function (req, res) {
+        if (!req.user) {
             return sendResponse(res, false, '로그인이 되어있지 않습니다.');
         }
 
-        try{
+        try {
             let data = req.body;
             let email = req.user.email;
             let naverEmail = data.naverEmail;
-            if(!naverEmail || !emailValidator.validate(naverEmail)){
+            if (!naverEmail || !emailValidator.validate(naverEmail)) {
                 throw `naverEmail 값이 올바르지 않습니다.(${naverEmail})`;
             }
             let snsLinkId = data.snsLinkId;
-            if(!snsLinkId){
+            if (!snsLinkId) {
                 throw 'snsLinkId 값이 없습니다.';
             }
 
             let user = await db.getWebUser(email);
-            user.snsType = process.nmns.SNS_TYPE.NAVER;
-            user.snsLinkId = snsLinkId;
 
             let dbResult1 = await db.setSnsLink({
                 snsLinkId: snsLinkId,
@@ -321,14 +319,14 @@ module.exports = function(passport) {
                 email: email
             });
 
-            let dbResult2 = await db.setWebUser(user);
+            let dbResult2 = await db.updateWebUser(email, {snsType: process.nmns.SNS_TYPE.NAVER, snsLinkId: snsLinkId});
 
-            if(!dbResult1 || !dbResult2){
+            if (!dbResult1 || !dbResult2) {
                 throw 'DB 저장에 실패했습니다.';
             }
 
             let socket = process.nmns.ONLINE[email];
-            if(socket){
+            if (socket) {
                 socket.emit('link sns', {
                     type: 'response',
                     status: true,
@@ -339,7 +337,7 @@ module.exports = function(passport) {
                     }
                 });
             }
-        }catch(e){
+        } catch (e) {
             return sendResponse(res, false, e);
         }
 
@@ -347,10 +345,24 @@ module.exports = function(passport) {
 
     });
 
+    let multer = require('multer');
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'uploads');
+        },
+        filename: function (req, file, cb) {
+            let email = req.body.email;
+            let extname = path.extname(file.originalname);
+            cb(null, email+extname);
+        }
+    });
+    let upload = multer({
+        storage: storage, limits: {fileSize: 5 * 1024 * 1024}
+    }).single('logo');
     /**
      * 회원가입 요청 처리
      */
-    router.post("/signup", async function(req, res) {
+    router.post("/signup", upload, async function (req, res) {
         let data = req.body;
         let email = data.email;
         let password = data.password;
@@ -360,15 +372,15 @@ module.exports = function(passport) {
             return sendResponse(res, false, '올바른 이메일 형식이 아닙니다.');
         }
 
-        if(data.snsType){
-            if(!data.snsLinkId){
+        if (data.snsType) {
+            if (!data.snsLinkId) {
                 return sendResponse(res, false, 'SNS 연동 회원가입인 경우 snsLinkId가 필요합니다.');
             }
             let snsLink = await db.getSnsLink(data.snsLinkId);
-            if(snsLink){
+            if (snsLink) {
                 return sendResponse(res, false, `이미 SNS 연동이 된 계정입니다.(email:${snsLink.email}, snsType:${snsLink.snsType})`);
             }
-        }else{
+        } else {
             //password strength check
             let strenthCheck = util.passwordStrengthCheck(password);
             if (strenthCheck.result === false) {
@@ -394,16 +406,21 @@ module.exports = function(passport) {
                 notice: data.notice || ''
             }
         }
+
+        if(req.file){
+            newUser.logo = req.file.filename;
+        }
+
         if (await db.setWebUser(newUser)) {
             if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
                 if (data.kakaotalk) {
                     let kakaoUser = await db.getUser(data.kakaotalk);
-                    if(kakaoUser){
+                    if (kakaoUser) {
                         kakaoUser.email = email;
                         db.saveUser(kakaoUser);
                     }
                 }
-                if(data.snsType){
+                if (data.snsType) {
                     db.setSnsLink(data);
                 }
                 res.cookie('email', email);
@@ -419,7 +436,7 @@ module.exports = function(passport) {
             let email = req.user.email;
             res.cookie('email', email);
             req.logout();
-            req.session.destroy(function(err) {
+            req.session.destroy(function (err) {
                 if (err) {
                     logger.log('fail to destroy session: ', err);
                 }
@@ -430,15 +447,23 @@ module.exports = function(passport) {
         }
     })
 
-    router.post("/sendVerification", async function(req, res){
+    /**
+     * 인증 이메일 다시 보내기
+     * 데이터 : {email: ${email, string, optional}}
+     * 응답 : HTTP status code로 응답 / {"status":${오류코드, string}, "message":${오류내용, string}}로 데이터 전달 (정상이면 "200")
+     * 데이터 email이 있으면 해당 이메일로 보내고, 없으면 세션정보에서 찾아서 보낸다.
+     */
+    router.post("/sendVerification", async function (req, res) {
         let status = false;
         let errorMessage = '이메일 전송이 실패했습니다.';
-        if(req.user){
-
-            let email = req.user.email;
+        let email = req.body.email;
+        if (!email && req.user) {
+            email = req.user.email;
+        }
+        if (email) {
             const emailAuthToken = require('js-sha256')(email);
             const result = await emailSender.sendEmailVerification(email, emailAuthToken);
-            if(result){
+            if (result) {
                 status = true;
                 errorMessage = '';
             }
@@ -447,14 +472,14 @@ module.exports = function(passport) {
     });
 
     //http://localhost:8088/emailVerification/email=soonsm@gmail.com&token=297356b5ba41255cfe85cc692ecabbf3a0caf5423e62b9c0974e8ef73676b32a
-    router.get("/emailVerification/email=:email&token=:token", async function(req, res) {
+    router.get("/emailVerification/email=:email&token=:token", async function (req, res) {
         const email = req.params.email;
         const token = req.params.token;
 
         let user = await db.getWebUser(email);
         if (user && user.emailAuthToken === token && user.authStatus !== process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-            await db.updateWebUser(email, { authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED });
-            req.logIn(user, function() {
+            await db.updateWebUser(email, {authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED});
+            req.logIn(user, function () {
                 res.redirect("/");
             });
             return;
@@ -463,7 +488,7 @@ module.exports = function(passport) {
         res.redirect("/");
     });
 
-    router.post('/resetPassword', async function(req, res) {
+    router.post('/resetPassword', async function (req, res) {
         const email = req.body.email;
 
         let user = await db.getWebUser(email);
@@ -474,7 +499,7 @@ module.exports = function(passport) {
                 numbers: true
             });
 
-            if (await db.updateWebUser(email, { password: util.sha512(password) })) {
+            if (await db.updateWebUser(email, {password: util.sha512(password)})) {
 
                 await emailSender.sendTempPasswordEmail(email, password);
 
@@ -486,11 +511,11 @@ module.exports = function(passport) {
         res.redirect("/");
     });
 
-    router.get('/addNotice/title=:title&&contents=:contents', async(req,res)=>{
+    router.get('/addNotice/title=:title&&contents=:contents', async (req, res) => {
         let title = req.params.title;
         let contents = req.params.contents;
-        try{
-            if(!title || !contents){
+        try {
+            if (!title || !contents) {
                 throw 'title 혹은 contents가 없습니다';
             }
 
@@ -504,14 +529,14 @@ module.exports = function(passport) {
             }
 
             await newDb.addNotice(notice);
-        }catch(e){
+        } catch (e) {
             logger.error(e);
         }
 
         res.redirect("/");
     });
 
-    router.get('/web_cancel/key=:reservationKey&&email=:email', async(req, res) => {
+    router.get('/web_cancel/key=:reservationKey&&email=:email', async (req, res) => {
         let id = req.params.reservationKey;
         let email = req.params.email;
 
@@ -560,11 +585,11 @@ module.exports = function(passport) {
                         }
 
                         await newDb.addPush({
-                           email: email,
-                           title: push.title,
-                           contents: msg,
-                           data: push.data,
-                           isRead: push.isRead
+                            email: email,
+                            title: push.title,
+                            contents: msg,
+                            data: push.data,
+                            isRead: push.isRead
                         });
 
                         if (!await db.updateReservation(email, reservationList)) {
@@ -581,8 +606,41 @@ module.exports = function(passport) {
             }
         }
 
-        return render(res, cancelView, { title: returnMsg, contents: contents });
+        return render(res, cancelView, {title: returnMsg, contents: contents});
+    });
+/*
+    router.get('/form-tester', (req, res) => {
+        res.render('form-tester.html', {
+            title: 'Form Tester'
+        });
     });
 
+    let multer = require('multer');
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'uploads');
+        },
+        filename: function (req, file, cb) {
+            console.log(req.body.name);
+            let extname = path.extname(file.originalname);
+            cb(null, 'soonsm@gmail.com'+extname);
+        }
+    });
+    let upload = multer({
+        storage: storage, limits: {fileSize: 5 * 1024 * 1024}
+    }).single('logo');
+
+    router.post('/form-tester',(req, res) => {
+        upload(req, res, function(err){
+           if(err){
+               console.log(err);
+           }
+            console.log(req.body);
+            console.log(req.file);
+            var str = "Your name is " + req.body.name + " and your nickname is " + req.body.nickname;
+            res.send(str);
+        });
+    });
+*/
     return router;
 };

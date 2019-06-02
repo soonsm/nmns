@@ -424,8 +424,7 @@ exports.reSendReservationConfirm = async function (data) {
 
     if (data.id) {
         let user = await db.getWebUser(email);
-        let reservationList = user.reservationList;
-        let reservation = reservationList.find(reservation => reservation.id === data.id);
+        let reservation = await newDb.getReservation(email, data.id);
         if (reservation) {
             if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
                 message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';

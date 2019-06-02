@@ -57,6 +57,7 @@ app.use(favicon(__dirname + '/client/static/nmns/img/favicon.ico'));
 
 //static file은 session 설정 필요없으므로 위로 이동
 app.use(express.static(__dirname + '/client/static'));
+app.use(express.static(__dirname + '/uploads'));
 
 //enable res.marko(template, data);
 app.use(markoExpress());

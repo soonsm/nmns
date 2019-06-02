@@ -151,10 +151,6 @@ exports.linkSns = async function(data){
         }
 
 
-        user.snsType = snsType;
-        user.snsLinkId = snsLinkId;
-        user.snsEmail = snsEmail;
-
         let dbResult1 = await db.setSnsLink({
             snsLinkId: snsLinkId,
             snsType: snsType,
@@ -162,7 +158,7 @@ exports.linkSns = async function(data){
             email: this.email
         });
 
-        let dbResult2 = await db.setWebUser(user);
+        let dbResult2 = await db.updateWebUser(user.email, {snsType: snsType, snsLinkId: snsLinkId, snsEmail: snsEmail});
 
         if(!dbResult1 || !dbResult2){
             throw 'DB 저장에 실패했습니다.';
