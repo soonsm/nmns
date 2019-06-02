@@ -4,7 +4,7 @@
   padding-bottom:5px;
   margin-bottom:10px;
 }
-#customerSortTypeMenu:after{
+#customerSortTypeMenu:after, #customerScheduleSortTypeMenu:after{
   content: url('/nmns/img/sort_on.svg');
   opacity:1;
   margin-left:3px;
@@ -99,20 +99,25 @@
 #customerModal #customerBalanceMembership, #customerModal #customerTotalSales{
     margin-right:5px;
 }
-#closeCustomerModal, #customerModal.addCustomer #customerTabList a:not([href="#customerInfo"]){
-    display:none;
-}
 
 #customerScheduleList{
-    max-height: calc(100vh - 310px);
+    /*max-height: calc(100vh - 310px);*/
     overflow:auto;
 }
-#customerScheduleList .customerSchedule{
+.customerSchedule, .customerMembership{
     display:flex;
-    text-align:center;
-    padding:10px 5px;
+    padding:20px 0;
+    margin:0;
 }
-#customerScheduleList .customerSchedule .col{
+.customerDetailTitle{
+  padding:0;
+  opacity:0.7;
+  width:8ch;
+}
+.customerSchedule:not(:first-child), .customerMembership:not(:first-child){
+  border-top:1px solid rgba(112,112,112,0.35);
+}
+.customerSchedule div, .customerMembership div{
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow:hidden;
@@ -126,19 +131,19 @@
     margin-right:3px;
 }
 
-#customerScheduleEmpty, #customerAlrimEmpty, #customerAlrimLoading{
+#customerScheduleEmpty, #customerAlrimEmpty, #customerMembershipEmpty, #customerAlrimLoading{
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 255px;
+    height: calc(100vh - 137px);
 }
 #customerAlrimList{
-    max-height:calc(100vh - 290px);
     overflow:auto;
+    margin:0 -20px;
 }
 #customerAlrimList .customerAlrim{
-    padding:10px 15px;
-    font-size:12px;
+    padding:10px 20px;
+    font-size:15px;
 }
 #customerAlrimList .customerAlrimDetailLink{
     position:absolute;
@@ -151,8 +156,12 @@
     font-size:11px;
     background-color:#f8f8f8;
     opacity:0.7;
-    padding:0 15px 15px 15px;
+    padding:0 20px;
     line-height:1.82;
+    word-break:break-all;
+}
+#customerAlrimList .customerAlrimDetail div{
+  padding:10px 0 20px 0;
 }
 
 #customerAlrimList .customerAlrim.active{
@@ -169,22 +178,4 @@
 #customerAlrimList .customerAlrim.active:after {
     transform: rotate(180deg);
     filter: none;
-}
-
-#customerMembershipChange{
-    color:rgba(58, 54, 54, 0.35);
-}
-#customerMembershipChange.manual{
-    color:rgb(58,54,54);
-}
-#customerMembershipList .customerMembership{
-    display:flex;
-    padding: 10px 5px;
-}
-
-#customerMembershipList .customerMembership div{
-    text-align: center;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow:hidden;
 }

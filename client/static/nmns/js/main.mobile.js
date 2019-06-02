@@ -348,11 +348,12 @@
         $("#mainTaskContents .task").on('touch click', function(e){
           e.stopPropagation();
           var data = $(this).parent();
-          initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
-          $("#scheduleTabList a[data-target='#taskTab']").tab('show');
-          $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가');
-          $("#scheduleBtn").text('예약 추가 완료');
-          $("#scheduleModal").removeClass('update').modal('show')
+          refreshTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'});
+          switchMenu.call($(".taskLink"), e);
+          // $("#scheduleTabList a[data-target='#taskTab']").tab('show');
+          // $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가');
+          // $("#scheduleBtn").text('예약 추가 완료');
+          // $("#scheduleModal").removeClass('update').modal('show')
         });
         refreshScheduleVisibility();
     }));
@@ -1235,12 +1236,12 @@
           }));
         });
 
-        var autoCompleteOption = {
+        /*var autoCompleteOption = {
           lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
           maxHeight:175,
           triggerSelectOnValidInput: false,
           zIndex:1060
-        };        
+        };        */
         // $('#scheduleStartTime').autocomplete(autoCompleteOption);
         // $("#scheduleEndTime").autocomplete(autoCompleteOption);
         var timeout;
@@ -1497,6 +1498,7 @@
     }
   
     function refreshTaskTab(task){
+      initTaskTab(task);
       var calendar;
       if(NMNS.refreshTaskManager){
         NMNS.refreshTaskManager = false;
@@ -1504,71 +1506,37 @@
             $("#taskManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
       }
-      $("#taskBtn").text(task && task.id ? "일정 변경 완료" : "일정 추가 완료")
-      if (typeof task === 'object') { // update existing task
       
-        $("#taskTab").data("edit", task.id ? true : false).data("task", task);
-        document.getElementById("taskStartDate")._flatpickr.setDate(moment(task.start, 'YYYYMMDDHHmm').toDate());
-        document.getElementById("taskEndDate")._flatpickr.setDate(moment(task.end, 'YYYYMMDDHHmm').toDate());
-        
-        var autoCompleteOption = {
-          lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
-          maxHeight:175,
-          triggerSelectOnValidInput: false,
-          zIndex:1060
-        };
-        $('#taskStartTime').autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
-        $("#taskEndTime").autocomplete(autoCompleteOption).val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
-        
-        $("#taskName").val(task.title || "");
-        $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
-        calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
-            return item.id === task.calendarId;
-        }) : NMNS.calendar.getCalendars()[0];
-        if (!calendar) {
-          $('#taskManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + task.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', task.calendarId).data('color', task.color);
-        }else{
-          calendar = $('#taskManager').next().find("button[data-calendar-id='" + calendar.id + "']");
-          $('#taskManager').html(calendar.html()).data('calendar-id', calendar.data('calendar-id')).data('color', calendar.data('color'));
-        }
-
-      } else if(typeof task === 'string'){// switched from schedule tab : copy data
-
-        document.getElementById("taskStartDate")._flatpickr.setDate(document.getElementById('scheduleStartDate')._flatpickr.selectedDates[0]);
-        $("#taskStartTime").val($("#scheduleStartTime").val());
-        document.getElementById("scheduleEndDate")._flatpickr.setDate(document.getElementById('taskEndDate')._flatpickr.selectedDates[0]);
-        $("#taskEndTime").val($("#scheduleEndTime").val());
-        $("#taskAllDay").prop('checked', $("#scheduleAllDay").prop('checked'));
-        calendar = $("#scheduleManager");
-        $("#taskManager").data("calendar-id", calendar.data("calendar-id")).data("color", calendar.data("color")).html(calendar.html());
-
-      } else {
-
-        $("#taskTab").data("edit", false).removeData("task");
-        var now = moment();
-        if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-            now = moment(NMNS.info.bizBeginTime, "HHmm");
-        } else {
-            now.minute(Math.ceil(now.minute() / 10) * 10);
-        }
-        document.getElementById("taskStartDate")._flatpickr.setDate(now.toDate());
-        $("#taskStartTime").val(getTimeFormat(now));
-        document.getElementById("taskEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
-        $("#taskEndTime").val(getTimeFormat(now));
-
-        $("#taskName").val("");
-        $("#taskContents").val("");
-        calendar = NMNS.calendar.getCalendars()[0].id;
-        calendar = $('#taskManager').next().find("button[data-calendar-id='" + calendar + "']");
-        $('#taskManager').html(calendar.html()).data('calendarid', calendar.data('calendarId')).data('color', calendar.data('color'));
-        
+      $(".taskDetailMenu").data("task", task);
+      document.getElementById("taskStartDate")._flatpickr.setDate(moment(task.start, 'YYYYMMDDHHmm').toDate());
+      document.getElementById("taskEndDate")._flatpickr.setDate(moment(task.end, 'YYYYMMDDHHmm').toDate());
+      
+      /*var autoCompleteOption = {
+        lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
+        maxHeight:175,
+        triggerSelectOnValidInput: false,
+        zIndex:1060
+      };*/
+      $('#taskStartTime').val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
+      $("#taskEndTime").val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
+      
+      $("#taskName").val(task.title || "");
+      $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
+      calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
+          return item.id === task.calendarId;
+      }) : NMNS.calendar.getCalendars()[0];
+      if (!calendar) {
+        $('#taskManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + task.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', task.calendarId).data('color', task.color);
+      }else{
+        calendar = $('#taskManager').next().find("button[data-calendar-id='" + calendar.id + "']");
+        $('#taskManager').html(calendar.html()).data('calendar-id', calendar.data('calendar-id')).data('color', calendar.data('color'));
       }
+
     }
 
     function initTaskTab(task) {
-      if (!$("#taskStartDate")[0]._flatpickr) {
+      if (!$(".taskDetailmenu").data('inited')) {
+        $(".taskDetailMenu").data("inited", true);
         var datetimepickerOption = {
             dateFormat: "Y. m. d",
             enableTime: false,
@@ -1577,6 +1545,35 @@
         };
         flatpickr("#taskStartDate", datetimepickerOption);
         flatpickr("#taskEndDate", datetimepickerOption);
+        $("#taskStartDate").on("touch click", function(){
+          $("#endTaskArea").hide();
+          $("#startTaskArea").show();
+          this._flatpickr.setDate(moment($(this).val(), 'YYYY. MM. DD').toDate());
+        });
+        $("#taskEndDate").on("touch click", function(){
+          $("#startTaskArea").hide();
+          $("#endTaskArea").show();
+          this._flatpickr.setDate(moment($(this).val(), 'YYYY. MM. DD').toDate());
+        });
+        flatpickr("#taskStartDate", {
+          dateFormat: "Y. m. d",
+          disableMobile: true,
+          appendTo:document.getElementById('startTaskArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            $("#taskCalendarModal").modal('hide');
+          }
+        });
+        flatpickr("#taskEndDate", {
+          dateFormat: "Y. m. d",
+          disableMobile: true,
+          appendTo:document.getElementById('endTaskArea'),
+          locale: "ko",
+          onChange:function(selectedDates, dateStr, instance){
+            $("#taskCalendarModal").modal('hide');
+          }
+        });
+        
         $("#taskBtn").on("touch click", function() {
           if ($("#taskName").val() === "") {
               alert("일정 이름을 입력해주세요!");
@@ -1588,53 +1585,14 @@
           if (start.getTime() > end.getTime()) {
               start = [end, end = start][0];
           }
-          if ($("#taskTab").data("edit")) {
-              var origin = $("#taskTab").data("task");
-              origin.manager = origin.calendarId;
-              NMNS.history.push(origin);
-              if (origin.calendarId !== $("#taskManager").data("calendar-id")) { //담당자 변경
-                  origin.newCalendarId = $("#taskManager").data("calendar-id");
-                  NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
-                  NMNS.calendar.createSchedules([{
-                      id: origin.id,
-                      calendarId: $("#taskManager").data("calendar-id"),
-                      title: $("#taskName").val(),
-                      start: start,
-                      end: end,
-                      isAllDay: false,//하루종일 항목 없앰
-                      category: "task",
-                      dueDateClass: "",
-                      color: $("#taskManager").data("bgcolor"),
-                      bgColor: getBackgroundColor($("#taskManager").data("bgcolor")),
-                      borderColor: $("#taskManager").data("bgcolor"),
-                      raw: {
-                          status: "RESERVED"
-                      }
-                  }]);
-              } else { //담당자 유지
-                  NMNS.calendar.updateSchedule(origin.id, origin.calendarId, {
-                      title: $("#taskName").val(),
-                      start: start,
-                      end: end,
-                      isAllDay: false,//하루종일 항목 없앰
-                  });
-              }
-              NMNS.socket.emit("update reserv", { //서버로 요청
-                  id: origin.id,
-                  manager: $("#taskManager").data("calendar-id"),
-                  name: $("#taskName").val(),
-                  start: moment(start).format("YYYYMMDDHHmm"),
-                  end: moment(end).format("YYYYMMDDHHmm"),
-                  type: 'T',
-                  isAllDay: $("#taskAllDay").prop('checked')
-              });
-          } else { //신규 일정 추가
-              if(typeof NMNS.scheduleTarget.clearGuideElement === 'function'){
-                NMNS.scheduleTarget.clearGuideElement();
-              }
-              id = NMNS.email + generateRandom();
+          var origin = $(".taskDetailMenu").data("task");
+          origin.manager = origin.calendarId;
+          NMNS.history.push(origin);
+          if (origin.calendarId !== $("#taskManager").data("calendar-id")) { //담당자 변경
+              origin.newCalendarId = $("#taskManager").data("calendar-id");
+              NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
               NMNS.calendar.createSchedules([{
-                  id: id,
+                  id: origin.id,
                   calendarId: $("#taskManager").data("calendar-id"),
                   title: $("#taskName").val(),
                   start: start,
@@ -1649,22 +1607,28 @@
                       status: "RESERVED"
                   }
               }]);
-              NMNS.history.push({
-                  id: id,
-                  manager: $("#taskManager").data("calendar-id")
-              });
-              NMNS.socket.emit("add reserv", {
-                  id: id,
-                  manager: $("#taskManager").data("calendar-id"),
-                  name: $("#taskName").val(),
-                  start: moment(start).format("YYYYMMDDHHmm"),
-                  end: moment(end).format("YYYYMMDDHHmm"),
-                  isAllDay: $("#taskAllDay").prop('checked'),
-                  type: "T",
-                  status: "RESERVED"
+          } else { //담당자 유지
+              NMNS.calendar.updateSchedule(origin.id, origin.calendarId, {
+                  title: $("#taskName").val(),
+                  start: start,
+                  end: end,
+                  isAllDay: false,//하루종일 항목 없앰
               });
           }
+          NMNS.socket.emit("update reserv", { //서버로 요청
+              id: origin.id,
+              manager: $("#taskManager").data("calendar-id"),
+              name: $("#taskName").val(),
+              start: moment(start).format("YYYYMMDDHHmm"),
+              end: moment(end).format("YYYYMMDDHHmm"),
+              type: 'T',
+              isAllDay: $("#taskAllDay").prop('checked')
+          });
+
           history.back();
+        });
+        $("#deleteTaskBtn").on("touch click", function(){
+          //TODO : implement delete task functionalities
         });
       }
       refreshTaskTab(task);
@@ -1909,10 +1873,8 @@
       $("#mainTaskContents .task").on('touch click', function(e){
         e.stopPropagation();
         var data = $(this).parent();
-        initTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'})
-        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').next().tab('show');
-        $("#scheduleBtn").text('예약 추가 완료');
-        $("#scheduleModal").removeClass('update').modal('show');
+        refreshTaskTab({id:data.data('id'), title:data.data('title'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'});
+        switchMenu.call($(".taskDetailMenu"), e);
       });
       
     }));
@@ -2397,11 +2359,6 @@
     $("#scheduleTabList a[data-target='#scheduleTab']").on('touch click', function(){
       if($(this).next().hasClass('active')){
         initScheduleTab("switch");
-      }
-    });
-    $("#scheduleTabList a[data-target='#taskTab']").on('touch click', function(){
-      if(!$(this).hasClass('active')){
-        initTaskTab('switch');
       }
     });
     $("#scheduleTabList a[data-target='#salesTab']").one('show.bs.tab', function(){

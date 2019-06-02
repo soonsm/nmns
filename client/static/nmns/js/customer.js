@@ -690,6 +690,19 @@
 
   function getSortFunc(action) {
       switch (action) {
+          case 'sort-start':
+              return function(a, b) {
+                  if (!a.start) {
+                      if (b.start) {
+                          return 1;
+                      } else {
+                          return getSortFunc("sort-name")(a, b);
+                      }
+                  } else if (!b.start) {
+                      return -1;
+                  }
+                  return (a.start < b.start ? -1 : (a.start > b.start ? 1 : getSortFunc("sort-name")(a, b)));
+              };
           case 'sort-date':
               return function(a, b) {
                   if (!a.history || a.history.length === 0) {
@@ -754,6 +767,19 @@
                       return -1;
                   }
                   return (a.history.length < b.history.length ? -1 : (a.history.length > b.history.length ? 1 : getSortFunc("sort-name")(a, b)));
+              };
+          case 'sort-status':
+              return function(a, b) {
+                  if (!a.status) {
+                      if (b.status) {
+                          return 1;
+                      } else {
+                          return getSortFunc("sort-name")(a, b);
+                      }
+                  } else if (!b.status) {
+                      return -1;
+                  }
+                  return (a.status < b.status ? -1 : (a.status > b.status ? 1 : getSortFunc("sort-name")(a, b)));
               };
           case 'sort-name':
           default:
