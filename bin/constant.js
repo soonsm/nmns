@@ -74,7 +74,8 @@
         Reservation: 'Reservation',
         Task: 'Task',
         Sales: 'Sales',
-        Point: 'Point'
+        Point: 'Point',
+        Notice: 'Notice'
     }
 
     o.MODE = {

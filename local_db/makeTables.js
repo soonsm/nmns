@@ -150,7 +150,6 @@ let create = function(params){
     };
     create(params);
 })();
-*/
 (async function(){
     var params = {
         TableName : "NoShow",
@@ -311,17 +310,47 @@ let create = function(params){
     };
     create(params);
 })();
-//-----------------------Data Insert------------------------------//
-/*
+*/
 (async function(){
-    for(let i=50; i< 70; i++){
+    dynamodb.deleteTable({
+        TableName : "Notice"
+    }, function(err, data) {
+        if (err) {
+            console.error("Unable to delete table. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
+        }
+    });
+})();
+(async function(){
+    var params = {
+        TableName : "Notice",
+        KeySchema: [
+            { AttributeName: "email", KeyType: "HASH"},
+            { AttributeName: "id", KeyType: "RANGE"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "email", AttributeType: "S" },
+            { AttributeName: "id", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    create(params);
+})();
+//-----------------------Data Insert------------------------------//
+(async function(){
+    for(let i=0; i< 20; i++){
         docClient.put({
             TableName: 'Notice',
             Item: {
-                "id": `${i}`,
-                "title": `${i} 번째 공지사항 제목`,
-                "registeredDate": moment().add(i,'days').format('YYYYMMDDHHmm'),
-                "contents": `${i} 번째 공지사항 내용입니다.`
+                email: 'notice',
+                id: moment().add(i,'days').format('YYYYMMDDHHmmssSSS'),
+                registeredDate: moment().add(i,'days').format('YYYYMMDDHHmm'),
+                title: `${i} 번째 공지사항`,
+                contents: `${i} 번째 공지사항 내용입니다.`
             }
         }, function (err, data) {
             if (err) {
@@ -332,6 +361,7 @@ let create = function(params){
         });
     }
 })();
+/*
 let newWebUser = function (user) {
     return {
         email: user.email,

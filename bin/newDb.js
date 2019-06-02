@@ -122,7 +122,7 @@ function scanRaw(params) {
                 resolve(null);
             } else {
                 // logger.log("Scan succeeded. Data:", util.format(data.Items));
-                resolve(data.Items);
+                resolve(data);
             }
         });
     }));
@@ -143,6 +143,34 @@ async function scan(params) {
     } while (lastEvaluatedKey);
 
     return items;
+}
+
+async function scanPaging(params, pageSize, targetPage) {
+
+    if (!pageSize || pageSize < 1 || !targetPage || targetPage < 1) {
+        throw `pageSize/targetPage error(pageSize:${pageSize}, targetPage:${targetPage})`;
+    }
+
+    let lastEvaluatedKey;
+    let currentPage = 0;
+
+    params.Limit = pageSize;
+    do {
+        currentPage += 1;
+
+        let data = await scanRaw(params);
+
+        if (currentPage === targetPage) {
+            return data.Items;
+        }
+
+        lastEvaluatedKey = data.LastEvaluatedKey;
+        if (lastEvaluatedKey) {
+            params.ExclusiveStartKey = lastEvaluatedKey;
+        }
+    } while (lastEvaluatedKey);
+
+    return [];
 }
 
 function update(params) {
@@ -712,7 +740,7 @@ exports.deleteAllAlrimTalk = async function (email) {
 }
 /**
  *
- * PushList(푸쉬 리스트)
+ * Notice(푸쉬 리스트)
  * email: Partition Key
  * id: Range Key, moment().format('YYYYMMDDHHmmssSSS')
  * registeredDate: YYYYMMDDHHmm
@@ -727,9 +755,9 @@ exports.addPush = async function (data) {
     data.id = moment().format('YYYYMMDDHHmmssSSS');
     data.registeredDate = moment().format('YYYYMMDDHHmm');
 
-    return await exports.addPushRaw(data);
+    return await exports.savePush(data);
 }
-exports.addPushRaw = async function (data) {
+exports.savePush = async function (data) {
     let push = (({email, title, contents, data, type, isRead, id, registeredDate}) => ({
         email,
         title,
@@ -741,12 +769,16 @@ exports.addPushRaw = async function (data) {
         registeredDate
     }))(data);
 
-    if (!push.email || !push.title || !push.contents || !push.type || !push.data || push.isRead === undefined) {
-        throw 'email, title, contents, data, type, isRead는 필수입니다.';
+    if (!push.email || !push.title || !push.contents || !push.data || push.isRead === undefined) {
+        throw 'email, title, contents, data, isRead는 필수입니다.';
     }
 
     if (push.isRead !== false && push.isRead !== true) {
         throw `isRead 값이 잘못되었습니다.(${push.isRead})`;
+    }
+
+    if(!push.type){
+        push.type = 'SCHEDULE_CANCELED';
     }
 
     if (push.type !== 'SCHEDULE_ADDED' && push.type !== 'SCHEDULE_CANCELED') {
@@ -762,12 +794,12 @@ exports.addPushRaw = async function (data) {
     }
 
     return await put({
-        TableName: process.nmns.TABLE.Push,
+        TableName: process.nmns.TABLE.Notice,
         Item: push
     });
 }
 
-exports.getPushList = async function (email, pageSize, page) {
+exports.getPushList = async function (email, page, pageSize = 5) {
 
     if (!email) {
         throw 'email은 필수입니다.';
@@ -781,7 +813,7 @@ exports.getPushList = async function (email, pageSize, page) {
     }
 
     return await queryPaging({
-        TableName: process.nmns.TABLE.Push,
+        TableName: process.nmns.TABLE.Notice,
         KeyConditionExpression: "#email = :email",
         ExpressionAttributeNames: {
             "#email": "email"
@@ -792,14 +824,13 @@ exports.getPushList = async function (email, pageSize, page) {
         ScanIndexForward: false
     }, pageSize, page);
 }
-
 exports.deleteAllPush = async function (email) {
     if (!email) {
         throw 'email은 필수입니다.';
     }
 
     let list = await query({
-        TableName: process.nmns.TABLE.Push,
+        TableName: process.nmns.TABLE.Notice,
         KeyConditionExpression: "#email = :email",
         ExpressionAttributeNames: {
             "#email": "email"
@@ -811,7 +842,7 @@ exports.deleteAllPush = async function (email) {
 
     for (const push of list) {
         await del({
-            TableName: process.nmns.TABLE.Push,
+            TableName: process.nmns.TABLE.Notice,
             Key: {
                 'email': push.email,
                 'id': push.id
@@ -819,6 +850,61 @@ exports.deleteAllPush = async function (email) {
         });
     }
 }
+
+/**
+ * 공지사항 조회
+ */
+exports.getNotice = async function (page, pageSize = 5) {
+    if (!pageSize || pageSize < 1) {
+        throw `pageSize가 올바르지 않습니다.(${pageSize})`;
+    }
+    if (!page || page < 1) {
+        throw `page가 올바르지 않습니다.(${page})`;
+    }
+
+    return await queryPaging({
+        TableName: process.nmns.TABLE.Notice,
+        KeyConditionExpression: "#email = :email",
+        ExpressionAttributeNames: {
+            "#email": "email"
+        },
+        ExpressionAttributeValues: {
+            ":email": 'notice'
+        },
+        ScanIndexForward: false
+    }, pageSize, page);
+}
+
+/**
+ * 공지사항 입력
+ */
+exports.addNotice = async function(input){
+    let notice = (({title, contents, id, registeredDate}) => ({
+        title,
+        contents,
+        id,
+        registeredDate
+    }))(input);
+
+    if (!notice.title || !notice.contents || !notice.id || !notice.registeredDate) {
+        throw 'title, contents, id, registeredDate는 필수입니다.';
+    }
+
+    if (!moment(notice.id, 'YYYYMMDDHHmmssSSS').isValid()) {
+        throw `id가 올바르지 않습니다.(${notice.id})`;
+    }
+
+    if (!moment(notice.registeredDate, 'YYYYMMDDHHmm').isValid()) {
+        throw `registeredDate가 올바르지 않습니다.(${notice.registeredDate})`;
+    }
+
+    notice.email = 'notice';
+
+    return await put({
+        TableName: process.nmns.TABLE.Notice,
+        Item: notice
+    });
+};
 
 /**
  * Reservation(예약 리스트)

@@ -17,6 +17,7 @@ const customerHandler = require('./customerHandler');
 const alrimTalkHandler = require('./alrimTalkHandler');
 const menuHandler = require('./menuHandler');
 const salesHandler = require('./salesHistHandler');
+const noticeHandler = require('./noticeHandler');
 
 const GetReservationList = 'get reserv',
     GetTaskList = 'get task',
@@ -151,7 +152,6 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Feedback 제출
          */
         addEvent(AadFeedback, async function(data){
-            //TODO: feedback save
             db.submitFeedback(email, data.data);
 
             emailSender.sendFeedbackAlrim(email, data.data);
@@ -175,120 +175,10 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         });
 
         /**
-         * 알림 조회
+         * 공지사항 및 알림 조회
          */
-        addEvent(GetNoti, async function () {
-            let resultData = {
-                type: 'push',
-                data: []
-            };
-
-            let user = await db.getWebUser(email);
-            let pushList = user.pushList || [];
-            for (let i = pushList.length - 1; i >= 0; i--) {
-                let push = pushList[i];
-                if (push.confirmed === false) {
-                    resultData.data.push(push);
-                    pushList[i].confirmed = true;
-                } else {
-                    break;
-                }
-            }
-
-            await db.updateWebUser(email, {pushList: pushList});
-
-            socket.emit(GetNoti, makeResponse(true, resultData, null));
-        })
-
-        /**
-         * 공지사항
-         */
-        addEvent(GetAnnouncement, async function(data){
-            if(data.page < 1){
-                data.page = 1;
-            }
-            let page = data.page || 1;
-            let user = await db.getWebUser(email);
-
-            //공지사항 리스트 가져오기
-            let noticeList = await db.getNoticeList() || [];
-            noticeList = noticeList.sort((r1,r2) => {
-                let compare = r2.registeredDate - r1.registeredDate;
-                if(compare === 0){
-                    compare = r2.id - r1.id;
-                }
-                return compare;
-            });
-
-            //사용자가 확인한 마지막 공지사항의 아이디
-            let redNoticeList = user.redNoticeList || [];
-
-            /**
-             * 마지막 공지사항 아이디보다 크면
-             * -> 안읽음 & 마지막 공지사항 아이디 업데이트
-             * 작거나 같으면
-             * -> 읽음
-             */
-            /**
-             * 1 page => 1개 이상, index=0부터 4또는 끝까지
-             * 2 page => 6개 이상, index=5부터 9또는 끝까지
-             * 3 page => 11개 이상, index=10부터, 14또는 끝까지
-             *
-             * n page => (n-1)*5+1 개 이상, index=(n-1)*5부터 (n-1)*5+4 또는 끝까지
-             */
-            if(noticeList.length >= (page-1)*5+1){
-                let lastIndex = (page-1)*5+5 < noticeList.length ? (page-1)*5+5 : noticeList.length;
-                noticeList = noticeList.slice((page-1)*5, lastIndex);
-                for(let i=0;i<noticeList.length;i++){
-                    let notice = noticeList[i];
-                    if(redNoticeList.includes(notice.id)){
-                        notice.isRead = true;
-                    }else{
-                        notice.isRead = false;
-                        redNoticeList.push(notice.id);
-                    }
-                }
-                user.redNoticeList = redNoticeList;
-            }else{
-                noticeList = [];
-            }
-
-            let pushList = user.pushList || [];
-            let length = pushList.length;
-            let returnPushList = [];
-            if(length >= (page-1)*5+1){
-                let an = (page - 1) * 5 + 5; //1 page = 5, 2 page = 10 ..
-                let firstIndex = an < length ? length - an : 0;
-                let lastIndex = an < length ? an + 5 : length - (an - 5);
-                pushList = pushList.slice(firstIndex, lastIndex);
-                pushList.forEach(push => {
-                    let returnPush = {};
-                    if (push.confirmed === false) {
-                        push.confirmed = true;
-                        returnPush.isRead = false;
-                    }else{
-                        returnPush.isRead = true;
-                    }
-                    returnPush.contents = push.body;
-                    returnPush.registeredDate = push.id.substring(0, 14);
-                    returnPush.type = 'SCHEDULE_CANCELED';
-                    returnPush.id = push.id;
-                    returnPushList.push(returnPush);
-
-                })
-            }
-
-            await db.setWebUser(user);
-
-            return{
-                status: true,
-                message: '',
-                data: {
-                    announcement: noticeList,
-                    schedule: returnPushList.reverse()
-                }
-            }
-        });
+        addEvent(GetNoti, noticeHandler.getPush);
+        addEvent(GetAnnouncement, noticeHandler.getNotice);
 
         /**
          * 고객정보

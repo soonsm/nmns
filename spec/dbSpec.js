@@ -525,21 +525,21 @@ describe('Push', function(){
 
             push.id = '20190102010101000';
             push.registeredDate = push.id.substring(0,12);
-            await db.addPushRaw(push);
+            await db.savePush(push);
 
             push.id = '20190104010101000';
             push.registeredDate = push.id.substring(0,12);
-            await db.addPushRaw(push);
+            await db.savePush(push);
 
             push.id = '20190103010101000';
             push.registeredDate = push.id.substring(0,12);
-            await db.addPushRaw(push);
+            await db.savePush(push);
 
             push.id = '20190101010101000';
             push.registeredDate = push.id.substring(0,12);
-            await db.addPushRaw(push);
+            await db.savePush(push);
 
-            let list = await db.getPushList(email, 5, 1);
+            let list = await db.getPushList(email,1);
 
             expect(list.length).toEqual(4);
 
@@ -556,14 +556,14 @@ describe('Push', function(){
                 date = moment(date,'YYYYMMDD').add(1,'d').format('YYYYMMDD');
                 push.registeredDate = date;
                 push.id = push.registeredDate + '010101000';
-                await db.addPushRaw(push);
+                await db.savePush(push);
             }
 
-            let list = await db.getPushList(email, 5, 1);
+            let list = await db.getPushList(email, 1);
             expect(list.length).toEqual(5);
             expect(list[0].registeredDate).toEqual('20190111');
 
-            list = await db.getPushList(email, 5, 2);
+            list = await db.getPushList(email, 2);
             expect(list.length).toEqual(5);
             expect(list[0].registeredDate).toEqual('20190106');
         });
@@ -574,18 +574,18 @@ describe('Push', function(){
                 date = moment(date,'YYYYMMDD').add(1,'d').format('YYYYMMDD');
                 push.registeredDate = date;
                 push.id = push.registeredDate + '010101000';
-                await db.addPushRaw(push);
+                await db.savePush(push);
             }
 
-            let list = await db.getPushList(email, 5, 1);
+            let list = await db.getPushList(email, 1);
             expect(list.length).toEqual(5);
             expect(list[0].registeredDate).toEqual('20190111');
 
-            list = await db.getPushList(email, 5, 2);
+            list = await db.getPushList(email, 2);
             expect(list.length).toEqual(5);
             expect(list[0].registeredDate).toEqual('20190106');
 
-            list = await db.getPushList(email, 5, 3);
+            list = await db.getPushList(email, 3);
             expect(list.length).toEqual(0);
         });
 
@@ -1443,5 +1443,15 @@ describe('Sales', function () {
             list = await db.getSalesHist(email, {typeList: [process.nmns.PAYMENT_METHOD.CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE]});
             expect(list.length).toEqual(3);
         });
+    });
+
+    describe('공지사항', function () {
+       it('id 역순으로 조회되는지 확인', async function(){
+          let list = await db.getNotice(100,1);
+
+          for(let i=0; i<list.length-1; i++){
+              expect(list[i].id > list[i+1].id).toEqual(true);
+          }
+       });
     });
 });

@@ -3,6 +3,7 @@ const
     router = require('express').Router(),
     emailValidator = require('email-validator'),
     db = require('./webDb'),
+    newDb = require('./newDb'),
     util = require('./util'),
     path = require('path'),
     alrimTalk = require('./alrimTalkSender'),
@@ -485,6 +486,31 @@ module.exports = function(passport) {
         res.redirect("/");
     });
 
+    router.get('/addNotice/title=:title&&contents=:contents', async(req,res)=>{
+        let title = req.params.title;
+        let contents = req.params.contents;
+        try{
+            if(!title || !contents){
+                throw 'title 혹은 contents가 없습니다';
+            }
+
+            let moment = require('moment');
+            let notice = {
+                email: 'notice',
+                id: moment().format('YYYYMMDDHHmmssSSS'),
+                registeredDate: moment().format('YYYYMMDDHHmm'),
+                title: title,
+                contents: contents
+            }
+
+            await newDb.addNotice(notice);
+        }catch(e){
+            logger.error(e);
+        }
+
+        res.redirect("/");
+    });
+
     router.get('/web_cancel/key=:reservationKey&&email=:email', async(req, res) => {
         let id = req.params.reservationKey;
         let email = req.params.email;
@@ -526,16 +552,20 @@ module.exports = function(passport) {
                                 id: reservation.id,
                                 manager: reservation.manager
                             },
-                            confirmed: false
+                            isRead: false
                         };
                         if (socket) {
-                            push.confirmed = true;
+                            push.isRead = true;
                             await socket.sendPush(push);
                         }
 
-                        let pushList = user.pushList || [];
-                        pushList.push(push);
-                        await db.updateWebUser(email, { pushList: pushList });
+                        await newDb.addPush({
+                           email: email,
+                           title: push.title,
+                           contents: msg,
+                           data: push.data,
+                           isRead: push.isRead
+                        });
 
                         if (!await db.updateReservation(email, reservationList)) {
                             contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
