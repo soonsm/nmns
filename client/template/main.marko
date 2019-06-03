@@ -200,7 +200,7 @@
             </g>
           </svg></span>
         </label>
-        <input type="text" pattern="[0-9]*" class="border-0 montserrat" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow">
+        <input type="text" class="border-0 montserrat inputmask-mobile" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow">
         <button class="btn btn-primary ml-auto addNoShowLink" data-toggle="modal" data-target="#noShowModal" type="button" title="노쇼 추가" style="white-space:nowrap"><span class="icon-plus">+</span>노쇼 추가</button>
         <span class="divider">&nbsp;</span>
         <button class="btn btn-flat px-0 position-relative announcementMenuLink" type="button" title="알림" data-toggle="popover" data-placement="bottom">
@@ -645,7 +645,7 @@
                 <div id="noShowAdd" class="tab-pane col-12 px-0 fade show active" role="tabpanel">
                   <div class="row mx-0">
                     <div>연락처 입력</div>
-                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">
+                    <input type="text" class="form-control form-control-sm mt-3 inputmask-mobile" id="noShowAddContact" placeholder="고객 연락처" style="margin-bottom:35px">
                     <div>노쇼 사유</div>
                     <div id="noShowAddContent" class="row mx-0 col-12 px-0 mt-3 mb-5">
                       <span class="btn noShowAddCase btn-white" data-value="지각">지각</span>
@@ -798,7 +798,7 @@
                     <div>고객 이름</div>
                     <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
                     <div style="margin-top:35px">고객 연락처</div>
-                    <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
+                    <input type="text" class="form-control form-control-sm mt-3 montserrat inputmask-mobile" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
                     <div style="margin-top:35px">예약시간
                       <span class="float-right">
                         <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>
@@ -1023,6 +1023,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js" integrity="sha256-JUbLuiRKiaXfbMpDSL9JwAJugW+Hg2E07+fjOCFjSSA=" crossorigin="anonymous"></script>
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js" integrity="sha256-BhZ+laf8gu3ZySieS2lNZWQ7Aeeada3d9b/0Gb7HBYc=" crossorigin="anonymous"></script>-->
 
   <!-- Custom scripts for this template -->
   <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
