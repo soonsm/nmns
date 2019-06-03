@@ -1110,6 +1110,7 @@ exports.deleteAllReservation = async function (email) {
  * start: 시작일시, string, YYYYMMDDHHmm(user input)
  * timstamp: RANGE KEY, start(user input, YYYYMMDDHHmm) + moment().format('YYYYMMDDHHmmssSSS')
  * end: YYYYMMDDHHmm,
+ * id: client generated id
  * isDone: boolean
  * contents: 일정
  * manager: 매니저 아이디

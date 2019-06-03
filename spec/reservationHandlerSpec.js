@@ -589,6 +589,123 @@ describe('Task', function(){
         });
     });
 
+    describe('getTask', function(){
+        it('개수만큼 조회', async function () {
+            try {
+
+                task.start = '201906031230';
+                task.end = '201906041230';
+                task.name = '6/3~6/4';
+                await db.saveTask(task);
+
+                task.start = '201906041230';
+                task.end = '201906051230';
+                task.name = '6/4~6/5';
+                await db.saveTask(task);
+
+                task.start = '201906051230';
+                task.end = '201906061230';
+                task.name = '6/5~6/6';
+                await db.saveTask(task);
+
+                let fn = handler.getTask;
+                fn.email = email;
+                let result = await fn.call(fn, {start:'20190603', end:'20190606'});
+                if(!result.status){
+                    logger.error(result.message);
+                }
+                expect(result.status).toEqual(true);
+                let list = result.data;
+                
+                expect(list.length).toEqual(4);
+
+                let list0 = list[0].task;
+                expect(list[0].date).toEqual('20190603');
+                expect(list0.length).toEqual(1);
+
+                let data = list0[0];
+                expect(data.id).toEqual(task.id);
+                expect(data.type).toEqual('T');
+                expect(data.name).toEqual('6/3~6/4');
+                expect(data.contact).toEqual(task.contact);
+                expect(data.isAllDay).toEqual(false);
+                expect(data.isDone).toEqual(task.isDone);
+                expect(data.manager).toEqual(task.manager);
+                expect(data.status).toEqual(task.status);
+                expect(data.contents).toEqual(task.contents);
+
+                let list1 = list[1].task;
+                expect(list[1].date).toEqual('20190604');
+                expect(list1.length).toEqual(2);
+
+                data = list1[0];
+                expect(data.id).toEqual(task.id);
+                expect(data.type).toEqual('T');
+                expect(data.name).toEqual('6/3~6/4');
+                expect(data.contact).toEqual(task.contact);
+                expect(data.isAllDay).toEqual(false);
+                expect(data.isDone).toEqual(task.isDone);
+                expect(data.manager).toEqual(task.manager);
+                expect(data.status).toEqual(task.status);
+                expect(data.contents).toEqual(task.contents);
+
+                data = list1[1];
+                expect(data.id).toEqual(task.id);
+                expect(data.type).toEqual('T');
+                expect(data.name).toEqual('6/4~6/5');
+                expect(data.contact).toEqual(task.contact);
+                expect(data.isAllDay).toEqual(false);
+                expect(data.isDone).toEqual(task.isDone);
+                expect(data.manager).toEqual(task.manager);
+                expect(data.status).toEqual(task.status);
+                expect(data.contents).toEqual(task.contents);
+
+                list1 = list[2].task;
+                expect(list[2].date).toEqual('20190605');
+                expect(list1.length).toEqual(2);
+
+                data = list1[0];
+                expect(data.id).toEqual(task.id);
+                expect(data.type).toEqual('T');
+                expect(data.name).toEqual('6/4~6/5');
+                expect(data.contact).toEqual(task.contact);
+                expect(data.isAllDay).toEqual(false);
+                expect(data.isDone).toEqual(task.isDone);
+                expect(data.manager).toEqual(task.manager);
+                expect(data.status).toEqual(task.status);
+                expect(data.contents).toEqual(task.contents);
+
+                data = list1[1];
+                expect(data.id).toEqual(task.id);
+                expect(data.type).toEqual('T');
+                expect(data.name).toEqual('6/5~6/6');
+                expect(data.contact).toEqual(task.contact);
+                expect(data.isAllDay).toEqual(false);
+                expect(data.isDone).toEqual(task.isDone);
+                expect(data.manager).toEqual(task.manager);
+                expect(data.status).toEqual(task.status);
+                expect(data.contents).toEqual(task.contents);
+
+                list1 = list[3].task;
+                expect(list[3].date).toEqual('20190606');
+                expect(list1.length).toEqual(1);
+
+                data = list1[0];
+                expect(data.id).toEqual(task.id);
+                expect(data.type).toEqual('T');
+                expect(data.name).toEqual('6/5~6/6');
+                expect(data.contact).toEqual(task.contact);
+                expect(data.isAllDay).toEqual(false);
+                expect(data.isDone).toEqual(task.isDone);
+                expect(data.manager).toEqual(task.manager);
+                expect(data.status).toEqual(task.status);
+                expect(data.contents).toEqual(task.contents);
+            } catch (e) {
+                fail();
+                logger.error(e);
+            }
+        });
+    });
     describe('getTaskList', function(){
         it('should 파라메터 없어도 조회', async function () {
             try {
@@ -676,6 +793,7 @@ describe('Task', function(){
                 logger.error(e);
             }
         });
+
         it('should 없으면 0개 조회', async function () {
             try {
 
