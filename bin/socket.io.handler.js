@@ -211,7 +211,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Reservation
          */
         addEvent(GetReservationSummaryList, reservationHandler.getReservationSummaryList);
-        addEvent(GetTaskList, reservationHandler.getTaskList);
+        addEvent(GetTaskList, reservationHandler.getTask);
         addEvent(GetReservationList, reservationHandler.getReservationList);
         addEvent(UpdateReservation, reservationHandler.update);
         addEvent(AddReservation, reservationHandler.add);

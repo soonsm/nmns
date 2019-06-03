@@ -68,9 +68,11 @@ exports.getReservationSummaryList = async function (data) {
  * 응답 형식 : "data":[{"id": ${예약키, string}, "type":${예약/일정 구분, string, R(예약)/T(일정) - 항상 R로 준다.}, "name":${고객 이름, string}, "contact":${고객 전화번호, string, optional}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "contentList":${시술 혹은 일정 리스트, array[string], optional}, "manager":${담당 매니저 id, string}, "etc":${부가정보, string, optional}, "status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED}}], "holiday":[{"date":${날짜, string, YYYY-MM-DD}, "title":${휴일이름, string}]
  */
 exports.getReservationList = async function (data) {
+    exports.email = this.email;
     let returnData = await exports.getReservationListRaw(data);
 
     if (returnData.status) {
+        returnData.type = 'response';
         returnData.holiday = getHolidays(data.start, data.end);
         this.socket.emit(this.eventName, returnData);
     } else {
@@ -102,6 +104,41 @@ exports.getReservationListRaw = async function (data) {
  * 데이터 : {"start":${조회 시작 일자, string, YYYYMMDD}, "end":${조회 종료 일자, string, YYYYMMDD}}
  * 응답 형식 : "data":[{"date": ${일정 날짜, string, YYYYMMDD}, "task":[{"id": ${예약키, string}, "name":${일정이름, string}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isDone":${완료 여부, boolean}, "contents":${일정, string, optional}, "manager":${담당 매니저 id, string}, "etc":${부가정보, string, optional}, "status": ${상태, string, 값: RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED}}]}]
  */
+exports.getTask = async function(data){
+    let email = this.email;
+    let status,message, resultData = [];
+    let start = data.start, end = data.end;
+    try{
+        if(!moment(start,'YYYYMMDD').isValid() || !moment(end,'YYYYMMDD').isValid()){
+            throw `start/end 값이 올바르지 않습니다.(start:${start}, end:${end})`;
+        }
+        let startDate = moment(start, 'YYYYMMDD');
+        let endDate = moment(end, 'YYYYMMDD');
+        let diff =  endDate.diff(startDate, 'days');
+        if(diff < 0){
+            throw `end 값이 start 작습니다.(start:${start}, end:${end})`;
+        }
+
+        for(let i=0; i<= diff; i++){
+            let date = moment(start, 'YYYYMMDD').add(i, 'days').format('YYYYMMDD');
+            resultData.push({
+                date: date,
+                task: await newDb.getTaskList(email, date, date)
+            });
+        }
+        status = true;
+    }catch(e){
+        status = false;
+        message = e;
+    }
+
+    return {
+        status: status,
+        message: message,
+        data: resultData
+    };
+}
+
 exports.getTaskList = async function (data) {
 
     let email = this.email;

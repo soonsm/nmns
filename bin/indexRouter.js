@@ -608,39 +608,61 @@ module.exports = function (passport) {
 
         return render(res, cancelView, {title: returnMsg, contents: contents});
     });
-/*
+
     router.get('/form-tester', (req, res) => {
         res.render('form-tester.html', {
             title: 'Form Tester'
         });
     });
 
-    let multer = require('multer');
-    var storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'uploads');
-        },
-        filename: function (req, file, cb) {
-            console.log(req.body.name);
-            let extname = path.extname(file.originalname);
-            cb(null, 'soonsm@gmail.com'+extname);
-        }
+    let AWS = require('aws-sdk');
+    AWS.config.update({
+        region: "ap-northeast-2"
     });
-    let upload = multer({
-        storage: storage, limits: {fileSize: 5 * 1024 * 1024}
+    const s3 = new AWS.S3();
+    let multerS3 = require('multer-s3');
+    var storage2 = multerS3({
+        s3: s3,
+        bucket: "file.washow.co.kr",
+        key: function (req, file, cb) {
+            let extension = path.extname(file.originalname);
+            cb(null, Date.now().toString() + extension);
+        },
+        acl: 'public-read-write',
+    });
+    let upload2 = multer({
+        storage: storage2, limits: {fileSize: 5 * 1024 * 1024}
     }).single('logo');
 
     router.post('/form-tester',(req, res) => {
-        upload(req, res, function(err){
+        upload2(req, res, function(err){
            if(err){
                console.log(err);
            }
             console.log(req.body);
             console.log(req.file);
+
+
+            // let fs = require('fs');
+            // let rs = fs.createReadStream(req.file.path);
+            // console.log('before upload');
+            // s3.upload({
+            //     'Bucket':'file.washow.co.kr',
+            //     'Key': 'image/' + req.file.filename,
+            //     'ACL':'public-read',
+            //     'Body': rs,
+            //     'ContentType':req.file.memitype
+            // },function(err, data){
+            //     if(err) {
+            //         console.log(err);
+            //     }
+            //     console.log(data);
+            // });
+
             var str = "Your name is " + req.body.name + " and your nickname is " + req.body.nickname;
             res.send(str);
         });
     });
-*/
+
     return router;
 };
