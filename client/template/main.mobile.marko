@@ -195,7 +195,7 @@
                   </g>
                 </svg></span>
               </label>
-              <input type="text" pattern="[0-9]*" class="border-0 col bg-transparent pr-0 montserrat" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow" style="max-width:calc(100% - 24px)">
+              <input type="text" class="border-0 col bg-transparent pr-0 montserrat inputmask-mobile" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="search" id="searchNoShow" style="max-width:calc(100% - 24px)">
             </div>
           </div>
           <div class="menuTitle" style="display:flex">
@@ -598,7 +598,7 @@
                       <div class="mt-2 mb-3">매장 이름</div>
                       <input id="alrimShopName" name="shopName" type="text" placeholder="고객에게 보여질 매장 이름을 입력해주세요." class="form-control form-control-sm han mb-4"/>
                       <div class="pt-2 mb-3">휴대폰 번호<span class="align-middle subText">고객이 예약취소를 했을 때 알림톡을 보내드려요.</span></div>
-                      <input id="alrimCallbackPhone" name="callbackPhone" type="text" pattern="[0-9]*" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4 montserrat"/>
+                      <input id="alrimCallbackPhone" name="callbackPhone" type="text" placeholder="휴대폰 번호를 입력해주세요." class="form-control form-control-sm mb-4 montserrat inputmask-mobile"/>
                       <div class="pt-2 mb-3">알림 안내문구<span class="align-middle subText">고객에게 보낼 알림톡 안내문구</span></div>
                       <textarea id="alrimNotice" name="notice" placeholder="예시.\n예약해주셔서 감사합니다.\n취소할 때에는 꼭 [예약취소] 버튼을 눌러 주세요!" class="form-control form-control-sm han mb-4"/>
                       <div class="pt-2 mb-3">예약취소 가능시간<br><span class="subText" style="margin-left:0">[예약취소는 n시간 전까지 가능합니다.] 라는 문구로 자동표기 됩니다.</span></div>
@@ -630,7 +630,7 @@
         </div>
 
 				<div class="switchingMenu announcementMenu" style="margin:0 -5px">
-					<div style="min-height:calc(100vh - 64px)" class="row mx-0" id="announcementArea">
+					<div style="min-height:calc(100vh - 64px)" id="announcementArea">
 						<div class="flex-column text-center w-100" style="align-self:center">
 							<div class="bouncingLoader">
 								<div></div>
@@ -662,7 +662,7 @@
               <div>고객 이름</div>
               <input type="text" class="form-control form-control-sm han mt-3" id="scheduleName" name="name" placeholder="고객 이름을 입력해주세요." aria-label="고객 이름" autocomplete="off">
               <div style="margin-top:35px">고객 연락처</div>
-              <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
+              <input type="text" class="form-control form-control-sm mt-3 montserrat inputmask-mobile" id="scheduleContact" name="contact" aria-label="고객 연락처" placeholder="고객 연락처를 입력해주세요." autocomplete="off">
               <div style="margin-top:35px">예약시간
                 <span class="float-right" style="font-size:11px">
                   <input id="scheduleAllDay" name="isAllDay" type="checkbox"/>
@@ -1123,6 +1123,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js" integrity="sha256-0YA7ixx4+I4GrLichcjWSQHIUSQiI8ojTDqsK7AZ5zU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js" integrity="sha256-JUbLuiRKiaXfbMpDSL9JwAJugW+Hg2E07+fjOCFjSSA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.numeric.extensions.min.js" integrity="sha256-dVx2gYHsRUlxMn8IvlyIclSnhktfPGUCHvXaPkdVqHc=" crossorigin="anonymous"></script>
 
   <!-- Custom scripts for this template -->
   <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>

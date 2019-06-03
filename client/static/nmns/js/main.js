@@ -669,11 +669,11 @@
             return;
         }
         if ($("#alrimUseYn").prop("checked")) {
-            if ($("#alrimCallbackPhone").val() === "") {
+            if ($("#alrimCallbackPhone").val().replace(/-/gi, '') === "") {
                 alert("알림톡을 사용하시려면 예약취소 알림톡을 받을 휴대폰번호를 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
-            } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val()))) {
+            } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val().replace(/-/gi, '')))) {
                 alert("입력하신 휴대폰번호가 정확하지 않습니다.\n휴대폰번호를 정확히 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
@@ -701,9 +701,9 @@
             parameters.useYn = $("#alrimUseYn").prop("checked") ? "Y" : "N";
             NMNS.info.alrimTalkInfo.useYn = parameters.useYn;
         }
-        if ($("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
+        if ($("#alrimCallbackPhone").val().replace(/-/gi, '') !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
             history.callbackPhone = NMNS.info.alrimTalkInfo.callbackPhone;
-            parameters.callbackPhone = $("#alrimCallbackPhone").val();
+            parameters.callbackPhone = $("#alrimCallbackPhone").val().replace(/-/gi, '');
             NMNS.info.alrimTalkInfo.callbackPhone = parameters.callbackPhone;
         }
         if ($("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")) {
@@ -2369,7 +2369,7 @@
             if (!changed && $("#alrimShopName").val() !== (NMNS.info.shopName || "")) {
                 changed = true;
             }
-            if (!changed && $("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
+            if (!changed && $("#alrimCallbackPhone").val().replace(/-/gi, '') !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
                 changed = true;
             }
             if (!changed && $("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")) {
@@ -3076,9 +3076,6 @@
         });
         $(".menuLink").on("touch click", switchMenu);
         $("#sidebarContainer").data('scroll', new PerfectScrollbar("#sidebarContainer"));
-        $("input[pattern]").each(function(index, input){
-          setNumericInput(input);
-        });
         Inputmask("999-999[9]-9999",{showMaskOnFocus:false, showMaskOnHover:false, autoUnmask:true, placeholder:""}).mask(".inputmask-mobile");
     })();
   window.onpopstate = function(state){

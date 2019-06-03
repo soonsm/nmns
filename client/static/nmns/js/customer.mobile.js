@@ -1,4 +1,4 @@
-/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
+/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, generateRandom */
 (function() {
   $("#mainContents").append('<div id="customerDetailMenu" class="switchingMenu customerDetailMenu">\
     <div class="d-flex horizontalTab">\
@@ -20,7 +20,7 @@
             <div>고객 이름</div>\
             <input type="text" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 이름을 입력해주세요." style="margin-bottom:35px">\
             <div>고객 연락처</div>\
-            <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
+            <input type="text" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
             <div>담당자</div>\
             <div class="col-12 px-0" style="margin-bottom:35px">\
               <button id="customerManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자">\
@@ -92,6 +92,7 @@
       </div>\
     </div>\
   </div>');
+  Inputmask("999-999[9]-9999",{showMaskOnFocus:false, showMaskOnHover:false, autoUnmask:true, placeholder:""}).mask("#customerContact");
   
   function generateCustomerMembershipRow(init, goal){
     var memberships = $("#customerMembershipList").data('item');
@@ -366,7 +367,7 @@
       if (Number.isInteger(index) && index > -1) {
           var customer = NMNS.customerList[index];
           customer.name = $("#customerName").val();
-          customer.contact = $("#customerContact").val();
+          customer.contact = $("#customerContact").val().replace(/-/gi, '');
           customer.etc = $("#customerEtc").val();
           customer.managerId = $("#customerManager").data("calendar-id");
           var managers = NMNS.calendar.getCalendars();
@@ -380,7 +381,7 @@
               NMNS.socket.emit("merge customer", {
                   id: e.data.id,
                   name: $("#customerName").val(),
-                  contact: $("#customerContact").val(),
+                  contact: $("#customerContact").val().replace(/-/gi, ''),
                   etc: $("#customerEtc").val(),
                   managerId: $("#customerManager").data("calendar-id")
               });
@@ -435,7 +436,7 @@
   
   $("#customerBtn").on("touch click", function(e) {
     e.preventDefault();
-    if ($("#customerName").val() === '' && $("#customerContact").val() === '') {
+    if ($("#customerName").val() === '' && $("#customerContact").val().replace(/-/gi, '') === '') {
         alert("고객 이름과 전화번호 중 하나는 반드시 입력해주세요.");
         return;
     }
@@ -448,7 +449,7 @@
         NMNS.socket.emit("update customer", {
             id: customer.id,
             name: $("#customerName").val(),
-            contact: $("#customerContact").val(),
+            contact: $("#customerContact").val().replace(/-/gi, ''),
             etc: $("#customerEtc").val(),
             managerId: $("#customerManager").data("calendar-id")
         });
@@ -527,10 +528,6 @@
       NMNS.socket.emit('get membership history', {customerId:id});
     }
   });
-  $("#customerDetailMenu input[pattern]").each(function(index, input){
-    setNumericInput(input);
-  });
-  
 
   function getSortFunc(action) {
       switch (action) {

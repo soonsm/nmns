@@ -715,11 +715,11 @@
             return;
         }
         if ($("#alrimUseYn").prop("checked")) {
-            if ($("#alrimCallbackPhone").val() === "") {
+            if ($("#alrimCallbackPhone").val().replace(/-/gi, '') === "") {
                 alert("알림톡을 사용하시려면 예약취소 알림톡을 받을 휴대폰번호를 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
-            } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val()))) {
+            } else if (!(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test($("#alrimCallbackPhone").val().replace(/-/gi, '')))) {
                 alert("입력하신 휴대폰번호가 정확하지 않습니다.\n휴대폰번호를 정확히 입력해주세요!");
                 $("#alrimCallbackPhone").focus();
                 return;
@@ -747,9 +747,9 @@
             parameters.useYn = $("#alrimUseYn").prop("checked") ? "Y" : "N";
             NMNS.info.alrimTalkInfo.useYn = parameters.useYn;
         }
-        if ($("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
+        if ($("#alrimCallbackPhone").val().replace(/-/gi, '') !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
             history.callbackPhone = NMNS.info.alrimTalkInfo.callbackPhone;
-            parameters.callbackPhone = $("#alrimCallbackPhone").val();
+            parameters.callbackPhone = $("#alrimCallbackPhone").val().replace(/-/gi, '');
             NMNS.info.alrimTalkInfo.callbackPhone = parameters.callbackPhone;
         }
         if ($("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")) {
@@ -1249,10 +1249,10 @@
         var timeout;
         function onContactBlur() {
             clearTimeout(timeout);
-            if ($('#scheduleContact').val().length > 9 || $('#scheduleName').val() !== '') {
+            if ($('#scheduleContact').val().replace(/-/gi, '').length > 9 || $('#scheduleName').val().replace(/-/gi, '') !== '') {
                 NMNS.socket.emit('get customer', {
                     name: $('#scheduleName').val(),
-                    contact: $('#scheduleContact').val()
+                    contact: $('#scheduleContact').val().replace(/-/gi, '')
                 });
             }
         }
@@ -1313,7 +1313,6 @@
                 onContactBlur();
             }
         }, NMNS.socket).on('blur', function() {
-            filterNonNumericCharacter($('#scheduleContact'));
             clearTimeout(timeout);
             timeout = setTimeout(function() {
                 onContactBlur();
@@ -1369,7 +1368,7 @@
       
           title = $('#scheduleName').val();
           contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {menuId:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): undefined), value:this.value}}).toArray());
-          contact = $('#scheduleContact').val();
+          contact = $('#scheduleContact').val().replace(/-/gi, '');
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
 
@@ -2035,7 +2034,7 @@
     NMNS.socket.on("get customer", socketResponse("고객 정보 가져오기", function(e) {
         var popup = $(".scheduleMenu");
         if(popup.is(":visible")){
-          if ((e.data.contact === popup.find("#scheduleContact").val() && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#scheduleName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
+          if ((e.data.contact === popup.find("#scheduleContact").val().replace(/-/gi, '') && popup.data("contact") !== e.data.contact) || (e.data.name === popup.find("#scheduleName").val() && popup.data("name") !== e.data.name)) {//이름 혹은 연락처의 변경
               if (e.data.etc) {
                   popup.find("#scheduleEtc").val(e.data.etc);
               }
@@ -2056,7 +2055,7 @@
               if (e.data.name && popup.find("#scheduleName").val() === "") {//빈칸일 경우에만 덮어쓰기
                   popup.find("#scheduleName").val(e.data.name);
               }
-              if (e.data.contact && popup.find("#scheduleContact").val() === "") {//빈칸일 경우에만 덮어쓰기
+              if (e.data.contact && popup.find("#scheduleContact").val().replace(/-/gi, '') === "") {//빈칸일 경우에만 덮어쓰기
                   popup.find("#scheduleContact").val(e.data.contact);
               }
           }
@@ -2231,7 +2230,7 @@
             if (!changed && $("#alrimShopName").val() !== (NMNS.info.shopName || "")) {
                 changed = true;
             }
-            if (!changed && $("#alrimCallbackPhone").val() !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
+            if (!changed && $("#alrimCallbackPhone").val().replace(/-/gi, '') !== (NMNS.info.alrimTalkInfo.callbackPhone || "")) {
                 changed = true;
             }
             if (!changed && $("#alrimCancelDue").val() !== (NMNS.info.alrimTalkInfo.cancelDue || "")) {
@@ -2886,7 +2885,7 @@
         // })
         $("#searchNoShow").on("keyup", function(e){
           if(e.keyCode === 13 || e.which === 13){
-            if($(this).val().length === 11 || $(this).val().length === 10){
+            if($(this).val().replace(/-/gi, '').length === 11 || $(this).val().replace(/-/gi, '').length === 10){
               // switchMenu.apply(this, e);
               if(!$(".calendarMenuLink").hasClass("menuLinkActive")){
                 $(".switchingMenu:not(.calendarMenu)").hide();

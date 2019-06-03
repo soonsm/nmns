@@ -18,11 +18,11 @@
                     <div>메뉴 이름</div>\
                     <input id="menuFormName" type="text" placeholder="메뉴 이름을 입력해주세요." class="form-control form-control-sm mt-3"/>\
                     <div style="margin-top:35px">카드 가격</div>\
-                    <input id="menuFormPriceCard" type="text" pattern="[0-9]*" placeholder="카드 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+                    <input id="menuFormPriceCard" type="text" placeholder="카드 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat inputmask-integer"/>\
                     <div style="margin-top:35px">현금 가격</div>\
-                    <input id="menuFormPriceCash" type="text" pattern="[0-9]*" placeholder="현금 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+                    <input id="menuFormPriceCash" type="text" placeholder="현금 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat inputmask-integer"/>\
                     <div style="margin-top:35px">멤버십 가격</div>\
-                    <input id="menuFormPriceMembership" type="text" pattern="[0-9]*" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+                    <input id="menuFormPriceMembership" type="text" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat inputmask-integer"/>\
                   </div>\
                 </form>\
                 <div class="row mx-0 col-12 px-0 mt-5">\
@@ -33,6 +33,7 @@
           </div>\
         </div>\
       </div>').one('show.bs.modal', initMenuModal));
+  Inputmask("integer", {autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlign: false, allowMinus:false, allowPlus:false}).mask('#menuModal .inputmask-integer');
   
   $("#updateMenuLink").on("touch click", function(){
     $(".menuRow .updatingMenu-collapsed").toggleClass('d-none').toggleClass('d-block');
@@ -151,9 +152,9 @@
         var after = {
           id:origin.id,
           name:$("#menuFormName").val(),
-          priceCash:$("#menuFormPriceCash").val() === ''? null : $("#menuFormPriceCash").val()*1,
-          priceCard:$("#menuFormPriceCard").val() === ''? null : $("#menuFormPriceCard").val()*1,
-          priceMembership:$("#menuFormPriceMembersip").val() === ''? null : $("#menuFormPriceMembership").val()*1
+          priceCash:$("#menuFormPriceCash").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCash").val().replace(/,/gi, '')*1,
+          priceCard:$("#menuFormPriceCard").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCard").val().replace(/,/gi, '')*1,
+          priceMembership:$("#menuFormPriceMembership").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceMembership").val().replace(/,/gi, '')*1
         };
         NMNS.socket.emit('update menu', after);
         origin = NMNS.menuList.find(function(item){ return item.id === after.id});
@@ -165,9 +166,9 @@
         origin = {
           id:NMNS.email + generateRandom(),
           name:$("#menuFormName").val(),
-          priceCash:$("#menuFormPriceCash").val() === ''? null : $("#menuFormPriceCash").val()*1,
-          priceCard:$("#menuFormPriceCard").val() === ''? null : $("#menuFormPriceCard").val()*1,
-          priceMembership:$("#menuFormPriceMembersip").val() === ''? null : $("#menuFormPriceMembership").val()*1
+          priceCash:$("#menuFormPriceCash").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCash").val().replace(/,/gi, '')*1,
+          priceCard:$("#menuFormPriceCard").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCard").val().replace(/,/gi, '')*1,
+          priceMembership:$("#menuFormPriceMembership").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceMembership").val().replace(/,/gi, '')*1
         }
         NMNS.socket.emit('add menu', origin);
         NMNS.menuList.push(origin);
@@ -175,9 +176,6 @@
       $("#menuModal").modal('hide');
       drawMenuList(true);
     });
-    $("#menuModal input[pattern]").each(function(index, input){
-      setNumericInput(input);
-    })
   }
   
   $("#createMenuLink").on("touch click", function(){

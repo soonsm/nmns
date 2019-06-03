@@ -1,25 +1,26 @@
-/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
+/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, generateRandom */
 (function() {
     $("#mainContents").append('<div id="menuDetailMenu" class="switchingMenu menuDetailMenu">\
         <div class="menuContents px-3">\
-          <form id="menuForm" class="mb-1 col-12 px-0" style="padding-top:35px">\
+          <form id="menuForm" class="mb-1 col-12 px-0 hasBottomArea" style="padding-top:35px">\
             <div class="form-group mb-0">\
               <div>메뉴 이름</div>\
               <input id="menuFormName" type="text" placeholder="메뉴 이름을 입력해주세요." class="form-control form-control-sm mt-3"/>\
               <div style="margin-top:35px">카드 가격</div>\
-              <input id="menuFormPriceCard" type="text" pattern="[0-9]*" placeholder="카드 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+              <input id="menuFormPriceCard" type="text" placeholder="카드 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat inputmask-integer"/>\
               <div style="margin-top:35px">현금 가격</div>\
-              <input id="menuFormPriceCash" type="text" pattern="[0-9]*" placeholder="현금 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+              <input id="menuFormPriceCash" type="text" placeholder="현금 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat inputmask-integer"/>\
               <div style="margin-top:35px">멤버십 가격</div>\
-              <input id="menuFormPriceMembership" type="text" pattern="[0-9]*" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat"/>\
+              <input id="menuFormPriceMembership" type="text" placeholder="멤버십 가격을 입력해주세요." class="form-control form-control-sm mt-3 mb-2 montserrat inputmask-integer"/>\
             </div>\
           </form>\
-          <div class="row mx-0 col-12 px-0 mt-5" style="padding-bottom:20px">\
+          <div class="row mx-0 col-12 mt-5 bottomButtonArea" style="padding:20px">\
             <button type="button" class="btn btn-white col mr-1" id="menuFormDeleteBtn">삭제</button>\
             <button type="button" class="btn btn-accent col ml-1" id="menuFormBtn">저장</button>\
           </div>\
         </div>\
       </div>');
+  Inputmask("integer", {autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlign: false, allowMinus:false, allowPlus:false}).mask('#menuDetailMenu .inputmask-integer');
   
   $("#menuFormBtn").on("touch click", function(){
     if($("#menuFormName").val() === ''){
@@ -32,9 +33,9 @@
       var after = {
         id:origin.id,
         name:$("#menuFormName").val(),
-        priceCash:$("#menuFormPriceCash").val() === ''? null : $("#menuFormPriceCash").val()*1,
-        priceCard:$("#menuFormPriceCard").val() === ''? null : $("#menuFormPriceCard").val()*1,
-        priceMembership:$("#menuFormPriceMembersip").val() === ''? null : $("#menuFormPriceMembership").val()*1
+        priceCash:$("#menuFormPriceCash").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCash").val().replace(/,/gi, '')*1,
+        priceCard:$("#menuFormPriceCard").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCard").val().replace(/,/gi, '')*1,
+        priceMembership:$("#menuFormPriceMembership").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceMembership").val().replace(/,/gi, '')*1
       };
       NMNS.socket.emit('update menu', after);
       origin = NMNS.menuList.find(function(item){ return item.id === after.id});
@@ -46,9 +47,6 @@
     NMNS.drawMenuList(true);
     history.back();
   });
-  $("#menuModal input[pattern]").each(function(index, input){
-    setNumericInput(input);
-  })
   $("#menuFormDeleteBtn").on("touch click", function(e){
     e.stopPropagation();
     if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {

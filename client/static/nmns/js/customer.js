@@ -1,4 +1,4 @@
-/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
+/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, generateRandom */
 (function() {
   $("#mainRow").append('<div id="customerModal" class="modal fade" tabIndex="-1" role="dialog" aria-label="고객 정보" aria-hidden="true">\
       <div class="modal-dialog modal-lg modal-dialog-centered" role="document">\
@@ -25,7 +25,7 @@
                   <div>고객 이름</div>\
                   <input type="text" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 이름을 입력해주세요." style="margin-bottom:35px">\
                   <div>고객 연락처</div>\
-                  <input type="text" pattern="[0-9]*" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
+                  <input type="text" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
                   <div class="col-6 px-0">담당자</div><div class="col-6 pl-1">고객메모</div>\
                 </div>\
                 <div class="d-flex" style="margin-bottom:35px">\
@@ -88,14 +88,14 @@
               <div id="customerMembership" class="tab-pane col-12 px-0 fade" role="tabpanel">\
                 <div class="d-flex"><div class="col px-0">멤버십 결제 금액</div><div class="col px-0" style="margin-left:-45px">멤버십 적립 금액<span class="subText">적립금액은 따로 입력할 수 있어요.</span></div></div>\
                 <div class="d-flex my-3">\
-                  <div class="row mx-0 col-12 px-0"><input type="text" pattern="[0-9]*" id="customerMembershipSales" class="form-control form-control-sm montserrat col mr-1" aria-label="멤버십 결제 금액" placeholder="결제 금액을 숫자로 입력하세요.">\
-                  <input type="text" pattern="[0-9]*" id="customerMembershipChange" class="form-control form-control-sm montserrat col ml-1" aria-label="멤버십 적립 금액" placeholder="멤버십 적립 금액을 입력하세요.">\
+                  <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipSales" class="form-control form-control-sm montserrat col mr-1 inputmask-integer" aria-label="멤버십 결제 금액" placeholder="결제 금액을 숫자로 입력하세요.">\
+                  <input type="text" id="customerMembershipChange" class="form-control form-control-sm montserrat col ml-1 inputmask-integer" aria-label="멤버십 적립 금액" placeholder="멤버십 적립 금액을 입력하세요.">\
                   <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipSales">추가</button></div>\
                 </div>\
                 <div><input type="radio" name="customerMembershipSalesType" value="CARD" id="customerMembershipCard" checked="checked"><label for="customerMembershipCard"></label><label for="customerMembershipCard" style="margin-right:30px">카드</label><input type="radio" name="customerMembershipSalesType" value="CASH" id="customerMembershipCash"><label for="customerMembershipCash"></label><label for="customerMembershipCash">현금</label></div>\
                 <div style="margin-top:30px">멤버십 금액 조절</div>\
                 <div class="d-flex my-3">\
-                  <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm montserrat col" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
+                  <div class="row mx-0 col-12 px-0"><input type="text" id="customerMembershipAdjust" class="form-control form-control-sm montserrat col inputmask-integer-sign" aria-label="멤버십 금액 조절" placeholder="+/- 숫자를 입력하면 멤버십 금액을 임의로 조절할 수 있어요." >\
                   <button type="button" class="btn btn-sm btn-form ml-2" id="addCustomerMembershipAdjust">추가</button></div>\
                 </div>\
                 <div class="row mx-0 col-12 py-3 px-1 text-center customerMembershipHead" style="border-bottom:1px solid rgba(112, 112, 112, 0.35)">\
@@ -122,6 +122,9 @@
         </div>\
       </div>\
     </div>');
+  Inputmask("999-999[9]-9999",{showMaskOnFocus:false, showMaskOnHover:false, autoUnmask:true, placeholder:""}).mask("#customerContact");
+  Inputmask("integer", {autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlign: false, allowMinus:false, allowPlus:false}).mask('#customerModal .inputmask-integer');
+  Inputmask("integer", {autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlign: false}).mask('#customerModal .inputmask-integer-sign');
   
   function generateCustomerMembershipRow(init, goal){
     var memberships = $("#customerMembershipList").data('item');
@@ -418,7 +421,7 @@
       if (Number.isInteger(index) && index > -1) {
           var customer = NMNS.customerList[index];
           customer.name = $("#customerName").val();
-          customer.contact = $("#customerContact").val();
+          customer.contact = $("#customerContact").val().replace(/-/gi, '');
           customer.etc = $("#customerEtc").val();
           customer.managerId = $("#customerManager").data("calendar-id");
           var managers = NMNS.calendar.getCalendars();
@@ -432,7 +435,7 @@
               NMNS.socket.emit("merge customer", {
                   id: e.data.id,
                   name: $("#customerName").val(),
-                  contact: $("#customerContact").val(),
+                  contact: $("#customerContact").val().replace(/-/gi, ''),
                   etc: $("#customerEtc").val(),
                   managerId: $("#customerManager").data("calendar-id")
               });
@@ -506,7 +509,7 @@
   }).one("show.bs.modal", function(){
     $("#customerBtn").on("touch click", function(e) {
         e.preventDefault();
-        if ($("#customerName").val() === '' && $("#customerContact").val() === '') {
+        if ($("#customerName").val() === '' && $("#customerContact").val().replace(/-/gi, '') === '') {
             alert("고객 이름과 전화번호 중 하나는 반드시 입력해주세요.");
             return;
         }
@@ -519,12 +522,12 @@
             NMNS.socket.emit("update customer", {
                 id: customer.id,
                 name: $("#customerName").val(),
-                contact: $("#customerContact").val(),
+                contact: $("#customerContact").val().replace(/-/gi, ''),
                 etc: $("#customerEtc").val(),
                 managerId: $("#customerManager").data("calendar-id")
             });
         } else {
-          if ($("#customerName").val() === '' && $("#customerContact").val() === '') {
+          if ($("#customerName").val() === '' && $("#customerContact").val().replace(/-/gi, '') === '') {
               alert("고객 이름과 전화번호 중 하나는 반드시 입력해주세요.");
               return;
           }
@@ -535,7 +538,7 @@
           customer = {
               id: NMNS.email + generateRandom(),
               name: $("#customerName").val(),
-              contact: $("#customerContact").val(),
+              contact: $("#customerContact").val().replace(/-/gi, ''),
               etc: $("#customerEtc").val(),
               managerId: $("#customerManager").data("calendar-id")
           };
@@ -615,7 +618,7 @@
         if(e.which === 13){
           $(this).next().next().trigger('click');
         }else{
-          $(this).next().removeClass('manual').val($(this).val());
+          $(this).next().removeClass('manual').val($(this).val().replace(/,/gi, ''));
         }
       });
       $("#customerMembershipChange").on("keyup", function(e){
@@ -631,7 +634,7 @@
         }
       });
       $("#addCustomerMembershipAdjust").on("touch click", function(){
-        var change = $("#customerMembershipAdjust").val().match(/^\s*(\+|\-)?\s*([\d]*)\s*$/);
+        var change = $("#customerMembershipAdjust").val().replace(/,/gi, '').match(/^\s*(\+|\-)?\s*([\d]*)\s*$/);
         if(!change){
           showSnackBar('조절할 금액을 정확히 입력해주세요.');
           return;
@@ -653,7 +656,7 @@
         drawCustomerMembershipList(true);
       });
       $("#addCustomerMembershipSales").on("touch click", function(){
-        if($("#customerMembershipChange").val() === '' || !($("#customerMembershipChange").val() * 1)){
+        if($("#customerMembershipChange").val().replace(/,/gi,'') === '' || !($("#customerMembershipChange").val().replace(/,/gi, '') * 1)){
           showSnackBar('적립할 금액을 입력해주세요.');
           return;
         }
@@ -663,8 +666,8 @@
           item: '멤버십 적립',
           customerId: $("#customerModal").data('customer').id,
           payment: $("#customerMembershipCard").prop('checked')? 'CARD' : ($("#customerMembershipCash").prop('checked') ? 'CASH' : null),
-          membershipChange: $("#customerMembershipChange").val() * 1,
-          price: $("#customerMembershipSales").val() * 1,
+          membershipChange: $("#customerMembershipChange").val().replace(/,/gi, '') * 1,
+          price: $("#customerMembershipSales").val().replace(/,/gi,'') * 1,
           date: moment().format('YYYYMMDD')
         }
         if(!input.payment){
@@ -677,9 +680,6 @@
         $("#customerMembershipSales").val('');
         $("#customerMembershipChange").val('');
       });
-    });
-    $("#customerModal input[pattern]").each(function(index, input){
-      setNumericInput(input);
     });
     $(".addCustomerScheduleBtn").on("touch click", function(){
       $("#customerModal").data("trigger", true).modal("hide");
