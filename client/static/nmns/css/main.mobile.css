@@ -19,9 +19,9 @@ body{
 input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator{
     display:none;
 }
-input[type=checkbox]:not(.custom-control-input) + label{width:11px;height:11px;line-height:11px;margin-right:8px;position:relative}input[type=checkbox]:not(.custom-control-input) + label:before{display: inline-block;background-image:url('/nmns/img/uncheck.svg');background-size:11px;position:absolute;width:11px;height:11px;line-height:11px;content:'';background-repeat:no-repeat;margin-right:8px}input[type=checkbox]:not(.custom-control-input):checked + label:before{background-image: url('/nmns/img/check.svg')}
+input[type=checkbox]:not(.custom-control-input) + label{width:11px;height:11px;line-height:11px;margin-right:8px;position:relative}input[type=checkbox]:not(.custom-control-input) + label:before{display: inline-block;background-image:url('/nmns/img/uncheck.svg');content:'';background-size:11px;position:absolute;width:11px;height:11px;line-height:11px;content:'';background-repeat:no-repeat;margin-right:8px}input[type=checkbox]:not(.custom-control-input):checked + label:before{content:'';background-image: url('/nmns/img/check.svg')}
 input[type=checkbox]:not(.custom-control-input) + label + label{vertical-align:middle}
-@supports (-webkit-overflow-scrolling: touch){.form-control{font-size:16px;padding-top:8px;padding-bottom:8px;line-height:22px}#searchNoShow,#searchCustomer{font-size:16px}}
+@supports (-webkit-overflow-scrolling: touch){.form-control{font-size:16px;padding-top:6px;padding-bottom:6px;line-height:22px}#searchNoShow,#searchCustomer{font-size:16px}}
 .new {
     font-size: .65rem;
     padding: 0;
@@ -99,7 +99,7 @@ input[name='etc'],
 .icon-announcement{
   content: url('/nmns/img/Notification_white.svg');
   width:17px;
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .icon-announcement.icon-announcement-count{
   content: url('/nmns/img/Notification_count_white.svg');
@@ -265,7 +265,7 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     opacity:0.5;
 }
 
-#mainRow #mainNav #mainMenu{
+#mainMenu{
     font-size:13px;
     white-space:nowrap;
 }
@@ -276,20 +276,20 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     margin-right:15px;
 }
 
-#mainRow #mainTask{
+#mainTask{
     display:none;
     height:0;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
     transition: 0.3 height ease;
 }
 
-#mainRow #mainTask.show{
+#mainTask.show{
     display:block;
     width:100%;
     height:auto;
 }
 
-#mainRow #mainTask #mainTaskTip{
+#mainTaskTip{
     border-left: 12px solid transparent;
     width: 0;
     height: 0;
@@ -301,12 +301,15 @@ input[type=email]::placeholder, input[type=email]::-webkit-input-placeholder, in
     right: calc(50% - 6px);
 }
 
-#mainRow #mainTask #mainTaskContents{
+#mainTaskContents{
     margin-top:30px;
     min-height:50vh;
     display:flex;
+    flex-direction:column;
 }
-
+#mainTaskContents label{
+    margin-top:6px;
+}
 #mainRow #mainTask .task{
     word-break: break-all;
 }
@@ -442,7 +445,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     font-weight:500;
     font-family: 'Montserrat';
     line-height:12vw;
-    padding-bottom:14.28571428%;
+    padding-bottom:calc(14.28571428% - 2px);
     border-radius:50%;
 }
 #mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
@@ -503,6 +506,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 
 #mainContents {
     margin-top:64px;
+    background-color:#f8f8f8;
 }
 
 @media(min-width:1600px){
@@ -513,7 +517,6 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 
 #mainCalendarArea{
     width:100%;
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
 }
 
 .tui-full-calendar-screen {

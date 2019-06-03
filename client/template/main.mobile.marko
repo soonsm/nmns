@@ -140,7 +140,7 @@
           </li>
           <li class="d-none">
             <div class="menuLink scheduleLink" data-link="scheduleMenu" data-history="schedule" data-type="detail" data-title="예약 상세"></div>
-            <div class="menuLink taskLink" data-link="taskDetailMenu" data-history="task" data-type="detail" data-title="일정 상세"></div>
+            <div class="menuLink taskDetailLink" data-link="taskDetailMenu" data-history="task" data-type="detail" data-title="일정 상세"></div>
             <div class="menuLink customerDetailLink" data-link="customerDetailMenu" data-history="customer/detail" data-type="detail" data-title="고객 상세"></div>
             <div class="menuLink menuDetailLink" data-link="menuDetailMenu" data-history="menu/detail" data-type="detail" data-title="메뉴 상세"></div>
           </li>
@@ -644,7 +644,7 @@
 
         <div class="switchingMenu scheduleMenu">
           <div class="menuContents px-3">
-            <form id="scheduleForm" class="mb-1">
+            <form id="scheduleForm" class="mb-1 hasBottomArea">
               <div class="row mx-0" style="margin:35px 0">
                 <div>예약 상태</div>
                 <div style="margin-left:auto" id="scheduleStatus">
@@ -675,14 +675,14 @@
                   <input id="scheduleStartDate" name="start" readonly="readonly" data-toggle="modal" data-target="#calendarModal" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
-                  <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                  <input id="scheduleStartTime" type="text" class="form-control form-control-sm montserrat" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
                 <span class="px-2 col-12 text-center" style="height:35px;line-height:35px">~</span>
                 <div class="select mr-1 col-7 px-0">
                   <input id="scheduleEndDate" name="end" readonly="readonly" data-toggle="modal" data-target="#calendarModal" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
-                  <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                  <input id="scheduleEndTime" type="text" class="form-control form-control-sm montserrat" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
               </div>
               <div style="margin-top:35px">예약 내용</div>
@@ -711,7 +711,7 @@
                 </div>
               </div>
             </form>
-            <div class="row mx-0 mt-5">
+            <div class="row mx-0 mt-5 bottomButtonArea">
               <!--<button type="button" class="btn btn-white updateScheduleElement col mr-1" id="deleteScheduleBtn">삭제</button>-->
               <button type="button" class="btn btn-primary col mr-1" id="resendAlrimScheduleBtn">알림톡 재전송</button>
               <button type="button" class="btn btn-accent col ml-1" id="scheduleBtn">저장</button>
@@ -720,8 +720,8 @@
         </div>
 
         <div class="switchingMenu taskDetailMenu">
-          <div class="menuContents px-3">
-            <form id="taskForm" class="mb-1">
+          <div class="menuContents px-3" style="padding-top:35px">
+            <form id="taskForm" class="mb-1 hasBottomArea">
               <div>일정 내용</div>
               <input class="form-control form-control-sm han mt-3" id="taskName" placeholder="일정 내용" aria-label="일정 내용" type="text">
               <div style="margin-top:35px">예약시간
@@ -731,19 +731,19 @@
                   <label for="taskAllDay">하루종일</label>
                 </span>
               </div>
-              <div class="d-flex col-12 px-0 align-items-center mt-3">
-                <div class="select mr-1">
+              <div class="row mx-0 col-12 px-0 align-items-center mt-3">
+                <div class="select mr-1 col-7 px-0">
                   <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
                 </div>
-                <div class="select ml-1">
-                  <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                <div class="select ml-1 col px-0">
+                  <input id="taskStartTime" type="text" class="form-control form-control-sm montserrat" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
-                <span class="px-2 mx-3">~</span>
-                <div class="select mr-1">
+                <span class="col-12 text-center" style="height:35px;line-height:35px">~</span>
+                <div class="select mr-1 col-7 px-0">
                   <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
                 </div>
-                <div class="select ml-1">
-                  <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                <div class="select ml-1 col px-0">
+                  <input id="taskEndTime" type="text" class="form-control form-control-sm montserrat" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
                 </div>
               </div>
               <div style="margin-top:35px">담당자</div>
@@ -753,7 +753,7 @@
               <div class="dropdown-menu" aria-labelledby="taskManager" role="menu" id="taskManagerList"></div>
               
             </form>
-            <div class="row mx-0 mt-5">
+            <div class="row mx-0 mt-5 bottomButtonArea">
               <button type="button" class="btn btn-white col mr-1" id="deleteTaskBtn">삭제</button>
               <button type="button" class="btn btn-accent col ml-1" id="taskBtn">저장</button>
             </div>
