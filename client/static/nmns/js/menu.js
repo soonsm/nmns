@@ -1,4 +1,4 @@
-/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, filterNonNumericCharacter, generateRandom */
+/*global moment, NMNS, $, PerfectScrollbar, dashContact, socketResponse, generateRandom */
 (function() {
     $("#mainRow").append($('<div id="menuModal" class="modal fade" tabIndex="-1" role="dialog" aria-hidden="true" data-index="0">\
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">\
