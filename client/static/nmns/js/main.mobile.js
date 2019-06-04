@@ -2818,11 +2818,11 @@
 				if($(this).data('type') !== 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
-					$("#mainContents").removeClass('bg-white');
+					$("#mainContents,body").removeClass('bg-white');
 				}else{
 				  $("#detailMenuTitle").html($(this).data('title')).show().prev().hide();
 			    $(".announcementMenuLink").hide().next().show();
-					$("#mainContents").addClass('bg-white');
+					$("#mainContents,body").addClass('bg-white');
 				}
       }
     }
