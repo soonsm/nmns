@@ -173,7 +173,8 @@ exports.newWebUser = function (user) {
         feedback: [],
         kakaotalk: user.kakaotalk || null,
         redNoticeList: [],
-        saleHistList: []
+        saleHistList: [],
+        logoFileName: user.logoFileName //logo file name이다. https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/ 이거 뒤에 logoFileName 붙이면 이미지 url
     };
 };
 

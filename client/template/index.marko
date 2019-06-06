@@ -746,17 +746,17 @@
 			}
 			var xhr = new XMLHttpRequest();
 			xhr.open('POST', '/signup');
-			xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+			//xhr.setRequestHeader('Content-Type', 'multipart/form-data');
 			xhr.onload = function() {
 				try{
-					var response = JSON.parse(xhr.data);
-					if(response.status !== 200){
-						alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
-						return;
-					}
-					showModal('emailModal')();
-					document.getElementById('signinForm').email.value = form.email.value;
-					document.getElementById('signupForm').reset();
+                   if (xhr && xhr.status !== 200) {
+                        alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                        return;
+                   } else {
+					    showModal('emailModal')();
+					    document.getElementById('signinForm').email.value = form.email.value;
+					    document.getElementById('signupForm').reset();
+                   }
 				}catch{
 					alert('회원가입에 실패했습니다. 다시 시도해주세요.');
 				}				

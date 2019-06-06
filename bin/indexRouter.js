@@ -10,6 +10,8 @@ const
     emailSender = require('./emailSender');
 
 const moment = require('moment');
+const multer = require("multer");
+
 
 const logger = global.nmns.LOGGER;
 
@@ -52,10 +54,15 @@ module.exports = function (passport) {
                 let md = new MobileDetect(req.headers['user-agent']);
                 let mainView = md.mobile() ? mobileMainView : pcMainView;
 
+                let logoUrl = null;
+                if(user.logoFileName){
+                    logoUrl = 'https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/' + user.logoFileName;
+                }
                 render(res, mainView, {
                     user: req.user,
                     kakaotalk: req.query.kakaotalk,
-                    tips: tip
+                    tips: tip,
+                    logoUrl: logoUrl
                 });
             } else {
                 render(res, signupView, {
@@ -345,108 +352,6 @@ module.exports = function (passport) {
 
     });
 
-    let multer = require('multer');
-    var storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'uploads');
-        },
-        filename: function (req, file, cb) {
-            let email = req.body.email;
-            let extname = path.extname(file.originalname);
-            cb(null, email+extname);
-        }
-    });
-    let upload = multer({
-        storage: storage, limits: {fileSize: 5 * 1024 * 1024}
-    }).single('logo');
-    /**
-     * 회원가입 요청 처리
-     */
-    router.post("/signup", upload, async function (req, res) {
-        let data = req.body;
-        let email = data.email;
-        let password = data.password;
-
-        //email validation
-        if (!emailValidator.validate(email)) {
-            return sendResponse(res, false, '올바른 이메일 형식이 아닙니다.');
-        }
-
-        if (data.snsType) {
-            if (!data.snsLinkId) {
-                return sendResponse(res, false, 'SNS 연동 회원가입인 경우 snsLinkId가 필요합니다.');
-            }
-            let snsLink = await db.getSnsLink(data.snsLinkId);
-            if (snsLink) {
-                return sendResponse(res, false, `이미 SNS 연동이 된 계정입니다.(email:${snsLink.email}, snsType:${snsLink.snsType})`);
-            }
-        } else {
-            //password strength check
-            let strenthCheck = util.passwordStrengthCheck(password);
-            if (strenthCheck.result === false) {
-                return sendResponse(res, false, strenthCheck.message);
-            }
-        }
-
-        //기존 사용자 체크
-        if (await db.getWebUser(email)) {
-            return sendResponse(res, false, '이미 존재하는 사용자입니다.');
-        }
-
-        data.emailAuthToken = require('js-sha256')(email);
-        let newUser = db.newWebUser(data);
-        if (data.useYn === 'Y') {
-            if (!data.callbackPhone || !util.phoneNumberValidation(data.callbackPhone)) {
-                return sendResponse(res, false, `휴대전화 번호 양식에 맞지 않습니다.${data.callbackPhone}`);
-            }
-            newUser.alrimTalkInfo = {
-                useYn: 'Y',
-                callbackPhone: data.callbackPhone,
-                cancelDue: data.cancelDue || '',
-                notice: data.notice || ''
-            }
-        }
-
-        if(req.file){
-            newUser.logo = req.file.filename;
-        }
-
-        if (await db.setWebUser(newUser)) {
-            if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
-                if (data.kakaotalk) {
-                    let kakaoUser = await db.getUser(data.kakaotalk);
-                    if (kakaoUser) {
-                        kakaoUser.email = email;
-                        db.saveUser(kakaoUser);
-                    }
-                }
-                if (data.snsType) {
-                    db.setSnsLink(data);
-                }
-                res.cookie('email', email);
-                return sendResponse(res, true, '회원가입성공');
-            }
-        }
-        return sendResponse(res, false, '시스템 오류가 발생했습니다.\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.');
-
-    });
-
-    router.get("/signout", (req, res) => {
-        if (req.user) {
-            let email = req.user.email;
-            res.cookie('email', email);
-            req.logout();
-            req.session.destroy(function (err) {
-                if (err) {
-                    logger.log('fail to destroy session: ', err);
-                }
-                res.redirect("/");
-            });
-        } else {
-            res.redirect("/");
-        }
-    })
-
     /**
      * 인증 이메일 다시 보내기
      * 데이터 : {email: ${email, string, optional}}
@@ -609,24 +514,143 @@ module.exports = function (passport) {
         return render(res, cancelView, {title: returnMsg, contents: contents});
     });
 
+    let AWS = require('aws-sdk');
+    AWS.config.update({
+        region: "ap-northeast-2",
+        endpoint: null
+    });
+    let s3 = new AWS.S3({apiVersion: '2006-03-01'});
+    var storage = require('multer-s3')({
+        s3: s3,
+        bucket: "file.washow.co.kr",
+        key: function (req, file, cb) {
+            let email = req.body.email;
+            let extension = path.extname(file.originalname);
+            let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+extension;
+            file.filename = fileName;
+            cb(null, fileName);
+        },
+        acl: 'public-read-write',
+    });
+    let upload = multer({
+        storage: storage, limits: {fileSize: 5 * 1024 * 1024}
+    }).single('logo');
+
+    /**
+     * 회원가입 요청 처리
+     */
+    router.post("/signup", upload, async function (req, res) {
+        let status = false, message;
+        try{
+            let data = req.body;
+            let email = data.email;
+            let password = data.password;
+
+            //email validation
+            if (!emailValidator.validate(email)) {
+                throw `이메일 값이 올바르지 않습니다.(${email})`;
+            }
+
+            if (data.snsType) {
+                if (!data.snsLinkId) {
+                    throw `SNS 연동 회원가입인 경우 snsLinkId가 필요합니다.`;
+                }
+                let snsLink = await db.getSnsLink(data.snsLinkId);
+                if (snsLink) {
+                    throw `이미 SNS 연동이 된 계정입니다.(email:${snsLink.email}, snsType:${snsLink.snsType})`;
+                }
+            } else {
+                //password strength check
+                let strenthCheck = util.passwordStrengthCheck(password);
+                if (strenthCheck.result === false) {
+                    throw strenthCheck.message;
+                }
+            }
+
+            //기존 사용자 체크
+            if (await db.getWebUser(email)) {
+                throw '이미 존재하는 사용자입니다.';
+            }
+
+            if(req.file){
+                data.logoFileName = req.file.filename;
+            }
+            data.emailAuthToken = require('js-sha256')(email);
+            let newUser = db.newWebUser(data);
+            if (data.useYn === 'Y') {
+                if (!data.callbackPhone || !util.phoneNumberValidation(data.callbackPhone)) {
+                    throw `휴대전화 번호 양식에 맞지 않습니다.${data.callbackPhone}`;
+                }
+                newUser.alrimTalkInfo = {
+                    useYn: 'Y',
+                    callbackPhone: data.callbackPhone,
+                    cancelDue: data.cancelDue || '',
+                    notice: data.notice || ''
+                }
+            }
+
+            if (await db.setWebUser(newUser)) {
+                if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
+                    if (data.kakaotalk) {
+                        let kakaoUser = await db.getUser(data.kakaotalk);
+                        if (kakaoUser) {
+                            kakaoUser.email = email;
+                            db.saveUser(kakaoUser);
+                        }
+                    }
+                    if (data.snsType) {
+                        db.setSnsLink(data);
+                    }
+                    res.cookie('email', email);
+                    status = true;
+                    message = '회원가입성공';
+                }
+            }
+        }catch(e){
+            status = false;
+            logger.error(e);
+            if((typeof a) === 'string' ){
+                message = e;
+            }else{
+                message = '시스템 오류가 발생했습니다.\\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.';
+            }
+        }
+        return sendResponse(res, status, message);
+    });
+
+    router.get("/signout", (req, res) => {
+        if (req.user) {
+            let email = req.user.email;
+            res.cookie('email', email);
+            req.logout();
+            req.session.destroy(function (err) {
+                if (err) {
+                    logger.log('fail to destroy session: ', err);
+                }
+                res.redirect("/");
+            });
+        } else {
+            res.redirect("/");
+        }
+    })
+
     router.get('/form-tester', (req, res) => {
         res.render('form-tester.html', {
             title: 'Form Tester'
         });
     });
 
-    let AWS = require('aws-sdk');
-    AWS.config.update({
-        region: "ap-northeast-2"
+    s3.listBuckets(function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else     console.log(data);           // successful response
     });
-    const s3 = new AWS.S3();
-    let multerS3 = require('multer-s3');
-    var storage2 = multerS3({
+
+    var storage2 = require('multer-s3')({
         s3: s3,
         bucket: "file.washow.co.kr",
         key: function (req, file, cb) {
             let extension = path.extname(file.originalname);
-            cb(null, Date.now().toString() + extension);
+            cb(null, file.originalname);
         },
         acl: 'public-read-write',
     });
@@ -641,23 +665,6 @@ module.exports = function (passport) {
            }
             console.log(req.body);
             console.log(req.file);
-
-
-            // let fs = require('fs');
-            // let rs = fs.createReadStream(req.file.path);
-            // console.log('before upload');
-            // s3.upload({
-            //     'Bucket':'file.washow.co.kr',
-            //     'Key': 'image/' + req.file.filename,
-            //     'ACL':'public-read',
-            //     'Body': rs,
-            //     'ContentType':req.file.memitype
-            // },function(err, data){
-            //     if(err) {
-            //         console.log(err);
-            //     }
-            //     console.log(data);
-            // });
 
             var str = "Your name is " + req.body.name + " and your nickname is " + req.body.nickname;
             res.send(str);
