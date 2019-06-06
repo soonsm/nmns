@@ -56,7 +56,11 @@ module.exports = function (passport) {
 
                 let logoUrl = null;
                 if(user.logoFileName){
-                    logoUrl = 'https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/' + user.logoFileName;
+                    let baseUrl = 'https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/';
+                    if (process.env.NODE_ENV != process.nmns.MODE.PRODUCTION) {
+                        baseUrl = '/'
+                    }
+                    logoUrl = baseUrl + user.logoFileName;
                 }
                 render(res, mainView, {
                     user: req.user,
@@ -514,24 +518,34 @@ module.exports = function (passport) {
         return render(res, cancelView, {title: returnMsg, contents: contents});
     });
 
-    let AWS = require('aws-sdk');
-    AWS.config.update({
-        region: "ap-northeast-2",
-        endpoint: null
-    });
-    let s3 = new AWS.S3({apiVersion: '2006-03-01'});
-    var storage = require('multer-s3')({
-        s3: s3,
-        bucket: "file.washow.co.kr",
-        key: function (req, file, cb) {
-            let email = req.body.email;
-            let extension = path.extname(file.originalname);
-            let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+extension;
-            file.filename = fileName;
-            cb(null, fileName);
+    let fileNameFunction = function (req, file, cb) {
+        let email = req.body.email;
+        let extension = path.extname(file.originalname);
+        let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+extension;
+        file.filename = fileName;
+        cb(null, fileName);
+    }
+    let storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'uploads');
         },
-        acl: 'public-read-write',
+        filename: fileNameFunction
     });
+    if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
+        let AWS = require('aws-sdk');
+        AWS.config.update({
+            region: "ap-northeast-2",
+            endpoint: null
+        });
+        let s3 = new AWS.S3({apiVersion: '2006-03-01'});
+        storage = require('multer-s3')({
+            s3: s3,
+            bucket: "file.washow.co.kr",
+            key: fileNameFunction,
+            acl: 'public-read-write',
+        });
+    }
+
     let upload = multer({
         storage: storage, limits: {fileSize: 5 * 1024 * 1024}
     }).single('logo');
@@ -640,26 +654,8 @@ module.exports = function (passport) {
         });
     });
 
-    s3.listBuckets(function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else     console.log(data);           // successful response
-    });
-
-    var storage2 = require('multer-s3')({
-        s3: s3,
-        bucket: "file.washow.co.kr",
-        key: function (req, file, cb) {
-            let extension = path.extname(file.originalname);
-            cb(null, file.originalname);
-        },
-        acl: 'public-read-write',
-    });
-    let upload2 = multer({
-        storage: storage2, limits: {fileSize: 5 * 1024 * 1024}
-    }).single('logo');
-
     router.post('/form-tester',(req, res) => {
-        upload2(req, res, function(err){
+        upload(req, res, function(err){
            if(err){
                console.log(err);
            }
