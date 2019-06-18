@@ -333,11 +333,11 @@
           html += '<div class="customer col-12" data-index="'+index+'"><div><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span></div>'+
               '<div class="col col-1 px-0 font-weight-bold" style="font-size:14px">'+(!item.name || item.name === '' ? '(이름없음)' : item.name) + '</div>' + 
               '<div class="col col-2 montserrat">'+(!item.contact || item.contact === '' ? '' : dashContact(item.contact)) + '</div>' +
-              '<div class="col col-1" style="font-size:10px">'+(!item.history? '0회' : item.history.length + '회')+'</div><div class="col-4">' +
+              '<div class="col col-1" style="font-size:11px">'+(!item.history? '0회' : item.history.length + '회')+'</div><div class="col-4">' +
               '<div class="col col-4 px-0 montserrat">'+(item.history && item.history.length > 0 ? moment(item.history[0].start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : '-') + '</div>' +
               '<div class="col col-4 px-0 montserrat">'+((item.cardSales + item.cashSales) ? ((item.cardSales + item.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"): '-') + '</div>' +
               '<div class="col col-4 px-0 montserrat">'+(item.pointMembership ? (item.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
-              '<div class="col" style="font-size:10px">'+(item.etc || '-')+'</div>'+
+              '<div class="col" style="font-size:11px">'+(item.etc || '-')+'</div>'+
               '<a class="customerModalLink" href="#" data-toggle="modal" data-target="#customerModal" title="상세보기"></a>'+
               '</div>'
       }

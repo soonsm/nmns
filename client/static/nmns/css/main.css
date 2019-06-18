@@ -535,7 +535,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }
 
 .monthlyDetailPopupTime{
-  font-size:10px;
+  font-size:11px;
   word-break:break-all;
   cursor:pointer;
 }
@@ -745,7 +745,7 @@ body.overflow-y-hidden #mainCalendarWrapper{
 }
 
 .tui-full-calendar-time-schedule-contact{
-    font-size:10px;
+    font-size:11px;
 }
 
 button.calendarType {
