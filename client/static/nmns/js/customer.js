@@ -4,7 +4,7 @@
       <div class="modal-dialog modal-lg modal-dialog-centered" role="document">\
         <div class="modal-content">\
           <div class="modal-header p-0 mx-0">\
-            <div class="row mx-0 col-12" style="padding:25px 30px 0 30px;border-bottom:1px solid rgba(58, 54, 54, 0.35)">\
+            <div class="row mx-0 col-12" style="padding:26px 30px 0 30px">\
               <ul id="customerTabList" class="nav nav-pills" role="tabList" style="display:inline-flex !important;height:47px;">\
                 <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#customerInfo" data-toggle="tab" aria-selected="true" aria-label="고객 정보">고객 정보</a></li>\
                 <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerSchedule" data-toggle="tab" aria-label="예약 내역">예약 내역</a></li>\

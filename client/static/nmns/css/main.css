@@ -1771,6 +1771,10 @@ button.form-control {
 .nav-pills .nav-link{
     font-size:18px;
     opacity:0.35;
+	padding-left:0;
+	padding-right:0;
+	margin-left:15px;
+	margin-right:15px;
 }
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     color: inherit;
