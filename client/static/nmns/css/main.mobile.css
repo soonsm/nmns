@@ -3,6 +3,11 @@ body{
   /*background-color:#fff;*/
 	height:auto;
 }
+body.modal-open{
+	position:fixed;
+	left:0;
+	right:0;
+}
 .cursor-pointer{
     cursor:pointer;
 }
@@ -21,7 +26,7 @@ input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-i
 }
 input[type=checkbox]:not(.custom-control-input) + label{width:11px;height:11px;line-height:11px;margin-right:8px;position:relative}input[type=checkbox]:not(.custom-control-input) + label:before{display: inline-block;background-image:url('/nmns/img/uncheck.svg');content:'';background-size:11px;position:absolute;width:11px;height:11px;line-height:11px;content:'';background-repeat:no-repeat;margin-right:8px}input[type=checkbox]:not(.custom-control-input):checked + label:before{content:'';background-image: url('/nmns/img/check.svg')}
 input[type=checkbox]:not(.custom-control-input) + label + label{vertical-align:middle}
-@supports (-webkit-overflow-scrolling: touch){.form-control{font-size:16px;padding-top:6px;padding-bottom:6px;line-height:22px}#searchNoShow,#searchCustomer{font-size:16px}}
+
 .new {
     font-size: .65rem;
     padding: 0;
@@ -51,13 +56,9 @@ input[type=checkbox]:not(.custom-control-input) + label + label{vertical-align:m
     outline: none;
     box-shadow: none;
 }
-
-input[name='name'],
-input[name='title'],
-input[name='contents'],
-input[name='etc'],
-.han{
-    ime-mode: active;
+@supports (-webkit-overflow-scrolling: touch){.form-control{font-size:16px;padding-top:6px;padding-bottom:6px;line-height:24px}#searchNoShow,#searchCustomer{font-size:16px}.dropdown-toggle:after{margin-top:10%}}
+.input-group-append .input-group-text{
+	border-width:0.05rem;
 }
 .icon-plus{
   font-size: 25px;
@@ -448,6 +449,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     padding-bottom:calc(14.28571428% - 2px);
     border-radius:50%;
 }
+#mainCalendarCalendar .flatpickr-day.today{
+	border-color:transparent;
+	text-decoration:underline;
+}
 #mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
     color:#1736ff;
 }
@@ -464,6 +469,9 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     box-shadow: none;
     color: initial;
     border-color: transparent;
+}
+.flatpickr-current-month input.cur-year{
+	padding:0;
 }
 #mainCalendarCarousel .mainCalendarWeek, #mainCalendarCalendar .mainCalendarCalendarMonth{
     display:flex;
@@ -1424,7 +1432,7 @@ button.form-control {
     min-height: calc(15vh);
     height:15vh;
     max-height: calc(100vh - 280px);
-    font-size: 14px;
+    font-size: 16px;
     border:none;
 }
 

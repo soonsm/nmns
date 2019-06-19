@@ -2600,6 +2600,8 @@
     
     $("#mainCalendarRange").on("touch click", function(){
       $("#mainCalendarCarousel, #mainCalendarCalendar").toggle();
+			NMNS.siema && NMNS.siema.resizeHandler();
+			NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();
       $("#mainCalendar").toggleClass('pushedDown');
       if($("#mainCalendarCalendar").is(":visible")){
         if(!$("#mainCalendarRangeInput1")[0]._flatpickr){
@@ -2818,7 +2820,11 @@
 				if($(this).data('type') !== 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
-					$("#mainContents,body").removeClass('bg-white');
+					if($(this).data("background") !== "white"){
+						$("#mainContents,body").removeClass('bg-white');	
+					}else{
+						$("#mainContents,body").addClass('bg-white');	
+					}
 				}else{
 				  $("#detailMenuTitle").html($(this).data('title')).show().prev().hide();
 			    $(".announcementMenuLink").hide().next().show();
@@ -2885,30 +2891,32 @@
         // })
         $("#searchNoShow").on("keyup", function(e){
           if(e.keyCode === 13 || e.which === 13){
-            if($(this).val().replace(/-/gi, '').length === 11 || $(this).val().replace(/-/gi, '').length === 10){
-              // switchMenu.apply(this, e);
-              if(!$(".calendarMenuLink").hasClass("menuLinkActive")){
-                $(".switchingMenu:not(.calendarMenu)").hide();
-                $("#mainRow").removeClass('fixedScroll');
-                $(".menuLinkActive").removeClass("menuLinkActive");
-                $(".calendarMenuLink").addClass("menuLinkActive");
-                // hide mainTask field
-                $("#mainTask").removeClass("show");
-              }
-              $(".calendarMenu").removeClass('fixedScroll');
-              $("#mainSearchNoShow").prev().hide().prev().hide();
-              $("#mainSearchNoShow").show();
-              document.scrollingElement.scrollTop = 0;
-              $("#mainAside").removeClass('sidebar-toggled');
-              if(location.pathname !== '/search'){
-                history.pushState({link:'calendarMenu', subLink:'search'}, "", 'search');
-              }
-              NMNS.socket.emit("get noshow", {contact:$(this).val(), mine:false});
-            }else{
-              showSnackBar("전화번호를 정확히 입력해주세요.");
-            }
+            $(this).prev().trigger('click');              
           }
-        })
+        }).prev().on("touch click", function(){
+					// switchMenu.apply(this, e);
+					if($(this).next().val().replace(/-/gi, '').length === 11 || $(this).next().val().replace(/-/gi, '').length === 10){
+						if(!$(".calendarMenuLink").hasClass("menuLinkActive")){
+							$(".switchingMenu:not(.calendarMenu)").hide();
+							$("#mainRow").removeClass('fixedScroll');
+							$(".menuLinkActive").removeClass("menuLinkActive");
+							$(".calendarMenuLink").addClass("menuLinkActive");
+							// hide mainTask field
+							$("#mainTask").removeClass("show");
+						}
+						$(".calendarMenu").removeClass('fixedScroll');
+						$("#mainSearchNoShow").prev().hide().prev().hide();
+						$("#mainSearchNoShow").show();
+						document.scrollingElement.scrollTop = 0;
+						$("#mainAside").removeClass('sidebar-toggled');
+						if(location.pathname !== '/search'){
+							history.pushState({link:'calendarMenu', subLink:'search'}, "", 'search');
+						}
+						NMNS.socket.emit("get noshow", {contact:$(this).next().val().replace(/-/gi, ''), mine:false});
+					}else{
+						showSnackBar("전화번호를 정확히 입력해주세요.");
+					}
+				})
         $(".calendarMenuLink").off("touch click").on("touch click", setSchedules);
         $("#searchNoShow").autocomplete({
             serviceUrl: "get customer info",

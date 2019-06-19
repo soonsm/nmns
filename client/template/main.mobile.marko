@@ -145,7 +145,7 @@
             <div class="menuLink menuDetailLink" data-link="menuDetailMenu" data-history="/menu/detail" data-type="detail" data-title="메뉴 상세"></div>
           </li>
           <div class="mt-auto" style="margin-bottom:20px">
-						<div class="menuLink storeLink" data-link="storeMenu" data-history="/store" aria-label="내 매장 정보">
+						<div class="menuLink storeLink" data-link="storeMenu" data-history="/store" data-background="white" aria-label="내 매장 정보">
 							<span>
 							  <div id="mainShopCapital" class="rounded-circle" style="line-height:35px;display:inline-block;vertical-align:middle;background-color:#f1f2f3;text-align:center;color:rgba(57,53,53,0.7)"><if(input.user.shopName)>${input.user.shopName.substring(0,1)}</if><else>${input.user.email.substring(0,1)}</else></div>
 								<img id="mainShopIcon" src="" class="rounded-circle d-none">
@@ -155,8 +155,8 @@
 						</div>
 						<hr style="border-top:1px solid rgba(255, 255, 255, 0.35)">
 						<div style="font-size:14px;opacity:0.7;display:flex">
-							<div class="menuLink alrimLink" data-link="alrimMenu" data-history="/alrim" aria-label="알림톡 정보">알림톡 정보</div>
-							<div class="mx-auto menuLink userLink" data-link="userMenu" data-history="/user" aria-label="내 계정 정보">계정 정보</div>
+							<div class="menuLink alrimLink" data-link="alrimMenu" data-history="/alrim" data-background="white" aria-label="알림톡 정보">알림톡 정보</div>
+							<div class="mx-auto menuLink userLink" data-link="userMenu" data-history="/user" data-background="white" aria-label="내 계정 정보">계정 정보</div>
 							<a href="/signout" style="color:#fff">로그아웃</a>
 						</div>
 					</div>
@@ -195,7 +195,7 @@
                   </g>
                 </svg></span>
               </label>
-              <input type="text" class="border-0 col bg-transparent pr-0 montserrat inputmask-mobile" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="/search" id="searchNoShow" style="max-width:calc(100% - 24px)">
+              <input type="tel" class="border-0 col bg-transparent pr-0 montserrat inputmask-mobile" placeholder="고객연락처로 노쇼이력을 찾아보세요." aria-label="고객연락처로 노쇼이력을 찾아보세요." data-link="noShowSearchMenu" data-history="/search" id="searchNoShow" style="max-width:calc(100% - 24px)">
             </div>
           </div>
           <div class="menuTitle" style="display:flex">
@@ -354,7 +354,8 @@
           </div>
           <div class="menuContents">
             <div id="feedback">
-              <textarea id="feedbackBody" placeholder="왓쇼를 이용하면서 불편하거나 바라는 점이 있으신가요?\n원하는 점을 적어주시면 최대한 빨리 확인하여 이메일로 답변드릴게요!" class="han col-12" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>  
+              <textarea id="feedbackBody" placeholder="왓쇼를 이용하면서 불편하거나 바라는 점이 있으신가요?\n
+원하는 점을 적어주시면 최대한 빨리 확인하여 이메일로 답변드릴게요!" class="han col-12" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>  
             </div>
             <div class="text-center" style="margin: 20px 0 49px 0">
               <button id="submitFeedback" type="button" class="btn btn-primary">문의 보내기</button>
@@ -614,7 +615,7 @@
                   <input type="text" class="form-control form-control-sm col" id="alrimHistoryTarget" placeholder="고객 이름 또는 연락처를 검색하세요." autocomplete="false">
                   <button type="button" id="alrimHistorySearch" class="btn btn-sm btn-primary shadow-none ml-1">검색</button>
                 </div>
-                <div class="d-flex col-12 justify-center" style="margin:20px 0 10px 0;padding:15px 0;border-bottom:1px solid #707070">
+                <div class="d-flex col-12 justify-center" style="margin:20px 0 10px 0;padding:15px 0;border-bottom:1px solid rgba(57, 53, 53, 0.2)">
                   <div class="col-4 pl-0 text-center" style="padding-left:25px">날짜</div>
                   <div class="col-3 px-0 text-center">고객이름</div>
                   <div class="col-4 px-0 text-center">연락처</div>
