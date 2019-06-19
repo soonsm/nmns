@@ -1367,7 +1367,7 @@
           }
       
           title = $('#scheduleName').val();
-          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {menuId:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): undefined), value:this.value}}).toArray());
+          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
@@ -1428,6 +1428,7 @@
                   });
               }
               NMNS.socket.emit("update reserv", { //서버로 요청
+									email:NMNS.email,
                   id: origin.id,
                   manager: calendarId,
                   name: title,
@@ -1475,6 +1476,7 @@
                   type:'T'
               });
               NMNS.socket.emit("add reserv", {
+									email: NMNS.email,
                   id: id,
                   manager: calendarId,
                   name: title,
