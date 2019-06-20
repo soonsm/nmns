@@ -411,7 +411,7 @@ exports.addReservation = async function (data) {
                 etc: data.etc,
                 managerId: data.manager
             });
-            data.manager = memberId;
+            data.member = memberId;
         }
         if (data.contents) {
             let array = JSON.parse(data.contents);
