@@ -824,6 +824,7 @@ button:focus {
 
 #infoForm {
     font-size: .9rem;
+	margin-top:20px;
 }
 
 #infoForm #infoManagerList .infoManagerItem label {
