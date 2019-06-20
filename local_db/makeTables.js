@@ -6,8 +6,8 @@ var moment = require('moment');
 //     region: "ap-northeast-2"
 // });
 AWS.config.update({
-    region: "eu-west-2",
-    endpoint: "http://localhost:8000"
+        region: "ap-northeast-2",
+        endpoint: "http://localhost:8000"
 });
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
@@ -20,7 +20,7 @@ let create = function(params){
         }
     });
 };
-/*
+
 (async function(){
     var params = {
         TableName : "SessionTable",
@@ -310,7 +310,7 @@ let create = function(params){
     };
     create(params);
 })();
-*/
+
 (async function(){
     dynamodb.deleteTable({
         TableName : "Notice"

@@ -9,7 +9,7 @@ exports.getToday = function(){
 exports.phoneNumberValidation = function(phone){
     const phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
     return phoneRex.test(phone);
-}
+};
 
 exports.passwordStrengthCheck = function(pwd){
 
@@ -56,7 +56,11 @@ exports.formatPhone = function(phone){
 };
 
 exports.sha512 = function(plain){
-    return require('sha512')(plain).toString('hex');
+	try{
+    	return require('js-sha512')(plain);
+	}catch(e){
+		console.log(e);
+	}
 }
 
 

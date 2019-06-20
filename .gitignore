@@ -16,4 +16,5 @@ bin/addMemberId.js
 goorm.manifest
 bin/logs/*
 run.sh
-
+uploads/*
+*.swp

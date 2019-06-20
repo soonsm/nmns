@@ -3,7 +3,7 @@
   $("#mainContents").append('<div id="customerDetailMenu" class="switchingMenu customerDetailMenu">\
     <div class="d-flex horizontalTab">\
       <div class="row col-12">\
-        <ul id="customerTabList" class="nav nav-pills nowrap" role="tabList" style="display:inline-flex !important;height:47px;padding-right:20px">\
+        <ul id="customerTabList" class="nav nav-pills nowrap" role="tabList" style="display:inline-flex !important;height:51px;padding-right:20px">\
           <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0 active" href="#customerInfo" data-toggle="tab" aria-selected="true" aria-label="고객 정보">고객 정보</a></li>\
           <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerSchedule" data-toggle="tab" aria-label="예약 내역">예약 내역</a></li>\
           <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerAlrim" data-toggle="tab" aria-label="알림톡 내역">알림톡 내역</a></li>\

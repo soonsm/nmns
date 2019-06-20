@@ -535,7 +535,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 }
 
 .monthlyDetailPopupTime{
-  font-size:10px;
+  font-size:11px;
   word-break:break-all;
   cursor:pointer;
 }
@@ -745,7 +745,7 @@ body.overflow-y-hidden #mainCalendarWrapper{
 }
 
 .tui-full-calendar-time-schedule-contact{
-    font-size:10px;
+    font-size:11px;
 }
 
 button.calendarType {
@@ -1771,6 +1771,10 @@ button.form-control {
 .nav-pills .nav-link{
     font-size:18px;
     opacity:0.35;
+	padding-left:0;
+	padding-right:0;
+	margin-left:15px;
+	margin-right:15px;
 }
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     color: inherit;

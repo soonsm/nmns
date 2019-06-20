@@ -1264,7 +1264,7 @@
             if ($('#scheduleContact').val().replace(/-/gi, '').length > 9 || $('#scheduleName').val() !== '') {
                 NMNS.socket.emit('get customer', {
                     name: $('#scheduleName').val(),
-                    contact: $('#scheduleContact').val().val().replace(/-/gi, '')
+                    contact: $('#scheduleContact').val().replace(/-/gi, '')
                 });
             }
         }
@@ -1379,7 +1379,7 @@
           }
       
           title = $('#scheduleName').val();
-          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {menuId:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): undefined), value:this.value}}).toArray());
+          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
@@ -1440,6 +1440,7 @@
                   });
               }
               NMNS.socket.emit("update reserv", { //서버로 요청
+									email: NMNS.email,
                   id: origin.id,
                   manager: calendarId,
                   name: title,
@@ -1486,6 +1487,7 @@
                   manager: calendarId
               });
               NMNS.socket.emit("add reserv", {
+									email: NMNS.email,
                   id: id,
                   manager: calendarId,
                   name: title,
@@ -1684,6 +1686,7 @@
                   type:'T'
               });
               NMNS.socket.emit("add reserv", {
+									email: NMNS.email,
                   id: id,
                   manager: $("#taskManager").data("calendar-id"),
                   name: $("#taskName").val(),
@@ -2489,7 +2492,9 @@
       }));
     }).on('shown.bs.popover', function(){
       $('#notificationBody').parents('.popover').find('.close-button').on('touch click', function(){
-        $(this).parents('.popover').popover('hide')
+        $(this).parents('.popover').popover('hide');
+				$(document.body).removeClass('modal-open');
+				$(".modal-backdrop.show").remove();
       })
       $('#notificationBody, #announcementArea').off('scroll').on('scroll', debounce(function(){
           var distance = Math.max(0, $(this)[0].scrollHeight - $(this).scrollTop() - $(this).innerHeight());
@@ -2991,7 +2996,7 @@
               <div class="col px-0">\
                 <div id="notificationArea" class="col px-0 ml-2">\
                   <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(57, 53, 53, 0.2)">\
-                    <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer">&times;</span></div>\
+                    <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13"><g id="x" transform="translate(0.5 0.5)"><path id="Path" d="M12,0,0,12" fill="none" stroke="#393535" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/><path id="Path-2" data-name="Path" d="M0,0,12,12" fill="none" stroke="#393535" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/></g></svg></span></div>\
                   <div id="notificationBody"><div class="flex-column m-auto text-center py-5"><div class="bouncingLoader"><div></div><div></div><div></div></div><span>새로운 알림을 불러오는 중입니다...</span></div></div>\
                   <div id="notificationEmpty">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div>\
                 </div>\

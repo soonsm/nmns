@@ -698,7 +698,7 @@
                 that.scroll.update();
             }else{
                 container.html(html);
-                if(PerfectScrollbar) {
+                if(typeof PerfectScrollbar !== 'undefined') {
                     that.scroll = new PerfectScrollbar(that.suggestionsContainer);
                 }
             }

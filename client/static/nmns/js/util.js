@@ -245,7 +245,7 @@ function showSnackBar(innerHtml) {
     } else if (x.classList.contains("show")) {
         snackbar.push(innerHtml);
     }
-    x.innerHTML = ("<div>"+innerHtml +"</div>"+ "<div class='close'>&times;</div>");
+    x.innerHTML = ("<div>"+innerHtml +"</div>"+ '<div class="close"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13"><g id="x" transform="translate(0.5 0.5)"><path id="Path" d="M12,0,0,12" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/><path id="Path-2" data-name="Path" d="M0,0,12,12" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/></g></svg></div>');
     x.classList.add("show");
 		var event = setTimeout(function() {
         x.classList.remove("show");

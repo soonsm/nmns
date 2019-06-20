@@ -38,6 +38,7 @@
   $("#updateMenuLink").on("touch click", function(){
     $(".menuRow .updatingMenu-collapsed").toggleClass('d-none').toggleClass('d-block');
     $(".updatingMenu-expanded").toggle();
+		$(".menuTitle .updatingMenu-collapsed").toggle();
     $("#mainMenuTools .updatingMenu-collapsed").toggleClass('d-inline-flex');
     if($(".updatingMenu-collapsed").is(":visible")){
       if($("#mainMenuList").data('sortable')){
