@@ -19,33 +19,35 @@ function scan(params) {
     }));
 }
 
-// (async function(){
-//     let users = await scan({
-//         TableName: 'WebSecheduler'
-//     });
-//     let i=0;
-//     for (; i < users.length; i++) {
-//         let user = users[i];
-//         if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
-//             let visitLog = user.visitLog;
-//             let lastVisit = visitLog[visitLog.length - 1];
-//             let rLength = user.reservationList.length;
-//
-//             if((lastVisit > '20190401' && rLength > 0) || rLength > 50){
-//                 console.log(`${user.email} ${lastVisit} ${rLength}`);
-//             }
-//
-//         }
-//         // if(user.memberList){
-//         //     user.memberList.forEach(member => {
-//         //         if(member.etc){
-//         //             console.log(member.etc);
-//         //         }
-//         //     });
-//         // }
-//     }
-//     console.log(`total count is ${i}`);
-// })();
+(async function(){
+    let users = await scan({
+        TableName: 'WebSecheduler'
+    });
+    let i=0;
+    for (; i < users.length; i++) {
+        let user = users[i];
+        // if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
+        //     let visitLog = user.visitLog;
+        //     let lastVisit = visitLog[visitLog.length - 1];
+        //     let rLength = user.reservationList.length;
+        //
+        //     if((lastVisit > '20190401' && rLength > 0) || rLength > 50){
+        //         console.log(`${user.email} ${lastVisit} ${rLength}`);
+        //     }
+        //
+        // }
+
+
+        let sizeof = require('object-sizeof');
+        let size = sizeof(user)/1000;
+        if(size > 100){
+            console.log(`${user.email} size: ${size}`);
+        }
+
+
+    }
+    console.log(`total count is ${i}`);
+})();
 
 // (async function(){
 //     let users = await scan({

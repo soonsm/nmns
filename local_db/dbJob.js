@@ -16,7 +16,7 @@ function query(params) {
                 console.log("Unable to query. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                console.log("Query succeeded. Data:", data.Items);
+                // console.log("Query succeeded. Data:", data.Items);
                 resolve(data.Items);
             }
         });
@@ -43,7 +43,7 @@ function update(params) {
                 console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
                 resolve(false);
             } else {
-                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                // console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
                 resolve(true);
             }
         });
@@ -94,7 +94,7 @@ let createTable = async function(){
 })();
 */
 
-/*
+
 let getWebUser = async function (email) {
     let items = await query({
         TableName: 'WebSecheduler',
@@ -133,17 +133,48 @@ let updateWebUser = async function (email, properties) {
 
     return await update(params);
 };
+
 (async function(){
-    let user = await getWebUser('kimnari405@naver.com');
+    // let user = await getWebUser('kimnari405@naver.com');
+    let user = await getWebUser('simbbo89@naver.com');
+/*
+    let newCancelList = [];
+    let cancelList = user.cancelAlrimTalkList;
+    for(let item of cancelList){
+        if(item.sendDate > '20190601000000'){
+            newCancelList.push(item);
+        }
+    }
+    await updateWebUser(user.email, {cancelAlrimTalkList: newCancelList});
 
-    user.reservationConfirmAlrimTalkList.splice(0,110);
+    let newConfirmList = [];
+    let confirmList = user.reservationConfirmAlrimTalkList;
+    for(let item of confirmList){
+        if(item.sendDate > '20190601000000'){
+            newConfirmList.push(item);
+        }
+    }
+    await updateWebUser(user.email, {reservationConfirmAlrimTalkList: newConfirmList});
 
-    await updateWebUser(user.email, {reservationConfirmAlrimTalkList: user.reservationConfirmAlrimTalkList});
-})();*/
+    let newReservationList = [];
+    let reservationList = user.reservationList;
+    for(let item of reservationList){
+        if(item.start > '201902010000'){
+            newReservationList.push(item);
+        }
+    }
+    await updateWebUser(user.email, {reservationList: newReservationList});
+*/
+    let sizeof = require('object-sizeof');
+    console.log(`${user.email} size: ${sizeof(user)/1000}`);
+    for(let x in user){
+        console.log(`${x}: ${sizeof(user[x])/1000}`);
+    }
+})();
 
 
 //simbbo89@naver.com 만촌점
-
+/*
 (async function(){
     let users = await scan({
         TableName: 'WebSecheduler'
@@ -161,3 +192,4 @@ let updateWebUser = async function (email, properties) {
         }
     }
 })();
+*/
