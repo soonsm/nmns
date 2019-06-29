@@ -91,7 +91,7 @@ exports.getShop = async function () {
 };
 
 
-let upload = function(fileName, data){
+let upload = function(fileName, data, type){
     let baseUrl = 'https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/';
     return new Promise((resolve) => {
         if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
@@ -137,7 +137,7 @@ exports.uploadLogo = async function(data){
         let type = fileType(data); // ext, mime
         let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+ '.' + type.ext;
 
-        let logoUrl = await upload(fileName, data);
+        let logoUrl = await upload(fileName, data, type);
         if(!logoUrl){
             throw '이미지 등록 실패';
         }
