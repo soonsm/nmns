@@ -75,7 +75,7 @@
         Task: 'Task',
         Sales: 'Sales',
         Point: 'Point',
-        Notice: 'Notice'
+        Notice: 'NoticeNew'
     }
 
     o.MODE = {

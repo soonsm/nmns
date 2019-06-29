@@ -208,7 +208,7 @@ function del(param) {
  * timestamp: Range Key, YYYYMMDDHHmmssSSS
  * date: YYYYMMDD, 노쇼한 날짜
  * email
- * noShowCase
+ * date
  * id: NoShowId 테이블의 Partition Key
  * name
  *

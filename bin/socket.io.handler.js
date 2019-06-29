@@ -33,6 +33,7 @@ const GetManagerList = 'get manager',
     UpdateManager = 'update manager',
     DelManager = 'delete manager';
 const GetShop = 'get info',
+    UploadLogo = 'upload logo',
     UpdateShop = 'update info',
     UpdatePwd = 'update password',
     GetAnnouncement = 'get announcement',
@@ -203,6 +204,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
          * Shop & Account
          */
         addEvent(UpdatePwd, accountHandler.updatePwd);
+        addEvent(UploadLogo, accountHandler.uploadLogo);
         addEvent(GetShop, accountHandler.getShop);
         addEvent(UpdateShop, accountHandler.updateShop);
         addEvent(LinkSns, accountHandler.linkSns);

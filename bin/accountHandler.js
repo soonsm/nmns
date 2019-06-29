@@ -1,9 +1,16 @@
 'use strict';
 
 const db = require('./webDb');
+const newDb = require('./newDb');
 const moment = require('moment');
 const util = require('./util');
 const emailValidator = require('email-validator');
+const AWS = require('aws-sdk');
+AWS.config.update({
+    region: "ap-northeast-2",
+    endpoint: null
+});
+const fs = require('fs');
 
 exports.updatePwd = async function (data) {
     let status = true,
@@ -59,17 +66,21 @@ exports.getShop = async function () {
         if(resultData.isFirstVisit){
             await db.updateWebUser(this.email, {isFirstVisit: false});
         }
-        let noticeList = await db.getNoticeList() || [];
         let user = await db.getWebUser(this.email);
 
-        let redNoticeList = user.redNoticeList || [];
-        let newNoticeCnt = 0;
-        for(let i=0;i<noticeList.length; i++){
-            if(!redNoticeList.includes(noticeList[i].id)){
-                newNoticeCnt++;
+        let lastRedNoticeId = user.lastRedNoticeId || 0;
+        let notices = await newDb.getNotice(1, 1000);
+        notices = notices.filter(notice => notice.email === 'notice' && notice.id > lastRedNoticeId) || [];
+
+        resultData.newAnnouncement = notices.length;
+
+        if(user.logoFileName){
+            let baseUrl = 'https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/';
+            if (process.env.NODE_ENV != process.nmns.MODE.PRODUCTION) {
+                baseUrl = '/'
             }
+            resultData.logo = baseUrl + user.logoFileName;
         }
-        resultData.newAnnouncement = newNoticeCnt;
     }
 
     return {
@@ -78,6 +89,77 @@ exports.getShop = async function () {
         message: message
     };
 };
+
+
+let upload = function(fileName, data){
+    let baseUrl = 'https://s3.ap-northeast-2.amazonaws.com/file.washow.co.kr/';
+    return new Promise((resolve) => {
+        if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
+            let s3 = new AWS.S3({apiVersion: '2006-03-01'});
+            let params = {
+                Bucket: "file.washow.co.kr",
+                Key: fileName,
+                ACL: 'public-read-write',
+                Body: data,
+                ContentType: type.mime
+            };
+            s3.upload(params, function(err, data) {
+                if(!err){
+                    resolve(baseUrl + fileName);
+                }else{
+                    resolve(false);
+                }
+            });
+        }else{
+            baseUrl = '/'
+            fs.writeFile('uploads/'+fileName, data, function(err){
+                if(!err){
+                    resolve(baseUrl + fileName);
+                }else{
+                    resolve(false);
+                }
+            });
+        }
+    });
+}
+/**
+ * 로고 파일 업로드
+ * 요청 위치 : "upload logo", 데이터 : javascript file object
+ * 응답 형식 : "data":{logo:${로고파일 경로, string}}
+ */
+exports.uploadLogo = async function(data){
+    let status = false, resultData = {}, message;
+    let email = this.email;
+
+    try{
+        const fileType = require('file-type');
+
+        let type = fileType(data); // ext, mime
+        let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+ '.' + type.ext;
+
+        let logoUrl = await upload(fileName, data);
+        if(!logoUrl){
+            throw '이미지 등록 실패';
+        }
+
+        resultData.logo = logoUrl;
+
+        let user = await db.getWebUser(email);
+        user.logoFileName = fileName;
+
+        await db.updateWebUser(email, {logoFileName: fileName});
+        status = true;
+    }catch(e){
+        status = false;
+        message = e;
+    }
+
+    return {
+        status: status,
+        data: resultData,
+        message: message
+    };
+}
 
 exports.updateShop = async function (params) {
     let status = true,
@@ -94,6 +176,9 @@ exports.updateShop = async function (params) {
         if (params.hasOwnProperty(property)) {
             data[property] = params[property];
         }
+    }
+    if(params.logo === null){
+        data.logoFileName = null;
     }
     let user = await db.getWebUser(this.email);
     if (!user) {

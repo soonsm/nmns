@@ -310,7 +310,7 @@ let create = function(params){
     };
     create(params);
 })();
-
+/*
 (async function(){
     dynamodb.deleteTable({
         TableName : "Notice"
@@ -321,10 +321,10 @@ let create = function(params){
             console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
         }
     });
-})();
+})();*/
 (async function(){
     var params = {
-        TableName : "Notice",
+        TableName : "NoticeNew",
         KeySchema: [
             { AttributeName: "email", KeyType: "HASH"},
             { AttributeName: "id", KeyType: "RANGE"},
@@ -344,7 +344,7 @@ let create = function(params){
 (async function(){
     for(let i=0; i< 20; i++){
         docClient.put({
-            TableName: 'Notice',
+            TableName: 'NoticeNew',
             Item: {
                 email: 'notice',
                 id: moment().add(i,'days').format('YYYYMMDDHHmmssSSS'),

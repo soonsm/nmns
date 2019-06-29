@@ -142,7 +142,6 @@ module.exports = function (passport) {
      * 그 외 에러: 나도 몰라, 근데 {message: 블라블라} 이런 형태로 리턴이 올 것임
      */
     router.post("/signin", function (req, res) {
-        logger.log(req.body);
         let email = req.body.email;
         res.cookie('email', email);
         passport.authenticate('local', (err, user, info) => {
@@ -549,6 +548,7 @@ module.exports = function (passport) {
     let upload = multer({
         storage: storage, limits: {fileSize: 5 * 1024 * 1024}
     }).single('logo');
+
 
     /**
      * 회원가입 요청 처리
