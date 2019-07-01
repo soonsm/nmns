@@ -824,6 +824,7 @@
       if(NMNS.info.logo){
         $("#addLogo").text("삭제").prev().val(NMNS.info.logo.substring(NMNS.info.logo.lastIndexOf("/")+1));
       }
+			$("#infoLogo").data("done", null).data("deleted", null);
     }
 
     function initNoShowModal() {
@@ -2023,7 +2024,12 @@
 
     NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function() {
         showSnackBar("<span>정상적으로 매장 정보를 변경하였습니다.</span>");
+			var history = NMNS.history.find(function(item) { return item.id === "info" });
         NMNS.history.remove("info", findById);
+			if(history.logo){
+				$("#infoLogo").data("done", true);
+				NMNS.info.logo = undefined;
+			}
 			$("#infoModal").modal('hide');
     }, function(e) {
         var history = NMNS.history.find(function(item) { return item.id === "info" });
@@ -2045,6 +2051,7 @@
     NMNS.socket.on("upload logo", socketResponse("로고이미지 등록하기", function(e){
       changeMainShopLogo(true, e.data.logo);
 			showSnackBar("<span>이미지를 등록하였습니다.</span>");
+			NMNS.info.logo = e.data.logo;
 			$("#infoLogo").data("done", true);
 			$("#infoModal").modal('hide');
     }));
@@ -2320,13 +2327,13 @@
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
         }
-        if (!changed && !$("#infoLogo").data('done') && ((NMNS.info.logo && $("#infoLogo").data('deleted')) || document.getElementById('infoLogo').files[0])){
+        if (!changed && (!$("#infoLogo").data('done') && ((NMNS.info.logo && $("#infoLogo").data('deleted')) || document.getElementById('infoLogo').files[0]))){
           changed = true;
         }
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
-			$("#infoLogo").data("done", false);
+			$("#infoLogo").data("done", false).data('deleted', null);
     }).one('show.bs.modal', function(){
       $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
       $("#addLogo").on("touch click", function(e){
