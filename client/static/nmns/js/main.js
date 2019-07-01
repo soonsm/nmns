@@ -789,13 +789,19 @@
           diff = true;
         }
         
+				if(logo){
+					var fileReader = new FileReader();
+					fileReader.loadend = function(){};
+					fileReader.onload=function(e){
+						NMNS.socket.emit("upload logo", {fileData:e.target.result, fileName:document.getElementById('infoLogo').files[0].name});
+					};
+          fileReader.readAsArrayBuffer(document.getElementById('infoLogo').files[0]);
+        }
         if (diff) {
             NMNS.history.push(history);
-            NMNS.socket.emit("update info", parameters);
+					  NMNS.socket.emit("update info", parameters);
         } 
-        if(logo){
-          NMNS.socket.emit("upload logo", document.getElementById('infoLogo').files[0]);
-        } 
+        
         if( !diff && !logo ) {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
@@ -812,6 +818,9 @@
       $("#infoBizType").val(NMNS.info.bizType);
       $("#infoBizBeginTime").val(NMNS.info.bizBeginTime);
       $("#infoBizEndTime").val(NMNS.info.bizEndTime);
+			if($("#addLogo").text() === '삭제'){
+				$("#addLogo").trigger("click");
+			}
       if(NMNS.info.logo){
         $("#addLogo").text("삭제").prev().val(NMNS.info.logo.substring(NMNS.info.logo.lastIndexOf("/")+1));
       }
@@ -2015,6 +2024,7 @@
     NMNS.socket.on("update info", socketResponse("매장 정보 변경하기", function() {
         showSnackBar("<span>정상적으로 매장 정보를 변경하였습니다.</span>");
         NMNS.history.remove("info", findById);
+			$("#infoModal").modal('hide');
     }, function(e) {
         var history = NMNS.history.find(function(item) { return item.id === "info" });
         if (history.bizBeginTime || history.bizEndTime) {
@@ -2032,8 +2042,11 @@
         NMNS.initedInfoModal = false;
     }));
     
-    NMNS.socket.on("upload logo", socketResponse("매장 이미지 등록하기", function(e){
+    NMNS.socket.on("upload logo", socketResponse("로고이미지 등록하기", function(e){
       changeMainShopLogo(true, e.data.logo);
+			showSnackBar("<span>이미지를 등록하였습니다.</span>");
+			$("#infoLogo").data("done", true);
+			$("#infoModal").modal('hide');
     }));
 
     NMNS.socket.on("update alrim", socketResponse("알림톡 정보 변경하기", function() {
@@ -2307,12 +2320,13 @@
         if (!changed && $("#infoBizType").val() !== (NMNS.info.bizType || "")) {
             changed = true;
         }
-        if (!changed && ((NMNS.info.logo && $("#infoLogo").data('deleted')) || document.getElementById('infoLogo').files[0])){
+        if (!changed && !$("#infoLogo").data('done') && ((NMNS.info.logo && $("#infoLogo").data('deleted')) || document.getElementById('infoLogo').files[0])){
           changed = true;
         }
         if (changed && !confirm("저장되지 않은 변경내역이 있습니다. 창을 닫으시겠어요?")) {
             return false;
         }
+			$("#infoLogo").data("done", false);
     }).one('show.bs.modal', function(){
       $("#infoBtn").off("touch click").on("touch click", submitInfoModal);
       $("#addLogo").on("touch click", function(e){

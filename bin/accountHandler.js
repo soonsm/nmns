@@ -134,7 +134,8 @@ exports.uploadLogo = async function(data){
     try{
         const fileType = require('file-type');
 
-        let type = fileType(data); // ext, mime
+        let type = fileType(data.fileData); // ext, mime
+				//file name : data.fileName
         let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+ '.' + type.ext;
 
         let logoUrl = await upload(fileName, data, type);
