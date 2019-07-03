@@ -20,7 +20,7 @@
             <div>고객 이름</div>\
             <input type="text" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 이름을 입력해주세요." style="margin-bottom:35px">\
             <div>고객 연락처</div>\
-            <input type="text" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
+            <input type="tel" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
             <div>담당자</div>\
             <div class="col-12 px-0" style="margin-bottom:35px">\
               <button id="customerManager" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm dropdown-toggle btn-flat form-control form-control-sm text-left mt-3" aria-label="담당자">\

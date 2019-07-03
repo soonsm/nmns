@@ -25,7 +25,7 @@
                   <div>고객 이름</div>\
                   <input type="text" class="form-control form-control-sm mt-3" id="customerName" placeholder="고객 이름을 입력해주세요." style="margin-bottom:35px">\
                   <div>고객 연락처</div>\
-                  <input type="text" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
+                  <input type="tel" class="form-control form-control-sm mt-3 montserrat" id="customerContact" placeholder="고객 연락처를 입력해주세요." style="margin-bottom:35px">\
                   <div class="col-6 px-0">담당자</div><div class="col-6 pl-1">고객메모</div>\
                 </div>\
                 <div class="d-flex" style="margin-bottom:35px">\
@@ -136,7 +136,7 @@
           + '<div class="col-3 montserrat">' + moment(item.date, 'YYYYMMDD').format('YYYY. MM. DD')
           + '</div><div class="col-4" title="'+item.item+'">' + item.item
           + '</div><div class="col-5 px-0 d-flex"><div class="col-6 px-0 montserrat">' + ((item.type === 'MEMBERSHIP_INCREMENT' || item.type === 'MEMBERSHIP_ADD')? '+ ' : '- ') + ((item.membershipChange || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
-          + '</div><div class="col-6 px-0 montserrat">' + ((item.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+          + '</div><div class="col-6 px-0 montserrat balanceMembership">' + ((item.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
           + '</div></div></div>';
     }
     return html;
@@ -149,6 +149,7 @@
     if(memberships && refresh){//from 0 to current customer count
       $("#customerMembershipLoading").hide();
       list.children().remove();
+			current = 0;
       if (memberships.length > 0) {
           goalIndex = Math.min(current === 0? current + Math.max(20, (5 + Math.ceil(list.height() / 48) - list.find(".customerMembership").length)) : current, memberships.length);
           html = generateCustomerMembershipRow(0, goalIndex);
@@ -651,9 +652,9 @@
           showSnackBar('조절할 금액을 0보다 크게 입력해주세요.');
           return;
         }
+				$("#customerMembershipList").data('item').splice(0, 0, input);
+				drawCustomerMembershipList(true);
         NMNS.socket.emit('add membership', input);
-        $("#customerMembershipList").data('item').splice(0, 0, input);
-        drawCustomerMembershipList(true);
       });
       $("#addCustomerMembershipSales").on("touch click", function(){
         if($("#customerMembershipChange").val().replace(/,/gi,'') === '' || !($("#customerMembershipChange").val().replace(/,/gi, '') * 1)){
