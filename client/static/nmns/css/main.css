@@ -1782,7 +1782,9 @@ button.form-control {
     border-bottom: 3px solid #393535;
     opacity:1;
 }
-
+#scheduleModal #scheduleTabContents input{
+	z-index:2000;
+}
 #scheduleModal #scheduleTabContents input:not(:last-child){
     margin-bottom:10px;
 }

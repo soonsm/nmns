@@ -2789,7 +2789,8 @@
         }
       });
     }
-    $(".addManager").on("touch click", function() {
+    $(".addManager").on("touch click", function(e) {
+			e.preventDefault();
 			if($("#mainAside").hasClass('sidebar-toggled')){
 				$("#mainAside").removeClass('sidebar-toggled');
 				setTimeout(function(){
