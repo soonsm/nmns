@@ -18,8 +18,6 @@ const logger = global.nmns.LOGGER;
 const pcMainView = require('../client/template/main');
 const mobileMainView = require('../client/template/main.mobile');
 const indexView = require('../client/template/index');
-const signinView = require('../client/template/signin');
-const signupView = require('../client/template/signup');
 const cancelView = require('../client/template/reservationCancel');
 const naverView = require('../client/template/naver');
 
@@ -69,7 +67,7 @@ module.exports = function (passport) {
                     logoUrl: logoUrl
                 });
             } else {
-                render(res, signupView, {
+                render(res, indexView, {
                     email: user.email,
                     authRequired: true
                 });
@@ -91,7 +89,7 @@ module.exports = function (passport) {
                 //로그인 되있으면 main으로 이동
                 res.redirect("/");
             } else {
-                render(res, signupView, {
+                render(res, indexView, {
                     email: user.email,
                     authRequired: true
                 });
@@ -109,6 +107,7 @@ module.exports = function (passport) {
     /**
      * Login page
      */
+	/*
     router.get('/signin', async function (req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
@@ -116,19 +115,19 @@ module.exports = function (passport) {
                 //로그인 되있으면 main으로 이동
                 res.redirect("/");
             } else {
-                render(res, signupView, {
+                render(res, indexView, {
                     email: user.email,
                     authRequired: true
                 });
             }
         } else {
-            render(res, signinView, {
+            render(res, indexView, {
                 email: req.cookies.email,
                 message: req.session.errorMessage,
                 kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
             });
         }
-    });
+    });*/
 
     /**
      * 로그인 요청 json format
@@ -187,7 +186,7 @@ module.exports = function (passport) {
         render(res, naverView);
     });
 
-
+/*
     router.get('/index.amp', async function (req, res) {
         if (req.user) {
             let user = await db.getWebUser(req.user.email);
@@ -195,7 +194,7 @@ module.exports = function (passport) {
                 //로그인 되있으면 main으로 이동
                 res.redirect("/");
             } else {
-                render(res, signupView, {
+                render(res, indexView, {
                     email: user.email,
                     authRequired: true
                 });
@@ -208,12 +207,12 @@ module.exports = function (passport) {
             });
             // return res.sendFile(path.join(__dirname, '../client/template/index.amp.html'))
         }
-    });
+    });*/
 
     /**
      * Sign Up Page
      */
-    router.get('/signup', async function (req, res) {
+    /*router.get('/signup', async function (req, res) {
         if (req.user) {
             //로그인 되있으면 main으로 이동
             res.redirect("/");
@@ -233,7 +232,7 @@ module.exports = function (passport) {
                 authRequired: false
             });
         }
-    });
+    });*/
 
     let sendResponse = function (res, status, errorMessage) {
         res.status(200).json({
@@ -271,7 +270,7 @@ module.exports = function (passport) {
 
             let snsLink = await db.getSnsLink(snsLinkId);
             if (!snsLink) {
-                render(res, signupView, {
+                render(res, indexView, {
                     snsType: snsType,
                     snsLinkId: snsLinkId,
                     snsEmail: snsEmail
@@ -279,7 +278,7 @@ module.exports = function (passport) {
             } else {
                 let user = await db.getWebUser(snsLink.email);
                 if (!user) {
-                    render(res, signupView, {
+                    render(res, indexView, {
                         snsType: snsType,
                         snsLinkId: snsLinkId,
                         snsEmail: snsEmail
