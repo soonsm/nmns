@@ -31,13 +31,13 @@
   <!-- Custom styles for this template -->
   <link href="/nmns/css/main.min.css" rel="stylesheet">
   <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="prefetch" as="font" onload="this.rel='stylesheet'">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="stylesheet">
 
   <link href="${input.cdn}/lib/perfect-scrollbar/perfect-scrollbar.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous" />
   <!--fonts-->
   <style>
-    @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}html{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat'}
+    @font-face {font-family:"Spoqa Han Sans";font-weight:700;src: local('Spoqa Han Sans Bold'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Bold.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Bold.ttf") format('truetype')}@font-face {font-family:"Spoqa Han Sans";font-weight:400;src: local('Spoqa Han Sans Regular'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff2") format('woff2'),url("/lib/fonts/Spoqa-Han-Sans-Regular.woff") format('woff'),url("/lib/fonts/Spoqa-Han-Sans-Regular.ttf") format('truetype')}html{font-family:'Spoqa Han Sans';color:#393535}.montserrat{font-family:'Montserrat', 'Spoqa Han Sans'}
   </style>
   
 <!--[if lte IE 8]>
@@ -768,10 +768,10 @@
           <div class="modal-content">
             <div class="modal-header p-0">
               <div class="row mx-0 col-12" style="padding:25px 30px 0 30px">
-                <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="height:47px;">
-                  <li class="nav-item d-inline-flex"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
-                  <li class="nav-item createScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>
-                  <li class="nav-item updateScheduleElement"><a class="nav-link pt-0 rounded-0" href="#" data-target="#salesTab" data-toggle="tab" aria-label="매출 입력">매출 입력</a></li>
+                <ul id="scheduleTabList" class="nav nav-pills" role="tabList" style="height:47px;display:inline-flex">
+                  <li class="nav-item" style="display:inline-flex"><a class="nav-link pt-0 rounded-0 active" href="#" data-target="#scheduleTab" data-toggle="tab" aria-label="예약 추가">예약 추가</a></li>
+                  <li class="nav-item createScheduleElement" style="display:inline-flex"><a class="nav-link pt-0 rounded-0" href="#" data-target="#taskTab" data-toggle="tab" aria-label="일정 추가">일정 추가</a></li>
+                  <li class="nav-item updateScheduleElement" style="display:inline-flex"><a class="nav-link pt-0 rounded-0" href="#" data-target="#salesTab" data-toggle="tab" aria-label="매출 입력">매출 입력</a></li>
                 </ul>
                 <button type="button" class="close p-0 ml-auto my-0 mr-0" data-dismiss="modal" aria-label="닫기">
                   <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>

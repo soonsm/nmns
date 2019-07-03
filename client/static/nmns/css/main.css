@@ -65,29 +65,89 @@ input[name='etc'],
   vertical-align: sub;
 }
 .icon-calendar{
-  content: url('/nmns/img/date_search.svg');
+	content: url('/nmns/img/date_search.svg');
 }
 .icon-arrow{
-  content: url('/nmns/img/arrow_bottom.svg');
+	content: url('/nmns/img/arrow_bottom.svg');
 }
 .icon-arrow-left{
-  content: url('/nmns/img/Calendar_left.svg');
+	content: url('/nmns/img/Calendar_left.svg');
   vertical-align: middle;
 }
 .icon-arrow-right{
-  content: url('/nmns/img/Calendar_left.svg');
+	content: url('/nmns/img/Calendar_left.svg');
   transform:rotate(180deg);
   vertical-align: middle;
 }
 .icon-email-ok{
-  content: url('/nmns/img/email-ok.svg');
+	content: url('/nmns/img/email-ok.svg');
 }
 .icon-announcement{
-  content: url('/nmns/img/Notification.svg');
+	content: url('/nmns/img/Notification.svg');
   width:25px;
 }
 .icon-announcement.icon-announcement-count{
-  content: url('/nmns/img/Notification_count.svg');
+	content: url('/nmns/img/Notification_count.svg');
+}
+@supports (-ms-ime-align:auto) {
+	.icon-calendar{
+		background-image: url('/nmns/img/date_search.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:6.5px;
+	}
+	.icon-arrow{
+		background-image: url('/nmns/img/arrow_bottom.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:3px 6px;
+	}
+	.icon-arrow-left{
+		background-image: url('/nmns/img/Calendar_left.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		vertical-align: middle;
+		padding:6px 3px;
+	}
+	.icon-arrow-right{
+		background-image: url('/nmns/img/Calendar_right.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:6px 3px;
+		vertical-align: middle;
+	}
+	.icon-email-ok{
+		background-image: url('/nmns/img/email-ok.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:3.2px 3.5px;
+	}
+	.icon-announcement{
+		background-image: url('/nmns/img/Notification.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		width:25px;
+		padding:12.5px;
+	}
+	.icon-announcement.icon-announcement-count{
+		background-image: url('/nmns/img/Notification_count.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+	}
 }
 /*main contents*/
 html {
@@ -495,7 +555,7 @@ input[type=checkbox]+label{
 }
 
 #mainRow .menuTitle .menuTitleNumber{
-    font-family:'Montserrat';
+    font-family:'Montserrat', 'Spoqa Han Sans';
     font-size:18px;
     font-weight:bold;
     line-height:27px;
@@ -675,7 +735,7 @@ body.overflow-y-hidden{
 .tui-full-calendar-weekday-grid-line .tui-full-calendar-weekday-grid-date {
     width: auto;
     text-align: left;
-    font-family:'montserrat';
+    font-family:'montserrat', 'Spoqa Han Sans';
 }
 
 .tui-full-calendar-month-week-item .tui-full-calendar-weekday-grid-line.tui-full-calendar-tomorrow:not(:first-child){
@@ -1746,7 +1806,7 @@ button.form-control {
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
     background-color: #ffffff;
     font-size:12px;
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', 'Spoqa Han Sans';
 }
 
 #noShowSearchList .noShowSearchDelete{
@@ -1804,7 +1864,7 @@ button.form-control {
 }
 
 #scheduleModal .updateScheduleElement{
-  display:none;
+  display:none !important;
 }
 
 #scheduleModal.update .updateScheduleElement{
