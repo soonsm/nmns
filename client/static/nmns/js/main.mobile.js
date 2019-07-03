@@ -272,7 +272,7 @@
         if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {// TODO : 알림 처리
             showNotification({
                 title: "이메일을 인증해주세요!",
-                body: "인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다. 이메일을 인증해주세요!"
+                body: "이메일을 인증하면 WA:SHOW의 모든 기능을 이용하실 수 있습니다. 이메일을 인증해주세요! 인증메일은 내 매장 정보 화면에서 다시 보내실 수 있습니다."
             });
         }
         //welcome popup
