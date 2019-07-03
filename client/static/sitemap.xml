@@ -2,38 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
     <url>
-        <loc>https://www.nomorenoshow.co.kr/index</loc>
+        <loc>https://www.washow.co.kr/index</loc>
         <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/index_scheduler.png</image:loc>
-            <image:caption>노쇼 방지 특화 예약관리</image:caption>
+            <image:loc>https://www.washow.co.kr/nmns/img/main_img.svg</image:loc>
+            <image:caption>노쇼 예방에 특화된 예약관리 시스템</image:caption>
         </image:image>
         <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/index_noshow_check.png</image:loc>
-            <image:caption>노쇼 자동 검색</image:caption>
+            <image:loc>https://www.washow.co.kr/nmns/img/talk.png</image:loc>
+            <image:caption>알림톡을 통한 예약안내 및 예약취소</image:caption>
         </image:image>
         <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/index_noshow_check2.png</image:loc>
-            <image:caption>노쇼 검색</image:caption>
-        </image:image>
-        <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/kakao_friend_list.png</image:loc>
-            <image:caption>노쇼 공유</image:caption>
-        </image:image>
-        <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/kakao_noshow_search.png</image:loc>
-            <image:caption>노쇼 공유</image:caption>
-        </image:image>
-        <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/kakao_search_nmns.png</image:loc>
-            <image:caption>노쇼 공유</image:caption>
-        </image:image>
-        <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/alrimtalk_ad_1.png</image:loc>
-            <image:caption>예약취소 버튼 전송을 통한 예약 취소 간편화로 노쇼 방지하세요.</image:caption>
-        </image:image>
-        <image:image>
-            <image:loc>https://www.nomorenoshow.co.kr/alrimtalk_ad_2.png</image:loc>
-            <image:caption>예약취소 버튼 전송을 통한 예약 취소 간편화로 노쇼 방지하세요.</image:caption>
+            <image:loc>https://www.washow.co.kr/nmns/img/sub_img.svg</image:loc>
+            <image:caption>고객/매출을 한번에 쉽게 관리하는 WA:SHOW</image:caption>
         </image:image>
     </url>
 </urlset>
