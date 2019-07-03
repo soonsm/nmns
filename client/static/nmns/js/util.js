@@ -277,49 +277,49 @@ function showNotification(notification) {
                         notificationSetting = "GRANTED";
                     } else { //denied
                         notificationSetting = "DENIED";
-                        $.notifyDefaults({
-                            newest_on_top: true,
-                            type: "minimalist",
-                            allow_dismiss: true,
-                            delay: 0,
-                            url: "#",
-                            element: "#notifications",
-                            icon_type: "class",
-                            onClosed: function() {
-                                var height = 10;
-                                $("#notifications .alert").each(function(index, item) {
-                                    height += item.getBoundingClientRect().height + 10;
-                                });
-                                $("#notifications").height(height + "px");
-                                if ($("#notifications").html() === "") {
-                                    $("#notifications").hide();
-                                }
-                            },
-                            template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
-                        });
+                        // $.notifyDefaults({
+                        //     newest_on_top: true,
+                        //     type: "minimalist",
+                        //     allow_dismiss: true,
+                        //     delay: 0,
+                        //     url: "#",
+                        //     element: "#notifications",
+                        //     icon_type: "class",
+                        //     onClosed: function() {
+                        //         var height = 10;
+                        //         $("#notifications .alert").each(function(index, item) {
+                        //             height += item.getBoundingClientRect().height + 10;
+                        //         });
+                        //         $("#notifications").height(height + "px");
+                        //         if ($("#notifications").html() === "") {
+                        //             $("#notifications").hide();
+                        //         }
+                        //     },
+                        //     template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span></div>'
+                        // });
                     }
                 });
             }
         }
-        if (notificationSetting !== "GRANTED") {
-            $.notifyDefaults({
-                newest_on_top: true,
-                type: "minimalist",
-                allow_dismiss: true,
-                delay: 0,
-                url: "#",
-                element: "#notifications",
-                icon_type: "class",
-                onClosed: function() {
-                    var height = 10;
-                    $("#notifications .alert").each(function(index, item) {
-                        height += item.getBoundingClientRect().height + 10;
-                    });
-                    $("#notifications").height(height + "px");
-                },
-                template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span><a href="{3}" target="{4}" data-notify="url"></a></div>'
-            });
-        }
+        // if (notificationSetting !== "GRANTED") {
+            // $.notifyDefaults({
+            //     newest_on_top: true,
+            //     type: "minimalist",
+            //     allow_dismiss: true,
+            //     delay: 0,
+            //     url: "#",
+            //     element: "#notifications",
+            //     icon_type: "class",
+            //     onClosed: function() {
+            //         var height = 10;
+            //         $("#notifications .alert").each(function(index, item) {
+            //             height += item.getBoundingClientRect().height + 10;
+            //         });
+            //         $("#notifications").height(height + "px");
+            //     },
+            //     template: '<div data-notify="container" class="col-12 alert alert-{0}" role="alert" data-id="' + notification.id + '"><button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button><i data-notify="icon" class="img-circle float-left notification-icon"></i><span data-notify="title" class="notification-title">{1}</span><span data-notify="message" class="notification-body">{2}</span><a href="{3}" target="{4}" data-notify="url"></a></div>'
+            // });
+        // }
     }
 
     if (notification.data && notification.data.type === "cancel reserv" && notification.data.id && notification.data.manager) {
@@ -344,18 +344,19 @@ function showNotification(notification) {
             console.error(exception);
         }
     }
+		showSnackBar(notification.body);
     //bootstrap notification
-    $.notify({
-        icon: "fas fa-bell",
-        title: notification.title,
-        message: notification.body,
-        url: (notification.data && notification.data.url ? notification.data.url : "#")
-    }, {});
-    var height = 10;
-    $("#notifications .alert").each(function(index, item) {
-        height += item.getBoundingClientRect().height + 10;
-    });
-    $("#notifications").height(height + "px");
+    // $.notify({
+    //     icon: "fas fa-bell",
+    //     title: notification.title,
+    //     message: notification.body,
+    //     url: (notification.data && notification.data.url ? notification.data.url : "#")
+    // }, {});
+    // var height = 10;
+    // $("#notifications .alert").each(function(index, item) {
+    //     height += item.getBoundingClientRect().height + 10;
+    // });
+    // $("#notifications").height(height + "px");
 }
 
 var tester = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;

@@ -280,18 +280,18 @@
             });
         }
         //tutorial & tip start
-        if (NMNS.info.isFirstVisit) {
-            if (!document.getElementById("tutorialScript")) {
-                var script = document.createElement("script");
-                script.src = "/nmns/js/tutorial.min.js";
-                script.id = "tutorialScript";
-                document.body.appendChild(script);
+        // if (NMNS.info.isFirstVisit) {
+        //     if (!document.getElementById("tutorialScript")) {
+        //         var script = document.createElement("script");
+        //         script.src = "/nmns/js/tutorial.min.js";
+        //         script.id = "tutorialScript";
+        //         document.body.appendChild(script);
 
-                script.onload = function() {
-                    $("#tutorialModal").modal();
-                };
-            }
-        }
+        //         script.onload = function() {
+        //             $("#tutorialModal").modal();
+        //         };
+        //     }
+        // }
         /*else if((getCookie("showTips") === "true" || getCookie("showTips") === undefined) && Math.random() < 0.5){
             $("#tipsModal").modal("show");
         }*/
