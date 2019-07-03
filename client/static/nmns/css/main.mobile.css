@@ -448,10 +448,15 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     line-height:12vw;
     padding-bottom:calc(14.28571428% - 2px);
     border-radius:50%;
+	position:relative;
 }
-#mainCalendarCalendar .flatpickr-day.today{
-	border-color:transparent;
-	text-decoration:underline;
+#mainCalendarCalendar .flatpickr-day.today:after {
+    border-bottom: 2px solid #393535;
+    content: '';
+    position: absolute;
+    left: 30%;
+    bottom: 25%;
+    right: 30%;
 }
 #mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
     color:#1736ff;

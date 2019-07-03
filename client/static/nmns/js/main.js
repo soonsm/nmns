@@ -2272,7 +2272,7 @@
     }, undefined, true));
     
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
-      //$("#salesForm").html(generateSalesContents(e.data));
+      $("#salesForm").html(generateSalesContents(e.data));
       // $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
       $("#salesBtn").removeClass('disabled');
       $("#salesLoading").hide();
@@ -2565,6 +2565,7 @@
         $("#salesTab .scheduleSalesPayments").each(function(index, payment){
           var object = {};
           var pay = $(payment);
+					object.email = NMNS.email;
           object.id = pay.data('id');
           object.customerId = pay.data('customer-id');
           object.managerId = pay.data('manager-id');
