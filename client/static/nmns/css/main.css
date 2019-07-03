@@ -89,7 +89,58 @@ input[name='etc'],
 .icon-announcement.icon-announcement-count{
 	content: url('/nmns/img/Notification_count.svg');
 }
-@supports (-ms-ime-align:auto) {
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	.icon-calendar{
+		background-image: url('/nmns/img/date_search.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:6.5px;
+	}
+	.icon-arrow{
+		background-image: url('/nmns/img/arrow_bottom.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:3px 6px;
+	}
+	.icon-arrow-left, .icon-arrow-right{
+		background-image: url('/nmns/img/Calendar_left.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		vertical-align: middle;
+		padding:6px 3px;
+	}
+	.icon-email-ok{
+		background-image: url('/nmns/img/email-ok.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		padding:3.2px 3.5px;
+	}
+	.icon-announcement{
+		background-image: url('/nmns/img/Notification.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+		width:25px;
+		padding:12.5px;
+	}
+	.icon-announcement.icon-announcement-count{
+		background-image: url('/nmns/img/Notification_count.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-y:center;
+		background-position-x:center;
+	}
+}
+@supports (-ms-ime-align:auto){
 	.icon-calendar{
 		background-image: url('/nmns/img/date_search.svg');
 		background-repeat:no-repeat;
