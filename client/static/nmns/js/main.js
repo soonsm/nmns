@@ -894,7 +894,9 @@
 
           $("#noShowTabList a[href='#noShowSchedule']").on("show.bs.tab", function(){
             $("#noShowScheduleSearch").trigger('click');
-          });
+          }).on("shown.bs.tab", function(){
+						$("#noShowScheduleTarget").focus();
+					});
           $("#noShowAddContact").autocomplete({
               serviceUrl: "get customer info",
               paramName: "contact",
@@ -2458,7 +2460,9 @@
         } else if ($(e.relatedTarget).hasClass("addNoShowLink")) {
             $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
         }
-    });
+    }).on("shown.bs.modal", function(){
+			$("#noShowAddContact").focus();
+		});
     
     $("#scheduleModal").on("hide.bs.modal", function() {
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.guide){
@@ -2472,7 +2476,11 @@
         removeContent(this);
       });
       $('#scheduleContact').val('');
-    });
+    }).on("shown.bs.modal", function(){
+			if($("#scheduleTab").is(":visible")){
+				$("#scheduleName").focus();
+			}
+		});
 /*
     $("#noMoreTips").on("touch click", function() {
         document.cookie = "showTips=false";
@@ -2548,12 +2556,16 @@
       if($(this).next().hasClass('active')){
         initScheduleTab("switch");
       }
-    });
+    }).on("shown.bs.tab", function(){
+			$("#scheduleName").focus();
+		});
     $("#scheduleTabList a[data-target='#taskTab']").on('touch click', function(){
       if(!$(this).hasClass('active')){
         initTaskTab('switch');
       }
-    });
+    }).on("shown.bs.tab", function(){
+			$("#taskName").focus();
+		});
     $("#scheduleTabList a[data-target='#salesTab']").one('show.bs.tab', function(){
       $("#salesBtn").on('touch click', function(e){
         e.preventDefault();

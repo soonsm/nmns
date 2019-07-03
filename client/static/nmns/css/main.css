@@ -290,6 +290,8 @@ input[type=checkbox]+label{
   font-size:15px;
   color:#fff;
   height:22px;
+	width:calc(100% - 64px);
+	margin-right:auto;
 }
 #lnbManagerFormSubmit{
   height:22px;
@@ -347,7 +349,7 @@ input[type=checkbox]+label{
     border:1px solid;
     background-color:transparent;
     left:2px;
-    top:4px;
+    top:auto;
 }
 #lnbManagerColor input:checked + span + span{
     display:inline-block;

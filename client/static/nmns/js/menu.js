@@ -32,7 +32,9 @@
             </div>\
           </div>\
         </div>\
-      </div>').one('show.bs.modal', initMenuModal));
+      </div>').one('show.bs.modal', initMenuModal).on("shown.bs.modal", function(){
+			 $("#menuFormName").focus();
+			 }));
   Inputmask("integer", {autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlign: false, allowMinus:false, allowPlus:false}).mask('#menuModal .inputmask-integer');
   
   $("#updateMenuLink").on("touch click", function(){

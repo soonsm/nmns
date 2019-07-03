@@ -152,9 +152,9 @@
             </a>
             <div id="lnbManagerList"></div>
             <div id="lnbManagerForm" class="menu-collapsed" style="margin-top:31px;display:none">
-              <div class='lnbManagerItem row mx-0 align-items-center'>
+              <div class='lnbManagerItem d-flex align-items-center'>
                 <span id="lnbManagerFormColor" title='담당자의 색깔을 아래에서 선택하세요.'></span>
-                <input type="text" id="lnbManagerFormName" class="border-0 col bg-transparent form-control form-control-sm p-0" placeholder="이름을 입력하세요.">
+                <input type="text" id="lnbManagerFormName" class="border-0 bg-transparent form-control form-control-sm p-0" placeholder="이름을 입력하세요.">
                 <button type="button" id="lnbManagerFormSubmit" class="btn btn-sm btn-flat">저장</button>
               </div>
               <div id="lnbManagerColor" class="mx-0">
@@ -810,14 +810,14 @@
                     </div>
                     <div class="d-flex col-12 px-0 align-items-center mt-3">
                       <div class="select mr-1">
-                        <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
+                        <input id="scheduleStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜" style="min-width:125px">
                       </div>
                       <div class="select ml-1">
                         <input id="scheduleStartTime" type="text" class="form-control form-control-sm" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                       </div>
                       <span class="px-2 mx-3">~</span>
                       <div class="select mr-1">
-                        <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
+                        <input id="scheduleEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜" style="min-width:125px">
                       </div>
                       <div class="select ml-1">
                         <input id="scheduleEndTime" type="text" class="form-control form-control-sm" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
@@ -868,14 +868,14 @@
                     </div>
                     <div class="d-flex col-12 px-0 align-items-center mt-3">
                       <div class="select mr-1">
-                        <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
+                        <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜" style="min-width:125px">
                       </div>
                       <div class="select ml-1">
                         <input id="taskStartTime" type="text" class="form-control form-control-sm" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
                       </div>
                       <span class="px-2 mx-3">~</span>
                       <div class="select mr-1">
-                        <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
+                        <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜" style="min-width:125px">
                       </div>
                       <div class="select ml-1">
                         <input id="taskEndTime" type="text" class="form-control form-control-sm" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
@@ -1029,7 +1029,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.numeric.extensions.min.js" integrity="sha256-dVx2gYHsRUlxMn8IvlyIclSnhktfPGUCHvXaPkdVqHc=" crossorigin="anonymous"></script>
   
   <!-- Custom scripts for this template -->
-  <script src="${input.cdn}/lib/bootstrap-notify/bootstrap-notify.min.js"></script>
   <script src="/nmns/js/main.min.js"></script>
   <script if(input.kakaotalk)>
     document.addEventListener("DOMContentLoaded", function(){
