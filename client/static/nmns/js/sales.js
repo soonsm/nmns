@@ -2,10 +2,10 @@
 (function(){
   NMNS.socket.on("get sales list", socketResponse("매출 내역 조회", function(e){
     NMNS.salesList = e.data.sales;
-    NMNS.salesList = [{id:'123', customerName:'기기기', date:'20190101', item:'입장료', price:3000, type:'CARD'}];//for test
-    for(var i=0;i<100;i++){
-      NMNS.salesList.push({id:'123'+i, customerName:'미미미'+(i*Math.random()), date:moment().add(i, 'day').format('YYYYMMDD'), item: '입장료'+(i*Math.random()), type:'CARD', price:Math.floor(30000*Math.random())})
-    }
+    // NMNS.salesList = [{id:'123', customerName:'기기기', date:'20190101', item:'입장료', price:3000, type:'CARD'}];//for test
+    // for(var i=0;i<100;i++){
+    //   NMNS.salesList.push({id:'123'+i, customerName:'미미미'+(i*Math.random()), date:moment().add(i, 'day').format('YYYYMMDD'), item: '입장료'+(i*Math.random()), type:'CARD', price:Math.floor(30000*Math.random())})
+    // }
     drawSalesList(true);
     $("#salesSummaryTotalCount").text((e.data.totalSalesCount || NMNS.salesList.length + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesSummaryTotalCard").text((e.data.totalSalesCard || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
