@@ -445,23 +445,23 @@
         setSchedules();
     }
 
-    function onClickTask(e){ // handle event when click today's task text
-      if($(window).width() < 1600){
-				$(document.body).toggleClass('overflow-y-hidden');
-        if($("#mainTask").hasClass("show")){// about to hide task
-          $("#mainCalendarArea").css('minWidth', '');
-          $("#mainContents").css("minWidth", '100%');
-          $("#mainAside").css('minWidth', 'unset');
-        }else{// about to show task
-          $("#mainCalendarArea").css('minWidth', $("#mainCalendarArea").width());
-          $("#mainContents").css("minWidth", '');
-          if($("#mainAside").hasClass("sidebar-toggled")){//hided
-            $("#mainAside").css('minWidth', 'unset');
-          }else{
-            $("#mainAside").css('minWidth', '270px');
-          }
-        }
-      }
+    function onClickTask(){ // handle event when click today's task text
+				if($(window).width() < 1600){
+					$(document.body).toggleClass('overflow-y-hidden');
+				// if($("#mainTask").hasClass("show")){// about to hide task
+				// $("#mainCalendarArea").css('minWidth', '');
+				// $("#mainContents").css("minWidth", '100%');
+				// $("#mainAside").css('minWidth', 'unset');
+				// }else{// about to show task
+				// $("#mainCalendarArea").css('minWidth', $("#mainCalendarArea").width());
+				// $("#mainContents").css("minWidth", '');
+				// if($("#mainAside").hasClass("sidebar-toggled")){//hided
+				// $("#mainAside").css('minWidth', 'unset');
+				// }else{
+				// $("#mainAside").css('minWidth', '270px');
+				// }
+				// }
+			 }
       $("#mainTask").toggleClass('show');
     }
 
@@ -593,7 +593,7 @@
             html += "<div class='taskDate' style='font-size:12px;opacity:0.5'><hr class='hr-text' data-content='"+(day.date === today?'오늘':(day.date === tomorrow?'내일':moment(day.date, 'YYYYMMDD').format('YYYY. MM. DD')))+"'></div>"
             day.task.forEach(function(task, index){
               var manager = findManager(task.manager) || {};
-              html += "<div class='row mx-0 px-0 col-12 position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-name='"+task.name+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.name+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
+              html += "<div class='position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-name='"+task.name+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.name+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
               moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
               + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
               +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
@@ -985,7 +985,7 @@
           $(temp).data('menu-id', item?item.menuId:null).val(item && item.value || item);
           return;
         }
-        html += '<div class="row mx-0 col-12 px-0"><input type="text" class="form-control form-control-sm han col" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." autocomplete="off" list="scheduleTabContentList" value="'
+        html += '<div class="row mx-0 col-12 px-0"><input class="form-control form-control-sm han col" name="scheduleContents" aria-label="예약 내용" placeholder="예약 내용을 직접 입력하거나 메뉴에서 선택하세요." autocomplete="off" list="scheduleTabContentList" value="'
           +(item && item.value || item)+'" '+(item && item.menuId? ('data-menu-id="'+item.menuId+'"') : '')+'><button type="button" class="btn btn-sm btn-form ml-2 deleteScheduleContents">삭제</button></div>';
       });
       return html;
@@ -1002,11 +1002,12 @@
     function generateMenuList(menuList){
       var html = '';
       menuList.forEach(function(item){
-        html += '<options value="'+item.id+'">'+item.name+'</option>';
+        html += '<option value="'+item.name+'"></option>';
       });
       return html;
     }
-    
+    NMNS.generateMenuList = generateMenuList;
+	
     function generateSalesContents(sales){
       var html = "";
       if(Array.isArray(sales) && sales.length > 0){
@@ -1135,7 +1136,7 @@
       if(NMNS.refreshMenu){
         NMNS.refreshMenu = false;
         NMNS.socket.emit('get menu list');//TODO : needed api alignment
-        $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
+        // $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
       $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
       
@@ -1954,7 +1955,7 @@
           e.data.find(function(date){return date.date === moment().format('YYYYMMDD')}).task.length
         )
       }
-      e.data = [{date:moment().format('YYYYMMDD'), task:e.data}];//for test
+      // e.data = [{date:moment().format('YYYYMMDD'), task:e.data}];//for test
       $('#mainTaskContents').html(generateTaskList(e.data));
       if(e.data.length === 0){
         $("#mainTaskContents").addClass('position-absolute');
@@ -2264,15 +2265,15 @@
     }));
     
     NMNS.socket.on("get menu list", socketResponse('메뉴 목록 조회', function(e){
-      if($("#scheduleTabContentList").is(":visible")){
+      if($("#scheduleTabContentList").length){
         $("#scheduleTabContentList").html(generateMenuList(e.data));
-        NMNS.menuList = e.data;
       }
+			NMNS.menuList = e.data;
     }, undefined, true));
     
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
       //$("#salesForm").html(generateSalesContents(e.data));
-      $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
+      // $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
       $("#salesBtn").removeClass('disabled');
       $("#salesLoading").hide();
       $("#salesForm").show();
@@ -2298,7 +2299,7 @@
       }
     }, function(e){
       if(e.data.snsType === 'KAKAO'){
-        alert('카카오톡과의 연동을 하지 못했���니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
+        alert('카카오톡과의 연동을 하지 못했습니다. 카카오톡에서 연동을 해제한 뒤 다시 시도해주세요.');
       }
     }, true));
     //websocket response end

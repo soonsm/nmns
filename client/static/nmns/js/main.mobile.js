@@ -1022,10 +1022,11 @@
     function generateMenuList(menuList){
       var html = '';
       menuList.forEach(function(item){
-        html += '<options value="'+item.id+'">'+item.name+'</option>';
+        html += '<option value="'+item.name+'"></option>';
       });
       return html;
     }
+	NMNS.generateMenuList = generateMenuList;
     
     function generateSalesContents(sales){
       var html = "";
@@ -1155,7 +1156,7 @@
       if(NMNS.refreshMenu){
         NMNS.refreshMenu = false;
         NMNS.socket.emit('get menu list');//TODO : needed api alignment
-        $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
+        // $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
 
       $(".scheduleMenu").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
@@ -1869,7 +1870,7 @@
           e.data.find(function(date){return date.date === moment().format('YYYYMMDD')}).task.length
         )
       }
-      e.data = [{date:moment().format('YYYYMMDD'), task:e.data}];//for test
+      // e.data = [{date:moment().format('YYYYMMDD'), task:e.data}];//for test
       $('#mainTaskContents').html(generateTaskList(e.data))
       $("#mainTaskContents input").on('change', function(e){
         e.stopPropagation();
@@ -1957,8 +1958,8 @@
     }));
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
-      e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
-      e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
+      // e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
+      // e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
       e.data.summary.lastNoShowDate = '20190103';
       e.data.summary.noShowCount = 2;
         if (e.data.summary.noShowCount > 0) {
@@ -2104,8 +2105,8 @@
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
     }))
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
-       e.data.announcement.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
-       e.data.announcement.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
+       // e.data.announcement.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
+       // e.data.announcement.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
       $("#announcementArea .flex-column").remove();
       if(e.data.announcement.length > 0){
 				var list = $(drawNotificationList(e.data.announcement));
@@ -2144,10 +2145,10 @@
     }));
     
     NMNS.socket.on("get menu list", socketResponse('메뉴 목록 조회', function(e){
-      if($("#scheduleTabContentList").is(":visible")){
-        $("#scheduleTabContentList").html(generateMenuList(e.data));
-        NMNS.menuList = e.data;
+      if($("#scheduleTabContentList").length){
+        $("#scheduleTabContentList").html(generateMenuList(e.data));  
       }
+			NMNS.menuList = e.data;
       if($("#mainMenuList").is(":visible") && NMNS.drawMenuList){
         NMNS.drawMenuList(true);
       }
@@ -2155,7 +2156,7 @@
     
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
       //$("#salesForm").html(generateSalesContents(e.data));
-      $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
+      // $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
       $("#salesBtn").removeClass('disabled');
       $("#salesLoading").hide();
       $("#salesForm").show();

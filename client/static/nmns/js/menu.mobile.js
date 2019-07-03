@@ -172,6 +172,7 @@
   }));*/
   NMNS.socket.on("update menu", socketResponse("메뉴 항목 수정", function(e){
     NMNS.history.remove(e.data.id, findById);
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
   }, function(e){
     var origin = NMNS.history.find(function(item){return item.id === e.data.id});
     var index = NMNS.menuList.findIndex(function(item) {
@@ -190,6 +191,7 @@
 
   NMNS.socket.on("delete menu", socketResponse("메뉴 항목 삭제", function(e){
     NMNS.history.remove(e.data.id, findById);
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
   }, function(e){
     var origin = NMNS.history.find(function(item){return item.id === e.data.id});
     NMNS.menuList.splice(origin.index, origin);
@@ -197,7 +199,7 @@
     NMNS.history.remove(e.data.id, findById);
   }));
   //TODO : delete these rows for test
-  NMNS.menuList = [{id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 121, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 441, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 91, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 81, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 17, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 61, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 51, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 41, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 31, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 21, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 11, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 2, name:'매니큐어2', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 3, name:'매니큐어3', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 4, name:'매니큐어4', priceCash:10000, priceCard:20000, priceMembership:10000}, {id:5, name:'매니큐어5', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 6, name:'매니큐어6', priceCash:10000, priceCard:20000, priceMembership:10000}]
+  // NMNS.menuList = [{id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 121, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 441, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 91, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 81, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 17, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 61, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 51, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 41, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 31, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 21, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 11, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 1, name:'매니큐어', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 2, name:'매니큐어2', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 3, name:'매니큐어3', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 4, name:'매니큐어4', priceCash:10000, priceCard:20000, priceMembership:10000}, {id:5, name:'매니큐어5', priceCash:10000, priceCard:20000, priceMembership:10000}, {id: 6, name:'매니큐어6', priceCash:10000, priceCard:20000, priceMembership:10000}]
   NMNS.drawMenuList(true); 
   
   function getDistFromBottom () {

@@ -190,6 +190,7 @@
   }));
   NMNS.socket.on("add menu", socketResponse("메뉴 추가", function(e) {
     NMNS.history.remove(e.data.id, findById);
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
   }, function(e) {
     var index = NMNS.menuList.findIndex(function(item) {
       return item.id === e.data.id;
@@ -201,6 +202,7 @@
   }));
   NMNS.socket.on("update menu", socketResponse("메뉴 항목 수정", function(e){
     NMNS.history.remove(e.data.id, findById);
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
   }, function(e){
     var origin = NMNS.history.find(function(item){return item.id === e.data.id});
     var index = NMNS.menuList.findIndex(function(item) {
@@ -219,6 +221,7 @@
   
   NMNS.socket.on("delete menu", socketResponse("메뉴 항목 삭제", function(e){
     NMNS.history.remove(e.data.id, findById);
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
   }, function(e){
     var origin = NMNS.history.find(function(item){return item.id === e.data.id});
     NMNS.menuList.splice(origin.index, origin);
