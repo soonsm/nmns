@@ -398,7 +398,7 @@ exports.addReservation = async function (data) {
             throw '연락처는 필수입니다.';
         }
 
-        let memberList = newDb.getCustomerList(email, contact, name);
+        let memberList = await newDb.getCustomerList(email, contact, name);
         if (memberList.length > 0) {
             data.member = memberList[0].id;
         } else {
