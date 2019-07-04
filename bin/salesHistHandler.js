@@ -201,7 +201,7 @@ exports.getMembershipHistory = fnTemplate(null, async (user, data) => {
 
     data.typeList = [process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_INCREMENT, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_DECREMENT];
 
-    return await newDb.getSalesHist(user.email, data);
+    return await newDb.getSalesHist(user.email, data, false);
 });
 
 
@@ -215,6 +215,10 @@ exports.getMembershipHistory = fnTemplate(null, async (user, data) => {
 exports.saveSales = fnTemplate(null, async function(user, list){
     for(let i =0; i<list.length; i++){
         let data = list[i];
+
+        if (!data.id || !data.type || !data.customerId || !data.item || !data.scheduleId || !data.managerId || !data.price) {
+            throw 'id, type, customerId, item, scheduleId, managerId, price는 필수입니다.'
+        }
 
         if(![process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH].includes(data.type)){
             throw `예약에서 매출내역을 추가하는 경우는 카드 매출, 현금 매출, 멤버십 사용만 가능합니다. (${data.type})`;

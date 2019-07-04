@@ -1428,7 +1428,7 @@ exports.saveSales = async function(data){
  * @param options(start, end, customerId, customerName, item, scheduleId, managerId, priceStart, priceEnd, paymentList)
  * @returns {Promise<void>}
  */
-exports.getSalesHist = async function(email, options){
+exports.getSalesHist = async function(email, options, asc = true){
     if(!email){
         throw 'email은 필수입니다.';
     }
@@ -1456,7 +1456,8 @@ exports.getSalesHist = async function(email, options){
             ':email': email,
             ':start': start,
             ':end': end
-        }
+        },
+        ScanIndexForward: asc
     };
 
     if(options.customerName){

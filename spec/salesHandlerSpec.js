@@ -319,6 +319,13 @@ describe('Sales', function () {
             let data = result.data;
             expect(result.status).toEqual(true);
             expect(data.length).toEqual(3);
+
+            //내림차순 정렬 확인
+            for(let i=1; i< data.length; i++){
+                if(data[i].id > data[i-1].id){
+                    fail();
+                }
+            }
         });
     });
 
