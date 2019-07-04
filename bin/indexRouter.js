@@ -622,7 +622,7 @@ module.exports = function (passport) {
         }catch(e){
             status = false;
             logger.error(e);
-            if((typeof a) === 'string' ){
+            if((typeof e) === 'string' ){
                 message = e;
             }else{
                 message = '시스템 오류가 발생했습니다.\\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.';

@@ -81,6 +81,10 @@ exports.getShop = async function () {
             }
             resultData.logo = baseUrl + user.logoFileName;
         }
+
+        if(user.originalLogoFileName){
+            resultData.logoFileName = user.originalLogoFileName;
+        }
     }
 
     return {
@@ -132,13 +136,20 @@ exports.uploadLogo = async function(data){
     let email = this.email;
 
     try{
+        let fileData = data.fileData;
+        let originalFileName = data.fileName;
+
+        if(!fileData || !originalFileName){
+            throw `fileData 혹은 fileName이 없습니다.`;
+        }
+
         const fileType = require('file-type');
 
         let type = fileType(data.fileData); // ext, mime
 				//file name : data.fileName
         let fileName = email + moment().format('YYYYMMDDHHmmssSSS')+ '.' + type.ext;
 
-        let logoUrl = await upload(fileName, data, type);
+        let logoUrl = await upload(fileName, fileData, type);
         if(!logoUrl){
             throw '이미지 등록 실패';
         }
@@ -148,7 +159,7 @@ exports.uploadLogo = async function(data){
         let user = await db.getWebUser(email);
         user.logoFileName = fileName;
 
-        await db.updateWebUser(email, {logoFileName: fileName});
+        await db.updateWebUser(email, {logoFileName: fileName, originalLogoFileName: originalFileName});
         status = true;
     }catch(e){
         status = false;
