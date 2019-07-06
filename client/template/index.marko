@@ -656,6 +656,17 @@
 				Kakao.Auth.login({
 					success: function(authObj) {
 						Kakao.API.request({url:'/v2/user/me', success:function(res){
+                            /**
+                             res.kakao_account.email 있는지 확인한다.
+                             사용자가 카카오톡 로그인 할 때 이메일 제공 선택을 안하면 email이 넘어오지 않는다.
+                             email이 없으면 email을 제공하지 않아서 연동이 안된다고 안내하고,
+                             KaKao.Auth.logout() 호출한다. (카카오톡 로그인 버튼을 다시 눌렀을 때 정보 제공화면을 뜨위기 위함)
+
+                             email이 있는 경우는 sns_signin post 요청을 한다.
+                             snsLinkId: res.id
+                             snsType: KAKAO
+                             snsEmail: res.kakao_account.email
+                            **/
 							NMNS.socket.emit('link sns', {
 								snsLinkId:res.for_partner.uuid,
 								snsEmail:res.for_partner.properties.email,
