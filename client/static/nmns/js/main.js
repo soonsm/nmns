@@ -2616,13 +2616,15 @@
     });
 
     $("#addScheduleBtn").on("touch click", function(){
-      initScheduleTab();
-      $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').tab('show');
-      $("#scheduleTabList a[data-target='#taskTab']").text('일정 추가');
-      $("#taskBtn").text('일정 추가 완료');
-      $("#deleteTaskBtn").hide().next().removeClass('ml-1');
-      $("#scheduleBtn").text('예약 추가 완료');
-      $("#scheduleModal").removeClass('update').modal('show');
+			if(NMNS.calendar && NMNS.info.bizEndTime){
+				initScheduleTab();
+				$("#scheduleTabList a[data-target='#scheduleTab']").text('예약 추가').tab('show');
+				$("#scheduleTabList a[data-target='#taskTab']").text('일정 추가');
+				$("#taskBtn").text('일정 추가 완료');
+				$("#deleteTaskBtn").hide().next().removeClass('ml-1');
+				$("#scheduleBtn").text('예약 추가 완료');
+				$("#scheduleModal").removeClass('update').modal('show');
+			}      
     });
     $("#userModal").one('show.bs.modal', function(){
       //passwordTab
