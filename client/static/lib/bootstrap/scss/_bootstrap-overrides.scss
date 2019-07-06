@@ -179,6 +179,11 @@ select.form-control-sm{
   box-shadow:none;
   border-color: rgba(112, 112, 112, 0.35);
 }
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	.form-control-sm{
+		padding:8px 15px;
+	}
+}
 .modal.fade .modal-dialog{
   transform:none;
   -webkit-transform:none;
