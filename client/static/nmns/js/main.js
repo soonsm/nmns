@@ -1161,7 +1161,7 @@
           $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule.end.toDate())));
     
           $('#scheduleName').val(e.schedule.title);
-          $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contentList : "")).find('button').off('touch click').on('touch click', function(){
+          $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
           
@@ -1346,7 +1346,7 @@
         });
         
         $("#scheduleBtn").on("touch click", function(){
-          var title, isAllDay, startDate, endDate, startTime, endTime, contentList, contact, etc, calendarId, manager;
+          var title, isAllDay, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
           try {
             startDate = $('#scheduleStartDate')[0]._flatpickr.selectedDates[0];
             endDate = $('#scheduleEndDate')[0]._flatpickr.selectedDates[0];
@@ -1393,7 +1393,7 @@
           }
       
           title = $('#scheduleName').val();
-          contentList = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || ((NMNS.menuList && NMNS.menuList.find(function(menu){return menu.name === this.value})) ? NMNS.menuList.find(function(menu){return menu.name === this.value}).id : NMNS.email + generateRandom()), value:this.value}}).toArray());
+          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || ((NMNS.menuList && NMNS.menuList.find(function(menu){return menu.name === this.value})) ? NMNS.menuList.find(function(menu){return menu.name === this.value}).id : NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
@@ -1436,7 +1436,7 @@
                       dragBgColor: manager.bgColor || "#334150",
                       raw: {
                         contact: contact,
-                        contentList: contentList,
+                        contents: contents,
                         etc: etc,
                         status: $("#scheduleStatus input:checked").val()
                       }
@@ -1447,7 +1447,7 @@
                       start: startDate,
                       end: endDate,
                       raw:{
-                        contentList: contentList,
+                        contents: contents,
                         contact: contact,
                         status:$("#scheduleStatus input:checked").val()
                       }
@@ -1460,7 +1460,7 @@
                   name: title,
                   start: moment(startDate).format("YYYYMMDDHHmm"),
                   end: moment(endDate).format("YYYYMMDDHHmm"),
-                  contentList: contentList,
+                  contents: contents,
                   contact: contact,
                   isAllDay: isAllDay,
                   status:$("#scheduleStatus input:checked").val()
@@ -1491,7 +1491,7 @@
                   dragBgColor: manager.bgColor || "#334150",
                   raw: {
                     contact: contact,
-                    contentList: contentList,
+                    contents: contents,
                     etc: etc,
                     status: "RESERVED"
                   }
@@ -1514,7 +1514,7 @@
                   dragBgColor: manager.bgColor || "#334150",
                   color: manager.color,
                   contact: contact,
-                  contentList: contentList,
+                  contents: contents,
                   etc: etc,
                   status: "RESERVED"
               });
@@ -1557,7 +1557,7 @@
         $("#taskEndTime").val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
         
         $("#taskName").val(task.name || "");
-        $("#taskContents").val(task.raw ? task.raw.contentList || "" : "");
+        $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
         calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
             return item.id === task.calendarId;
         }) : NMNS.calendar.getCalendars()[0];
@@ -1759,7 +1759,7 @@
                 dragBgColor: manager.bgColor || "#334150",
                 raw: {
                     contact: schedule.contact,
-                    contentList: schedule.contentList,
+                    contents: schedule.contents,
                     etc: schedule.etc,
                     status: schedule.status
                 }
@@ -1860,15 +1860,15 @@
         } else {
             e.data.forEach(function(item) {
               var contents = "";
-              if(item.contentList){
+              if(item.contents){
                 try{
-                  contents = JSON.parse(item.contentList).map(function(item){return item.value}).join(', ');
+                  contents = JSON.parse(item.contents).map(function(item){return item.value}).join(', ');
                 }catch(error){
-                  contents = item.contentList
+                  contents = item.contents
                 }
               }
               html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + 
-              (item.contentList ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
+              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
               (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" + 
               contents + "</div></div>";
             });
@@ -2159,8 +2159,8 @@
                       popup.find("#scheduleManager").html(popup.find("#scheduleManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendar-id", manager.id);
                   }
               }
-              if (e.data.contentList) {
-                popup.find("#scheduleTabContents").append(generateContentsList(e.data.contentList)).find('button').off('touch click').on('touch click', function(){
+              if (e.data.contents) {
+                popup.find("#scheduleTabContents").append(generateContentsList(e.data.contents)).find('button').off('touch click').on('touch click', function(){
                   removeContent(this);
                 });
               }
