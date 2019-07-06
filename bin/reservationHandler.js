@@ -358,7 +358,7 @@ exports.add = async function (data) {
  * 예약 추가(일정만)
  * 요청 위치 : "add reserv"
  * 요청 데이터 : {"id": ${예약키}, "type":${예약/일정 구분, string, R(예약)/T(일정), optional, default: R}, "name":${고객 이름 혹은 일정이름, string, optional}, "contact":${고객 전화번호, string, optional}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "manager":${담당 매니저 id, string, optional}, "etc":${부가정보, string, optional}, contents: ${시술 혹은 일정 리스트, json string, ex: "[{'id': 0, 'value':'네일케어'},{'id': 1, 'value':'페디케어'}]", optional}
- * type 이 R(예약)이면 contact 필수, T(일정)이면 name 필수
+ * type이 T(일정)이면 name 필수
  * 응답 데이터 : {"id": ${예약키}}
  */
 exports.addTask = async function(data){
@@ -384,7 +384,6 @@ exports.addTask = async function(data){
  * 예약 추가(예약만)
  * 요청 위치 : "add reserv"
  * 요청 데이터 : {"id": ${예약키}, "type":${예약/일정 구분, string, R(예약)/T(일정), optional, default: R}, "name":${고객 이름 혹은 일정이름, string, optional}, "contact":${고객 전화번호, string, optional}, "start":${시작일시, string, YYYYMMDDHHmm}, "end":${종료일시, string, YYYYMMDDHHmm}, "isAllDay":${하루종일여부, boolean, optional}, "manager":${담당 매니저 id, string, optional}, "etc":${부가정보, string, optional}, contents: ${시술 혹은 일정 리스트, json string, ex: "[{'id': 0, 'value':'네일케어'},{'id': 1, 'value':'페디케어'}]", optional}
- * type 이 R(예약)이면 contact 필수, T(일정)이면 name 필수
  * 응답 데이터 : {"id": ${예약키}}
  */
 exports.addReservation = async function (data) {
@@ -394,9 +393,9 @@ exports.addReservation = async function (data) {
         let contact = data.contact;
         let name = data.name;
 
-        if (!contact) {
-            throw '연락처는 필수입니다.';
-        }
+        // if (!contact) {
+        //     throw '연락처는 필수입니다.';
+        // }
 
         let memberList = await newDb.getCustomerList(email, contact, name);
         if (memberList.length > 0) {

@@ -944,8 +944,8 @@ exports.saveReservation = async function (data) {
         etc,
         cancelDate
     }))(data);
-    if (!item.email || !item.contact || !item.start || !item.end || !item.id || !item.member || !item.manager) {
-        throw 'email, contact, start, end, id, member, manager는 필수입니다.'
+    if (!item.email || !item.start || !item.end || !item.id || !item.member || !item.manager) {
+        throw 'email, start, end, id, member, manager는 필수입니다.'
     }
 
     if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
@@ -962,7 +962,7 @@ exports.saveReservation = async function (data) {
 
     item.type = 'R';
 
-    if(!nmnsUtil.phoneNumberValidation(item.contact)){
+    if(item.contact && !nmnsUtil.phoneNumberValidation(item.contact)){
         throw `휴대전화번호 형식이 올바르지 않습니다.(${item.contact})`;
     }
 

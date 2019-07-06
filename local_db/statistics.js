@@ -7,16 +7,36 @@ AWS.config.update({
 var docClient = new AWS.DynamoDB.DocumentClient({
     convertEmptyValues: true
 });
-function scan(params) {
+
+function scanRaw(params) {
     return new Promise((resolve => {
         docClient.scan(params, function (err, data) {
             if (err) {
+                logger.log("Unable to scan. Error:", JSON.stringify(err, null, 2));
                 resolve(null);
             } else {
-                resolve(data.Items);
+                // logger.log("Scan succeeded. Data:", util.format(data.Items));
+                resolve(data);
             }
         });
     }));
+}
+
+async function scan(params) {
+    let items = [];
+    let lastEvaluatedKey;
+
+    do {
+        let data = await scanRaw(params);
+        items = items.concat(data.Items);
+
+        lastEvaluatedKey = data.LastEvaluatedKey;
+        if (lastEvaluatedKey) {
+            params.ExclusiveStartKey = lastEvaluatedKey;
+        }
+    } while (lastEvaluatedKey);
+
+    return items;
 }
 
 (async function(){
@@ -24,6 +44,8 @@ function scan(params) {
         TableName: 'WebSecheduler'
     });
     let i=0;
+    let numOfNoContact = 0;
+    let num = 0;
     for (; i < users.length; i++) {
         let user = users[i];
         // if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
@@ -38,15 +60,23 @@ function scan(params) {
         // }
 
 
-        let sizeof = require('object-sizeof');
-        let size = sizeof(user)/1000;
-        if(size > 100){
-            console.log(`${user.email} size: ${size}`);
+        // let sizeof = require('object-sizeof');
+        // let size = sizeof(user)/1000;
+        // if(size > 100){
+        //     console.log(`${user.email} size: ${size}`);
+        // }
+
+        let reservationList = user.reservationList;
+        num += reservationList.length;
+
+        reservationList = reservationList.filter(reservation => !reservation.contact);
+
+        if(reservationList.length > 0){
+            console.log(`${user.email} size: ${reservationList.length}`);
+            numOfNoContact += reservationList.length;
         }
-
-
     }
-    console.log(`total count is ${i}`);
+    console.log(`total count is ${num} and total no contact count is ${numOfNoContact}`);
 })();
 
 // (async function(){

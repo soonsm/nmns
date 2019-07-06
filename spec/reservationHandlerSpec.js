@@ -55,14 +55,27 @@ describe('Reservation', function () {
     });
 
     describe('add reserv', function () {
-        it('contact 없으면 exception', async function () {
+        it('contact 없어도 exception 안남', async function () {
             try {
                 let fn = handler.addReservation;
                 fn.email = email;
-                let result = await fn.call(fn, {});
+                delete reservation.contact;
+                reservation.name = "연락처 없는 애";
+                let result = await fn.call(fn, reservation);
 
-                expect(result.status).toEqual(false);
-                expect(result.message).toContain('연락처는 필수입니다.');
+                if(!result.status){
+                    logger.error(result.message);
+                }
+                expect(result.status).toEqual(true);
+
+                let data = await db.getReservation(email, reservation.id);
+
+                reservation.type = 'R';
+                delete reservation.contents;
+                delete data.timestamp;
+
+                expect(data).toEqual(reservation);
+
             } catch (e) {
                 fail();
                 logger.error(e);
@@ -95,6 +108,7 @@ describe('Reservation', function () {
                 logger.error(e);
             }
         });
+        /*
         it('예약 추가 후 고객 추가되었는지 확인 ', async function () {
             try {
 
@@ -143,8 +157,9 @@ describe('Reservation', function () {
                 logger.error(e);
             }
         });
+        */
     });
-
+/*
     describe('updateReservation', function () {
         it('should 없는 예약일 때 exception', async function () {
             try {
@@ -471,8 +486,9 @@ describe('Reservation', function () {
             }
         });
     });
+*/
 });
-
+/*
 describe('Task', function(){
     let task;
     beforeEach(async function () {
@@ -1013,3 +1029,4 @@ describe('Task, Reservation', function(){
         }
     });
 });
+*/
