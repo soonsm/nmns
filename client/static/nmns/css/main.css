@@ -264,7 +264,7 @@ input[type=checkbox]+label{
     width:74px;
 }
 
-#mainAside.sidebar-toggled .menu-collapsed{
+#mainAside:not(.show-collapsed) .menu-collapsed{
     display:none;
 }
 #mainRow {

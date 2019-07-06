@@ -784,6 +784,7 @@
           logo = true;
         } else if($("#infoLogo").data("deleted") && NMNS.info.logo){
           history.logo = NMNS.info.logo;
+					history.logoFileName = NMNS.info.logoFileName;
           parameters.logo = null;
           changeMainShopLogo(false, NMNS.info.shopName);
           diff = true;
@@ -822,7 +823,7 @@
 				$("#addLogo").trigger("click");
 			}
       if(NMNS.info.logo){
-        $("#addLogo").text("삭제").prev().val(NMNS.info.logo.substring(NMNS.info.logo.lastIndexOf("/")+1));
+        $("#addLogo").text("삭제").prev().val(NMNS.info.logoFileName);
       }
 			$("#infoLogo").data("done", null).data("deleted", null);
     }
@@ -2029,9 +2030,10 @@
         showSnackBar("<span>정상적으로 매장 정보를 변경하였습니다.</span>");
 			var history = NMNS.history.find(function(item) { return item.id === "info" });
         NMNS.history.remove("info", findById);
-			if(history.logo){
+			if(history.logo){// successfully removed logo file
 				$("#infoLogo").data("done", true);
 				NMNS.info.logo = undefined;
+				NMNS.info.logoFileName = undefined;
 			}
 			$("#infoModal").modal('hide');
     }, function(e) {
@@ -3020,8 +3022,11 @@
             if($("#mainTask").hasClass("show")){
               $("#mainAside").css('minWidth', '270px');
             }
+						setTimeout(function(){
+							$("#mainAside").addClass('show-collapsed');	
+						}, 300);
           }else{// about to hide aside
-            $("#mainAside").css('minWidth', 'unset');
+            $("#mainAside").css('minWidth', 'unset').removeClass('show-collapsed');
           }
           $('#mainAside').toggleClass('sidebar-toggled');
         });
