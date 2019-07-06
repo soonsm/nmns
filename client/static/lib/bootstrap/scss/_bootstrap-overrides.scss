@@ -246,3 +246,8 @@ select.form-control-sm{
 label{
   margin-bottom:0;
 }
+@media(max-height:800px){
+	.modal-dialog-centered{
+		align-items:flex-start;
+	}
+}
