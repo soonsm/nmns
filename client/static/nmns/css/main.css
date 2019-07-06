@@ -555,7 +555,7 @@ input[type=checkbox]+label{
 }
 
 #mainRow #mainTask.show{
-    display:initial;
+    display:block;
     max-width:237px;
     min-width:237px;
     width:237px;
@@ -888,6 +888,9 @@ button.moveDate:focus {
 }
 .flatpickr-months, .flatpickr-days{
     font-family:'Montserrat', 'Spoqa Han Sans';
+}
+.flatpickr-calendar .flatpickr-rContainer, .flatpickr-calendar .dayContainer{
+	width:100%;
 }
 /*
 .flatpickr-input {
