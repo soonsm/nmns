@@ -324,7 +324,11 @@ exports.updateReservation = async function (newReservation) {
         message = '예약수정완료';
     } catch (e) {
         status = false;
-        message = e;
+        if((typeof e) === 'string' ){
+            message = e;
+        }else{
+            message = JSON.stringify(e);
+        }
     }
 
     return {
