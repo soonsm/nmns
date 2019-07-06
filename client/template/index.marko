@@ -799,6 +799,9 @@
 		if (navigator.appVersion.indexOf("Win")!=-1){
 			new PerfectScrollbar("#signupForm");
 		}
+		if(!!${input.authRequired}){
+			showModal('emailModal')();
+		}
   })();
   window.fitText(document.getElementById('caption1'));
   window.fitText(document.getElementById('caption2'));
