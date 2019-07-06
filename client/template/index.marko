@@ -502,7 +502,7 @@
 			var types = type.split(" ");
       if (el.addEventListener){
 				for(var i=0;i<types.length;i++){
-					el.addEventListener(types[i], fn, false);	
+					el.addEventListener(types[i], fn, true);	
 				}
 			}else{
 				for(var i=0;i<types.length;i++){
@@ -548,9 +548,20 @@
 			document.body.style.overflow = null;
 			document.body.classList.remove('fixed');
 		}
-		addEvent(document.getElementById('backdrop'), 'click', function(e){
+		var mousedownOnBackdrop = false;
+		addEvent(document.getElementById('backdrop'), 'mousedown', function(e){
 			if(e.target.id === 'backdrop'){
-				closeModal(e);
+				mousedownOnBackdrop = true;
+			}else{
+				mousedownOnBackdrop = false;
+			}
+		});
+		addEvent(document.getElementById('backdrop'), 'mouseup', function(e){
+			if(e.target.id === 'backdrop'){
+				if(mousedownOnBackdrop){
+					mousedownOnBackdrop = false;
+					closeModal(e);
+				}				
 			}			
 		});
 		function showModal(modalId){
