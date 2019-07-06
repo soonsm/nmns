@@ -1161,7 +1161,7 @@
           $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule.end.toDate())));
     
           $('#scheduleName').val(e.schedule.title);
-          $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
+          $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contentList : "")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
           
@@ -1198,7 +1198,7 @@
           $("#scheduleEndTime").val(getTimeFormat(moment(e.end.toDate())));
     
           $('#scheduleName').val('');
-          $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
+          $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
           
@@ -1240,7 +1240,7 @@
         $('#scheduleName').val('');
         $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
           removeContent(this);
-        });;
+        });
         $('#scheduleContact').val('');
         $('#scheduleAllDay').attr('checked', false);
 
@@ -1346,7 +1346,7 @@
         });
         
         $("#scheduleBtn").on("touch click", function(){
-          var title, isAllDay, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
+          var title, isAllDay, startDate, endDate, startTime, endTime, contentList, contact, etc, calendarId, manager;
           try {
             startDate = $('#scheduleStartDate')[0]._flatpickr.selectedDates[0];
             endDate = $('#scheduleEndDate')[0]._flatpickr.selectedDates[0];
@@ -1393,7 +1393,7 @@
           }
       
           title = $('#scheduleName').val();
-          contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): NMNS.email + generateRandom()), value:this.value}}).toArray());
+          contentList = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || ((NMNS.menuList && NMNS.menuList.find(function(menu){return menu.name === this.value})) ? NMNS.menuList.find(function(menu){return menu.name === this.value}).id : NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
           etc = $('#scheduleEtc').val();
           isAllDay = $('#scheduleAllDay').prop('checked');
@@ -1436,7 +1436,7 @@
                       dragBgColor: manager.bgColor || "#334150",
                       raw: {
                         contact: contact,
-                        contents: contents,
+                        contentList: contentList,
                         etc: etc,
                         status: $("#scheduleStatus input:checked").val()
                       }
@@ -1447,7 +1447,7 @@
                       start: startDate,
                       end: endDate,
                       raw:{
-                        contents: contents,
+                        contentList: contentList,
                         contact: contact,
                         status:$("#scheduleStatus input:checked").val()
                       }
@@ -1460,7 +1460,7 @@
                   name: title,
                   start: moment(startDate).format("YYYYMMDDHHmm"),
                   end: moment(endDate).format("YYYYMMDDHHmm"),
-                  contents: contents,
+                  contentList: contentList,
                   contact: contact,
                   isAllDay: isAllDay,
                   status:$("#scheduleStatus input:checked").val()
@@ -1491,7 +1491,7 @@
                   dragBgColor: manager.bgColor || "#334150",
                   raw: {
                     contact: contact,
-                    contents: contents,
+                    contentList: contentList,
                     etc: etc,
                     status: "RESERVED"
                   }
@@ -1514,7 +1514,7 @@
                   dragBgColor: manager.bgColor || "#334150",
                   color: manager.color,
                   contact: contact,
-                  contents: contents,
+                  contentList: contentList,
                   etc: etc,
                   status: "RESERVED"
               });
@@ -1557,7 +1557,7 @@
         $("#taskEndTime").val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
         
         $("#taskName").val(task.name || "");
-        $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
+        $("#taskContents").val(task.raw ? task.raw.contentList || "" : "");
         calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
             return item.id === task.calendarId;
         }) : NMNS.calendar.getCalendars()[0];
@@ -1759,7 +1759,7 @@
                 dragBgColor: manager.bgColor || "#334150",
                 raw: {
                     contact: schedule.contact,
-                    contents: schedule.contents,
+                    contentList: schedule.contentList,
                     etc: schedule.etc,
                     status: schedule.status
                 }
@@ -1860,15 +1860,15 @@
         } else {
             e.data.forEach(function(item) {
               var contents = "";
-              if(item.contents){
+              if(item.contentList){
                 try{
-                  contents = JSON.parse(item.contents).map(function(item){return item.value}).join(', ');
+                  contents = JSON.parse(item.contentList).map(function(item){return item.value}).join(', ');
                 }catch(error){
-                  contents = item.contents
+                  contents = item.contentList
                 }
               }
               html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + 
-              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
+              (item.contentList ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
               (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" + 
               contents + "</div></div>";
             });
@@ -2159,8 +2159,8 @@
                       popup.find("#scheduleManager").html(popup.find("#scheduleManager").next().find("button[data-calendar-id='" + manager.id + "']").html()).data("calendar-id", manager.id);
                   }
               }
-              if (e.data.contents) {
-                popup.find("#scheduleTabContents").append(generateContentsList(e.data.contents)).find('button').off('touch click').on('touch click', function(){
+              if (e.data.contentList) {
+                popup.find("#scheduleTabContents").append(generateContentsList(e.data.contentList)).find('button').off('touch click').on('touch click', function(){
                   removeContent(this);
                 });
               }
@@ -2479,7 +2479,7 @@
       });
       $('#scheduleContact').val('');
     }).on("shown.bs.modal", function(){
-			if($("#scheduleTab").is(":visible")){
+			if($("#scheduleTab").is(":visible") && $("#scheduleName").val() === ''){
 				$("#scheduleName").focus();
 			}
 		});
@@ -2559,14 +2559,18 @@
         initScheduleTab("switch");
       }
     }).on("shown.bs.tab", function(){
-			$("#scheduleName").focus();
+			if($("#scheduleName").val() === ''){
+				$("#scheduleName").focus();	
+			}
 		});
     $("#scheduleTabList a[data-target='#taskTab']").on('touch click', function(){
       if(!$(this).hasClass('active')){
         initTaskTab('switch');
       }
     }).on("shown.bs.tab", function(){
-			$("#taskName").focus();
+			if($("#taskName").val() === ''){
+				$("#taskName").focus();	
+			}
 		});
     $("#scheduleTabList a[data-target='#salesTab']").one('show.bs.tab', function(){
       $("#salesBtn").on('touch click', function(e){
@@ -3110,7 +3114,7 @@
               }
             });
             var html = "";
-            var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
+            var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 데스크탑으로 접속하시면 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'모바일에서는 예약 추가가 안되나요?', contents:'모바일 버전에서는 노쇼, 예약, 일정, 고객, 메뉴 추가 기능을 뺀 모든 서비스를 이용할 수 있어요.<br>추가 기능은 PC에서 이용할 수 있답니다!'}, {title:'고객을 추가로 등록하고 싶어요.', contents:'고객 추가는 고객관리 메뉴에서 하실 수 있습니다!'}, {title:'고객을 엑셀로 등록하고 싶어요.', contents:'엑셀등록 기능을 열심히 만들고 있는 중입니다. 조금만 기다려주세요!'}, {title:'노쇼로 등록한 전화번호는 개인정보가 아닌가요?', contents:'노쇼에 등록된 전화번호는 복호화가 불가능한 암호화 형태로 저장되어 관리자도 내용을 확인할 수 없습니다. 안심하세요!'}, {title:'예약과 일정은 무엇이 다른가요?', contents:'예약은 예약하는 고객이 있어서 시간표에 직접 등록되고, 일정은 매장의 운영에 필요한 일정을 등록하는데 사용됩니다.<br>예를들어, 매장 대청소 등을 일정으로 관리하면 편리하게 이용하실 수 있겠죠?'}]
             faqs.forEach(function(item, index) {
                 html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
                     '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
