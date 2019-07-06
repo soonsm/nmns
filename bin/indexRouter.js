@@ -94,10 +94,12 @@ module.exports = function (passport) {
                     authRequired: true
                 });
             }
-        } else {
+        } else {			
+			let errorMessage = req.session.errorMessage;
+			req.session.errorMessage = undefined;
             render(res, indexView, {
                 email: req.cookies.email,
-                message: req.session.errorMessage,
+                message: errorMessage,
                 kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
             });
         }
