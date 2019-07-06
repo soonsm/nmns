@@ -86,6 +86,11 @@ exports.getReservationListRaw = async function (data) {
 
     try {
         resultData = await newDb.getReservationList(email, data.start, data.end);
+        for (let item of resultData) {
+            if (item.contentList) {
+                item.contents = JSON.stringify(item.contentList);
+            }
+        }
         status = true;
     } catch (e) {
         status = false;
