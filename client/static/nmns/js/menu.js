@@ -89,7 +89,7 @@
       var list = $("#mainMenuList");
       var html = "";
       var goalIndex;
-		if(!currentMenuCount){
+		if(!currentMenuCount || refresh){
 			currentMenuCount = 0;
 		}
       if(NMNS.menuList && refresh){//from 0 to current menu count
@@ -110,18 +110,17 @@
         refreshMenuModal(NMNS.menuList[$(this).parent().data('index')*1]);
       }).on("touch click", ".deleteMenuLink", function(e){
         e.stopPropagation();
-        $(this).parents('.menuRow').data('action', 'delete').hide();
-        if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
-          var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
-          if (Number.isInteger(index)) {
-            var menu = NMNS.menuList[index];
-            if (menu) {
-                NMNS.history.push($.extend({ "index": index }, menu));
-                NMNS.socket.emit("delete menu", { "id": menu.id });
-                NMNS.menuList.remove(menu.id, function(item, target) { return item.id === target });
-                drawMenuList(true);
-            }
-          }
+				if (confirm("정말 이 메뉴 항목을 삭제하시겠어요?")) {
+        	$(this).parents('.menuRow').data('action', 'delete').hide();        
+          // var index = Number($(this).parents(".menuRow").data("index"));
+          // if (Number.isInteger(index)) {
+          //   var menu = NMNS.menuList[index];
+          //   if (menu) {
+          //       NMNS.history.push($.extend({ "index": index }, menu));
+          //       NMNS.socket.emit("delete menu", { "id": menu.id });
+          //       NMNS.menuList.remove(menu.id, findById);
+          //   }
+          // }
         }
       }));
       if(!list.data('sortable')){
@@ -189,10 +188,14 @@
     refreshMenuModal(null);
   });
   
-  NMNS.socket.on("update menu list", socketResponse("메뉴 리스트 수정", undefined, function(e){
+  NMNS.socket.on("update menu list", socketResponse("메뉴 리스트 수정", function(){
+		NMNS.menuList = NMNS.menuList.filter(function(x){return x.action!== 'delete'});
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
+	}, function(e){
     NMNS.menuList = e.data;
     currentMenuCount = 0;
     drawMenuList(true);
+		$("#scheduleTabContentList").html(NMNS.generateMenuList(NMNS.menuList));
   }));
   NMNS.socket.on("add menu", socketResponse("메뉴 추가", function(e) {
     NMNS.history.remove(e.data.id, findById);
