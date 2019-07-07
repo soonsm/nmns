@@ -266,6 +266,10 @@ exports.updateReservation = async function (newReservation) {
             newReservation.contentList = array;
         }
 
+        if(!newReservation.contact){
+            newReservation.contact = null;
+        }
+
         //신규 고객 추가
         if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact !== reservation.contact) {
             let memberId = newCustomerId(email);

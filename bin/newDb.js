@@ -1274,7 +1274,7 @@ exports.deleteAllTask = async function (email) {
  * email: Partition Key
  * date: 매출날짜(YYYYMMDD)
  * time: 매출 시간(HHmmss)
- * id: timestamp(YYYYMMDDHHmmssSSS), Range Key, Client 생성
+ * id: timestamp(YYYYMMDDHHmmssSSS) + 랜덤스트링, Range Key, Client 생성
  * item: 매출내용/멤버십 변동
  * price
  * customerId: 고객 아이디
@@ -1351,7 +1351,8 @@ exports.saveSales = async function(data){
         throw 'email, id, date, time, customerId, item는 필수입니다.'
     }
 
-    if(!moment(sales.id, 'YYYYMMDDHHmmssSSS').isValid()){
+    let timestamp = sales.id.substring(0,17);
+    if(!moment(timestamp, 'YYYYMMDDHHmmssSSS').isValid()){
         throw `id 값 형식이 올바르지 않습니다.(${sales.id})`;
     }
     if(!moment(sales.date, 'YYYYMMDD').isValid()){

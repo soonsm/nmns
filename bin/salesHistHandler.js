@@ -207,7 +207,7 @@ exports.getMembershipHistory = fnTemplate(null, async (user, data) => {
 
 /**
  요청 위치 : 'save sales'
- 데이터 : [{'id':${매출 아이디, optional, 매출 내역을 저장하는 timestamp로써 YYYYMMDDHHmmssSSS 형태여야 함}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'price': ${결제 금액, number}}]
+ 데이터 : [{'id':${매출 아이디, 매출 내역을 저장하는 timestamp로써 YYYYMMDDHHmmssSSS 형태여야 함}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'price': ${결제 금액, number}}]
  응답 형식: 'data':[{'id':${매출 아이디}, 'date':${매출 날짜(YYYYMMDD), string}, 'time':${매출시간(hhmmss), string}, 'type':${매출 종류, CARD(카드), CASH(현금), MEMBERSHIP(멤버십 사용), string}, 'customerId':${매출을 일으킨 고객 아이디, string}, 'item':${매출내용, string}, 'scheduleId':${예약아이디, string}, 'managerId':${예약 담당자 아이디, string}, 'price': ${결제 금액, number}}]
  요청 데이터에 id가 없으면 매출 내역을 추가한다.
  요청 데이터에 id가 있으면 기존 매출 내역을 수정한다.
