@@ -203,14 +203,16 @@
 
     NMNS.calendar.on({
       clickSchedule: function(e){
-        NMNS.scheduleTarget = e;
-        initScheduleTab(e);
-        $("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
-        $("#scheduleTabList a[data-target='#taskTab']").text('일정 추가');
-        $("#taskBtn").text('일정 추가 완료');
-        $("#deleteTaskBtn").hide().next().removeClass('ml-1');
-        $("#scheduleBtn").text('저장');
-        $("#scheduleModal").addClass('update').modal('show');
+				if(e.type !== 'monthlyClickSchedule'){
+					NMNS.scheduleTarget = e;
+					initScheduleTab(e);
+					$("#scheduleTabList a[data-target='#scheduleTab']").text('예약 상세').tab('show');
+					$("#scheduleTabList a[data-target='#taskTab']").text('일정 추가');
+					$("#taskBtn").text('일정 추가 완료');
+					$("#deleteTaskBtn").hide().next().removeClass('ml-1');
+					$("#scheduleBtn").text('저장');
+					$("#scheduleModal").addClass('update').modal('show');
+				}
       },
       beforeCreateSchedule: function(e) {
         NMNS.scheduleTarget = e;
@@ -1017,7 +1019,7 @@
         var membership = sales[0] && sales[0].balanceMembership > 0, isRegistered;
         sales.forEach(function(sale, index){//draw selective form area
           isRegistered = Number.isInteger(sale.priceCard) || Number.isInteger(sale.priceCash) || Number.isInteger(sale.priceMembership);
-          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'" data-id="'+(sale.id || moment().format('YYYYMMDDHHmmssSSS'))+'"' 
+          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'" data-id="'+(sale.id || moment().format('YYYYMMDDHHmmssSSS') + generateRandom())+'"' 
           + (sale.customerId?(' data-customer-id="'+(sale.customerId || '')+'"'):'') + (sale.managerId?(' data-manager-id="'+(sale.managerId || '')+'"'):'')+ ' data-type="'+(sale.type || 'CARD')+'" data-is-registered="'+isRegistered+'">';
           if(!isRegistered){
             html += '<input type="text" pattern="[0-9]*" class="form-control form-control-sm scheduleSalesPaymentPrice" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'" data-old-value="'+(sale.price || '')+'" placeholder="금액을 숫자로 입력하세요.">';
@@ -1143,7 +1145,7 @@
       }
       $("#scheduleBtn").text(e && e.schedule ? "예약 변경 완료" : "예약 추가 완료");
       
-      $("#scheduleTab").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
+      $("#scheduleTab").data('contact', e && e.schedule && e.schedule.raw ? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
         if(e.schedule){// update schedule
           $("#scheduleStatus input[type='radio']").prop('checked', false);
