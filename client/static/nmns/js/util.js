@@ -106,6 +106,12 @@ if (!Array.prototype.findIndex) {
     }
 }
 
+Number.isInteger = Number.isInteger || function(value) {
+    return typeof value === "number" &&
+           isFinite(value) &&
+           Math.floor(value) === value;
+};
+
 function getColorFromBackgroundColor(background) {
     var o = Math.round(((parseInt(background.substring(1, 3), 16) * 299) +
         (parseInt(background.substring(3, 5), 16) * 587) +
