@@ -145,6 +145,7 @@ input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-i
 		background-position-y:center;
 		width:17px;
 		height:17px;
+		display:inline-block;
 	}
 }
 @supports (-ms-ime-align:auto){
@@ -851,6 +852,7 @@ body.overflow-y-hidden{
     overflow: hidden;
     display:flex;
     flex-direction:column;
+	justify-content:center;
 }
 .tui-full-calendar-time-schedule {
     word-break:break-all;
@@ -1934,17 +1936,17 @@ button.form-control {
 }
 
 #scheduleModal.update .updateScheduleElement{
-  display:inline-flex;
+  display:inline-flex !important;
 }
 #scheduleModal.update button.updateScheduleElement{
-  display:inline-block;
+  display:inline-block !important;
 }
 
 #scheduleModal .createScheduleElement{
   display:inline-flex;
 }
 #scheduleModal.update .createScheduleElement{
-  display:none;
+  display:none !important;
 }
 
 #salesLoading{

@@ -1860,6 +1860,9 @@
         } else {
             e.data.forEach(function(item) {
               var contents = "";
+							if(item.status === 'NOSHOW'){
+								return;
+							}
               if(item.contents){
                 try{
                   contents = JSON.parse(item.contents).map(function(item){return item.value}).join(', ');
