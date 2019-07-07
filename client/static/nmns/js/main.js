@@ -596,7 +596,7 @@
               html += "<div class='position-relative' data-id='"+task.id+"' data-calendar-id='"+task.manager+"' data-start='"+task.start+"' data-end='"+task.end+"' data-name='"+task.name+"'><input type='checkbox' class='task-checkbox' id='task-checkbox"+index+"'"+(task.isDone?" checked='checked'":"")+"><label for='task-checkbox"+index+"'></label><div class='flex-column d-inline-flex cursor-pointer task' style='margin-left:10px;max-width:calc(100% - 35px)'><div style='font-size:14px'>"+task.name+"</div><div class='montserrat' style='font-size:12px;opacity:0.5'>"+
               moment(task.start, 'YYYYMMDDHHmm').format(moment(task.start, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')
               + (task.end?' - ' + (moment(task.end, 'YYYYMMDDHHmm').format(moment(task.end, 'YYYYMMDDHHmm').isSame(moment(day.date, 'YYYYMMDD'), 'day')?'HH:mm':'MM. DD HH:mm')):'')
-              +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:unset;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
+              +"</div></div><span class='tui-full-calendar-weekday-schedule-bullet' style='top:8px;right:0;left:auto;background:"+manager.borderColor+"' title='"+manager.name+"'></span></div>"
             })
           }
         })
@@ -2803,6 +2803,7 @@
 				$("#mainAside").removeClass('sidebar-toggled');
 				setTimeout(function(){
 					document.getElementById("sidebarContainer").scrollTop = 0;
+					$("#mainAside").addClass('show-collapsed');
 				}, 300);
 			}
       if($("#lnbManagerForm").data('id')){//was updating
@@ -2989,7 +2990,7 @@
         // hide mainTask field
         $("#mainCalendarArea").css('minWidth', '');
         $("#mainContents").css("minWidth", '100%');
-        $("#mainAside").css('minWidth', 'unset');
+        $("#mainAside").css('minWidth', '0px');
         $("#mainTask").removeClass("show");
 				$(document.body).removeClass('overflow-y-hidden');
         if(!isHistory){
@@ -3032,7 +3033,7 @@
 							$("#mainAside").addClass('show-collapsed');	
 						}, 300);
           }else{// about to hide aside
-            $("#mainAside").css('minWidth', 'unset').removeClass('show-collapsed');
+            $("#mainAside").css('minWidth', '0px').removeClass('show-collapsed');
           }
           $('#mainAside').toggleClass('sidebar-toggled');
         });
