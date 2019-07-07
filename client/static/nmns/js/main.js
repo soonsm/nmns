@@ -1017,7 +1017,7 @@
         var membership = sales[0] && sales[0].balanceMembership > 0, isRegistered;
         sales.forEach(function(sale, index){//draw selective form area
           isRegistered = Number.isInteger(sale.priceCard) || Number.isInteger(sale.priceCash) || Number.isInteger(sale.priceMembership);
-          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'"'+(sale.id?' data-id="'+(sale.id || '')+'"':'') 
+          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'" data-id="'+(sale.id || moment().format('YYYYMMDDHHmmssSSS'))+'"' 
           + (sale.customerId?(' data-customer-id="'+(sale.customerId || '')+'"'):'') + (sale.managerId?(' data-manager-id="'+(sale.managerId || '')+'"'):'')+ ' data-type="'+(sale.type || 'CARD')+'" data-is-registered="'+isRegistered+'">';
           if(!isRegistered){
             html += '<input type="text" pattern="[0-9]*" class="form-control form-control-sm scheduleSalesPaymentPrice" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'" data-old-value="'+(sale.price || '')+'" placeholder="금액을 숫자로 입력하세요.">';
@@ -2593,7 +2593,7 @@
           object.id = pay.data('id');
           object.customerId = pay.data('customer-id');
           object.managerId = pay.data('manager-id');
-          object.scheduleId = pay.data('schedule-id');
+          object.scheduleId = $("#salesForm").data('schedule-id');
           object.type = pay.data('type');
           object.item = pay.data('item');
           object.price = pay.data('is-registered')?pay.find('.scheduleSalesPayment:checked').data('price') : pay.find('.scheduleSalesPaymentPrice').val();
@@ -2616,7 +2616,7 @@
     }).on('show.bs.tab', function(){
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule){
         $("#salesLoading").show();
-        $("#salesForm").hide();
+        $("#salesForm").hide().data('schedule-id', NMNS.scheduleTarget.schedule.id);
         $("#salesBtn").addClass('disabled');
         NMNS.socket.emit('get reserv sales', {scheduleId: NMNS.scheduleTarget.schedule.id});
         return true;
@@ -3052,7 +3052,7 @@
                   <div class="d-flex align-items-center" style="padding:25px 30px;border-bottom:1px solid rgba(57, 53, 53, 0.2)">\
                     <span style="font-size:18px;font-weight:bold">알림</span><span class="close-button ml-auto cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13"><g id="x" transform="translate(0.5 0.5)"><path id="Path" d="M12,0,0,12" fill="none" stroke="#393535" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/><path id="Path-2" data-name="Path" d="M0,0,12,12" fill="none" stroke="#393535" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" fill-rule="evenodd"/></g></svg></span></div>\
                   <div id="notificationBody"><div class="flex-column m-auto text-center py-5"><div class="bouncingLoader"><div></div><div></div><div></div></div><span>새로운 알림을 불러오는 중입니다...</span></div></div>\
-                  <div id="notificationEmpty">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div>\
+                  <div id="notificationEmpty"><div class="text-center">아직 알림 내역이 없어요.<br>예약 등록 내역, 예약 취소 내역이 보여집니다.</div></div>\
                 </div>\
               </div>\
             </div>',
