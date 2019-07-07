@@ -3014,6 +3014,8 @@
         $("#mainSearchNoShow").show();
       }else{//calendar mode
         $("#mainSearchNoShow").hide().prev().show().prev().show();
+				NMNS.siema && NMNS.siema.resizeHandler();
+				NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();
       }
     }
     if(!state.state || state.state.type !== 'detail'){// 뒤로가기 제거

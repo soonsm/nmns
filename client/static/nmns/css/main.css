@@ -606,12 +606,12 @@ input[type=checkbox]+label{
 #mainRow #mainTask .task{
     word-break: break-all;
 }
-
+/* 
 #mainRow *:not(.badge):not(.tui-full-calendar-calendar-dot):not(.tui-full-calendar-weekday-grid-date-decorator):not(.tui-full-calendar-weekday-schedule-time):not(.tui-full-calendar-weekday-schedule-bullet):not(.tui-full-calendar-timegrid-todaymarker):not(input + span) {
     border-width: .05rem;
     border-radius: 0;
 }
-
+ */
 #mainRow .menuTitle{
     margin-bottom:30px;
     align-items:center;
