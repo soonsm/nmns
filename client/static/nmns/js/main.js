@@ -2273,6 +2273,11 @@
         $("#scheduleTabContentList").html(generateMenuList(e.data));
       }
 			NMNS.menuList = e.data;
+			console.log('response', e.data);
+			if(NMNS.drawMenuList && $("#mainMenuList").is(":visible")){
+				console.log('draw');
+				NMNS.drawMenuList(true);
+			}
     }, undefined, true));
     
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){

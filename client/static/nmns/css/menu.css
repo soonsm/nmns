@@ -45,3 +45,8 @@
 #menuModal .modal-header{
   padding: 25px 30px;
 }
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	.menuRow{
+		padding:25px 20px;
+	}
+}

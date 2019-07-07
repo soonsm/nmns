@@ -92,7 +92,7 @@
               goalIndex = Math.min(currentSalesCount === 0? currentSalesCount + Math.max(20, (5 + Math.ceil($('#mainSalesList').height() / 48) - $("#mainSalesList .salesRow").length)) : currentSalesCount, NMNS.salesList.length);
               html += generateSalesRow(0, goalIndex)
           } else {
-              html += "<p>저장된 매출 내역이 없습니다.</p>";
+              html += "<p class='m-auto'>저장된 매출 내역이 없습니다.</p>";
           }
       }else if(NMNS.salesList){//additional loading
           goalIndex = Math.min(currentSalesCount + Math.max(20, (5 + Math.ceil($('#mainSalesList').height() / 48) - $("#mainSalesList .salesRow").length)), NMNS.salesList.length);//최대 20개씩 신규로 로딩
@@ -230,6 +230,7 @@
       return Math.max(document.body.scrollHeight - window.innerHeight - window.scrollY, 0);
     }
     var isLoading = false;
+		var scrollingElement = document.scrollingElement || document.documentElement;
     $(document).on("scroll", debounce(function(){
       if($("#mainSalesList").is(":visible")){
         if(!isLoading && NMNS.salesList && currentSalesCount < NMNS.salesList.length && getDistFromBottom() < Math.max(100, window.innerHeight * 0.2)){
@@ -242,10 +243,10 @@
       }
     }, 100)).on("scroll", function(){
       if($("#mainSalesList").is(":visible")){
-        if(document.scrollingElement.scrollTop > 0){
+        if(scrollingElement.scrollTop > 0){
           $(".salesMenu .menuTitle").addClass('fixedScroll');
           $("#menuTitleSticky").removeClass('d-none');
-          if(document.scrollingElement.scrollTop > $("#mainSalesTools").data('initialHeight') - document.getElementById('salesToolsSticky').offsetHeight){
+          if(scrollingElement.scrollTop > $("#mainSalesTools").data('initialHeight') - document.getElementById('salesToolsSticky').offsetHeight){
             $("#mainSalesTools").addClass('fixedScroll');
           }else{
             $("#mainSalesTools").removeClass('fixedScroll');

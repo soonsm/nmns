@@ -157,6 +157,9 @@ input[type=radio]:not(.custom-control-input):checked + label{
 .select select::-ms-expand, .select input::-ms-expand, .select input:hover::-ms-expand, .select input[list]::-ms-expand, .select input[list]:hover::-ms-expand, input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-indicator {
   display: none;
 }
+.select select::-ms-expand{
+	display:none;
+}
 .select::after {
   display: inline-block;
   margin-left: .255em;

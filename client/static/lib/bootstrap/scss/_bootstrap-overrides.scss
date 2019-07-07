@@ -113,7 +113,7 @@ a.text-primary {
   color: #fff;
 }
 .btn:focus{
-  box-shadow:initial;
+  box-shadow:none;
 }
 
 .bg-accent{
@@ -207,7 +207,7 @@ select.form-control-sm{
   box-shadow: 5px 15px 30px 0 rgba(0, 0, 0, 0.12);
   background-color: #ffffff;
   border:none;
-  max-width:unset;
+  max-width:none;
 }
 .bs-popover-auto[x-placement^=bottom]>.arrow::before, .bs-popover-bottom>.arrow::before{
   border-bottom-color:#fff;
