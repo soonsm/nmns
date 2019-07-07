@@ -72,6 +72,9 @@
   content: url('/nmns/img/sort_on.svg');
   opacity:1;
   margin-left:3px;
+	display: inline-block;
+	width: 7px;
+	height: 19px;
 }
 
 #salesToolsSticky .salesSortType:not(.active):after{
@@ -109,4 +112,9 @@
   display: inline-block;
   top:unset;
   left:unset;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	.salesRow{
+		padding:25px 20px;
+	}
 }
