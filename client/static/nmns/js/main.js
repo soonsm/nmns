@@ -1045,7 +1045,7 @@
         var membershipUsage = 0, priceTotal = 0;
         sales.forEach(function(sale, index){//draw summary area
           html += '<div class="scheduleSalesSummaryItem" data-index="'+index+'">'+sale.item+'<span class="ml-auto montserrat'+(sale.type === 'MEMBERSHIP'?' membershipSummary':'')+'"><span class="scheduleSalesSummaryMembershipSign">- </span><span class="scheduleSalesSummaryPrice">'
-            + ((sale.type === 'CARD' || !sale.type)? ((sale.priceCard || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : (sale.type === 'CASH'? ((sale.priceCash || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : ((sale.priceMembership || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")))
+            + ((sale.type === 'CARD' || !sale.type)? ((sale.price || sale.priceCard || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : (sale.type === 'CASH'? ((sale.price || sale.priceCash || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : ((sale.price || sale.priceMembership || '0')+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")))
             + ' </span></span> 원</div>';
           if(sale.type === 'MEMBERSHIP'){
             membershipUsage += Number.isInteger(sale.price || sale.priceMembership) ? sale.price || sale.priceMembership : 0;
