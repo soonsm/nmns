@@ -112,6 +112,9 @@
       var list = $("#mainMenuList");
       var html = "";
       var goalIndex;
+		if(!currentMenuCount){
+			currentMenuCount = 0;
+		}
       if(NMNS.menuList && refresh){//from 0 to current menu count
           list.html('');
           if (NMNS.menuList && NMNS.menuList.length > 0) {

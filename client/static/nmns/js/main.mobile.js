@@ -2814,7 +2814,10 @@
         $(this).addClass("menuLinkActive");
         // hide mainTask field
         // $("#mainTask").removeClass("show");
-        $(".calendarMenu").removeClass('fixedScroll');
+        if($(".calendarMenu").removeClass('fixedScroll').is(":visible")){
+					NMNS.siema && NMNS.siema.resizeHandler();
+					NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();	
+				}
         document.scrollingElement.scrollTop = 0;
         $("#mainAside").removeClass('sidebar-toggled');
         if(!isHistory){
