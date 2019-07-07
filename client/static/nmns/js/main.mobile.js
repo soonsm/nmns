@@ -1500,7 +1500,22 @@
           }
       
           history.back();
-        })
+        });
+				$("#deleteScheduleBtn").on("touch click", function(e){
+					e.preventDefault();
+					if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule && confirm('이 예약을 삭제하시겠어요?')){
+						NMNS.history.push(NMNS.scheduleTarget.schedule);
+						NMNS.calendar.deleteSchedule(NMNS.scheduleTarget.schedule.id, NMNS.scheduleTarget.schedule.calendarId);
+						NMNS.socket.emit("update reserv", { id: NMNS.scheduleTarget.schedule.id, status: "DELETED" });
+						history.back();
+					}
+				});
+				$("#resendAlrimScheduleBtn").on("touch click", function(e){
+					e.preventDefault();
+					if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule && confirm('고객에게 알림톡을 다시 보낼까요?')){
+						NMNS.socket.emit("resend alrimtalk", {id:NMNS.scheduleTarget.schedule.id});
+					}
+				});
       }
       refreshScheduleTab(e);
     }
@@ -2106,7 +2121,7 @@
     }, function(e){
         $('#resendAlrimScheduleBtn').addClass('d-none');
         showSnackBar("<span>"+e.message || "알림톡을 다시 보내지 못했습니다."+"</span>");
-    }))
+    }), true);
     NMNS.socket.on('get announcement', socketResponse('공지사항 조회', function(e){
        // e.data.announcement.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
        // e.data.announcement.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
