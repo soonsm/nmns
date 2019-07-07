@@ -118,6 +118,9 @@
     var list = $("#customerMembershipList"), memberships = list.data('item'), current = list.data('index');
     var html = "";
     var goalIndex;
+		if(refresh || !current){
+			current = 0;
+		}
     if(memberships && refresh){//from 0 to current customer count
       $("#customerMembershipLoading").hide();
       list.children().remove();

@@ -86,6 +86,9 @@
       var list = $("#mainSalesList");
       var html = "";
       var goalIndex;
+		if(refresh || !currentSalesCount){
+			currentSalesCount = 0;
+		}
       if(NMNS.salesList && refresh){//from 0 to current sales count
           list.children(":not(.ps)").remove();
           if (NMNS.salesList && NMNS.salesList.length > 0) {

@@ -348,6 +348,9 @@
       var list = $("#mainCustomerList");
       var html = "";
       var goalIndex;
+		if(refresh || !currentCustomerCount){
+			currentCustomerCount = 0;
+		}
       if(NMNS.customerList && refresh){//from 0 to current customer count
           list.children(":not(.ps)").remove();
           if (NMNS.customerList && NMNS.customerList.length > 0) {
