@@ -1963,8 +1963,8 @@
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
       // e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
       // e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});//for test
-      e.data.summary.lastNoShowDate = '20190103';
-      e.data.summary.noShowCount = 2;
+      // e.data.summary.lastNoShowDate = '20190103';
+      // e.data.summary.noShowCount = 2;
         if (e.data.summary.noShowCount > 0) {
           
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
