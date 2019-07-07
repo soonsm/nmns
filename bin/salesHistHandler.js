@@ -72,7 +72,7 @@ exports.getSalesHist = fnTemplate(null, async function(user, data){
     let totalSalesCount = list.length, totalSalesAmount =0;
     let totalSalesCard=0, totalSalesCash=0,totalSalesMembership=0;
 
-    list.forEach(sales => {
+    for(let sales of list){
         totalSalesAmount += sales.price;
         if(sales.type === process.nmns.PAYMENT_METHOD.CARD){
             totalSalesCard += sales.price;
@@ -81,8 +81,10 @@ exports.getSalesHist = fnTemplate(null, async function(user, data){
         }else if(sales.type === process.nmns.PAYMENT_METHOD.MEMBERSHIP){
             totalSalesMembership += sales.price;
         }
-        sales.customerName = user.memberList.find(member => member.id === sales.customerId);
-    });
+        let customer = await newDb.getCustomer(user.email, sales.customerId) || {name: undefined};
+        sales.customerName = customer.name;
+    }
+
     return {
         totalSalesCount: totalSalesCount,
         totalSalesAmount: totalSalesAmount,
