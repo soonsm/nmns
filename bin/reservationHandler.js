@@ -86,6 +86,11 @@ exports.getReservationListRaw = async function (data) {
 
     try {
         resultData = await newDb.getReservationList(email, data.start, data.end);
+        for (let item of resultData) {
+            if (item.contentList) {
+                item.contents = JSON.stringify(item.contentList);
+            }
+        }
         status = true;
     } catch (e) {
         status = false;
@@ -319,7 +324,11 @@ exports.updateReservation = async function (newReservation) {
         message = '예약수정완료';
     } catch (e) {
         status = false;
-        message = e;
+        if((typeof e) === 'string' ){
+            message = e;
+        }else{
+            message = JSON.stringify(e);
+        }
     }
 
     return {
