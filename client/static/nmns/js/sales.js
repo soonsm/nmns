@@ -7,11 +7,11 @@
     //   NMNS.salesList.push({id:'123'+i, customerName:'미미미'+(i*Math.random()), date:moment().add(i, 'day').format('YYYYMMDD'), item: '입장료'+(i*Math.random()), type:'CARD', price:Math.floor(30000*Math.random())})
     // }
     drawSalesList(true);
-    $("#salesSummaryTotalCount").text((e.data.totalSalesCount || NMNS.salesList.length + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalCard").text((e.data.totalSalesCard || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalCash").text((e.data.totalSalesCash || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalMembership").text((e.data.totalSalesMembership || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalAmount").text((e.data.totalSalesAmount || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalCount").text(((e.data.totalSalesCount || NMNS.salesList.length) + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalCard").text(((e.data.totalSalesCard || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalCash").text(((e.data.totalSalesCash || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalMembership").text(((e.data.totalSalesMembership || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalAmount").text(((e.data.totalSalesAmount || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     $("#salesToolsSticky").show();
     if(!$("#mainSalesTools").data('initialHeight')){
       $("#mainSalesTools").data('initialHeight', document.getElementById("mainSalesTools").offsetHeight);
