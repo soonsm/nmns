@@ -670,6 +670,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
   word-break:break-all;
   cursor:pointer;
   margin-bottom: 10px;
+	display:table-cell;
 }
 .monthlyDetailPopupTitle:last-child{
   margin-bottom:0;
@@ -853,6 +854,11 @@ body.overflow-y-hidden{
     display:flex;
     flex-direction:column;
 	justify-content:center;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	.tui-full-calendar-week-day .tui-full-calendar-schedule-cover > div{
+		justify-content:flex-start;
+	}	
 }
 .tui-full-calendar-time-schedule {
     word-break:break-all;

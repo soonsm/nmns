@@ -353,11 +353,11 @@
         var html = "";
         if(NMNS.calendar.getViewName() === 'week'){
           html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center text-center'><div class='col-11 px-0'>"
-          if(!isAllDay){
-              html += "<div class='row mx-0'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
+          if(!isAllDay && moment(schedule.end.toDate()).diff(schedule.start.toDate(), 'hours')> 1){
+              html += "<div class='row mx-0' style='margin-bottom:10px'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
           }
           if (schedule.title) {
-              html += "<div class='row mx-0' style='margin-top:10px'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>" + schedule.title + "</div></div>";
+              html += "<div class='row mx-0'><div class='col px-0' title='" + type + "이름:" + schedule.title + "'>" + schedule.title + "</div></div>";
           }
           html += "</div></div>"
         }else if(NMNS.calendar.getViewName() === 'day'){
