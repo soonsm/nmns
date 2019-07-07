@@ -2113,9 +2113,9 @@
 				list.find('.addAnnouncementNoShow').on("touch click", function(){
 					NMNS.socket.emit("update reserv", {id:$(this).data('schedule-id'), status:"NOSHOW", noShowCase:"직전취소"});
 				});
-        $("#announcementArea").append(list);
+        $("#announcementArea").append(list).removeClass('d-flex');
       }else if(NMNS.announcementPage === 1){
-        $("#announcementArea").append("<div class='m-auto text-center' style='font-size:14px;line-height:1.71'>아직 알림내역이 없어요.<br>공지사항, 예약 등록 내역, 예약 취소<br>내역이 보여집니다.</div>");
+        $("#announcementArea").append("<div class='m-auto text-center' style='font-size:14px;line-height:1.71'>아직 알림내역이 없어요.<br>공지사항, 예약 등록 내역, 예약 취소<br>내역이 보여집니다.</div>").addClass('d-flex');
       }
       
       var count = NMNS.info.newAnnouncement;

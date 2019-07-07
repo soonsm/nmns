@@ -51,12 +51,10 @@ input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-i
     box-shadow: none;
 }
 
-input[name='name'],
-input[name='title'],
-input[name='contents'],
-input[name='etc'],
-.han{
-    ime-mode: active;
+@media(max-height:800px){
+	.modal-dialog-centered{
+		align-items:flex-start;
+	}
 }
 .icon-plus{
   font-size: 25px;
@@ -138,6 +136,15 @@ input[name='etc'],
 		background-size:contain;
 		background-position-y:center;
 		background-position-x:center;
+	}
+	#lnbManagerList .contextual{
+		background-image: url('/nmns/img/Contextual.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-x:center;
+		background-position-y:center;
+		width:17px;
+		height:17px;
 	}
 }
 @supports (-ms-ime-align:auto){
@@ -461,6 +468,11 @@ input[type=checkbox]+label{
     background-color:transparent;
     left:2px;
     top:auto;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	#lnbManagerColor input + span + span{
+		top:4px;
+	}
 }
 #lnbManagerColor input:checked + span + span{
     display:inline-block;
