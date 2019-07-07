@@ -528,7 +528,10 @@
       document.scrollingElement.scrollTop = 0;
       $(".calendarMenu").removeClass('fixedScroll');
       $("#mainTask").toggleClass('show');
-      $("#mainCalendarArea").toggle();
+      if($("#mainCalendarArea").toggle().is(":visible")){
+				NMNS.siema && NMNS.siema.resizeHandler();
+				NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();	
+			}
     }
 
     function findManager(managerId) {

@@ -458,6 +458,9 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     bottom: 25%;
     right: 30%;
 }
+#mainCalendarCalendar .flatpickr-day.today:not(.selected){
+	border:none;
+}
 #mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
     color:#1736ff;
 }
