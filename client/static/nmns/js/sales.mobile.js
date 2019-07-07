@@ -8,11 +8,11 @@
     // }
     $("#mainSalesLoading").hide();
     drawSalesList(true);
-    $("#salesSummaryTotalCount").text((e.data.totalSalesCount || NMNS.salesList.length + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalCard").text((e.data.totalSalesCard || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalCash").text((e.data.totalSalesCash || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalMembership").text((e.data.totalSalesMembership || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
-    $("#salesSummaryTotalAmount").text((e.data.totalSalesAmount || '0'  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalCount").text(((e.data.totalSalesCount || NMNS.salesList.length) + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalCard").text(((e.data.totalSalesCard || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalCash").text(((e.data.totalSalesCash || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalMembership").text(((e.data.totalSalesMembership || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+    $("#salesSummaryTotalAmount").text(((e.data.totalSalesAmount || '0')  + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
     if(!$("#mainSalesTools").data('initialHeight')){
       $("#mainSalesTools").data('initialHeight', document.getElementById("mainSalesTools").offsetHeight);
     }
