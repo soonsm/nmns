@@ -41,6 +41,11 @@
   display:flex;
   align-items:center;
 }
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	#mainCustomerList .customer{
+		padding:20px 7px;
+	}
+}
 
 #mainCustomerList .customer:hover{
   box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.1);

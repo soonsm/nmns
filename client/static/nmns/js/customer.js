@@ -12,7 +12,7 @@
                 <li class="nav-item" style="display:inline-flex !important"><a class="nav-link pt-0 rounded-0" href="#customerMembership" data-toggle="tab" aria-label="멤버십 금액 내역">멤버십 금액 내역</a></li>\
               </ul>\
               <button type="button" class="close p-0 ml-auto mr-0 my-0" data-dismiss="modal" aria-label="닫기">\
-                <span aria-hidden="true" style="vertical-align:text-top;line-height:0px">&times;</span>\
+                <span aria-hidden="true" style="vertical-align:text-top;line-height:0px;display:inline-block">&times;</span>\
               </button>\
             </div>\
           </div>\
@@ -479,6 +479,11 @@
     drawCustomerMembershipList(true);
   })).on("add membership", socketResponse("멤버십 내역 변경", function(e){
     $("#customerMembershipList .customerMembership[data-id='"+e.data.id+"'] .balanceMembership").text(((e.data.balanceMembership || '') + '').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		$("#customerMembershipList").data("item").forEach(function(membership){
+			if(membership.id === e.data.id){
+				membership.balanceMembership = e.data.balanceMembership;
+			}
+		});
   }, function(e){
     var list = $("#customerMembershipList").data('item')
     list.splice(list.findIndex(function(item){
