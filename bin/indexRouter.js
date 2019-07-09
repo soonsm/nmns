@@ -253,7 +253,8 @@ module.exports = function (passport) {
      * {snsType: ${sns 종류(NAVER, KAKAO), string}, snsLinkId: ${SNS에서 부여한 id, string}, snsEmail: ${SNS email(회원가입 화면의 email input에 채워질 데이터), string, optional}}
      */
     router.post('/sns_signin', async function (req, res) {
-        if (req.user) {
+        let user = req.user;
+        if (user) {
             res.redirect('/');
             return;
         }
@@ -275,18 +276,12 @@ module.exports = function (passport) {
 
             let snsLink = await db.getSnsLink(snsLinkId);
             if (!snsLink) {
-				let user = await db.getWebUser(snsEmail);
+				user = await db.getWebUser(snsLink.email);
 				if(!user){
 					return sendResponse(res, false, `${snsEmail}로 가입되어있는 계정이 없습니다.`);
 				}
-				await db.setSnsLink({	
-					snsLinkId: snsLinkId,
-					snsType: snsType,
-					snsEmail: snsEmail,
-					email: snsEmail
-				});
             } else {
-                let user = await db.getWebUser(snsLink.email);
+                user = await db.getWebUser(snsLink.email);
                 if (!user) {
                     user = await db.getWebUser(snsLink.snsEmail);
 					if(!user){
@@ -298,7 +293,7 @@ module.exports = function (passport) {
 								snsLinkId: snsLinkId,
 								snsType: snsType,
 								snsEmail: snsEmail,
-								email: snsEmail
+								email: user.email
 							});
 						}
 					}else{
@@ -306,7 +301,7 @@ module.exports = function (passport) {
 							snsLinkId: snsLinkId,
 							snsType: snsType,
 							snsEmail: snsEmail,
-							email: snsLink.snsEmail
+							email: user.email
 						});
 					}
                 }
