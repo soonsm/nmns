@@ -357,6 +357,13 @@
 		NMNS.calendar.render();
 		$(this).toggleClass('maximized');
 	});
+	$("#toggleCalendarToday").on("touch click", function(){
+		$(this).blur();
+		NMNS.calendar.setDate(new Date());
+		setDropdownCalendarType();
+		setRenderRangeText();
+		setSchedules();
+	});
     function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
