@@ -361,6 +361,22 @@
     }));
 
     //business specific functions about calendar start
+		$("#toggleCalendarToday").on("touch click", function(){
+			$(this).blur();
+			NMNS.calendar.setDate(new Date());			
+			if(NMNS.siemaCalendar){
+				document.getElementById('mainCalendarRangeInput' + (NMNS.siemaCalendar.currentSlide + 1))._flatpickr.setDate(NMNS.calendar.getDate().toDate());	
+				NMNS.siemaCalendar.resizeHandler();
+				if($("#mainCalendarCalendar").is(":visible")){
+					$("#mainCalendarRange").trigger('click');
+					initCalendarCarousel();
+					return;
+				}
+			}
+			initCalendarCarousel();
+			NMNS.siema.resizeHandler();
+			setRenderRangeText();
+		});
     function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";

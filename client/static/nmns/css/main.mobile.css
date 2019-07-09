@@ -452,7 +452,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     border-radius:50%;
 	position:relative;
 }
-#mainCalendarCalendar .flatpickr-day.today:after {
+#mainCalendarCalendar .flatpickr-day.selected:after {
     border-bottom: 2px solid #393535;
     content: '';
     position: absolute;
@@ -460,8 +460,9 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     bottom: 25%;
     right: 30%;
 }
-#mainCalendarCalendar .flatpickr-day.today:not(.selected){
+#mainCalendarCalendar .flatpickr-day.selected:not(.today){
 	border:none;
+	background-color:#fff;
 }
 #mainCalendarCalendar .flatpickr-day:nth-child(7n), #mainCalendarCalendar .flatpickr-weekday:last-child{
     color:#1736ff;
@@ -474,7 +475,10 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarCalendar .flatpickr-day.prevMonthDay, #mainCalendarCalendar .flatpickr-day.nextMonthDay{
     opacity:0.5;
 }
-#mainCalendarCalendar .flatpickr-day.selected, #mainCalendarCalendar .flatpickr-day.startRange, #mainCalendarCalendar .flatpickr-day.endRange, #mainCalendarCalendar .flatpickr-day.selected.inRange, #mainCalendarCalendar .flatpickr-day.startRange.inRange, #mainCalendarCalendar .flatpickr-day.endRange.inRange, #mainCalendarCalendar .flatpickr-day.selected:focus, #mainCalendarCalendar .flatpickr-day.startRange:focus, #mainCalendarCalendar .flatpickr-day.endRange:focus, #mainCalendarCalendar .flatpickr-day.selected:hover, #mainCalendarCalendar .flatpickr-day.startRange:hover, #mainCalendarCalendar .flatpickr-day.endRange:hover, #mainCalendarCalendar .flatpickr-day.selected.prevMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.selected.nextMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.nextMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.nextMonthDay{
+#mainCalendarCalendar .flatpickr-day.selected{
+	color:initial;
+}
+#mainCalendarCalendar .flatpickr-day.today, #mainCalendarCalendar .flatpickr-day.startRange, #mainCalendarCalendar .flatpickr-day.endRange, #mainCalendarCalendar .flatpickr-day.selected.inRange, #mainCalendarCalendar .flatpickr-day.startRange.inRange, #mainCalendarCalendar .flatpickr-day.endRange.inRange, #mainCalendarCalendar .flatpickr-day.today:focus, #mainCalendarCalendar .flatpickr-day.startRange:focus, #mainCalendarCalendar .flatpickr-day.endRange:focus, #mainCalendarCalendar .flatpickr-day.today:hover, #mainCalendarCalendar .flatpickr-day.startRange:hover, #mainCalendarCalendar .flatpickr-day.endRange:hover, #mainCalendarCalendar .flatpickr-day.today.prevMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.prevMonthDay, #mainCalendarCalendar .flatpickr-day.today.nextMonthDay, #mainCalendarCalendar .flatpickr-day.startRange.nextMonthDay, #mainCalendarCalendar .flatpickr-day.endRange.nextMonthDay{
     background-color: rgba(51, 65, 80, 0.1);
     box-shadow: none;
     color: initial;

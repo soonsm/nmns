@@ -225,7 +225,7 @@
               <div id="mainCalendarArea" class="bg-white col px-3 pb-3">
                 <div id="mainCalendarSticky" class="pt-3">
                   <div id="mainCalendarTools" class="text-center align-items-center row mx-0 justify-center">
-                    <div class="col-12 px-0" style="margin-bottom:20px">
+                    <div class="col-12 px-0 position-relative" style="margin-bottom:20px">
                       <input type="text" id="mainCalendarRangeInput1" class="d-none">
                       <input type="text" id="mainCalendarRangeInput2" class="d-none">
                       <input type="text" id="mainCalendarRangeInput3" class="d-none">
@@ -234,6 +234,7 @@
                         <span id="renderRange" class="montserrat"></span>
                         <button class="btn moveDate" data-action="next" type="button" aria-label="다음" style="padding:0 0 0 20px"><span class="icon-arrow icon-arrow-right"></span></button>
                       </div>
+											<button class="btn btn-white btn-sm position-absolute" id="toggleCalendarToday" type="button" style="padding:7px 12px;top:-2px;right:0">오늘</button>
                     </div>
                     <div id="mainCalendarCalendar" class="col-12 px-0" style="width:100%">
                       <div data-index="1" class="mainCalendarCalendarMonth"></div>
