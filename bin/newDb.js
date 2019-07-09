@@ -551,22 +551,15 @@ exports.getCustomerList = async function (email, contact, name) {
         }
     };
 
-    if (contact) {
-        param.FilterExpression = '#contact = :contact';
-        param.ExpressionAttributeNames['#contact'] = 'contact';
-        param.ExpressionAttributeValues[':contact'] = contact;
+    let list = await query(param);
+    if(contact !== undefined){
+        list = list.filter(customer => customer.contact == contact);
     }
-    if (name) {
-        let fe = '';
-        if (contact) {
-            fe = param.FilterExpression + ' and ';
-        }
-        param.FilterExpression = fe + '#name = :name';
-        param.ExpressionAttributeNames['#name'] = 'name';
-        param.ExpressionAttributeValues[':name'] = name;
+    if(name !== undefined){
+        list = list.filter(customer => customer.name == name);
     }
 
-    return await query(param);
+    return list;
 };
 
 exports.deleteCustomer = async function (email, id) {
