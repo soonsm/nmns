@@ -355,7 +355,7 @@
 			$(".calendarMenu .menuTitle").hide();
 		}
 		NMNS.calendar.render();
-		$(this).toggleClass('maximized');
+		$(this).toggleClass('maximized').blur();
 	});
 	$("#toggleCalendarToday").on("touch click", function(){
 		$(this).blur();
