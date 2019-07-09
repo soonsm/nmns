@@ -658,6 +658,7 @@
 				Kakao.Auth.login({
 					success: function(authObj) {
 						Kakao.API.request({url:'/v2/user/me', success:function(res){
+						console.log(res);
                             /**
                              res.kakao_account.email 있는지 확인한다.
                              사용자가 카카오톡 로그인 할 때 이메일 제공 선택을 안하면 email이 넘어오지 않는다.
@@ -669,11 +670,26 @@
                              snsType: KAKAO
                              snsEmail: res.kakao_account.email
                             **/
-							NMNS.socket.emit('link sns', {
-								snsLinkId:res.for_partner.uuid,
-								snsEmail:res.for_partner.properties.email,
-								snsType: 'KAKAO'
-							});
+							if(!res.kakao_account.email || !res.kakao_account.email){
+								alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다. 카카오톡>설정>프라이버시>카카오 계정>연결 서비스 관리 메뉴에서 연결을 해제 후 다시 시도해주세요.');
+								Kakao.Auth.logout();
+							}else{
+								var xhr = new XMLHttpRequest();
+								xhr.open('POST', '/sns_signin');
+								xhr.setRequestHeader('Content-Type', 'application/json');
+								xhr.onload = function() {
+									if (xhr && xhr.status === 200) {
+										location.href = '/';
+									} else {
+										alert("카카오톡 로그인에 실패했습니다. 다시 시도해주세요!");
+									}
+								};
+								xhr.send(JSON.stringify({
+									snsLinkId: res.id,
+									snsType: 'KAKAO',
+									snsEmail: res.kakao_account.email
+								}));
+							}
 						}, fail: function(error){
 							alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
 						}})
