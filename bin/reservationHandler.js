@@ -473,17 +473,22 @@ exports.reSendReservationConfirm = async function (data) {
 
     if (data.id) {
         let user = await db.getWebUser(email);
-        let reservation = await newDb.getReservation(email, data.id);
-        if (reservation) {
-            if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
-                message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
-            } else {
-                status = true;
-                message = '알림톡 전송 성공';
-            }
-        } else {
-            message = '없는 예약입니다.';
-        }
+		if(user.alrimTalkInfo.useYn === 'Y'){
+			let reservation = await newDb.getReservation(email, data.id);
+			if (reservation) {
+				if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
+					message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
+				} else {
+					status = true;
+					message = '알림톡 전송 성공';
+				}
+			} else {
+				message = '없는 예약입니다.';
+			}	
+		}else{
+			message = '알림톡 사용 설정이 되어있지 않습니다.';
+		}
+        
     } else {
         message = '예약 아이디가 없습니다.';
     }
