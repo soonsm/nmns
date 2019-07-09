@@ -172,11 +172,10 @@ exports.update = async function (data) {
     if (!type) {
         type = 'R';
     }
-    exports.email = this.email;
     if (type === 'R') {
-        return await exports.updateReservation(data);
+        return await exports.updateReservation.apply(this, [data]);
     } else if (type === 'T') {
-        return await exports.updateTask(data);
+        return await exports.updateTask.apply(this, [data]);
     } else (type !== 'R' && type !== 'T')
     {
         return {
@@ -272,17 +271,22 @@ exports.updateReservation = async function (newReservation) {
 
         //신규 고객 추가
         if (newReservation.status !== process.nmns.RESERVATION_STATUS.DELETED && newReservation.contact !== reservation.contact) {
-            let memberId = newCustomerId(email);
-            await newDb.saveCustomer({
-                email: email,
-                id: memberId,
-                name: newReservation.name,
-                contact: newReservation.contact,
-                etc: newReservation.etc,
-                managerId: newReservation.manager
-            });
-            newReservation.manager = memberId;
-            pushMessage = '새로운 고객이 추가되었습니다.';
+            let memberList = await newDb.getCustomerList(email, newReservation.contact, newReservation.name);
+            if (memberList.length > 0) {
+                newReservation.member = memberList[0].id;
+            }else{
+                let memberId = newCustomerId(email);
+                await newDb.saveCustomer({
+                    email: email,
+                    id: memberId,
+                    name: newReservation.name,
+                    contact: newReservation.contact,
+                    etc: newReservation.etc,
+                    managerId: newReservation.manager
+                });
+                newReservation.member = memberId;
+                pushMessage = '새로운 고객이 추가되었습니다.';
+            }
         }
 
         //노쇼에서 정상 또는 취소로 바꿀 때 노쇼 삭제
@@ -308,7 +312,7 @@ exports.updateReservation = async function (newReservation) {
         let user = await db.getWebUser(email);
 
         //알림톡 전송
-        if (newReservation.contact !== reservation.contact && newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED && user.alrimTalkInfo.useYn === 'Y') {
+        if (newReservation.contact && newReservation.contact !== reservation.contact && newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED && user.alrimTalkInfo.useYn === 'Y') {
             if (pushMessage) {
                 pushMessage += '<br/>';
             }
@@ -352,11 +356,10 @@ exports.add = async function (data) {
     if (!type) {
         type = 'R';
     }
-    exports.email = this.email;
     if (type === 'R') {
-        return await exports.addReservation(data);
+        return await exports.addReservation.apply(this, [data]);
     } else if (type === 'T') {
-        return await exports.addTask(data);
+        return await exports.addTask.apply(this, [data]);
     } else (type !== 'R' && type !== 'T')
     {
         return {
@@ -424,6 +427,7 @@ exports.addReservation = async function (data) {
                 managerId: data.manager
             });
             data.member = memberId;
+            pushMessage = '새로운 고객이 추가되었습니다.';
         }
         if (data.contents) {
             let array = JSON.parse(data.contents);
