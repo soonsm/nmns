@@ -47,22 +47,22 @@
           var xhr = new XMLHttpRequest();
           // Setup our listener to process completed requests
           var that = self;
-          xhr.onload = function () {
-          
+          xhr.onload = function () {          
           	if (xhr.status >= 200 && xhr.status < 300) {
           	  alert('정상적으로 인증되었습니다.');
       				that.opener = that;
-              window.close();
+              window.location.replace("https://" + window.location.hostname + "/");
           	} else {
           		alert('네이버 아이디 연동 및 로그인에 실패하였습니다('+xhr.status+').\n\n네이버 > 내정보 > 보안설정 > 외부사이트 연결 페이지에서\nWA:SHOW 연결을 끊은 후 다시 시도해주세요.');
+							naverLogin.reprompt();
       				that.opener = that;
-              window.close();
+              window.location.replace("https://" + window.location.hostname + "/index");
           	}
           };
           
-          xhr.open('POST', window.location.origin + '/naver_link');
+          xhr.open('POST', window.location.origin + '/sns_signin');
           xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.send(JSON.stringify({snsLinkId:naverLogin.user.getId(), naverEmail:naverLogin.user.getEmail()}));
+          xhr.send(JSON.stringify({snsLinkId:naverLogin.user.getId(), snsType:'NAVER', snsEmail:naverLogin.user.getEmail()}));
 				} else {
 				  alert('네이버 아이디 연동 및 로그인에 실패하였습니다. 잠시 후 다시 시도해주세요.');
   				self.opener = self;
