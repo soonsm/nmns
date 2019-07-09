@@ -259,39 +259,62 @@ module.exports = function (passport) {
         }
         let data = req.body;
         try {
-            let snsLinkId = data.snsLinkId;
+			console.log(JSON.stringify(data));
+            let snsLinkId = data.snsLinkId + "";
             let snsType = data.snsType;
             let snsEmail = data.snsEmail;
             if (!snsLinkId) {
                 throw 'snsLinkId가 없습니다.';
             } else if (!process.nmns.isValidSnsType(snsType)) {
                 throw `snsType은 NAVER 또는 KAKAO입니다.${snsType}`;
-            } else if (snsEmail && !emailValidator.validate(snsEmail)) {
+            } else if(!snsEmail){
+				throw 'email이 없습니다';	  
+			}else if (snsEmail && !emailValidator.validate(snsEmail)) {
                 throw `snsEmail이 이메일 형식에 맞지 않습니다.${snsEmail}`;
             }
 
             let snsLink = await db.getSnsLink(snsLinkId);
             if (!snsLink) {
-                render(res, indexView, {
-                    snsType: snsType,
-                    snsLinkId: snsLinkId,
-                    snsEmail: snsEmail
-                });
+				let user = await db.getWebUser(snsEmail);
+				if(!user){
+					return sendResponse(res, false, `${snsEmail}로 가입되어있는 계정이 없습니다.`);
+				}
+				await db.setSnsLink({	
+					snsLinkId: snsLinkId,
+					snsType: snsType,
+					snsEmail: snsEmail,
+					email: snsEmail
+				});
             } else {
                 let user = await db.getWebUser(snsLink.email);
                 if (!user) {
-                    render(res, indexView, {
-                        snsType: snsType,
-                        snsLinkId: snsLinkId,
-                        snsEmail: snsEmail
-                    });
-                } else {
-                    req.logIn(user, function () {
-                        res.redirect("/");
-                    });
+                    user = await db.getWebUser(snsLink.snsEmail);
+					if(!user){
+						user = await db.getWebUser(snsEmail);
+						if(!user){
+							return sendResponse(res, false, `${snsEmail}로 가입되어있는 계정이 없습니다.`);
+						}else{
+							await db.setSnsLink({	
+								snsLinkId: snsLinkId,
+								snsType: snsType,
+								snsEmail: snsEmail,
+								email: snsEmail
+							});
+						}
+					}else{
+						await db.setSnsLink({	
+							snsLinkId: snsLinkId,
+							snsType: snsType,
+							snsEmail: snsEmail,
+							email: snsLink.snsEmail
+						});
+					}
                 }
             }
-
+			req.logIn(user, async function () {
+				console.log('log in sns');
+                res.redirect("/");
+            });
         } catch (e) {
             return sendResponse(res, false, e);
         }
