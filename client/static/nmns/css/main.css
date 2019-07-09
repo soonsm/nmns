@@ -739,6 +739,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     display: inline-flex;
     width:auto;
     min-width:100%;
+	position:relative;
 }
 
 @media(min-width:1600px){
@@ -753,6 +754,28 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     min-width:100%;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
     transition: 0.3s margin-left ease;
+	position:relative;
+}
+#resizeCalendar{
+	content: url('/nmns/img/maximize.svg');
+	right:12px;
+	top:12px;
+	width:10px;
+	height:10px;
+	z-index:1;
+	cursor:pointer;
+}
+#resizeCalendar.maximized{
+	content: url('/nmns/img/minimize.svg');
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none){
+	#resizeCalendar{
+		background-image: url('/nmns/img/maximize.svg');
+		background-size:10px;	
+	}
+	#resizeCalendar.maximized{
+		background-image:url('/nmns/img/minimize.svg');
+	}
 }
 
 #mainTask.show+#mainCalendarArea {
@@ -767,6 +790,9 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 #mainCalendarWrapper{
 	height:calc(100vh - 353px);
 	overflow-y:auto;
+}
+#resizeCalendar.maximized + div + #mainCalendarArea #mainCalendarWrapper{
+	height:calc(100vh - 278px);
 }
 body.overflow-y-hidden{
 	overflow-y:hidden;

@@ -348,6 +348,15 @@
     }));
 
     //business specific functions about calendar start
+	$("#resizeCalendar").on("touch click", function(){
+		if($(this).hasClass('maximized')){//about to minimize
+			$(".calendarMenu .menuTitle").css('display', 'flex');
+		}else{//about to maximize
+			$(".calendarMenu .menuTitle").hide();
+		}
+		NMNS.calendar.render();
+		$(this).toggleClass('maximized');
+	});
     function getTimeSchedule(schedule, isAllDay) { // draw schedule block using schedule object
         var type = schedule.category === 'task' ? "일정" : "예약";
         var html = "";
@@ -2228,7 +2237,7 @@
         });
       } else if (e.type === "alert") {
         showSnackBar(e.data.body);
-        if(e.data.body.indexOf("새로운 고객이 추가되었습니다")>0){
+        if(e.data.body.indexOf("새로운 고객이 추가되었습니다")>=0){
           NMNS.customerList = null;
         }
       }
