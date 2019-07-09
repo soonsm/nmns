@@ -680,7 +680,7 @@
             var html = "";
             var base = $("#alrimHistoryList .alrimRow").length
             alrims.forEach(function(item, index) {
-                html += '<div class="d-flex alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-4 pl-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 px-0 ellipsis">' + item.name + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1 px-0"></div></div>' +
+                html += '<div class="d-flex alrimRow col" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-4 pl-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 px-0 ellipsis">' + (item.name || '(이름 없음)') + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1 px-0"></div></div>' +
                     '<div class="row alrimDetailRow collapse col-12" id="alrimDetail' + (index+base) + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
                 if (index > 0 && index % 50 === 0) {
                     $("#alrimHistoryList").append(html);
@@ -690,6 +690,9 @@
             list.append(html);
             $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
               $(this).parent().toggleClass('show');
+							if($(this).parent().hasClass('show')){
+								(document.scrollingElement || document.documentElement).scrollTop = $(this).offset().top - ( $("html,body").height() - $(this).outerHeight(true) ) / 2;	
+							}
             })
         } else {
             list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");

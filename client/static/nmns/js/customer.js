@@ -208,6 +208,12 @@
       $("#customerAlrimEmpty").show();
       return;
     }
+		html = $(html).on("touch click", ".customerAlrimDetailLink", function(e){
+			e.preventDefault();
+			if(e.target.getAttribute('aria-expanded') === 'false'){
+				document.getElementById('customerAlrimList').scrollTop = $(e.target).offset().top - ( $("#customerAlrimList").height() - $(e.target).outerHeight(true) ) / 2;	
+			}
+		});
     list.data('index', goalIndex).append(html).on("touch click", ".customerAlrimDetailLink", function(){
       $(this).parent().toggleClass('active');
     });

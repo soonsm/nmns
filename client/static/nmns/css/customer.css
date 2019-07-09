@@ -143,6 +143,7 @@
 #customerAlrimList{
     max-height:calc(100vh - 290px);
     overflow:auto;
+	scroll-behavior:smooth;
 }
 #customerAlrimList .customerAlrim{
     padding:10px 15px;

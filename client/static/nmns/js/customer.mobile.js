@@ -182,6 +182,12 @@
       $("#customerAlrimEmpty").show();
       return;
     }
+		html = $(html).on("touch click", ".customerAlrimDetailLink", function(e){
+			e.preventDefault();
+			if(e.target.getAttribute('aria-expanded') === 'false'){
+				(document.scrollingElement || document.documentElement).scrollTop = $(e.target).offset().top - ( $("#customerAlrimList").height() - $(e.target).outerHeight(true) ) / 2;	
+			}
+		});
     list.data('index', goalIndex).append(html).on("touch click", ".customerAlrimDetailLink", function(){
       $(this).parent().toggleClass('active');
     });
@@ -403,7 +409,7 @@
       }
   }, true));
   NMNS.socket.on("get customer alrim", socketResponse("알림톡 내역 조회", function(e) {
-    e.data = [{date:'20190101123059', contents: '알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}, {date:'20190201123059', contents: '알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}, {date:'20190301123059', contents: '1123123알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}]
+    //e.data = [{date:'20190101123059', contents: '알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}, {date:'20190201123059', contents: '알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}, {date:'20190301123059', contents: '1123123알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.알림톡내용입니다.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}]// for test
     $("#customerAlrimList").data('index', 0).data('item', e.data);
     drawCustomerAlrimList(true);
   }));
@@ -424,7 +430,7 @@
       history.back();
   }));
   NMNS.socket.on("get membership history", socketResponse('멤버십 내역 조회', function(e){
-    e.data = [{date:'20190101123050', item:'예약내용입니다 예약내용입니다.', balanceMembership:10000, type:'MEMBERSHIP_ADD', membershipChange: 1000}, {date:'20190103123050', item:'예약내용입니다 예약내용입니다.', balanceMembership:10000, type:'MEMBERSHIP_DECREMENT', membershipChange: 1000}]
+    //e.data = [{date:'20190101123050', item:'예약내용입니다 예약내용입니다.', balanceMembership:10000, type:'MEMBERSHIP_ADD', membershipChange: 1000}, {date:'20190103123050', item:'예약내용입니다 예약내용입니다.', balanceMembership:10000, type:'MEMBERSHIP_DECREMENT', membershipChange: 1000}]//for test
     $("#customerMembershipList").data('index', 0).data('item', e.data);
     drawCustomerMembershipList(true);
   })).on("add membership", socketResponse("멤버십 내역 변경", function(e){
@@ -484,7 +490,7 @@
     if($(this).data('id') !== $("#customerDetailMenu").data('customer').id){
       var customer = $("#customerDetailMenu").data('customer');
       $(this).data('id', customer.id);
-      customer.history = [{start:'20190101123059', end:'20190201123050', contents:'테스트 내용입니다.ㅎㅎ', manager:'aaa', status:'NOSHOW', sales:10000},{start:'20190103123059', end:'20190203123050', contents:'테스트 내용입니다.ㅎㅎㅎ', manager:'aaa', status:'RESERVED', sales:100000}]
+      //customer.history = [{start:'20190101123059', end:'20190201123050', contents:'테스트 내용입니다.ㅎㅎ', manager:'aaa', status:'NOSHOW', sales:10000},{start:'20190103123059', end:'20190203123050', contents:'테스트 내용입니다.ㅎㅎㅎ', manager:'aaa', status:'RESERVED', sales:100000}]// for test
       if(!customer.history || customer.history.length === 0){
         $("#customerScheduleNotEmpty").hide();
         $("#customerScheduleEmpty").show();

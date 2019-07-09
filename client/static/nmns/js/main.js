@@ -353,7 +353,7 @@
         var html = "";
         if(NMNS.calendar.getViewName() === 'week'){
           html +=  "<div class='tui-full-calendar-schedule-cover font-weight-bold row mx-auto align-items-center text-center'><div class='col-11 px-0'>"
-          if(!isAllDay && moment(schedule.end.toDate()).diff(schedule.start.toDate(), 'hours')> 1){
+          if(!isAllDay && moment(schedule.end.toDate()).diff(schedule.start.toDate(), 'minutes')> 60){
               html += "<div class='row mx-0' style='margin-bottom:10px'><div class='montserrat col px-0' style='font-weight:500'>" + moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm") + "</div></div>";
           }
           if (schedule.title) {
@@ -632,7 +632,7 @@
             var html = "";
             var base = $("#alrimHistoryList .alrimRow").length
             alrims.forEach(function(item, index) {
-                html += '<div class="row alrimRow col mx-0 px-0" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-2 pr-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 offset-2 ellipsis">' + item.name + '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1"></div></div>' +
+                html += '<div class="row alrimRow col mx-0 px-0" title="눌러서 전송된 알림톡 내용 보기"><a href="#alrimDetail' + (index+base) + '" class="alrimDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="alrimDetail' + (index+base) + '"></a><div class="col-2 pr-0 text-left montserrat">' + moment(item.date, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '</div><div class="col-3 offset-2 ellipsis">' + (item.name || '(이름 없음)')+ '</div><div class="col-4 px-0 montserrat">' + dashContact(item.contact) + '</div><div class="col-1"></div></div>' +
                     '<div class="row alrimDetailRow collapse mx-0 col-12" id="alrimDetail' + (index+base) + '">'+(item.contents?item.contents.replace(/\n/g, "<br>"):'')+'</div>';
                 if (index > 0 && index % 50 === 0) {
                     $("#alrimHistoryList").append(html);
@@ -642,6 +642,10 @@
             list.append(html);
             $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
               $(this).parent().toggleClass('show');
+							if($(this).parent().hasClass('show')){
+								document.getElementById('alrimHistoryList').scrollTop = $(this).offset().top - ( $("#alrimHistoryList").height() - $(this).outerHeight(true) ) / 2;	
+								list.data("scroll").update();
+							}
             })
         } else {
             list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
@@ -878,7 +882,12 @@
               return;
             }
             var item = $("#noShowScheduleList input:checked").parent().parent();
-            NMNS.history.push({id:item.data('id'), status:item.data('status'), manager:item.data('manager'), contents:item.data('contents')})
+            NMNS.history.push({id:item.data('id'), status:item.data('status'), manager:item.data('manager'), contents:item.data('contents')});
+						NMNS.calendar.updateSchedule(item.data('id'), item.data('manager'), {
+                      raw:{
+                        status:"NOSHOW"
+                      }
+                  });
             NMNS.socket.emit("update reserv", {id:item.data("id"), status:"NOSHOW", noShowCase:($("#noShowScheduleContent .noShowAddCase.bg-primary").length > 0? $("#noShowScheduleContent .noShowAddCase.bg-primary").data('value') : $("#noShowScheduleCaseEtc").val().trim())})
           })
           $("#noShowScheduleSearch").off("touch click").on("touch click", function() {
@@ -1125,7 +1134,7 @@
           }
         }, 300));
       }else{
-        html += '<div style="height:300px;align-items:center;width:100%;display:flex;justify-content:center;font-size:15px">메뉴를 입력하면 매출내역을 기록할 수 있어요!</div>';
+        html += '<div style="height:300px;align-items:center;width:100%;display:flex;justify-content:center;font-size:15px">예약 내용(메뉴)을 입력하면 매출내역을 기록할 수 있어요!</div>';
       }
       return html;
     }
@@ -1836,7 +1845,7 @@
             list += '<div class="notification"><div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat notificationTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + (item.contents?'<br>예약내용 : '+item.contents : '') +'</p></div><div><span class="text-accent font-weight-bold" style="font-size:14px">예약 등록</span></div></div>'
             break;
           case 'SCHEDULE_CANCELED':
-            list += '<div class="notification"><div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat notificationTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'">직전취소로 노쇼등록 &gt;</span></div></div>'
+            list += '<div class="notification"><div class="d-flex align-items-center"><span>' + (item.title?'고객명 : ' + item.title :'고객번호 : ' + item.contact)+ '</span><span class="d-flex ml-auto montserrat notificationTime">'+(item.registeredDate? (moment(item.registeredDate, 'YYYYMMDDHHmm').isSame(moment(), 'day') ? moment(item.registeredDate, 'YYYYMMDDHHmm').format('HH:mm') : moment(item.registeredDate, 'YYYYMMDDHHmm').format('MM. DD')): '')+'</span></div><div><p>'+(item.title?'고객번호 : ' + dashContact(item.contact) : '')+'<br>예약날짜 : '+ moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD') + '<br>예약시간 : '+ moment(item.start, 'YYYYMMDDHHmm').format('HH시 mm분') + '</p></div><div class="d-flex align-items-center"><span class="text-accent font-weight-bold" style="font-size:14px">예약 취소</span><span class="d-flex ml-auto addAnnouncementNoShow cursor-pointer" style="font-size:10px" data-schedule-id="'+item.id+'" data-manager-id="'+item.manager+'">직전취소로 노쇼등록 &gt;</span></div></div>'
             break;
           case 'ANNOUNCEMENT':
           default:
@@ -2254,6 +2263,11 @@
         $("#notificationEmpty").hide();
 				var list = $(drawNotificationList(e.data.schedule));
 				list.find('.addAnnouncementNoShow').on("touch click", function(){
+					var origin = NMNS.calendar.getSchedule($(this).data('schedule-id'), $(this).data('manager-id'));
+					if(origin){
+						NMNS.history.push({id:origin.id, calendarId: origin.calendarId, raw:{status:origin.raw.status}});
+						NMNS.calendar.updateSchedule($(this).data('schedule-id'), $(this).data('manager-id'), {raw:{status:'NOSHOW'}});
+					}
 					NMNS.socket.emit("update reserv", {id:$(this).data('schedule-id'), status:"NOSHOW", noShowCase:"직전취소"});
 				});
         $("#notificationBody").append(list).show();
@@ -2629,6 +2643,7 @@
           return;
         }
         NMNS.socket.emit('save sales', array);
+				delete NMNS.salesList;
       });
     }).on('show.bs.tab', function(){
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.schedule){
@@ -2917,7 +2932,7 @@
         NMNS.socket.emit("get menu list", null);
       });
     });
-    $(".salesMenuLink").one("touch click", function(){
+    $(".salesMenuLink").on("touch click", function(){
       if(!document.getElementById('salesStyle')){
         var style = document.createElement('link');
         style.rel="stylesheet";
@@ -2977,15 +2992,6 @@
             defaultDate: new Date(),
             locale: "ko"
         });
-        if(!NMNS.salesList || NMNS.salesList.length === 0){
-          NMNS.socket.emit('get sales list', {
-            start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
-            name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
-            managerId: $("#salesSearchManager").data('calendar-id') || undefined,
-            item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
-          });
-        }
         var now = moment();
         $("#mainSalesSearch .activable").each(function(index, button){
           button.innerText = now.format('M월');
@@ -2994,7 +3000,15 @@
         $("#salesSearchManagerList").html(generateTaskManagerList(true)).off("touch click", "button").on("touch click", "button", function() {
           $("#salesSearchManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
-      }
+      }else if(!NMNS.salesList || NMNS.salesList === []){
+				NMNS.socket.emit("get sales list", {
+					start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+					end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
+					name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
+					managerId: $("#salesSearchManager").data('calendar-id') || undefined,
+					item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
+				});
+			}
     });
     
     function switchMenu(e, isHistory){

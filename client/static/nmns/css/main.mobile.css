@@ -1,6 +1,8 @@
 /* commons */
+html,body{
+	scroll-behavior:smooth;
+}
 body{
-  /*background-color:#fff;*/
 	height:auto;
 }
 body.modal-open{
@@ -1359,7 +1361,7 @@ button.form-control {
 }
 
 #alrimHistoryList {
-    max-height: calc(100vh - 400px);
+    min-height: calc(100vh - 400px);
     display: block;
 }
 

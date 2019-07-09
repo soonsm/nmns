@@ -1628,6 +1628,7 @@ button.form-control {
 #alrimModal #alrimHistoryList {
     max-height: calc(100vh - 400px);
     display: block;
+	scroll-behavior:smooth;
 }
 
 #alrimModal #alrimHistoryList .row.alrimDetailRow {

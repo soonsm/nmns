@@ -140,6 +140,7 @@
 #customerAlrimList{
     overflow:auto;
     margin:0 -20px;
+	scroll-behavior:smooth;
 }
 #customerAlrimList .customerAlrim{
     padding:10px 20px;
