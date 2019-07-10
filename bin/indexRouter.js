@@ -308,9 +308,13 @@ module.exports = function (passport) {
             }
 			req.logIn(user, async function () {
 				console.log('log in sns');
-                res.redirect("/");
+				return sendResponse(res, true);
+                //res.redirect("/");
             });
         } catch (e) {
+			if(typeof e !== 'string'){
+				e = '로그인 실패하였습니다.';
+			}
             return sendResponse(res, false, e);
         }
 
