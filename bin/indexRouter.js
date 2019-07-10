@@ -276,7 +276,7 @@ module.exports = function (passport) {
 
             let snsLink = await db.getSnsLink(snsLinkId);
             if (!snsLink) {
-				user = await db.getWebUser(snsLink.email);
+				user = await db.getWebUser(snsEmail);
 				if(!user){
 					return sendResponse(res, false, `${snsEmail}로 가입되어있는 계정이 없습니다.`);
 				}
