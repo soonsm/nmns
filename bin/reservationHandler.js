@@ -311,13 +311,8 @@ exports.updateReservation = async function (newReservation) {
         }
         //노쇼 처리인 경우 노쇼 추가
         if (newReservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && reservation.status !== process.nmns.RESERVATION_STATUS.NOSHOW) {
-            await newDb.addNoShow(email, newReservation.contact, newReservation.start.substring(0, 8), newReservation.noShowCase, newReservation.id);
+            await newDb.addNoShow(email, newReservation.contact, newReservation.start.substring(0, 8), newReservation.noShowCase, newReservation.id, newReservation.name);
         }
-
-        /**
-         * TODO: 매출 관련 수정
-         * 고객이 바뀌었거나, 매니저가 바뀌었거나, 예약이 삭제된 경우 -> 해당 예약과 연관된 매출 정보를 변경해준다.
-         */
 
         //예약정보 저장
         newReservation.email = email;
@@ -418,7 +413,7 @@ exports.addTask = async function(data){
  */
 exports.addReservation = async function (data) {
     let email = data.email = this.email;
-    let status = false, message, pushMessage;
+    let status = false, message, pushMessage="";
     try {
         let contact = data.contact;
         let name = data.name;

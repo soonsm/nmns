@@ -218,7 +218,7 @@ exports.saveSales = fnTemplate(null, async function(user, list){
     for(let i =0; i<list.length; i++){
         let data = list[i];
 
-        if (!data.id || !data.type || !data.customerId || !data.item || !data.scheduleId || !data.managerId || !data.price) {
+        if (!data.id || !data.type || !data.customerId || !data.item || !data.scheduleId || !data.managerId || isNaN(data.price)) {
             throw 'id, type, customerId, item, scheduleId, managerId, price는 필수입니다.'
         }
 

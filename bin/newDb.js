@@ -209,7 +209,7 @@ function del(param) {
  * date: YYYYMMDD, 노쇼한 날짜
  * email
  * date
- * id: NoShowId 테이블의 Partition Key
+ * id: NoShowId 테이블의 Partition Key, 예약에서 노쇼 추가 한 경우는 예약 아이디이다.
  * name
  *
  * NoShowId(노쇼 매핑 아이디)
@@ -315,11 +315,13 @@ exports.delNoShow = async function (id) {
         }
     });
 
+
+
     if (noShowId) {
         let noShowKey = noShowId.noShowKey;
         let timestamp = noShowId.timestamp;
 
-        return await del({
+        let noShow =  await del({
             TableName: process.nmns.TABLE.NoShow,
             Key: {
                 'noShowKey': noShowKey,
@@ -327,6 +329,17 @@ exports.delNoShow = async function (id) {
             }
         });
 
+        if(!noShow){
+            return false;
+        }
+
+        let reservation = await exports.getReservation(noShow.email, noShow.id);
+        if(reservation){
+            reservation.status = process.nmns.RESERVATION_STATUS.RESERVED;
+            await exports.saveReservation(reservation);
+        }
+
+        return true;
     }
 }
 
@@ -1372,7 +1385,7 @@ exports.saveSales = async function(data){
             break;
         case process.nmns.SALE_HIST_TYPE.MEMBERSHIP_ADD:
             commonValidationForMembershipModify(sales);
-            if(isNaN(sales.price) || sales.price <= 0){
+            if(isNaN(sales.price) || sales.price < 0){
                 throw `멤버십 적립 시에는 양수 정수인 금액 값이 필요합니다.(${sales.price})`;
             }else if(![process.nmns.PAYMENT_METHOD.CASH, process.nmns.PAYMENT_METHOD.CARD].includes(data.payment)){
                 throw `멤버십 적립 시에는 결제수단이 필요합니다. (${sales.payment})`;
@@ -1387,8 +1400,8 @@ exports.saveSales = async function(data){
                 throw `예약아아디가 없거나 예약아이디로 예약이 조회되지 않습니다.(${sales.scheduleId})`;
             }else if(!sales.managerId){
                 throw '매출내역 추가에 매니저 아이디가 필요합니다.';
-            }else if(isNaN(sales.price) || sales.price <= 0){
-                throw `매출내역 추가에 양수 정수인 금액 값이 필요합니다.(${sales.price})`;
+            }else if(isNaN(sales.price) || sales.price < 0){
+                throw `매출내역 저장에 0원 이상의 금액 값이 필요합니다.(${sales.price})`;
             }
             sales.payment = sales.type;
             break;
@@ -1410,6 +1423,18 @@ exports.saveSales = async function(data){
     changeMemberSalesStatistic(customer, false, sales);
 
     await exports.saveCustomer(customer);
+
+    if(sales.type === process.nmns.SALE_HIST_TYPE.SALES_CARD || sales.type === process.nmns.SALE_HIST_TYPE.SALES_CASH || sales.type === process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE){
+        if(sales.price === 0){
+            return await del({
+                TableName: process.nmns.TABLE.Sales,
+                Key: {
+                    'email': sales.email,
+                    'id': sales.id
+                }
+            })
+        }
+    }
 
     return await put({
         TableName: process.nmns.TABLE.Sales,
