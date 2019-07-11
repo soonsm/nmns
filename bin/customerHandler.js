@@ -285,6 +285,14 @@ exports.addCustomer = async function (data) {
         resultData = {id: data.id, totalNoShow: 0};
 
     try {
+        if(data.contact){
+            let old = await newDb.getCustomerList(email, data.contact);
+            if(old.length > 0){
+                old = old[0];
+                throw `동일한 연락처를 가진 고객이 이미 존재합니다.(이름:${old.name}, 연락처:${old.contact})`;
+            }
+        }
+
         await newDb.saveCustomer({
             email: email,
             id: data.id,
