@@ -85,20 +85,25 @@ exports.getCustomerInfo = async function (data) {
 
         list = await newDb.getCustomerList(email);
         list = list.filter((member) => {
-            if (member.contact && member.contact.includes(target)) {
-                return true;
-            }
+            try{
+                if (member.contact && member.contact.includes(target)) {
+                    return true;
+                }
 
-            if (hangul.search(member.name, target) !== -1) {
-                return true;
-            }
+                if(member.name){
+                    if (hangul.search(member.name, target) !== -1) {
+                        return true;
+                    }
 
-            //초성검색
-            let names = hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
-            if (names.includes(hangul.disassemble(target).join(''))) {
-                return true;
+                    //초성검색
+                    let names = hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
+                    if (names.includes(hangul.disassemble(target).join(''))) {
+                        return true;
+                    }
+                }
+            }catch(e){
+                logger.error(JSON.stringify(e));
             }
-
             return false;
         });
 

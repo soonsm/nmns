@@ -672,7 +672,7 @@ exports.addAlrmTalk = async function (data) {
     return exports.addAlrmTalkRaw(data);
 }
 
-exports.getAlrimTalkList = async function (email, start, end, contact) {
+exports.getAlrimTalkList = async function (email, start, end) {
 
     if (!email) {
         throw 'email은 필수입니다.';
@@ -683,9 +683,6 @@ exports.getAlrimTalkList = async function (email, start, end, contact) {
     }
     if (end && !moment(end, 'YYYYMMDD').isValid()) {
         throw `end 날짜 형식이 맞지 않습니다.(${end})`;
-    }
-    if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
-        throw `contact 형식이 맞지 않습니다.(${contact})`;
     }
 
     if (start) {
@@ -709,11 +706,7 @@ exports.getAlrimTalkList = async function (email, start, end, contact) {
         },
         ScanIndexForward: false
     };
-    if (contact) {
-        param.FilterExpression = '#contact = :contact';
-        param.ExpressionAttributeNames = {'#contact': 'contact'};
-        param.ExpressionAttributeValues[':contact'] = contact;
-    }
+
 
     return await query(param);
 }

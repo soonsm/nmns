@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = global.nmns.LOGGER;
+
 const db = require('./webDb');
 const newDb = require('./newDb');
 const util = require('./util');
@@ -79,6 +81,21 @@ exports.getAlrimTalkHistory = async function (data) {
 
     try{
         list = await newDb.getAlrimTalkList(email, data.start, data.end);
+        if(data.target){
+            list = list.filter((item)=> {
+                try{
+                    if(item.name && item.name.includes(data.target)){
+                        return true;
+                    }
+                    if(item.contact && item.contact.includes(data.target)){
+                        return true;
+                    }
+                }catch(e){
+                    logger.error(e);
+                }
+                return false;
+            })
+        }
         status = true;
     }catch(e){
         status = false;
