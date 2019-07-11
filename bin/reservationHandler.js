@@ -479,31 +479,55 @@ exports.addReservation = async function (data) {
     };
 }
 
+/**
+ * 알림톡 재전송
+ * 요청 위치 : "resend alrimtalk", 데이터 : {"id":${예약 id, string}}
+ * 응답 형식 : "data":{"id":${요청에서 넘겨준 id, string}}
+ *
+ * 하루에 한번 보낼 수 있다.
+ */
 exports.reSendReservationConfirm = async function (data) {
     let email = this.email;
     let status = false;
     let message = '알림톡 전송 실패';
 
-    if (data.id) {
+    try{
+        let id = data.id;
+        if(!id){
+            throw '예약 아이디가 없습니다.';
+        }
+
         let user = await db.getWebUser(email);
-		if(user.alrimTalkInfo.useYn === 'Y'){
-			let reservation = await newDb.getReservation(email, data.id);
-			if (reservation) {
-				if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
-					message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
-				} else {
-					status = true;
-					message = '알림톡 전송 성공';
-				}
-			} else {
-				message = '없는 예약입니다.';
-			}	
-		}else{
-			message = '알림톡 사용 설정이 되어있지 않습니다.';
-		}
-        
-    } else {
-        message = '예약 아이디가 없습니다.';
+        if(user.alrimTalkInfo.useYn !== 'Y'){
+            throw '알림톡 사용 설정이 되어있지 않습니다.';
+        }
+
+        let reservation = await newDb.getReservation(email, id);
+        if(!reservation){
+            throw '없는 예약입니다.';
+        }
+
+        let today = moment().format('YYYYMMDD');
+        let list = await newDb.getAlrimTalkList(email, today, today);
+        list = list.filter(item => !item.isCancel).filter(item => item.reservationKey === id);
+        if(list.length > 0){
+            throw '한 예약당 하루에 한번 전송 가능합니다.';
+        }
+
+        if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
+            throw '고객 전화번호를 확인하세요.';
+        }
+
+        status = true;
+        message = '알림톡 전송 성공';
+
+    }catch(e){
+        status = false;
+        if(typeof e === 'string'){
+            message = e;
+        }else{
+            message = '알림톡 전송에 실패했습니다.';
+        }
     }
 
     return {
