@@ -41,9 +41,23 @@ exports.getReservationSummaryList = async function (data) {
 
     let email = this.email;
     let status = false, message, list;
+    let target = data.target;
 
     try {
         list = await newDb.getReservationList(email, data.start, data.end);
+        if(target){
+            list = list.filter((reservation) => {
+                if(reservation.name && reservation.name.includes(target)){
+                    return true;
+                }
+
+                if(reservation.contact && reservation.contact.includes(target)){
+                    return true;
+                }
+
+                return false;
+            });
+        }
         for (let item of list) {
             if (item.contentList) {
                 item.contents = JSON.stringify(item.contentList);
