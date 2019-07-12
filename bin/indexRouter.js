@@ -352,7 +352,7 @@ module.exports = function (passport) {
                 email: email
             });
 
-            let dbResult2 = await db.updateWebUser(email, {snsType: process.nmns.SNS_TYPE.NAVER, snsLinkId: snsLinkId});
+            let dbResult2 = await db.updateWebUser(email, {isNaverLink: true});
 
             if (!dbResult1 || !dbResult2) {
                 throw 'DB 저장에 실패했습니다.';
@@ -366,7 +366,7 @@ module.exports = function (passport) {
                     message: '연동 성공',
                     data: {
                         snsLinkId: snsLinkId,
-                        snsType: user.snsType
+                        snsType: process.nmns.SNS_TYPE.NAVER
                     }
                 });
             }
