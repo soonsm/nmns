@@ -2347,12 +2347,14 @@
         if($("#naverBtn").is(":visible")){
           $("#naverBtn").addClass('connected');
         }
+		alert('연동이 완료되었습니다. 앞으로 네이버 계정으로 로그인하실 수 있습니다.');
       }
       if(e.data.snsType === 'KAKAO'){
         NMNS.info.kakao = e.data.snsLinkId;
         if($("#kakaoBtn").is(":visible")){
           $("#kakaoBtn").addClass('connected');
         }
+		alert('연동이 완료되었습니다. 앞으로 카카오 계정으로 로그인하실 수 있습니다.');
       }
     }, function(e){
       if(e.data.snsType === 'KAKAO'){
@@ -2752,11 +2754,16 @@
             Kakao.Auth.login({
               success: function(authObj) {
                 Kakao.API.request({url:'/v2/user/me', success:function(res){
-                  NMNS.socket.emit('link sns', {
-                    snsLinkId:res.for_partner.uuid,
-                    snsEmail:res.for_partner.properties.email,
-                    snsType: 'KAKAO'
-                  });
+					if(!res.kakao_account.email){
+						alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다. 카카오톡>설정>프라이버시>카카오 계정>연결 서비스 관리 메뉴에서 연결을 해제 후 다시 시도해주세요.');
+						Kakao.Auth.logout();
+					}else{
+						NMNS.socket.emit('link sns', {
+							snsLinkId:res.id,
+							snsEmail:res.kakao_account.email,
+							snsType: 'KAKAO'
+					  	});	
+					}                  
                 }, fail: function(error){
                   alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
                 }})
