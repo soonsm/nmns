@@ -1201,8 +1201,8 @@
           
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule.start.toDate());
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule.end.toDate());
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule.start.toDate())));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule.end.toDate())));
+          $("#scheduleStartTime").val(moment(e.schedule.start.toDate()).format('HHmm'));
+          $("#scheduleEndTime").val(moment(e.schedule.end.toDate()).format('HHmm'));
     
           $('#scheduleName').val(e.schedule.title);
           $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
@@ -1366,8 +1366,8 @@
                 return;
               }
           }
-          startTime = parseTime($("#scheduleStartTime").val());
-          endTime = parseTime($("#scheduleEndTime").val());
+          startTime = $("#scheduleStartTime").val();
+          endTime = $("#scheduleEndTime").val();
           if(!startTime){
             showSnackBar("시작 시간을 확인해주세요.");
             return;
@@ -1632,6 +1632,22 @@
           if (start.getTime() > end.getTime()) {
               start = [end, end = start][0];
           }
+					var startTime = $("#taskStartTime").val();
+          var endTime = $("#taskEndTime").val();
+          if(!startTime){
+            showSnackBar("시작 시간을 확인해주세요.");
+            return;
+          }
+          if(!endTime){
+            showSnackBar("종료 시간을 확인해주세요.");
+            return;
+          }
+
+          start.setHours(startTime.substring(0,2)*1);
+          start.setMinutes(startTime.substring(2)*1);
+          end.setHours(endTime.substring(0,2)*1);
+          end.setMinutes(endTime.substring(2)*1);
+
           var origin = $(".taskDetailMenu").data("task");
           origin.manager = origin.calendarId;
           NMNS.history.push(origin);

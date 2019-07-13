@@ -1762,7 +1762,7 @@ button.form-control {
 }
 #snackbar > div:not(.close){
     max-height:35px;
-    line-height:1.54;
+    line-height:1.4;
     overflow:hidden;
     word-break: break-all;
 }
@@ -1942,6 +1942,9 @@ button.form-control {
     font-weight: bold;
     border-bottom: 3px solid #393535;
     opacity:1;
+}
+.nav-item:first-child .nav-link{
+	margin-left:0;
 }
 #scheduleModal #scheduleTabContents input{
 	z-index:2000;

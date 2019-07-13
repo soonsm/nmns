@@ -1190,8 +1190,8 @@
           
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule.start.toDate());
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule.end.toDate());
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.schedule.start.toDate())));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.schedule.end.toDate())));
+          $("#scheduleStartTime").val(moment(e.schedule.start.toDate()).format('HHmm'));
+          $("#scheduleEndTime").val(moment(e.schedule.end.toDate()).format('HHmm'));
     
           $('#scheduleName').val(e.schedule.title);
           $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
@@ -1211,8 +1211,8 @@
         }else if(e.customer){// customer modal trigger
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start);
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end);
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.start)));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.end)));
+          $("#scheduleStartTime").val(moment(e.start).format('HHmm'));
+          $("#scheduleEndTime").val(moment(e.end).format('HHmm'));
     
           $('#scheduleName').val(e.customer.name);
           $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
@@ -1227,8 +1227,8 @@
         }else{// dragged calendar
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start.toDate());
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end.toDate());
-          $("#scheduleStartTime").val(getTimeFormat(moment(e.start.toDate())));
-          $("#scheduleEndTime").val(getTimeFormat(moment(e.end.toDate())));
+          $("#scheduleStartTime").val(moment(e.start.toDate()).format('HHmm'));
+          $("#scheduleEndTime").val(moment(e.end.toDate()).format('HHmm'));
     
           $('#scheduleName').val('');
           $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
@@ -1257,20 +1257,24 @@
         calendar = $("#taskManager");
         $("#scheduleManager").data("calendar-id", calendar.data("calendar-id")).data("color", calendar.data("color")).html(calendar.html());
       }else{// creating...
-        var now = moment();
-        if (now.hour() > Number(NMNS.info.bizEndTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizEndTime.substring(0, 2)) && now.minute() + 30 > Number(NMNS.info.bizEndTime.substring(2)))) {
-            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(30, "m");
-        } else if (now.hour() < Number(NMNS.info.bizBeginTime.substring(0, 2)) || (now.hour() == Number(NMNS.info.bizBeginTime.substring(0, 2)) && now.minute() < Number(NMNS.info.bizBeginTime.substring(2)))) {
-            now = moment(NMNS.info.bizBeginTime, "HHmm");
-        } else {
-            now.minute(Math.ceil(now.minute() / 10) * 10);
-        }
+        var now = moment().second(0).millisecond(0);
+				var limit = moment().hour(NMNS.info.bizEndTime.substring(0, 2) * 1).minute(NMNS.info.bizEndTime.substring(2) * 1).second(0).millisecond(0);
+        if (limit.diff(now, 'minutes') < 60) {
+            now = moment(NMNS.info.bizEndTime, "HHmm").subtract(1, "h");
+				}else{
+					limit.hour(NMNS.info.bizBeginTime.substring(0, 2) * 1).minute(NMNS.info.bizBeginTime.substring(2) * 1);
+					if(now.diff(limit, 'minutes') < 60) {
+						now = moment(NMNS.info.bizBeginTime, "HHmm");
+					}
+				}
+				now.minute(Math.ceil(now.minute() / 30) * 30);
+        
         document.getElementById("scheduleStartDate")._flatpickr.setDate(now.toDate());
-        $("#scheduleStartTime").val(getTimeFormat(now));
-        document.getElementById("scheduleEndDate")._flatpickr.setDate(now.add(30, "m").toDate());
-        $("#scheduleEndTime").val(getTimeFormat(now));
+        $("#scheduleStartTime").val(now.format('HHmm'));
+        document.getElementById("scheduleEndDate")._flatpickr.setDate(now.add(1, "h").toDate());
+        $("#scheduleEndTime").val(now.format('HHmm'));
 
-        $('#scheduleName').val('');
+				$('#scheduleName').val('');
         $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
           removeContent(this);
         });
@@ -1396,8 +1400,8 @@
                 return;
               }
           }
-          startTime = parseTime($("#scheduleStartTime").val());
-          endTime = parseTime($("#scheduleEndTime").val());
+          startTime = $("#scheduleStartTime").val();
+          endTime = $("#scheduleEndTime").val();
           if(!startTime){
             showSnackBar("시작 시간을 확인해주세요.");
             return;
@@ -1662,14 +1666,6 @@
         flatpickr("#taskStartDate", datetimepickerOption);
         flatpickr("#taskEndDate", datetimepickerOption);
         
-        var autoCompleteOption = {
-          lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
-          maxHeight:175,
-          triggerSelectOnValidInput: false,
-          zIndex:1060
-        };
-        $('#taskStartTime').autocomplete(autoCompleteOption);
-        $("#taskEndTime").autocomplete(autoCompleteOption);
         $("#taskBtn").on("touch click", function() {
           if ($("#taskName").val() === "") {
               alert("일정 이름을 입력해주세요!");
@@ -1681,6 +1677,21 @@
           if (start.getTime() > end.getTime()) {
               start = [end, end = start][0];
           }
+					var startTime = $("#taskStartTime").val();
+          var endTime = $("#taskEndTime").val();
+          if(!startTime){
+            showSnackBar("시작 시간을 확인해주세요.");
+            return;
+          }
+          if(!endTime){
+            showSnackBar("종료 시간을 확인해주세요.");
+            return;
+          }
+
+          start.setHours(startTime.substring(0,2)*1);
+          start.setMinutes(startTime.substring(2)*1);
+          end.setHours(endTime.substring(0,2)*1);
+          end.setMinutes(endTime.substring(2)*1);
           if ($("#taskTab").data("edit")) {
               var origin = $("#taskTab").data("task");
               origin.manager = origin.calendarId;
