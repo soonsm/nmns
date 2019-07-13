@@ -501,6 +501,29 @@
       document.getElementsByClassName('carousel-dot')[this.currentSlide].classList.add('carousel-dot-active');
     }
   });
+	function showModal(modalId){
+		return function(e){
+			e && e.stopPropagation && e.stopPropagation();
+			e && e.preventDefault && e.preventDefault();
+			var modals = document.getElementsByClassName('modal');
+			for(var i=0;i<modals.length;i++){
+				modals[i].style.display = 'none';// remove all modals
+			}
+			document.body.classList.add('overflow-hidden');// prevent scrollability
+			document.body.style.overflow = 'hidden';
+			document.body.classList.add('fixed');// prevent scrollability
+			document.getElementById('backdrop').style.display = 'flex';//show backdrop
+			document.getElementById(modalId).style.display = 'block';//show modal
+		};
+	}
+	function linkToSignup(sns){
+		var form = document.getElementById('signupForm');
+		form.email.value = sns.snsEmail;
+		form.snsType.value = sns.snsType;
+		form.snsLinkId.value = sns.snsLinkId;
+		document.getElementById('signupPassword').style.display = 'none';
+		showModal('signupForm')();
+	}
 	(function(){
     var addEvent = function (el, type, fn) {
 			var types = type.split(" ");
@@ -567,22 +590,7 @@
 					closeModal(e);
 				}				
 			}			
-		});
-		function showModal(modalId){
-			return function(e){
-				e && e.stopPropagation && e.stopPropagation();
-				e && e.preventDefault && e.preventDefault();
-				var modals = document.getElementsByClassName('modal');
-				for(var i=0;i<modals.length;i++){
-					modals[i].style.display = 'none';// remove all modals
-				}
-				document.body.classList.add('overflow-hidden');// prevent scrollability
-				document.body.style.overflow = 'hidden';
-				document.body.classList.add('fixed');// prevent scrollability
-				document.getElementById('backdrop').style.display = 'flex';//show backdrop
-				document.getElementById(modalId).style.display = 'block';//show modal
-			};
-		}
+		});		
 		var targets = document.getElementsByClassName('signupLink');
 		for(var i=0;i<targets.length;i++){
 			addEvent(targets[i], 'click', showModal('signupModal'));
@@ -686,12 +694,7 @@
 											return;
 										}
 										if(response.sns){//회원가입 되어있지 않은 경우
-											var form = document.getElementById('signupForm');
-											form.email.value = response.sns.snsEmail;
-											form.snsType.value = response.sns.snsType;
-											form.snsLinkId.value = response.sns.snsLinkId;
-											document.getElementById('signupPassword').style.display = 'none';
-											showModal('signupForm')();
+											linkToSignup(response.sns);
 											return;
 										}
 										location.href = '/';
