@@ -2137,7 +2137,7 @@
 
     NMNS.socket.on("get noshow", socketResponse("노쇼 정보 가져오기", function(e) {
         if (e.data.summary.noShowCount > 0) {
-          e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});
+          // e.data.detail.push({id:1111, date:'20190101', noShowCase:'직전취소'});// for test
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
           if(!$("#noShowDirtyImage").attr('src')){
             $("#noShowDirtyImage").attr('src', '/nmns/img/badperson.png');
@@ -2348,6 +2348,11 @@
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
       $("#salesForm").html(generateSalesContents(e.data));
       // $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
+			if(Array.isArray(e.data) && e.data.length > 0){
+				$("#salesBtn").show().prev().addClass('mr-1');
+			}else{
+				$("#salesBtn").hide().prev().removeClass('mr-1');
+			}
       $("#salesBtn").removeClass('disabled');
       $("#salesLoading").hide();
       $("#salesForm").show();

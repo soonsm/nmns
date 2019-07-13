@@ -316,7 +316,16 @@
       $(".addCustomerScheduleBtn").hide();
       $("#closeCustomerModal").show();
       $("#customerModal .updatingCustomer").removeClass('d-flex').hide();
-      
+      var manager = NMNS.calendar.getCalendars()[0];
+      if(!manager){
+        manager = {
+          color:'#334150',
+          name:'(삭제된 담당자)'
+        };
+      }
+      $("#customerManager").data("calendar-id", manager.id).data("color", manager.color)
+        .html(manager.id?$("#customerManagerList button[data-calendar-id='"+manager.id+"']").html():'<span class="tui-full-calendar-icon tui-full-calendar-calendar-dot mr-3" style="background-color: #334150"></span><span class="tui-full-calendar-content">(삭제된 담당자)</span>');
+			
       $("#customerTabList a[href='#customerInfo']").text('고객 추가').tab('show');
       $("#customerModal").addClass('addCustomer').data('customer', null);
     }
@@ -493,6 +502,21 @@
 				membership.balanceMembership = e.data.balanceMembership;
 			}
 		});
+		var index = NMNS.customerList.findIndex(function(item){return item.id === e.data.customerId});
+		var customer = NMNS.customerList[index];
+		customer.pointMembership = e.data.balanceMembership;
+		if(e.data.payment === 'CARD'){
+			customer.cardSales += e.data.price;
+		}else if(e.data.payment === 'CASH'){
+			customer.cashSales += e.data.price;
+		}
+		$("#customerBalanceMembership").text((customer.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		$("#customerTotalSales").text(((customer.cardSales + customer.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		var customerRow = $("#mainCustomerList .customer[data-index='"+index+"']");
+		if(customerRow.length){
+			customerRow.find('div:nth-child(5)').find('div:nth-child(2)').text(((customer.cardSales + customer.cashSales) ? ((customer.cardSales + customer.cashSales)+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"): '-'));
+			customerRow.find('div:nth-child(5)').find('div:nth-child(3)').text((customer.pointMembership ? (customer.pointMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-'));
+		}
   }, function(e){
     var list = $("#customerMembershipList").data('item')
     list.splice(list.findIndex(function(item){
@@ -555,7 +579,10 @@
               name: $("#customerName").val(),
               contact: $("#customerContact").val().replace(/-/gi, ''),
               etc: $("#customerEtc").val(),
-              managerId: $("#customerManager").data("calendar-id")
+              managerId: $("#customerManager").data("calendar-id"),
+							pointMembership: 0,
+							cardSales:0,
+							cashSales:0
           };
           NMNS.socket.emit("add customer", customer);
           NMNS.customerList.splice(0, 0, customer);

@@ -1049,7 +1049,7 @@
       return html;
     }
 	NMNS.generateMenuList = generateMenuList;
-    
+    /*
     function generateSalesContents(sales){
       var html = "";
       if(Array.isArray(sales) && sales.length > 0){
@@ -1166,7 +1166,7 @@
       }
       return html;
     }
-    
+    */
     function refreshScheduleTab(e){
       var calendar;
       if(NMNS.refreshScheduleManager){
