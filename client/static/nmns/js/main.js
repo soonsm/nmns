@@ -595,10 +595,16 @@
         return;
       }
       var manager = findManager($(this).parents(".lnbManagerItem").data('value'));
-      NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
-      NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
-      $("#lnbManagerList .lnbManagerItem[value='"+manager.id+"']").remove();
-      NMNS.socket.emit("delete manager", { id: manager.id });
+			if(manager){
+				NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().remove(manager.id, function(item, target) { return item.id === target; }));
+				NMNS.history.push({ id: manager.id, bgColor: manager.bgColor, borderColor: manager.borderColor, color: manager.color, name: manager.name });
+				$("#lnbManagerList .lnbManagerItem[value='"+manager.id+"']").remove();
+				NMNS.socket.emit("delete manager", { id: manager.id });
+				$(this).parents(".lnbManagerItem").remove();
+			}else{
+				showSnackBar('삭제할 담당자를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
+			}
+      
     }
     
     function generateTaskList(taskList) {
@@ -2150,7 +2156,7 @@
           if (e.data.detail.length > 0) {
             var html = "<div class='row col-12 mx-0'><div class='col col-3'>전화번호</div><div class='col col-3'>노쇼 날짜</div><div class='col col-4'>노쇼 사유</div></div>";
             e.data.detail.forEach(function(item) {
-                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
+                html += "<div class='row col-12 noShowRow' data-id='" + item.id + "' data-contact='" + (e.data.summary.contact || "") + "' data-date='" + (item.date || "") + "' data-noshowcase='" + (item.noShowCase || "") + "'><div class='col col-3'>" + (e.data.summary.contact ? dashContact(e.data.summary.contact) : "") + "</div><div class='col col-3'>" + (item.date ? (item.date.substring(0, 4) + ". " + item.date.substring(4, 6) + ". " + item.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + (item.noShowCase || "")+ "</div><div class='col-2 pr-0 d-flex'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>";
             });
             $("#noShowSearchList").html(html);
             $("#noShowSearchList .noShowSearchDelete").on("touch click", function(){
