@@ -341,9 +341,11 @@
 					<div class="flex flex-wrap" style="margin-top:35px">
 						이메일 주소
 						<input type="hidden" name="kakaotalk" value="${input.kakaotalk}" if(input.kakaotalk) />
+						<input type="hidden" name="snsType" value="${input.snsType}" />
+						<input type="hidden" name="snsLinkId" value="${input.snsLinkId}" />
 						<input type="email" name="email" class="form-control col-12 montserrat" placeholder="이메일을 입력하세요." value="${input.email}" style="margin-top:15px"/>
 					</div>
-					<div class="flex flex-wrap" style="margin-top:35px">
+					<div class="flex flex-wrap" style="margin-top:35px" id="signupPassword">
 						비밀번호
 						<input type="password" name="password" class="form-control col-12" placeholder="비밀번호는 하나 이상의 숫자와 특수문자를 포함해야 합니다." style="margin:15px 0 10px 0"/>
 						<input type="password" name="repassword" class="form-control col-12" placeholder="비밀번호를 한번 더 입력해주세요."/>
@@ -679,8 +681,17 @@
 								xhr.onload = function() {
 									if (xhr && xhr.status === 200) {
 										var response = JSON.parse(xhr.response);
-										if(response.status != 200){
+										if(response.status != "200"){
 											alert(response.message || '카카오톡 로그인에 실패했습니다. 다시 시도해주세요.');
+											return;
+										}
+										if(response.sns){//회원가입 되어있지 않은 경우
+											var form = document.getElementById('signupForm');
+											form.email.value = response.sns.snsEmail;
+											form.snsType.value = response.sns.snsType;
+											form.snsLinkId.value = response.sns.snsLinkId;
+											document.getElementById('signupPassword').style.display = 'none';
+											showModal('signupForm')();
 											return;
 										}
 										location.href = '/';
@@ -805,7 +816,7 @@
 							return;
 					 } else {
 						var response = JSON.parse(xhr.response);
-						if(response.status !== 200){
+						if(response.status !== "200"){
 							alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
 							return;
 						}

@@ -54,7 +54,7 @@ window.addEventListener('load', function() {
 				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 300) {
 						var response = JSON.parse(xhr.response);
-						if (response.status != 200) {
+						if (response.status != "200") {
 							parent.alert(response.message || '네이버 아이디 로그인에 실패했습니다. 다시 시도해주세요.');
 							that.close();
 							return;
