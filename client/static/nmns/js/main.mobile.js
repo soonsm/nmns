@@ -1180,6 +1180,12 @@
         NMNS.socket.emit('get menu list');//TODO : needed api alignment
         // $("#scheduleTabContentList").html(generateMenuList([{menuId:'1234', menuName:'테스트 메뉴'}]))//TODO : remove this line (for test)
       }
+			if($("#scheduleName").autocomplete()){
+				$("#scheduleName").autocomplete().clearCache();
+			}
+			if($("#scheduleContact").autocomplete()){
+				$("#scheduleContact").autocomplete().clearCache();
+			}
 
       $(".scheduleMenu").data('contact', e && e.schedule? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
@@ -1205,7 +1211,7 @@
           
           $('#scheduleContact').val(e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact);
           $('#scheduleEtc').val(e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc);
-          $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
+          // $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
           
           if(moment(e.schedule.start.toDate()).isBefore(moment())){
             $("#resendAlrimScheduleBtn").addClass('d-none').next().removeClass('ml-1');
@@ -1343,7 +1349,7 @@
         });
         
         $("#scheduleBtn").on("touch click", function(){
-          var title, isAllDay, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
+          var title, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
           try {
             startDate = $('#scheduleStartDate')[0]._flatpickr.selectedDates[0];
             endDate = $('#scheduleEndDate')[0]._flatpickr.selectedDates[0];
@@ -1393,7 +1399,7 @@
           contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
           etc = $('#scheduleEtc').val();
-          isAllDay = $('#scheduleAllDay').prop('checked');
+          // isAllDay = $('#scheduleAllDay').prop('checked');
 
           if (NMNS.info.alrimTalkInfo.useYn === 'Y' && contact !== '' && !(/^01([016789]?)([0-9]{3,4})([0-9]{4})$/.test(contact))) {
               if (!confirm('입력하신 전화번호는 알림톡을 보낼 수 있는 전화번호가 아닙니다. 그래도 등록하시겠어요?')) {
@@ -1459,7 +1465,7 @@
                   end: moment(endDate).format("YYYYMMDDHHmm"),
                   contents: contents,
                   contact: contact,
-                  isAllDay: isAllDay,
+                  isAllDay: false, //하루종일 항목 없앰
                   status:$("#scheduleStatus input:checked").val()
               });
           } else { //신규 예약 추가
@@ -1505,7 +1511,7 @@
                   name: title,
                   start: moment(startDate).format("YYYYMMDDHHmm"),
                   end: moment(endDate).format("YYYYMMDDHHmm"),
-                  isAllDay: isAllDay,
+                  isAllDay: false,//하루종일 항목 없앰
                   type: "R",
                   bgColor: getBackgroundColor(manager.color),
                   borderColor: manager.color,
@@ -1663,7 +1669,7 @@
               start: moment(start).format("YYYYMMDDHHmm"),
               end: moment(end).format("YYYYMMDDHHmm"),
               type: 'T',
-              isAllDay: $("#taskAllDay").prop('checked')
+              isAllDay: false//하루종일 항목 없앰
           });
 
           history.back();
@@ -1697,7 +1703,7 @@
                 start: (typeof schedule.start === "string" ? moment(schedule.start, "YYYYMMDDHHmm").toDate() : schedule.start),
                 end: (typeof schedule.end === "string" ? moment(schedule.end, "YYYYMMDDHHmm").toDate() : schedule.end),
                 isAllDay: false,//하루종일 항목 없앰
-                category: (schedule.type === "T" ? "task" : (schedule.isAllday ? "allday" : "time")),
+                category: (schedule.type === "T" ? "task" : "time"),
                 dueDateClass: (schedule.type === "T" ? "dueDateClass" : ""),
                 attendees: [],
                 recurrenceRule: false,
@@ -2089,9 +2095,9 @@
                   removeContent(this);
                 });
               }
-              if (e.data.isAllDay !== undefined) {
-                  popup.find("#scheduleAllDay").attr("checked", e.data.isAllDay);
-              }
+              // if (e.data.isAllDay !== undefined) {
+              //     popup.find("#scheduleAllDay").attr("checked", e.data.isAllDay);
+              // }
               if (e.data.name && popup.find("#scheduleName").val() === "") {//빈칸일 경우에만 덮어쓰기
                   popup.find("#scheduleName").val(e.data.name);
               }
@@ -2966,6 +2972,7 @@
             paramName: "contact",
             zIndex: 1060,
             maxHeight: 150,
+						noCache:true,
             triggerSelectOnValidInput: false,
             transformResult: function(response, originalQuery) {
                 response.forEach(function(item) {
