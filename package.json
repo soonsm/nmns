@@ -55,5 +55,9 @@
     "gulp-sass": "^4.0.1",
     "gulp-uglify": "^3.0.1",
     "jasmine": "^3.4.0"
-  }
+  },
+	"browserslist":[
+		"last 2 versions",
+		"IE 10"
+	]
 }

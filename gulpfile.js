@@ -4,7 +4,7 @@ var cleanCSS = require('gulp-clean-css');
 var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
 var autoprefixer = require('gulp-autoprefixer');
-var options = {browsers:['last 2 versions'], cascade: false};
+// var options = {browsers:['last 2 versions'], cascade: false};
 // Copy third party libraries from /node_modules into /client/static/lib
 gulp.task('lib', async function() {
 
@@ -73,7 +73,7 @@ gulp.task('css:minify', function() {
       '!./client/**/*.min.css'
     ])
     .pipe(cleanCSS({rebase:false}))
-    .pipe(autoprefixer(options))
+    .pipe(autoprefixer())
     .pipe(rename({
       suffix: '.min'
     }))
