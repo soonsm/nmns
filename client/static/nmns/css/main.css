@@ -207,6 +207,16 @@ input::-webkit-calendar-picker-indicator, input:hover::-webkit-calendar-picker-i
 		background-position-y:center;
 		background-position-x:center;
 	}
+	#lnbManagerList .contextual{
+		background-image: url('/nmns/img/Contextual.svg');
+		background-repeat:no-repeat;
+		background-size:contain;
+		background-position-x:center;
+		background-position-y:center;
+		width:17px;
+		height:17px;
+		display:inline-block;
+	}
 }
 /*main contents*/
 html {
@@ -789,11 +799,11 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     }
 }
 #mainCalendarWrapper{
-	height:calc(100vh - 353px);
+	height:calc(100vh - 358px);
 	overflow-y:auto;
 }
 #resizeCalendar.maximized + div + #mainCalendarArea #mainCalendarWrapper{
-	height:calc(100vh - 278px);
+	height:calc(100vh - 282px);
 }
 body.overflow-y-hidden{
 	overflow-y:hidden;
