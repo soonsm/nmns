@@ -165,11 +165,14 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             let status = true,
                 message = `인증 이메일이 ${email}로 전송되었습니다.`;
 
-            const emailAuthToken = require('js-sha256')(email);
-            const result = await emailSender.sendEmailVerification(email, emailAuthToken);
-            if (!result) {
+            try{
+                const emailAuthToken = require('js-sha256')(email);
+                emailSender.sendEmailVerification(email, emailAuthToken);
+                status = true;
+            }catch(e){
                 status = false;
-                message = '인증 이메일 전송이 실패하였습니다.';
+                message = '이메일 전송에 실패했습니다.';
+                logger.error(e);
             }
 
             socket.emit(SendVerification, makeResponse(status, null, message));

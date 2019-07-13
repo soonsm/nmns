@@ -41,7 +41,7 @@ exports.sendEmailVerification = async function(email, token){
     return await sendMail({
         from: srcEmail,
         to: email,
-        subject: 'NoMoreNoShow 인증 메일입니다.',
+        subject: 'WA:SHOW 인증 메일입니다.',
         html: getEmailVerificaitonText(authLinkParams)
     });
 };
@@ -50,7 +50,7 @@ exports.sendTempPasswordEmail = async function(email, pwd){
     return await sendMail({
         from: srcEmail,
         to: email,
-        subject: 'NoMoreNoShow 임시 비밀번호 발급 이메일입니다.',
+        subject: 'WA:SHOW 임시 비밀번호 발급 이메일입니다.',
         html: getPasswordResetText(pwd)
     });
 };
@@ -59,7 +59,7 @@ exports.sendFeedbackAlrim = async function(email, feedback){
     return await sendMail({
         from: srcEmail,
         to: srcEmail,
-        subject: 'NoMoreNoShow 피드백 알림',
+        subject: 'WA:SHOW 피드백 알림',
         text: `피드백 내용: ${feedback} \n 발신자: ${email}`
     });
 };
