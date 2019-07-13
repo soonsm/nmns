@@ -706,9 +706,9 @@
             list.append(html);
             $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
               $(this).parent().toggleClass('show');
-							if($(this).parent().hasClass('show')){
+							/*if($(this).parent().hasClass('show')){
 								(document.scrollingElement || document.documentElement).scrollTop = $(this).offset().top - ( $("html,body").height() - $(this).outerHeight(true) ) / 2;	
-							}
+							}*/
             })
         } else {
             list.append("<div class='row alrimRow'><span class='col-12 text-center'>검색된 결과가 없습니다.</span></div>");
