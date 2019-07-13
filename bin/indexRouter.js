@@ -352,7 +352,7 @@ module.exports = function (passport) {
                 email: email
             });
 
-            let dbResult2 = await db.updateWebUser(email, {snsType: process.nmns.SNS_TYPE.NAVER, snsLinkId: snsLinkId});
+            let dbResult2 = await db.updateWebUser(email, {isNaverLink: true});
 
             if (!dbResult1 || !dbResult2) {
                 throw 'DB 저장에 실패했습니다.';
@@ -366,7 +366,7 @@ module.exports = function (passport) {
                     message: '연동 성공',
                     data: {
                         snsLinkId: snsLinkId,
-                        snsType: user.snsType
+                        snsType: process.nmns.SNS_TYPE.NAVER
                     }
                 });
             }
@@ -386,19 +386,24 @@ module.exports = function (passport) {
      */
     router.post("/sendVerification", async function (req, res) {
         let status = false;
-        let errorMessage = '이메일 전송이 실패했습니다.';
+        let errorMessage;
         let email = req.body.email;
-        if (!email && req.user) {
-            email = req.user.email;
-        }
-        if (email) {
-            const emailAuthToken = require('js-sha256')(email);
-            const result = await emailSender.sendEmailVerification(email, emailAuthToken);
-            if (result) {
-                status = true;
-                errorMessage = '';
+        try{
+            if (!email && req.user) {
+                email = req.user.email;
             }
+            if(!email) throw '이메일이 없습니다';
+
+            const emailAuthToken = require('js-sha256')(email);
+            emailSender.sendEmailVerification(email, emailAuthToken);
+
+            status = true;
+        }catch(e){
+            status = false
+            errorMessage = '이메일 전송이 실패했습니다';
+            logger.error(e);
         }
+
         sendResponse(res, status, errorMessage);
     });
 
@@ -432,7 +437,7 @@ module.exports = function (passport) {
 
             if (await db.updateWebUser(email, {password: util.sha512(password)})) {
 
-                await emailSender.sendTempPasswordEmail(email, password);
+                emailSender.sendTempPasswordEmail(email, password);
 
                 res.sendStatus(200);
                 return;
@@ -627,21 +632,20 @@ module.exports = function (passport) {
             }
 
             if (await db.setWebUser(newUser)) {
-                if (await emailSender.sendEmailVerification(email, data.emailAuthToken) && newUser) {
-                    if (data.kakaotalk) {
-                        let kakaoUser = await db.getUser(data.kakaotalk);
-                        if (kakaoUser) {
-                            kakaoUser.email = email;
-                            db.saveUser(kakaoUser);
-                        }
+                emailSender.sendEmailVerification(email, data.emailAuthToken);
+                if (data.kakaotalk) {
+                    let kakaoUser = await db.getUser(data.kakaotalk);
+                    if (kakaoUser) {
+                        kakaoUser.email = email;
+                        db.saveUser(kakaoUser);
                     }
-                    if (data.snsType) {
-                        db.setSnsLink(data);
-                    }
-                    res.cookie('email', email);
-                    status = true;
-                    message = '회원가입성공';
                 }
+                if (data.snsType) {
+                    db.setSnsLink(data);
+                }
+                res.cookie('email', email);
+                status = true;
+                message = '회원가입성공';
             }
         }catch(e){
             status = false;

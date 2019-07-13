@@ -85,20 +85,25 @@ exports.getCustomerInfo = async function (data) {
 
         list = await newDb.getCustomerList(email);
         list = list.filter((member) => {
-            if (member.contact && member.contact.includes(target)) {
-                return true;
-            }
+            try{
+                if (member.contact && member.contact.includes(target)) {
+                    return true;
+                }
 
-            if (hangul.search(member.name, target) !== -1) {
-                return true;
-            }
+                if(member.name){
+                    if (hangul.search(member.name, target) !== -1) {
+                        return true;
+                    }
 
-            //초성검색
-            let names = hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
-            if (names.includes(hangul.disassemble(target).join(''))) {
-                return true;
+                    //초성검색
+                    let names = hangul.disassemble(member.name, true).map(nameList => nameList[0]).join('');
+                    if (names.includes(hangul.disassemble(target).join(''))) {
+                        return true;
+                    }
+                }
+            }catch(e){
+                logger.error(JSON.stringify(e));
             }
-
             return false;
         });
 
@@ -285,6 +290,21 @@ exports.addCustomer = async function (data) {
         resultData = {id: data.id, totalNoShow: 0};
 
     try {
+        if(data.contact){
+            let old = await newDb.getCustomerList(email, data.contact);
+            if(old.length > 0){
+                old = old[0];
+                throw `동일한 연락처를 가진 고객이 이미 존재합니다.(이름:${old.name}, 연락처:${old.contact})`;
+            }
+        }
+        if(data.name && !data.contact){
+            let old = await newDb.getCustomerList(email, null, data.name);
+            if(old.length > 0){
+                old = old[0];
+                throw `동일한 이름을 가진 고객이 이미 존재합니다.(이름:${old.name})`;
+            }
+        }
+
         await newDb.saveCustomer({
             email: email,
             id: data.id,

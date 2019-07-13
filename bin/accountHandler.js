@@ -81,6 +81,12 @@ exports.getShop = async function () {
             }
             resultData.logo = baseUrl + user.logoFileName;
         }
+		if(user.isKaKaoLink){
+			resultData.kakaotalk = true;
+		}
+		if(user.isNaverLink){
+			resultData.naver = true;
+		}
 
         if(user.originalLogoFileName){
             resultData.logoFileName = user.originalLogoFileName;
@@ -235,7 +241,7 @@ exports.linkSns = async function(data){
     try{
         let user = await db.getWebUser(this.email);
 
-        let snsLinkId = data.snsLinkId;
+        let snsLinkId = data.snsLinkId + "";
         let snsType = data.snsType;
         let snsEmail = data.snsEmail;
 
@@ -254,8 +260,14 @@ exports.linkSns = async function(data){
             snsEmail: snsEmail,
             email: this.email
         });
-
-        let dbResult2 = await db.updateWebUser(user.email, {snsType: snsType, snsLinkId: snsLinkId, snsEmail: snsEmail});
+		let snsLink = {};
+		if(snsType === process.nmns.SNS_TYPE.KAKAO){
+			snsLink.isKaKaoLink = true;
+		}else{
+			snsLink.isNaverLink = true;
+		}
+		
+        let dbResult2 = await db.updateWebUser(user.email, snsLink);
 
         if(!dbResult1 || !dbResult2){
             throw 'DB 저장에 실패했습니다.';

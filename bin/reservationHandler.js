@@ -41,9 +41,23 @@ exports.getReservationSummaryList = async function (data) {
 
     let email = this.email;
     let status = false, message, list;
+    let target = data.target;
 
     try {
         list = await newDb.getReservationList(email, data.start, data.end);
+        if(target){
+            list = list.filter((reservation) => {
+                if(reservation.name && reservation.name.includes(target)){
+                    return true;
+                }
+
+                if(reservation.contact && reservation.contact.includes(target)){
+                    return true;
+                }
+
+                return false;
+            });
+        }
         for (let item of list) {
             if (item.contentList) {
                 item.contents = JSON.stringify(item.contentList);
@@ -297,13 +311,8 @@ exports.updateReservation = async function (newReservation) {
         }
         //노쇼 처리인 경우 노쇼 추가
         if (newReservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && reservation.status !== process.nmns.RESERVATION_STATUS.NOSHOW) {
-            await newDb.addNoShow(email, newReservation.contact, newReservation.start.substring(0, 8), newReservation.noShowCase, newReservation.id);
+            await newDb.addNoShow(email, newReservation.contact, newReservation.start.substring(0, 8), newReservation.noShowCase, newReservation.id, newReservation.name);
         }
-
-        /**
-         * TODO: 매출 관련 수정
-         * 고객이 바뀌었거나, 매니저가 바뀌었거나, 예약이 삭제된 경우 -> 해당 예약과 연관된 매출 정보를 변경해준다.
-         */
 
         //예약정보 저장
         newReservation.email = email;
@@ -404,7 +413,7 @@ exports.addTask = async function(data){
  */
 exports.addReservation = async function (data) {
     let email = data.email = this.email;
-    let status = false, message, pushMessage;
+    let status = false, message, pushMessage="";
     try {
         let contact = data.contact;
         let name = data.name;
@@ -470,31 +479,55 @@ exports.addReservation = async function (data) {
     };
 }
 
+/**
+ * 알림톡 재전송
+ * 요청 위치 : "resend alrimtalk", 데이터 : {"id":${예약 id, string}}
+ * 응답 형식 : "data":{"id":${요청에서 넘겨준 id, string}}
+ *
+ * 하루에 한번 보낼 수 있다.
+ */
 exports.reSendReservationConfirm = async function (data) {
     let email = this.email;
     let status = false;
     let message = '알림톡 전송 실패';
 
-    if (data.id) {
+    try{
+        let id = data.id;
+        if(!id){
+            throw '예약 아이디가 없습니다.';
+        }
+
         let user = await db.getWebUser(email);
-		if(user.alrimTalkInfo.useYn === 'Y'){
-			let reservation = await newDb.getReservation(email, data.id);
-			if (reservation) {
-				if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
-					message = '알림톡 전송이 실패했습니다. 고객 전화번호를 확인하세요.';
-				} else {
-					status = true;
-					message = '알림톡 전송 성공';
-				}
-			} else {
-				message = '없는 예약입니다.';
-			}	
-		}else{
-			message = '알림톡 사용 설정이 되어있지 않습니다.';
-		}
-        
-    } else {
-        message = '예약 아이디가 없습니다.';
+        if(user.alrimTalkInfo.useYn !== 'Y'){
+            throw '알림톡 사용 설정이 되어있지 않습니다.';
+        }
+
+        let reservation = await newDb.getReservation(email, id);
+        if(!reservation){
+            throw '없는 예약입니다.';
+        }
+
+        let today = moment().format('YYYYMMDD');
+        let list = await newDb.getAlrimTalkList(email, today, today);
+        list = list.filter(item => !item.isCancel).filter(item => item.reservationKey === id);
+        if(list.length > 0){
+            throw '한 예약당 하루에 한번 전송 가능합니다.';
+        }
+
+        if (!await alrimTalk.sendReservationConfirm(user, reservation)) {
+            throw '고객 전화번호를 확인하세요.';
+        }
+
+        status = true;
+        message = '알림톡 전송 성공';
+
+    }catch(e){
+        status = false;
+        if(typeof e === 'string'){
+            message = e;
+        }else{
+            message = '알림톡 전송에 실패했습니다.';
+        }
     }
 
     return {

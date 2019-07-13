@@ -89,7 +89,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         //방문 기록 로깅
         const MobileDetect = require('mobile-detect');
         let md = new MobileDetect(socket.request.headers['user-agent']);
-        let visitLog = newDb.visitLog(email, md.mobile() || 'pc');
+        // let visitLog = await newDb.visitLog(email, md.mobile() || 'pc');
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
@@ -100,11 +100,11 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         process.nmns.ONLINE[email] = socket;
 
-        socket.on('disconnect', async function () {
-            delete process.nmns.ONLINE[email];
-
-            await newDb.exitLog(visitLog);
-        });
+        // socket.on('disconnect', async function () {
+        //     delete process.nmns.ONLINE[email];
+        //
+        //     await newDb.exitLog(visitLog);
+        // });
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
@@ -165,11 +165,14 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
             let status = true,
                 message = `인증 이메일이 ${email}로 전송되었습니다.`;
 
-            const emailAuthToken = require('js-sha256')(email);
-            const result = await emailSender.sendEmailVerification(email, emailAuthToken);
-            if (!result) {
+            try{
+                const emailAuthToken = require('js-sha256')(email);
+                emailSender.sendEmailVerification(email, emailAuthToken);
+                status = true;
+            }catch(e){
                 status = false;
-                message = '인증 이메일 전송이 실패하였습니다.';
+                message = '이메일 전송에 실패했습니다.';
+                logger.error(e);
             }
 
             socket.emit(SendVerification, makeResponse(status, null, message));
