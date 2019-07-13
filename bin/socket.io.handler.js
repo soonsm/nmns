@@ -89,7 +89,7 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         //방문 기록 로깅
         const MobileDetect = require('mobile-detect');
         let md = new MobileDetect(socket.request.headers['user-agent']);
-        let visitLog = newDb.visitLog(email, md.mobile() || 'pc');
+        // let visitLog = await newDb.visitLog(email, md.mobile() || 'pc');
 
         socket.sendPush = async function (data) {
             socket.emit(SendNoti, {
@@ -100,11 +100,11 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
 
         process.nmns.ONLINE[email] = socket;
 
-        socket.on('disconnect', async function () {
-            delete process.nmns.ONLINE[email];
-
-            await newDb.exitLog(visitLog);
-        });
+        // socket.on('disconnect', async function () {
+        //     delete process.nmns.ONLINE[email];
+        //
+        //     await newDb.exitLog(visitLog);
+        // });
 
         const addEvent = function (eventName, fn) {
             socket.on(eventName, async function (data) {
