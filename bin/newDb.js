@@ -549,6 +549,13 @@ exports.getCustomerList = async function (email, contact, name) {
         throw 'email이 필요합니다.';
     }
 
+    if(contact === ''){
+        contact = null;
+    }
+    if(name === ''){
+        name = null;
+    }
+
     if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
         throw `전화번호가 올바르지 않습니다.(${contact})`;
     }
@@ -953,6 +960,10 @@ exports.saveReservation = async function (data) {
 
     if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${item.start}, end:${item.end})`;
+    }
+
+    if(item.start > item.end){
+        throw `시간시간이 종료시간보다 미래일 수는 없습니다.(시작시간:${item.start}, 종료시간:${item.end})`;
     }
 
     if (item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined) {
