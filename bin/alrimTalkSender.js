@@ -50,8 +50,8 @@ exports.sendReservationConfirm = async function (user, reservation) {
             template_code: 'C02',
             btn_types: '웹링크',
             btn_txts: '예약취소',
-            btn_urls1: `https://www.washow.co.kr/web_cancel/key=${reservation.id}&&email=${user.email}`,
-            btn_urls2: `https://www.washow.co.kr/web_cancel/key=${reservation.id}&&email=${user.email}`,
+            btn_urls1: `http://washow.ga/web_cancel/key=${reservation.id}&&email=${user.email}`,
+            btn_urls2: `http://washow.ga/web_cancel/key=${reservation.id}&&email=${user.email}`,
             //url: `http://ec2-13-125-29-64.ap-northeast-2.compute.amazonaws.com/web_cancel/key=${reservation.id}&&email=${user.email}`,
             apiVersion: 1,
             client_id: apiStoreId
@@ -81,11 +81,11 @@ exports.sendReservationConfirmKaKao =  async function(user, alrimTalk) {
         phone: alrimTalk.receiverPhone,
         callback: '01028904311',
         msg: msg,
-        template_code: 'A002',
+        template_code: 'C01',
         btn_types: '웹링크',
         btn_txts: '예약취소',
-        btn_urls1: `https://www.washow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
-        btn_urls2: `https://www.washow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls1: `http://washow.ga/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls2: `http://washow.ga/cancel/key=${alrimTalk.reservationKey}`,
         apiVersion: 1,
         client_id: apiStoreId
     });
