@@ -307,9 +307,14 @@ module.exports = function (passport) {
                 }
             }
 			req.logIn(user, async function () {
-				console.log('log in sns');
+			    let sns = {};
+			    if(snsType === process.nmns.SNS_TYPE.NAVER){
+			        sns.isNaverLink = true;
+                }else{
+                    sns.isKaKaoLink = true;
+                }
+			    db.updateWebUser(user.email, sns);
 				return sendResponse(res, true);
-                //res.redirect("/");
             });
         } catch (e) {
 			if(typeof e !== 'string'){
