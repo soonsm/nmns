@@ -985,7 +985,7 @@ exports.saveReservation = async function (data) {
         throw `salesList 값이 올바르지 않습니다.(${item.salesList})`;
     }
 
-    if (item.cancelDate && !!moment(item.cancelDate, 'YYYYMMDDHHmmss').isValid()) {
+    if (item.cancelDate && !!moment(item.cancelDate, 'YYYYMMDD').isValid()) {
         throw `cancelDate 값이 올바르지 않습니다.(${item.cancelDate})`;
     }
 
