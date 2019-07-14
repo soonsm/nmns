@@ -64,7 +64,8 @@ exports.sendReservationConfirm = async function (user, reservation) {
             contact: reservation.contact,
             name: reservation.name,
             contents: msg,
-            reservationKey: reservation.id
+            reservationKey: reservation.id,
+            member: reservation.member
         });
         return result;
     }
@@ -113,7 +114,8 @@ exports.sendReservationCancelNotify =async function (user, reservation){
         contact: reservation.contact,
         name: user.shopName || user.email,
         contents: msg,
-        reservationKey: reservation.id
+        reservationKey: reservation.id,
+        member: reservation.member
     });
     return result;
 };

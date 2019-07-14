@@ -628,7 +628,7 @@ exports.deleteAllCustomer = async function (email) {
  * reservationKey: 예약키
  **/
 exports.addAlrmTalkRaw = async function (data) {
-    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey}) => ({
+    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey, member}) => ({
         email,
         isCancel,
         contact,
@@ -636,7 +636,8 @@ exports.addAlrmTalkRaw = async function (data) {
         contents,
         date,
         sendDate,
-        reservationKey
+        reservationKey,
+        member
     }))(data);
 
     if (!alrimTalk.email) {
@@ -656,6 +657,9 @@ exports.addAlrmTalkRaw = async function (data) {
     }
     if (!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDHHmmssSSS').isValid()) {
         throw `sendDate가 올바르지 않습니다.(${alrimTalk.sendDate})`;
+    }
+    if(!alrimTalk.member){
+        throw '고객 아이디가 없습니다.';
     }
 
     return await put({
