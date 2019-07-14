@@ -653,7 +653,7 @@ module.exports = function (passport) {
             if((typeof e) === 'string' ){
                 message = e;
             }else{
-                message = '시스템 오류가 발생했습니다.\\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.';
+                message = '시스템 오류가 발생했습니다.\\n support@washow.co.kr로 연락주시면 바로 조치하겠습니다.';
             }
         }
         return sendResponse(res, status, message);

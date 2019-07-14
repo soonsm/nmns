@@ -337,8 +337,8 @@ docClient.update(params, function(err, data) {
 //
 // addReservationCancelAlrimTalkHist(email, {
 //     "msg": "[스마일네일샵 예약안내]\n예약날짜: 09월19일\n예약시간: 11시00분\n안내말씀: 프로듀스 보자\n- 예약취소는 3시간전까지 가능합니다.\n- 예약취소를 원하실 때는 꼭 예약취소 버튼을 눌러주시기 바랍니다.",
-//     "btn_urls1": "https://www.nomorenoshow.co.kr/web_cancel/key=soonsm@gmail.com3b0af3fd-1d7f-4631-b6dc-67aa726a3d1e&&email=soonsm@gmail.com",
-//     "btn_urls2": "https://www.nomorenoshow.co.kr/web_cancel/key=soonsm@gmail.com3b0af3fd-1d7f-4631-b6dc-67aa726a3d1e&&email=soonsm@gmail.com",
+//     "btn_urls1": "https://www.washow.co.kr/web_cancel/key=soonsm@gmail.com3b0af3fd-1d7f-4631-b6dc-67aa726a3d1e&&email=soonsm@gmail.com",
+//     "btn_urls2": "https://www.washow.co.kr/web_cancel/key=soonsm@gmail.com3b0af3fd-1d7f-4631-b6dc-67aa726a3d1e&&email=soonsm@gmail.com",
 //     "apiVersion": 1,
 //     "phone": "01028904311",
 //     "sendResult": true,
