@@ -136,7 +136,6 @@ app.use(passport.session());
 //Web request router
 app.use('/', indexRouter(passport));
 app.use('/kakao', kakaoSkills);
-app.use('/noShow', noShowRouter);
 
 // app.use('/kakaoReservation', kakaoReservationRouter);
 

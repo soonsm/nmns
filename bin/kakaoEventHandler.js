@@ -144,9 +144,9 @@ exports.messageHandler = async function(userKey, content, res){
     }
     if(!user.email){
         //회원가입 하라는 안내 문구
-        let url = `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`;
+        let url = `https://www.washow.co.kr/index?kakaotalk=${userKey}`;
         if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
-            url = `http://localhost:8088/signup?kakaotalk=${userKey}`;
+            url = `http://localhost:8080/index?kakaotalk=${userKey}`;
         }
         return sendRes(message.messageWithButton('No More No Show 회원으로 등록되어 있지 않습니다.\n회원가입 후 이용해주세요.\n이미 가입하신 분은 로그인해주세요.', '회원가입/로그인', url));
         // return sendRes(message.messageWithHomeKeyboard(`No More No Show 회원으로 등록되어 있지 않습니다. \n회원가입 후 이용해주세요.\n${url}\n이미 가입하신 분은 로그인해주세요.`));
@@ -228,12 +228,12 @@ exports.messageHandler = async function(userKey, content, res){
                             let numOfMyNoShow = myNoShowList.length;
                             if(numOfMyNoShow > 0){
                                 let last = myNoShowList[numOfMyNoShow -1];
-                                resultMessage += `우리 매장에서 ${numOfMyNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY년MM월DD일')}\n`;
+                                resultMessage += `우리 매장에서 ${numOfMyNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY[년]MM[월]DD[일]')}\n`;
                             }
 
                             let numOfNoShow = noShowList.length;
                             let last = noShowList[numOfNoShow - 1];
-                            resultMessage += `전체 매장에서 ${numOfNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY년MM월DD일')}`;
+                            resultMessage += `전체 매장에서 ${numOfNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY[년]MM[월]DD[일]')}`;
                             returnMessage = message.messageWithHomeKeyboard(resultMessage);
                         }else{
                             returnMessage = message.messageWithHomeKeyboard('노쇼 전적이 없습니다.');
