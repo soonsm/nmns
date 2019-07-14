@@ -921,7 +921,7 @@ exports.addNotice = async function(input){
  * etc: 고객 메모
  * isAllDay: boolean
  * status: 예역 상태, RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED
- * cancelDate: moment().format('YYYYMMDDHHmmss')
+ * cancelDate: moment().format('YYYYMMDD')
  * type: 'R',
  * **/
 
