@@ -169,13 +169,13 @@ exports.messageHandler = async function(userKey, content, res){
     }else if(content === message.confirmReservation){
         let user = await db.getUser(userKey);
         if(user){
-            if(user.hasRightToSendConfirm){
+            // if(user.hasRightToSendConfirm){
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkInfo, 'sendConfirmTryCount');
                 returnMessage = message.typeAlrimTalkInfo();
-            }else{
-                await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
-                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)\n(등록키 발급 방법: 노쇼그만 카카오톡 프로필 클릭 -> 화면 하단의 "알림톡 등록키 발급 방법" 확인)');
-            }
+            // }else{
+            //     await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
+            //     returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)\n(등록키 발급 방법: 노쇼그만 카카오톡 프로필 클릭 -> 화면 하단의 "알림톡 등록키 발급 방법" 확인)');
+            // }
         }
     }else if(content === message.yesAlrmTalkInfo || content === message.noAlrmTalkInfo){
         if(user.userStatus === userStatus.beforeConfirmAlrimTalkInfo){
