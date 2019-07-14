@@ -313,7 +313,7 @@ module.exports = function (passport) {
                 }else{
                     sns.isKaKaoLink = true;
                 }
-			    db.updateWebUser(user.email, sns);
+			    await db.updateWebUser(user.email, sns);
 				return sendResponse(res, true);
             });
         } catch (e) {
