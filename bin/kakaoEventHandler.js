@@ -245,7 +245,7 @@ exports.messageHandler = async function(userKey, content, res){
                     }
                     break;
                 case userStatus.beforeTypeAlrimTalkInfo:
-                    if(user.hasRightToSendConfirm){
+                    // if(user.hasRightToSendConfirm){
                         let alrimTalkInfo = content.replace(/ /g, "");
                         let date = alrimTalkInfo.substring(0, 4);;
                         let time = alrimTalkInfo.substring(4,8);
@@ -277,9 +277,9 @@ exports.messageHandler = async function(userKey, content, res){
                         }else{
                             returnMessage = message.typeAlrimTalkInfo(errorMsg);
                         }
-                    }else{
-                        returnMessage = message.messageWithHomeKeyboard('서비스 준비중입니다.');
-                    }
+                    // }else{
+                    //     returnMessage = message.messageWithHomeKeyboard('서비스 준비중입니다.');
+                    // }
                     break;
                 case userStatus.beforeTypeAlrimTalkKey:
                     //정보가 맞으면 User에 권한 추가
