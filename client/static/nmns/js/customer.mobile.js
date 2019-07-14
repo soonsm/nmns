@@ -220,11 +220,11 @@
           '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">날짜</div>' + 
           '<div class="col pr-0 montserrat" title="'+date+'">' + date + '</div></div>' +
           '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">담당</div>' + 
-          '<div class="col pr-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'" title="'+manager.name+'"></span>'+manager.name+'</div></div>'+
+          '<div class="col pr-0" title="'+manager.name+'"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'"></span>'+manager.name+'</div></div>'+
           '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">예약내용</div>' + 
           '<div class="col pr-0">'+(contents || '') + '</div></div>' +
           '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">매출액</div>' + 
-          '<div class="col pr-0 montserrat">'+(item.sales ? (item.sales+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
+          '<div class="col pr-0 montserrat">'+(item.price ? (item.price+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div></div>' +
           '<div class="d-flex col-12 px-0 mb-1"><div class="customerDetailTitle">예약상태</div>' + 
           '<div class="col pr-0">'+(item.status == 'NOSHOW'? '노쇼' : (item.status === 'CANCELED' || item.status === 'CUSTOMERCANCELED' ? '취소' : '정상')) + '</div></div>' +
           '</div>';

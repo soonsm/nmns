@@ -948,7 +948,7 @@
               },
               onSearchComplete: function() {},
               formatResult: function(suggestion, currentValue) {
-                  return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+                  return dashContact(suggestion.value) + " (" + (suggestion.data || '(이름없는 고객)') + ")";
               },
               onSearchError: function() {},
               onSelect: function(suggestion) {}
@@ -975,7 +975,7 @@
               },
               onSearchComplete: function() {},
               formatResult: function(suggestion, currentValue) {
-                  return suggestion.value + " (" + dashContact(suggestion.data) + ")";
+                  return (suggestion.value || '(이름없는 고객)') + " (" + dashContact(suggestion.data) + ")";
               },
               onSearchError: function() {},
               onSelect: function(suggestion) {
@@ -1189,7 +1189,7 @@
           if($("#scheduleStatus input[value='"+e.schedule.raw.status+"']").length){
             $("#scheduleStatus input[value='"+e.schedule.raw.status+"']").prop('checked', true);
           }else if(e.schedule.raw.status === 'CUSTOMERCANCELED'){
-            $("#scheduleStatus input[value='CUSTOMERCANCELED']").prop('checked', true);
+            $("#scheduleStatus input[value='CANCELED']").prop('checked', true);
           }else{
             $("#scheduleStatus input[value='RESERVED']").prop('checked', true);
           }
@@ -1343,7 +1343,7 @@
             },
             onSearchComplete: function() {},
             formatResult: function(suggestion) {
-                return suggestion.value + ' (' + dashContact(suggestion.data) + ')';
+                return (suggestion.value || '(이름없는 고객)') + ' (' + dashContact(suggestion.data) + ')';
             },
             onSearchError: function() {},
             onSelect: function(suggestion) {
@@ -1374,7 +1374,7 @@
             },
             onSearchComplete: function() {},
             formatResult: function(suggestion) {
-                return suggestion.value + ' (' + dashContact(suggestion.data) + ')';
+                return (suggestion.value || '(이름없는 고객)') + ' (' + dashContact(suggestion.data) + ')';
             },
             onSearchError: function() {},
             onSelect: function(suggestion) {
@@ -2053,7 +2053,9 @@
       
     }));
     
-    NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e) {
+    NMNS.socket.on("add manager", socketResponse("담당자 추가하기", function(){
+			NMNS.refreshScheduleManager = true;
+		}, function(e) {
         NMNS.calendar.setCalendars(NMNS.calendar.getCalendars().filter(function(item) {
             return item.id !== e.data.id;
         }));
@@ -2062,6 +2064,7 @@
 
     NMNS.socket.on("delete manager", socketResponse("담당자 삭제하기", function(e) {
         NMNS.history.remove(e.data.id, findById);
+			NMNS.refreshScheduleManager = true;
     }, function(e) {
         var manager = NMNS.history.find(function(item) { return item.id === e.data.id });
         if (manager) {
@@ -2079,6 +2082,7 @@
 
     NMNS.socket.on("update manager", socketResponse("담당자 변경하기", function(e) {
         NMNS.history.remove(e.data.id, findById);
+			NMNS.refreshScheduleManager = true;
     }, function(e) {
         var manager = NMNS.history.find(function(item) { return item.id === e.data.id });
         if (manager) {
@@ -3025,7 +3029,7 @@
             },
             onSearchComplete: function() {},
             formatResult: function(suggestion) {
-                return suggestion.value + ' (' + dashContact(suggestion.data) + ')';
+                return (suggestion.value || '(이름없는 고객)') + ' (' + dashContact(suggestion.data) + ')';
             },
             onSearchError: function() {},
             onSelect: function(suggestion) {
@@ -3184,7 +3188,7 @@
             },
             onSearchComplete: function() {},
             formatResult: function(suggestion, currentValue) {
-                return dashContact(suggestion.value) + " (" + suggestion.data + ")";
+                return dashContact(suggestion.value) + " (" + (suggestion.data || '(이름없는 고객)') + ")";
             },
             onSearchError: function() {},
             onSelect: function(suggestion) {}
