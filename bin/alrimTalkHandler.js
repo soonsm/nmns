@@ -74,6 +74,12 @@ exports.updateAlrimTalkInfo = async function (data) {
  응답 형식 : "data":[{"date":${전송 일시, YYYYMMDDHHmm, string}, "name":${고객 이름, string}, "contact":${고객 연락처, string}, "contents": ${알림톡 내용, string, optional}}]
  취소알림이나 예약알림이나 상관없이 전송일시 내림차순 정렬 / 취소알림일 경우 매장이름을 고객이름에 넣어줌
  요청 데이터 없으면 전체 조회
+
+ 고객별 알림톡 이력 조회
+ 요청 위치 : "get customer alrim",
+ 데이터 : {"id":${고객 id, string}}
+ 응답 형식 : "data":[{"date":${전송 일시, YYYYMMDDHHmm, string}, "contents": ${알림톡 내용, string, optional}}]
+ 취소알림이나 예약알림이나 상관없이 전송일시 내림차순 정렬
  */
 exports.getAlrimTalkHistory = async function (data) {
     let email = this.email;
@@ -95,6 +101,9 @@ exports.getAlrimTalkHistory = async function (data) {
                 }
                 return false;
             })
+        }
+        if(data.id){
+            list = list.filter(item => item.member === data.id);
         }
         status = true;
     }catch(e){

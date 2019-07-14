@@ -304,13 +304,13 @@ exports.updateReservation = async function (newReservation) {
         }
 
         //노쇼에서 정상 또는 취소로 바꿀 때 노쇼 삭제
-        if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW) {
+        if (reservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && newReservation.contact) {
             if (newReservation.status === process.nmns.RESERVATION_STATUS.RESERVED || newReservation.status === process.nmns.RESERVATION_STATUS.CANCELED) {
                 await newDb.delNoShow(reservation.id);
             }
         }
         //노쇼 처리인 경우 노쇼 추가
-        if (newReservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && reservation.status !== process.nmns.RESERVATION_STATUS.NOSHOW) {
+        if (newReservation.contact && newReservation.status === process.nmns.RESERVATION_STATUS.NOSHOW && reservation.status !== process.nmns.RESERVATION_STATUS.NOSHOW) {
             await newDb.addNoShow(email, newReservation.contact, newReservation.start.substring(0, 8), newReservation.noShowCase, newReservation.id, newReservation.name);
         }
 

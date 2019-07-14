@@ -25,7 +25,7 @@ const makeSimpleTextResponse = function (text) {
 };
 
 const makeBasicCardResponse = function (userKey) {
-    let url = `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`;
+    let url = `https://www.washow.co.kr/signup?kakaotalk=${userKey}`;
     if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
         url = `http://localhost:8088/signup?kakaotalk=${userKey}`;
     }

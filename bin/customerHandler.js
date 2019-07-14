@@ -352,14 +352,15 @@ exports.updateCustomer = async function (data) {
             throw '이미 이름과 연락처가 동일한 고객이 존재합니다.';
         }
 
-        await newDb.saveCustomer({
-            email: email,
-            id: data.id,
-            name: data.name,
-            contact: data.contact,
-            managerId: data.managerId === '' ? undefined : data.managerId,
-            etc: data.etc
-        });
+        let old = await newDb.getCustomer(email, data.id);
+        //data 없는 프로퍼티는 old에서 복사
+        for (let x in old) {
+            if (!data.hasOwnProperty(x)) {
+                data[x] = old[x];
+            }
+        }
+
+        await newDb.saveCustomer(data);
         status = true;
     } catch (e) {
         status = false;

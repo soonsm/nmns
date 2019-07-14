@@ -64,7 +64,8 @@ exports.sendReservationConfirm = async function (user, reservation) {
             contact: reservation.contact,
             name: reservation.name,
             contents: msg,
-            reservationKey: reservation.id
+            reservationKey: reservation.id,
+            member: reservation.member
         });
         return result;
     }
@@ -81,11 +82,11 @@ exports.sendReservationConfirmKaKao =  async function(user, alrimTalk) {
         phone: alrimTalk.receiverPhone,
         callback: '01028904311',
         msg: msg,
-        template_code: 'A002',
+        template_code: 'C01',
         btn_types: '웹링크',
         btn_txts: '예약취소',
-        btn_urls1: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
-        btn_urls2: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls1: `http://washow.ga/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls2: `http://washow.ga/cancel/key=${alrimTalk.reservationKey}`,
         apiVersion: 1,
         client_id: apiStoreId
     });
@@ -113,7 +114,8 @@ exports.sendReservationCancelNotify =async function (user, reservation){
         contact: reservation.contact,
         name: user.shopName || user.email,
         contents: msg,
-        reservationKey: reservation.id
+        reservationKey: reservation.id,
+        member: reservation.member
     });
     return result;
 };

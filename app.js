@@ -11,7 +11,7 @@ const logger = global.nmns.LOGGER;
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == process.nmns.MODE.PRODUCTION ) ? process.nmns.MODE.PRODUCTION : process.nmns.MODE.DEVELOPMENT;
 if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
-    global.nmns.cdn = 'https://www.nomorenoshow.co.kr';
+    global.nmns.cdn = 'https://www.washow.co.kr';
     logger.info("Production Mode");
 } else if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
     global.nmns.cdn = '';
@@ -136,7 +136,6 @@ app.use(passport.session());
 //Web request router
 app.use('/', indexRouter(passport));
 app.use('/kakao', kakaoSkills);
-app.use('/noShow', noShowRouter);
 
 // app.use('/kakaoReservation', kakaoReservationRouter);
 

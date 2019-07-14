@@ -549,6 +549,13 @@ exports.getCustomerList = async function (email, contact, name) {
         throw 'email이 필요합니다.';
     }
 
+    if(contact === ''){
+        contact = null;
+    }
+    if(name === ''){
+        name = null;
+    }
+
     if (contact && !nmnsUtil.phoneNumberValidation(contact)) {
         throw `전화번호가 올바르지 않습니다.(${contact})`;
     }
@@ -628,7 +635,7 @@ exports.deleteAllCustomer = async function (email) {
  * reservationKey: 예약키
  **/
 exports.addAlrmTalkRaw = async function (data) {
-    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey}) => ({
+    let alrimTalk = (({email, isCancel, contact, name, contents, date, sendDate, reservationKey, member}) => ({
         email,
         isCancel,
         contact,
@@ -636,7 +643,8 @@ exports.addAlrmTalkRaw = async function (data) {
         contents,
         date,
         sendDate,
-        reservationKey
+        reservationKey,
+        member
     }))(data);
 
     if (!alrimTalk.email) {
@@ -656,6 +664,9 @@ exports.addAlrmTalkRaw = async function (data) {
     }
     if (!alrimTalk.sendDate || !moment(alrimTalk.sendDate, 'YYYYMMDDHHmmssSSS').isValid()) {
         throw `sendDate가 올바르지 않습니다.(${alrimTalk.sendDate})`;
+    }
+    if(!alrimTalk.member){
+        throw '고객 아이디가 없습니다.';
     }
 
     return await put({
@@ -921,7 +932,7 @@ exports.addNotice = async function(input){
  * etc: 고객 메모
  * isAllDay: boolean
  * status: 예역 상태, RESERVED, CANCELED, DELETED, NOSHOW, CUSTOMERCANCELED
- * cancelDate: moment().format('YYYYMMDDHHmmss')
+ * cancelDate: moment().format('YYYYMMDD')
  * type: 'R',
  * **/
 
@@ -949,6 +960,10 @@ exports.saveReservation = async function (data) {
 
     if (!moment(item.start, 'YYYYMMDDHHmm').isValid() || !moment(item.end, 'YYYYMMDDHHmm').isValid()) {
         throw `start/end 값이 올바르지 않습니다.(start:${item.start}, end:${item.end})`;
+    }
+
+    if(item.start > item.end){
+        throw `시간시간이 종료시간보다 미래일 수는 없습니다.(시작시간:${item.start}, 종료시간:${item.end})`;
     }
 
     if (item.isAllDay !== true && item.isAllDay !== false && item.isAllDay !== undefined) {
@@ -985,7 +1000,7 @@ exports.saveReservation = async function (data) {
         throw `salesList 값이 올바르지 않습니다.(${item.salesList})`;
     }
 
-    if (item.cancelDate && !!moment(item.cancelDate, 'YYYYMMDDHHmmss').isValid()) {
+    if (item.cancelDate && !moment(item.cancelDate, 'YYYYMMDD').isValid()) {
         throw `cancelDate 값이 올바르지 않습니다.(${item.cancelDate})`;
     }
 

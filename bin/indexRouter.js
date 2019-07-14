@@ -105,32 +105,6 @@ module.exports = function (passport) {
         }
     });
 
-
-    /**
-     * Login page
-     */
-	/*
-    router.get('/signin', async function (req, res) {
-        if (req.user) {
-            let user = await db.getWebUser(req.user.email);
-            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-                //로그인 되있으면 main으로 이동
-                res.redirect("/");
-            } else {
-                render(res, indexView, {
-                    email: user.email,
-                    authRequired: true
-                });
-            }
-        } else {
-            render(res, indexView, {
-                email: req.cookies.email,
-                message: req.session.errorMessage,
-                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
-            });
-        }
-    });*/
-
     /**
      * 로그인 요청 json format
      * {email: #사용자 이메일#, password: #비밀번호#}
@@ -172,69 +146,9 @@ module.exports = function (passport) {
      * New Index page
      */
     router.get('/naver', async function (req, res) {
-        /*if (req.user) {
-            let user = await db.getWebUser(req.user.email);
-            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-                //로그인 되있으면 main으로 이동
-                res.redirect("/");
-            } else {
-                render(res, signupView, {
-                    email: user.email,
-                    authRequired: true
-                });
-            }
-        } else {
-        }*/
         render(res, naverView);
     });
 
-/*
-    router.get('/index.amp', async function (req, res) {
-        if (req.user) {
-            let user = await db.getWebUser(req.user.email);
-            if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-                //로그인 되있으면 main으로 이동
-                res.redirect("/");
-            } else {
-                render(res, indexView, {
-                    email: user.email,
-                    authRequired: true
-                });
-            }
-        } else {
-            return res.render('index.amp.html', {
-                email: req.cookies.email,
-                message: req.session.errorMessage,
-                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined
-            });
-            // return res.sendFile(path.join(__dirname, '../client/template/index.amp.html'))
-        }
-    });*/
-
-    /**
-     * Sign Up Page
-     */
-    /*router.get('/signup', async function (req, res) {
-        if (req.user) {
-            //로그인 되있으면 main으로 이동
-            res.redirect("/");
-        } else {
-
-            if (req.query.kakaotalk) {
-                let kakaoUser = await db.getUser(req.query.kakaotalk);
-                if (kakaoUser && kakaoUser.email) {
-                    res.redirect("/");
-                }
-            }
-
-            render(res, signupView, {
-                email: req.cookies.email,
-                message: req.session.errorMessage,
-                kakaotalk: req.query.kakaotalk && req.query.kakaotalk !== "" ? req.query.kakaotalk : undefined,
-                authRequired: false
-            });
-        }
-    });*/
 
     let sendResponse = function (res, status, errorMessage) {
         res.status(200).json({
@@ -307,9 +221,14 @@ module.exports = function (passport) {
                 }
             }
 			req.logIn(user, async function () {
-				console.log('log in sns');
+			    let sns = {};
+			    if(snsType === process.nmns.SNS_TYPE.NAVER){
+			        sns.isNaverLink = true;
+                }else{
+                    sns.isKaKaoLink = true;
+                }
+			    await db.updateWebUser(user.email, sns);
 				return sendResponse(res, true);
-                //res.redirect("/");
             });
         } catch (e) {
 			if(typeof e !== 'string'){
@@ -397,6 +316,8 @@ module.exports = function (passport) {
             const emailAuthToken = require('js-sha256')(email);
             emailSender.sendEmailVerification(email, emailAuthToken);
 
+            await db.updateWebUser(email, {emailAuthToken: emailAuthToken});
+
             status = true;
         }catch(e){
             status = false
@@ -479,67 +400,70 @@ module.exports = function (passport) {
         let returnMsg = '예약취소실패';
         let contents = '예약정보가 없습니다.';
 
-        //예약정보 수정
-        if (!id || !email) {
-            returnMsg = '예약취소실패';
-            contents = '잘못된 접근입니다.';
-        } else {
-            let reservationList = await db.getReservationList(email);
-            for (var i = 0; i < reservationList.length; i++) {
-                let reservation = reservationList[i];
-                if (reservation.id === id) {
-                    if (reservation.status === process.nmns.RESERVATION_STATUS.CANCELED || reservation.status === process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED) {
-                        returnMsg = '이미 취소된 예약';
-                        contents = '이미 취소된 예약입니다.';
-                    } else if (reservation.status === process.nmns.RESERVATION_STATUS.RESERVED) {
-                        reservation.status = process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED;
-                        reservation.cancelDate = moment().format('YYYYMMDD');
-                        reservationList[i] = reservation;
+        try{
+            if (!id || !email) throw '아이디 또는 이메일이 없습니다';
 
-                        let user = await db.getWebUser(email);
-                        let socket = process.nmns.ONLINE[email];
+            let reservation = await newDb.getReservation(email, id);
+            if(reservation.status === process.nmns.RESERVATION_STATUS.RESERVED){
+                let user = await db.getWebUser(email);
 
-                        let msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시 mm분')}`;
-                        if (reservation.start.endsWith('00')) {
-                            msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시')}`;
-                        }
-                        msg += ' 예약이 취소되었습니다.'
-                        let push = {
-                            id: moment().format('YYYYMMDDHHmmssSSS'),
-                            title: '예약취소알림',
-                            body: msg,
-                            data: {
-                                type: 'cancel reserv',
-                                id: reservation.id,
-                                manager: reservation.manager
-                            },
-                            isRead: false
-                        };
-                        if (socket) {
-                            push.isRead = true;
-                            await socket.sendPush(push);
-                        }
+                reservation.status = process.nmns.RESERVATION_STATUS.CUSTOMERCANCELED;
+                reservation.cancelDate = moment().format('YYYYMMDD');
 
-                        await newDb.addPush({
-                            email: email,
-                            title: push.title,
-                            contents: msg,
-                            data: push.data,
-                            isRead: push.isRead
-                        });
-
-                        if (!await db.updateReservation(email, reservationList)) {
-                            contents = `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
-                        } else {
-                            //알림톡 전송
-                            await alrimTalk.sendReservationCancelNotify(user, reservation);
-                            returnMsg = '예약취소완료';
-                            contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
-                        }
-                    }
-                    break;
+                if(!await newDb.saveReservation(reservation)){
+                    throw `예약취소를 실패했습니다.\n${util.formatPhone(user.alrimTalkInfo.callbackPhone)}으로 전화나 카톡으로 취소하시기 바랍니다.`;
                 }
+
+                //알림톡 전송
+                await alrimTalk.sendReservationCancelNotify(user, reservation);
+                returnMsg = '예약취소완료';
+                contents = '노쇼하지 않고 예약취소해주셔서 감사합니다. 다음에 다시 찾아주세요.';
+
+                //Push
+                let msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시 mm분')}`;
+                if (reservation.start.endsWith('00')) {
+                    msg = `${moment(reservation.start, 'YYYYMMDDHHmm').format('M월 D일 h시')}`;
+                }
+                msg += ' 예약이 취소되었습니다.'
+                let push = {
+                    id: moment().format('YYYYMMDDHHmmssSSS'),
+                    title: '예약취소알림',
+                    body: msg,
+                    data: {
+                        type: 'cancel reserv',
+                        id: reservation.id,
+                        manager: reservation.manager
+                    },
+                    isRead: false
+                };
+
+                let socket = process.nmns.ONLINE[email];
+                if (socket) {
+                    push.isRead = true;
+                    await socket.sendPush(push);
+                }
+
+                await newDb.addPush({
+                    email: email,
+                    title: push.title,
+                    contents: msg,
+                    data: push.data,
+                    isRead: push.isRead
+                });
+
+            }else{
+                returnMsg = '취소할 수 없는 예약';
+                contents = '이미 취소됐거나 삭제된 예약입니다.';
             }
+
+        }catch(e){
+            returnMsg = '예약취소실패';
+            if(typeof e === 'string'){
+                contents = e;
+            }else{
+                contents = '예약정보가 없습니다.';
+            }
+            logger.error(e);
         }
 
         return render(res, cancelView, {title: returnMsg, contents: contents});
@@ -653,7 +577,7 @@ module.exports = function (passport) {
             if((typeof e) === 'string' ){
                 message = e;
             }else{
-                message = '시스템 오류가 발생했습니다.\\n support@nomorenoshow.co.kr로 연락주시면 바로 조치하겠습니다.';
+                message = '시스템 오류가 발생했습니다.\\n support@washow.co.kr로 연락주시면 바로 조치하겠습니다.';
             }
         }
         return sendResponse(res, status, message);

@@ -80,8 +80,8 @@ async function sendReservationConfirm(user, alrimTalk) {
         template_code: 'A002',
         btn_types: '웹링크',
         btn_txts: '예약취소',
-        btn_urls1: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
-        btn_urls2: `https://www.nomorenoshow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls1: `https://www.washow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls2: `https://www.washow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
         apiVersion: 1,
         client_id: apiStoreId
     });
@@ -144,11 +144,11 @@ exports.messageHandler = async function(userKey, content, res){
     }
     if(!user.email){
         //회원가입 하라는 안내 문구
-        let url = `https://www.nomorenoshow.co.kr/signup?kakaotalk=${userKey}`;
+        let url = `https://www.washow.co.kr/index?kakaotalk=${userKey}`;
         if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
-            url = `http://localhost:8088/signup?kakaotalk=${userKey}`;
+            url = `http://localhost:8080/index?kakaotalk=${userKey}`;
         }
-        return sendRes(message.messageWithButton('No More No Show 회원으로 등록되어 있지 않습니다.\n회원가입 후 이용해주세요.\n이미 가입하신 분은 로그인해주세요.', '회원가입/로그인', url));
+        return sendRes(message.messageWithButton('WA:SHOW 회원으로 등록되어 있지 않습니다.\n회원가입 후 이용해주세요.\n이미 가입하신 분은 로그인해주세요.', '회원가입/로그인', url));
         // return sendRes(message.messageWithHomeKeyboard(`No More No Show 회원으로 등록되어 있지 않습니다. \n회원가입 후 이용해주세요.\n${url}\n이미 가입하신 분은 로그인해주세요.`));
     }
     let webUser = await db.getWebUser(user.email);
@@ -169,13 +169,13 @@ exports.messageHandler = async function(userKey, content, res){
     }else if(content === message.confirmReservation){
         let user = await db.getUser(userKey);
         if(user){
-            if(user.hasRightToSendConfirm){
+            // if(user.hasRightToSendConfirm){
                 await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkInfo, 'sendConfirmTryCount');
                 returnMessage = message.typeAlrimTalkInfo();
-            }else{
-                await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
-                returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)\n(등록키 발급 방법: 노쇼그만 카카오톡 프로필 클릭 -> 화면 하단의 "알림톡 등록키 발급 방법" 확인)');
-            }
+            // }else{
+            //     await db.setUserStatus(userKey, userStatus.beforeTypeAlrimTalkKey);
+            //     returnMessage = message.messageWithTyping('상호명과 등록키를 입력하세요.\n(예:상암네일샵 A01eAoC)\n(등록키 발급 방법: 노쇼그만 카카오톡 프로필 클릭 -> 화면 하단의 "알림톡 등록키 발급 방법" 확인)');
+            // }
         }
     }else if(content === message.yesAlrmTalkInfo || content === message.noAlrmTalkInfo){
         if(user.userStatus === userStatus.beforeConfirmAlrimTalkInfo){
@@ -228,12 +228,12 @@ exports.messageHandler = async function(userKey, content, res){
                             let numOfMyNoShow = myNoShowList.length;
                             if(numOfMyNoShow > 0){
                                 let last = myNoShowList[numOfMyNoShow -1];
-                                resultMessage += `우리 매장에서 ${numOfMyNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY년MM월DD일')}\n`;
+                                resultMessage += `우리 매장에서 ${numOfMyNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY[년]MM[월]DD[일]')}\n`;
                             }
 
                             let numOfNoShow = noShowList.length;
                             let last = noShowList[numOfNoShow - 1];
-                            resultMessage += `전체 매장에서 ${numOfNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY년MM월DD일')}`;
+                            resultMessage += `전체 매장에서 ${numOfNoShow}번\n마지막 노쇼: ${moment(last.date, 'YYYYMMDD').format('YYYY[년]MM[월]DD[일]')}`;
                             returnMessage = message.messageWithHomeKeyboard(resultMessage);
                         }else{
                             returnMessage = message.messageWithHomeKeyboard('노쇼 전적이 없습니다.');
@@ -245,7 +245,7 @@ exports.messageHandler = async function(userKey, content, res){
                     }
                     break;
                 case userStatus.beforeTypeAlrimTalkInfo:
-                    if(user.hasRightToSendConfirm){
+                    // if(user.hasRightToSendConfirm){
                         let alrimTalkInfo = content.replace(/ /g, "");
                         let date = alrimTalkInfo.substring(0, 4);;
                         let time = alrimTalkInfo.substring(4,8);
@@ -277,9 +277,9 @@ exports.messageHandler = async function(userKey, content, res){
                         }else{
                             returnMessage = message.typeAlrimTalkInfo(errorMsg);
                         }
-                    }else{
-                        returnMessage = message.messageWithHomeKeyboard('서비스 준비중입니다.');
-                    }
+                    // }else{
+                    //     returnMessage = message.messageWithHomeKeyboard('서비스 준비중입니다.');
+                    // }
                     break;
                 case userStatus.beforeTypeAlrimTalkKey:
                     //정보가 맞으면 User에 권한 추가
