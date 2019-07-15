@@ -369,7 +369,7 @@
         </div>
         
         <div class="switchingMenu menuMenu">
-          <div class="d-flex menuTitle">
+          <div class="d-flex menuTitle" style="margin-bottom:7px">
             <span class="h4 mb-0 font-weight-bold">메뉴 관리</span>
             <!--<span class="divider updatingMenu-collapsed" style="display:none;">&nbsp;</span>
             <span class="h6 mb-0 updatingMenu-collapsed" style="opacity:0.5;display:none">드래그해서 순서를 바꿀 수 있어요!</span>
@@ -377,7 +377,7 @@
             <button class="btn btn-accent ml-2 updatingMenu-expanded" type="button" data-toggle="modal" data-target="#menuModal" id="createMenuLink"><span class="icon-plus">+</span>메뉴 추가</button>-->
           </div>
           <div class="menuContents pt-1">
-            <div id="mainMenuList" class="col-12 px-0 mx-0 row" style="min-height:calc(100vh - 280px)">
+            <div id="mainMenuList" class="col-12 px-0" style="min-height:calc(100vh - 280px)">
               <div class="flex-column m-auto">
                 <div class="bouncingLoader">
                   <div></div>
@@ -671,14 +671,18 @@
                   <input id="scheduleStartDate" name="start" readonly="readonly" data-toggle="modal" data-target="#calendarModal" class="form-control form-control-sm montserrat" aria-label="예약 시작 날짜" placeholder="예약 시작 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
-                  <input id="scheduleStartTime" type="text" class="form-control form-control-sm montserrat" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                  <select id="scheduleStartTime" class="form-control form-control-sm montserrat" aria-label="예약 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+										<option value="0000">오전 00:00</option><option value="0030">오전 00:30</option><option value="0100">오전 01:00</option><option value="0130">오전 01:30</option><option value="0200">오전 02:00</option><option value="0230">오전 02:30</option><option value="0300">오전 03:00</option><option value="0330">오전 03:30</option><option value="0400">오전 04:00</option><option value="0430">오전 04:30</option><option value="0500">오전 05:00</option><option value="0530">오전 05:30</option><option value="0600">오전 06:00</option><option value="0630">오전 06:30</option><option value="0700">오전 07:00</option><option value="0730">오전 07:30</option><option value="0800">오전 08:00</option><option value="0830">오전 08:30</option><option value="0900">오전 09:00</option><option value="0930">오전 09:30</option><option value="1000">오전 10:00</option><option value="1030">오전 10:30</option><option value="1100">오전 11:00</option><option value="1130">오전 11:30</option><option value="1200">오후 12:00</option><option value="1230">오후 12:30</option><option value="1300">오후 01:00</option><option value="1330">오후 01:30</option><option value="1400">오후 02:00</option><option value="1430">오후 02:30</option><option value="1500">오후 03:00</option><option value="1530">오후 03:30</option><option value="1600">오후 04:00</option><option value="1630">오후 04:30</option><option value="1700">오후 05:00</option><option value="1730">오후 05:30</option><option value="1800">오후 06:00</option><option value="1830">오후 06:30</option><option value="1900">오후 07:00</option><option value="1930">오후 07:30</option><option value="2000">오후 08:00</option><option value="2030">오후 08:30</option><option value="2100">오후 09:00</option><option value="2130">오후 09:30</option><option value="2200">오후 10:00</option><option value="2230">오후 10:30</option><option value="2300">오후 11:00</option><option value="2330">오후 11:30</option>
+									</select>
                 </div>
                 <span class="px-2 col-12 text-center" style="height:35px;line-height:35px">~</span>
                 <div class="select mr-1 col-7 px-0">
                   <input id="scheduleEndDate" name="end" readonly="readonly" data-toggle="modal" data-target="#calendarModal" class="form-control form-control-sm montserrat" aria-label="예약 끝 날짜" placeholder="예약 끝 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
-                  <input id="scheduleEndTime" type="text" class="form-control form-control-sm montserrat" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                  <select id="scheduleEndTime" class="form-control form-control-sm montserrat" aria-label="예약 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+										<option value="0000">오전 00:00</option><option value="0030">오전 00:30</option><option value="0100">오전 01:00</option><option value="0130">오전 01:30</option><option value="0200">오전 02:00</option><option value="0230">오전 02:30</option><option value="0300">오전 03:00</option><option value="0330">오전 03:30</option><option value="0400">오전 04:00</option><option value="0430">오전 04:30</option><option value="0500">오전 05:00</option><option value="0530">오전 05:30</option><option value="0600">오전 06:00</option><option value="0630">오전 06:30</option><option value="0700">오전 07:00</option><option value="0730">오전 07:30</option><option value="0800">오전 08:00</option><option value="0830">오전 08:30</option><option value="0900">오전 09:00</option><option value="0930">오전 09:30</option><option value="1000">오전 10:00</option><option value="1030">오전 10:30</option><option value="1100">오전 11:00</option><option value="1130">오전 11:30</option><option value="1200">오후 12:00</option><option value="1230">오후 12:30</option><option value="1300">오후 01:00</option><option value="1330">오후 01:30</option><option value="1400">오후 02:00</option><option value="1430">오후 02:30</option><option value="1500">오후 03:00</option><option value="1530">오후 03:30</option><option value="1600">오후 04:00</option><option value="1630">오후 04:30</option><option value="1700">오후 05:00</option><option value="1730">오후 05:30</option><option value="1800">오후 06:00</option><option value="1830">오후 06:30</option><option value="1900">오후 07:00</option><option value="1930">오후 07:30</option><option value="2000">오후 08:00</option><option value="2030">오후 08:30</option><option value="2100">오후 09:00</option><option value="2130">오후 09:30</option><option value="2200">오후 10:00</option><option value="2230">오후 10:30</option><option value="2300">오후 11:00</option><option value="2330">오후 11:30</option>
+									</select>
                 </div>
               </div>
               <div style="margin-top:35px">예약 내용</div>
@@ -726,14 +730,18 @@
                   <input id="taskStartDate" name="start" class="form-control form-control-sm montserrat" aria-label="일정 시작 날짜" placeholder="일정 시작 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
-                  <input id="taskStartTime" type="text" class="form-control form-control-sm montserrat" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+                  <select id="taskStartTime" class="form-control form-control-sm montserrat" aria-label="일정 시작 시간" autocomplete="off" placeholder="오전(후) **:**">
+										<option value="0000">오전 00:00</option><option value="0030">오전 00:30</option><option value="0100">오전 01:00</option><option value="0130">오전 01:30</option><option value="0200">오전 02:00</option><option value="0230">오전 02:30</option><option value="0300">오전 03:00</option><option value="0330">오전 03:30</option><option value="0400">오전 04:00</option><option value="0430">오전 04:30</option><option value="0500">오전 05:00</option><option value="0530">오전 05:30</option><option value="0600">오전 06:00</option><option value="0630">오전 06:30</option><option value="0700">오전 07:00</option><option value="0730">오전 07:30</option><option value="0800">오전 08:00</option><option value="0830">오전 08:30</option><option value="0900">오전 09:00</option><option value="0930">오전 09:30</option><option value="1000">오전 10:00</option><option value="1030">오전 10:30</option><option value="1100">오전 11:00</option><option value="1130">오전 11:30</option><option value="1200">오후 12:00</option><option value="1230">오후 12:30</option><option value="1300">오후 01:00</option><option value="1330">오후 01:30</option><option value="1400">오후 02:00</option><option value="1430">오후 02:30</option><option value="1500">오후 03:00</option><option value="1530">오후 03:30</option><option value="1600">오후 04:00</option><option value="1630">오후 04:30</option><option value="1700">오후 05:00</option><option value="1730">오후 05:30</option><option value="1800">오후 06:00</option><option value="1830">오후 06:30</option><option value="1900">오후 07:00</option><option value="1930">오후 07:30</option><option value="2000">오후 08:00</option><option value="2030">오후 08:30</option><option value="2100">오후 09:00</option><option value="2130">오후 09:30</option><option value="2200">오후 10:00</option><option value="2230">오후 10:30</option><option value="2300">오후 11:00</option><option value="2330">오후 11:30</option>
+									</select>
                 </div>
                 <span class="col-12 text-center" style="height:35px;line-height:35px">~</span>
                 <div class="select mr-1 col-7 px-0">
                   <input id="taskEndDate" name="end" class="form-control form-control-sm montserrat" aria-label="일정 끝 날짜" placeholder="일정 끝 날짜">
                 </div>
                 <div class="select ml-1 col px-0">
-                  <input id="taskEndTime" type="text" class="form-control form-control-sm montserrat" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+                  <select id="taskEndTime" class="form-control form-control-sm montserrat" aria-label="일정 끝 시간" autocomplete="off" placeholder="오전(후) **:**">
+										<option value="0000">오전 00:00</option><option value="0030">오전 00:30</option><option value="0100">오전 01:00</option><option value="0130">오전 01:30</option><option value="0200">오전 02:00</option><option value="0230">오전 02:30</option><option value="0300">오전 03:00</option><option value="0330">오전 03:30</option><option value="0400">오전 04:00</option><option value="0430">오전 04:30</option><option value="0500">오전 05:00</option><option value="0530">오전 05:30</option><option value="0600">오전 06:00</option><option value="0630">오전 06:30</option><option value="0700">오전 07:00</option><option value="0730">오전 07:30</option><option value="0800">오전 08:00</option><option value="0830">오전 08:30</option><option value="0900">오전 09:00</option><option value="0930">오전 09:30</option><option value="1000">오전 10:00</option><option value="1030">오전 10:30</option><option value="1100">오전 11:00</option><option value="1130">오전 11:30</option><option value="1200">오후 12:00</option><option value="1230">오후 12:30</option><option value="1300">오후 01:00</option><option value="1330">오후 01:30</option><option value="1400">오후 02:00</option><option value="1430">오후 02:30</option><option value="1500">오후 03:00</option><option value="1530">오후 03:30</option><option value="1600">오후 04:00</option><option value="1630">오후 04:30</option><option value="1700">오후 05:00</option><option value="1730">오후 05:30</option><option value="1800">오후 06:00</option><option value="1830">오후 06:30</option><option value="1900">오후 07:00</option><option value="1930">오후 07:30</option><option value="2000">오후 08:00</option><option value="2030">오후 08:30</option><option value="2100">오후 09:00</option><option value="2130">오후 09:30</option><option value="2200">오후 10:00</option><option value="2230">오후 10:30</option><option value="2300">오후 11:00</option><option value="2330">오후 11:30</option>
+									</select>
                 </div>
               </div>
               <div style="margin-top:35px">담당자</div>

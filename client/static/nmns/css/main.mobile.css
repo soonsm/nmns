@@ -1004,6 +1004,7 @@ button:focus {
     border-radius: 2px;
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
     background-color: white;
+	overflow:auto;
 }
 
 .autocomplete-suggestion {
@@ -1214,9 +1215,6 @@ button:focus {
 
 .float:focus {
     background-color: #00796b;
-}
-.flatpickr-current-month span.cur-month {
-    font-weight: 400;
 }
 
 .flatpickr-calendar.noCalendar.hasTime .flatpickr-time {

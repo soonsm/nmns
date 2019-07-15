@@ -98,7 +98,7 @@
               goalIndex = Math.min(currentMenuCount === 0? currentMenuCount + Math.max(20, (5 + Math.ceil($('#mainMenuList').height() / 48) - $("#mainMenuList .menuRow").length)) : currentMenuCount, NMNS.menuList.length);
 		         html += generateMenuRow(0, goalIndex)
           } else {
-		          html += "<p>아직 등록된 메뉴가 없습니다. 새로운 메뉴를 등록하여 고객의 매출내역을 기록, 관리해보세요!</p>";
+		          html += "<p class='m-auto'>아직 등록된 메뉴가 없습니다. 새로운 메뉴를 등록하여 고객의 매출내역을 기록, 관리해보세요!</p>";
           }
 		  }else if(NMNS.menuList){//additional loading
           goalIndex = Math.min(currentMenuCount + Math.max(20, (5 + Math.ceil($('#mainMenuList').height() / 48) - $("#mainMenuList .menuRow").length)), NMNS.menuList.length);//최대 20개씩 신규로 로딩
