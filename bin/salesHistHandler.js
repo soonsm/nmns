@@ -67,11 +67,14 @@ exports.getSalesHist = fnTemplate(null, async function(user, data){
 
     data.typeList = [process.nmns.SALE_HIST_TYPE.SALES_CARD, process.nmns.SALE_HIST_TYPE.MEMBERSHIP_USE, process.nmns.SALE_HIST_TYPE.SALES_CASH];
 
-    return await newDb.getSalesHist(user.email, data);
-}, async function(user, list){
-    let totalSalesCount = list.length, totalSalesAmount =0;
-    let totalSalesCard=0, totalSalesCash=0,totalSalesMembership=0;
+    return data;
+}, async function(user, data){    
 
+	let list = await newDb.getSalesHist(user.email, data);
+	
+	let totalSalesCount = list.length, totalSalesAmount =0;
+    let totalSalesCard=0, totalSalesCash=0,totalSalesMembership=0;
+	
     for(let sales of list){
         totalSalesAmount += sales.price;
         if(sales.type === process.nmns.PAYMENT_METHOD.CARD){
@@ -84,6 +87,11 @@ exports.getSalesHist = fnTemplate(null, async function(user, data){
         let customer = await newDb.getCustomer(user.email, sales.customerId) || {name: undefined};
         sales.customerName = customer.name;
     }
+	
+	if(data.name){
+		list = list.filter(sales => sales.customerName.includes(data.name));	
+	}
+	
 
     return {
         totalSalesCount: totalSalesCount,
