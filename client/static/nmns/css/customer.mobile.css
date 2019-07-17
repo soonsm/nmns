@@ -1,8 +1,9 @@
 /* customer menu */
 #customerSortTypeMenu{
   font-size:14px;
-  padding-bottom:5px;
+  padding-bottom:8px;
   margin-bottom:10px;
+  padding-top:20px;
 }
 #customerSortTypeMenu:after, #customerScheduleSortTypeMenu:after{
   content: url('/nmns/img/sort_on.svg');
