@@ -244,8 +244,8 @@
         date = moment(item.start, 'YYYYMMDDHHmm').format('YYYY. MM. DD HH:mm') + (item.end?moment(item.end, 'YYYYMMDDHHmm').format(moment(item.start, 'YYYYMMDDHHmm').isSame(moment(item.end, 'YYYYMMDDHHmm'), 'day')?' - HH:mm':' - YYYY. MM. DD HH:mm'):'');
         html += '<div class="customerSchedule col-12" data-index="'+index+'">'+
           '<div class="col col-4 px-0 montserrat" title="'+date+'">' + date + '</div>' +
-          '<div class="col col-5 px-0 d-flex" title="'+manager.name+'"><div class="col col-4 px-0"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'"></span>'+manager.name+'</div>'+
-          '<div class="col col-8">'+(contents || '') + '</div></div><div class="col-3 px-0 d-flex">' +
+          '<div class="col col-5 px-0 d-flex"><div class="col col-4 px-0" title="'+manager.name+'"><span class="tui-full-calendar-weekday-schedule-bullet" style="background:'+manager.color+'"></span>'+manager.name+'</div>'+
+          '<div class="col col-8" title="'+(contents || '')+'">'+(contents || '') + '</div></div><div class="col-3 px-0 d-flex">' +
           '<div class="col col-6 px-0 montserrat">'+(item.price ? (item.price+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") : '-') + '</div>' +
           '<div class="col col-6 px-0">'+(item.status == 'NOSHOW'? '노쇼' : (item.status === 'CANCELED' || item.status === 'CUSTOMERCANCELED' ? '취소' : '정상')) + '</div></div>' +
           '</div></div>';

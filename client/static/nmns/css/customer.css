@@ -129,8 +129,8 @@
 .customerSchedule .tui-full-calendar-weekday-schedule-bullet{
     display:inline-block;
     position:relative;
-    top:unset;
-    left:unset;
+    top:auto;
+    left:auto;
     margin-right:3px;
 }
 
