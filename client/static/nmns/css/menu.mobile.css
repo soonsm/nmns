@@ -10,6 +10,7 @@
 .menuRow{
   padding:0;
   margin-bottom:8px;
+	display:inline-block;
 }
 .menuRow:nth-child(2n+1){
   padding-right:4px;
