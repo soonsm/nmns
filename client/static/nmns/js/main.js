@@ -4,11 +4,11 @@
         var word;
         var agent = navigator.userAgent.toLowerCase();
 
-        // IE old version ( IE 10 or Lower ) 
+        // IE old version ( IE 10 or Lower )
         if (navigator.appName == "Microsoft Internet Explorer") word = "msie ";
-        // IE 11 
+        // IE 11
         else if (agent.search("trident") > -1) word = "trident/.*rv:";
-        // Microsoft Edge  
+        // Microsoft Edge
         else if (agent.search("edge/") > -1) word = "edge/";
 
         var reg = new RegExp(word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})");
@@ -388,7 +388,7 @@
           html += "<div class='tui-full-calendar-schedule-cover'><div><div class='row align-items-center' style='margin-bottom:5px'><div class='row mx-0 col'>";
           html += ("<div title='"+type+"내용:"+(contents||'')+"' class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
           html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + (moment(schedule.start.toDate()).isSame(moment(schedule.end.toDate()), 'days')?(moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm")):(moment(schedule.start.toDate()).format("MM.DD HH:mm") + " - " + moment(schedule.end.toDate()).format("MM.DD HH:mm"))) + "</div></div></div><div style='font-size:11px'>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div></div>");
-          
+
         }else{
           html += "예약 " + schedule.count + "건</div>"
         }
@@ -511,7 +511,7 @@
             span.style.backgroundColor = input.checked ? span.getAttribute('data-color') : 'transparent';
             span.style.borderColor = input.checked ? span.getAttribute('data-color') : '#7f8fa4'
         });
-        
+
         //$('#mainTask').css('minHeight', document.getElementById('mainCalendarArea').offsetHeight + 'px');
     }
 
@@ -564,7 +564,7 @@
         });
         return html;
     }
-    
+
     function updateManager(e){
       if(e.stopPropagation){
         e.stopPropagation();
@@ -582,7 +582,7 @@
       $("#lnbManagerForm").data('id', manager.id).show();
       $("#lnbManagerFormName").val(manager.name).focus();
     }
-    
+
     function removeManager(e){
       if(e.stopPropagation){
         e.stopPropagation();
@@ -604,9 +604,9 @@
 			}else{
 				showSnackBar('삭제할 담당자를 찾을 수 없습니다. 페이지를 새로고침해주세요.');
 			}
-      
+
     }
-    
+
     function generateTaskList(taskList) {
       var html = "";
       if(taskList.length > 0){
@@ -634,7 +634,7 @@
       $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
       $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1));
     }
-    
+
     function changeMainShopLogo(isImage, shopName){
       if(isImage){
         $("#mainShopCapital").addClass('d-none');
@@ -665,7 +665,7 @@
             $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
               $(this).parent().toggleClass('show');
 							/*if($(this).parent().hasClass('show')){
-								document.getElementById('alrimHistoryList').scrollTop = $(this).offset().top - ( $("#alrimHistoryList").height() - $(this).outerHeight(true) ) / 2;	
+								document.getElementById('alrimHistoryList').scrollTop = $(this).offset().top - ( $("#alrimHistoryList").height() - $(this).outerHeight(true) ) / 2;
 								list.data("scroll").update();
 							}*/
             })
@@ -807,7 +807,7 @@
             NMNS.info.bizType = parameters.bizType;
             diff = true;
         }
-        
+
         if(document.getElementById('infoLogo').files[0] && !$("#infoLogo").data("deleted")){
           logo = true;
         } else if($("#infoLogo").data("deleted") && NMNS.info.logo){
@@ -817,7 +817,7 @@
           changeMainShopLogo(false, NMNS.info.shopName);
           diff = true;
         }
-        
+
 				if(logo){
 					var fileReader = new FileReader();
 					fileReader.loadend = function(){};
@@ -829,8 +829,8 @@
         if (diff) {
             NMNS.history.push(history);
 					  NMNS.socket.emit("update info", parameters);
-        } 
-        
+        }
+
         if( !diff && !logo ) {
             showSnackBar("<span>변경된 내역이 없습니다.</span>");
         }
@@ -859,7 +859,7 @@
     function initNoShowModal() {
         if (!$("#noShowScheduleList").hasClass("ps")) {
           $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
-        
+
           $(".noShowAddCase").off("touch click").on("touch click", function() {
             $(this).siblings().removeClass("bg-primary");
             $(this).toggleClass('bg-primary');
@@ -989,7 +989,7 @@
     }
 
     function generateTaskManagerList(allowClear) {
-        var html = allowClear?"<button type='button' class='dropdown-item tui-full-calendar-dropdown-item'>선택</button>":"";
+        var html = allowClear?"<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id=''>선택</button>":"";
         NMNS.calendar.getCalendars().forEach(function(item) {
             html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item ellipsis' data-calendar-id='" + item.id + "' data-color='" + item.color + "'>" +
                 "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot mr-3' style='background-color: " + item.color + "'></span>" +
@@ -998,7 +998,7 @@
         });
         return html;
     }
-    
+
     function generateContentsList(contents){
       var html = "";
       if(contents === null || contents === undefined){
@@ -1011,7 +1011,7 @@
         }
       }else if(!Array.isArray(contents)){
         contents = [contents];
-      } 
+      }
       var inputs = $('#scheduleTabContents input').toArray();
       contents.filter(function(item){
         return !inputs.find(function(input){return input.value === (item && item.value || item) && !(item === '' && input.value === '')});
@@ -1034,7 +1034,7 @@
         $(target).parent().remove();
       }
     }
-    
+
     function generateMenuList(menuList){
       var html = '';
       menuList.forEach(function(item){
@@ -1043,28 +1043,28 @@
       return html;
     }
     NMNS.generateMenuList = generateMenuList;
-	
+
     function generateSalesContents(sales){
       var html = "";
       if(Array.isArray(sales) && sales.length > 0){
         var membership = sales[0] && sales[0].balanceMembership > 0, isRegistered;
         sales.forEach(function(sale, index){//draw selective form area
           isRegistered = Number.isInteger(sale.priceCard) || Number.isInteger(sale.priceCash) || Number.isInteger(sale.priceMembership);
-          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'" data-id="'+(sale.id || moment().format('YYYYMMDDHHmmssSSS') + generateRandom())+'"' 
+          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'" data-id="'+(sale.id || moment().format('YYYYMMDDHHmmssSSS') + generateRandom())+'"'
           + (sale.customerId?(' data-customer-id="'+(sale.customerId || '')+'"'):'') + (sale.managerId?(' data-manager-id="'+(sale.managerId || '')+'"'):'')+ ' data-type="'+(sale.type || 'CARD')+'" data-is-registered="'+isRegistered+'">';
           if(!isRegistered){
             html += '<input type="text" pattern="[0-9]*" class="form-control form-control-sm scheduleSalesPaymentPrice" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'" data-old-value="'+(sale.price || '')+'" placeholder="금액을 숫자로 입력하세요.">';
           }
           if(!isRegistered || Number.isInteger(sale.priceCard)){
-            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'" style="margin-right:30px">카드' 
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'" style="margin-right:30px">카드'
               + (sale.priceCard ? ' <span class="montserrat">'+(sale.priceCard+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           if(!isRegistered || Number.isInteger(sale.priceCard)){
-            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" || (isRegistered && !Number.isInteger(sale.priceCard))? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'" style="margin-right:30px">현금' 
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" || (isRegistered && !Number.isInteger(sale.priceCard))? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'" style="margin-right:30px">현금'
               + (sale.priceCash ? ' <span class="montserrat">'+(sale.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           if((isRegistered && Number.isInteger(sale.priceMembership)) || (!isRegistered && membership)){//등록된 메뉴이고 멤버십 가격이 있거나, 등록되지 않은 메뉴이고 멤버십 내역이 있는 경우
-            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"'+(!membership || sales[0].balanceMembership < sale.priceMembership ? ' disabled="disabled"' : '')+'><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" || (isRegistered && !Number.isInteger(sale.priceMembership))? ' checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십' 
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"'+(!membership || sales[0].balanceMembership < sale.priceMembership ? ' disabled="disabled"' : '')+'><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" || (isRegistered && !Number.isInteger(sale.priceMembership))? ' checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십'
               + (sale.priceMembership ? ' <span class="montserrat">'+(sale.priceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           html += '</div>';
@@ -1160,7 +1160,7 @@
       }
       return html;
     }
-    
+
     function refreshScheduleTab(e){
       var calendar;
       if(NMNS.refreshScheduleManager){
@@ -1181,7 +1181,7 @@
 			if($("#scheduleContact").autocomplete()){
 				$("#scheduleContact").autocomplete().clearCache();
 			}
-      
+
       $("#scheduleTab").data('contact', e && e.schedule && e.schedule.raw ? e.schedule.raw.contact : null).data('name', e && e.schedule?e.schedule.title : '');
       if(typeof e === 'object'){// dragged calendar / update schedule
         if(e.schedule){// update schedule
@@ -1193,21 +1193,21 @@
           }else{
             $("#scheduleStatus input[value='RESERVED']").prop('checked', true);
           }
-          
+
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule.start.toDate());
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule.end.toDate());
           $("#scheduleStartTime").val(moment(e.schedule.start.toDate()).format('HHmm'));
           $("#scheduleEndTime").val(moment(e.schedule.end.toDate()).format('HHmm'));
-    
+
           $('#scheduleName').val(e.schedule.title);
           $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
-          
+
           $('#scheduleContact').val(e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact);
           $('#scheduleEtc').val(e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc);
           // $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
-          
+
           if(moment(e.schedule.start.toDate()).isBefore(moment())){
             $("#resendAlrimScheduleBtn").addClass('d-none');
           }else{
@@ -1219,35 +1219,35 @@
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end);
           $("#scheduleStartTime").val(moment(e.start).format('HHmm'));
           $("#scheduleEndTime").val(moment(e.end).format('HHmm'));
-    
+
           $('#scheduleName').val(e.customer.name);
           $("#scheduleTabContents").append(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
-          
+
           $('#scheduleContact').val(e.customer.contact);
           $('#scheduleEtc').val(e.customer.etc);
           $('#scheduleAllDay').attr('checked', false);
-          
+
           calendar = findManager(e.customer.managerId) || NMNS.calendar.getCalendars()[0];
         }else{// dragged calendar
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.start.toDate());
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.end.toDate());
           $("#scheduleStartTime").val(moment(e.start.toDate()).format('HHmm'));
           $("#scheduleEndTime").val(moment(e.end.toDate()).format('HHmm'));
-    
+
           $('#scheduleName').val('');
           $("#scheduleTabContents").html(generateContentsList("")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
-          
+
           $('#scheduleContact').val('');
           $('#scheduleEtc').val('');
           // $('#scheduleAllDay').attr('checked', e.isAllDay);
-          
+
           calendar = NMNS.calendar.getCalendars()[0];
         }
-        
+
         if (!calendar) {
           $('#scheduleManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + e.schedule.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', e.schedule.calendarId).data('color', e.schedule.color);
         }else{
@@ -1274,7 +1274,7 @@
 					}
 				}
 				now.minute(Math.ceil(now.minute() / 30) * 30);
-        
+
         document.getElementById("scheduleStartDate")._flatpickr.setDate(now.toDate());
         $("#scheduleStartTime").val(now.format('HHmm'));
         document.getElementById("scheduleEndDate")._flatpickr.setDate(now.add(1, "h").toDate());
@@ -1312,7 +1312,7 @@
 //           maxHeight:175,
 //           triggerSelectOnValidInput: false,
 //           zIndex:1060
-//         };        
+//         };
 //         $('#scheduleStartTime').autocomplete(autoCompleteOption);
 //         $("#scheduleEndTime").autocomplete(autoCompleteOption);
         var timeout;
@@ -1387,7 +1387,7 @@
                 onContactBlur();
             }, 300);
         });
-        
+
         $("#scheduleBtn").on("touch click", function(){
           var title, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
           try {
@@ -1430,11 +1430,11 @@
             showSnackBar('담당자를 지정해주세요.');
             return;
           }
-      
+
           if (startDate.getTime() > endDate.getTime()) { // swap two dates
               startDate = [endDate, endDate = startDate][0];
           }
-      
+
           title = $('#scheduleName').val();
           contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || ((NMNS.menuList && NMNS.menuList.find(function(menu){return menu.name === this.value})) ? NMNS.menuList.find(function(menu){return menu.name === this.value}).id : NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
@@ -1446,7 +1446,7 @@
                   return;
               }
           }
-      
+
           if (NMNS.scheduleTarget && NMNS.scheduleTarget.schedule) {
               var origin = NMNS.scheduleTarget.schedule;
               origin.manager = origin.calendarId;
@@ -1454,7 +1454,7 @@
               if (origin.calendarId !== calendarId) { //담당자 변경
                   origin.newCalendarId = calendarId
                   NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
-                  
+
                   NMNS.calendar.createSchedules([{
                       id: origin.id,
                       calendarId: calendarId,
@@ -1562,7 +1562,7 @@
                   status: "RESERVED"
               });
           }
-      
+
           $("#scheduleModal").modal('hide');
         });
 				$("#deleteScheduleBtn").on("touch click", function(e){
@@ -1583,7 +1583,7 @@
       }
       refreshScheduleTab(e);
     }
-  
+
     function refreshTaskTab(task){
       var calendar;
       if(NMNS.refreshTaskManager){
@@ -1600,11 +1600,11 @@
         $("#deleteTaskBtn").hide().next().removeClass('ml-1');
       }
       if (typeof task === 'object') { // update existing task
-      
+
         $("#taskTab").data("edit", task.id ? true : false).data("task", task);
         document.getElementById("taskStartDate")._flatpickr.setDate(moment(task.start, 'YYYYMMDDHHmm').toDate());
         document.getElementById("taskEndDate")._flatpickr.setDate(moment(task.end, 'YYYYMMDDHHmm').toDate());
-        
+
         var autoCompleteOption = {
           lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
           maxHeight:175,
@@ -1613,7 +1613,7 @@
         };
         $('#taskStartTime').val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
         $("#taskEndTime").val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
-        
+
         $("#taskName").val(task.name || "");
         $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
         calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
@@ -1657,7 +1657,7 @@
         calendar = NMNS.calendar.getCalendars()[0].id;
         calendar = $('#taskManager').next().find("button[data-calendar-id='" + calendar + "']");
         $('#taskManager').html(calendar.html()).data('calendarid', calendar.data('calendarId')).data('color', calendar.data('color'));
-        
+
       }
     }
 
@@ -1671,7 +1671,7 @@
         };
         flatpickr("#taskStartDate", datetimepickerOption);
         flatpickr("#taskEndDate", datetimepickerOption);
-        
+
         $("#taskBtn").on("touch click", function() {
           if ($("#taskName").val() === "") {
               alert("일정 이름을 입력해주세요!");
@@ -1787,7 +1787,7 @@
       }
       refreshTaskTab(task);
     }
-    
+
     function getSchedule(start, end) {
         NMNS.socket.emit("get reserv", { start: toYYYYMMDD(start._date) + "0000", end: toYYYYMMDD(end._date) + "2359" });
     }
@@ -1935,9 +1935,9 @@
                   contents = item.contents
                 }
               }
-              html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + 
-              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
-              (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" + 
+              html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" +
+              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" +
+              (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" +
               contents + "</div></div>";
             });
         }
@@ -1950,7 +1950,7 @@
             $("#noShowScheduleBtn span").css('opacity', 0.35)
           }
         })
-        
+
         if ($("#noShowScheduleList").hasClass("ps")) {
             $("#noShowScheduleList").data("scroll").update();
         }
@@ -2015,7 +2015,7 @@
 							}
 						}
 					}
-				}        
+				}
     }));
 
     NMNS.socket.on("get task", socketResponse("일정 가져오기", function(e){
@@ -2050,9 +2050,9 @@
         $("#taskBtn").text('저장');
         $("#scheduleModal").removeClass('update').modal('show');
       });
-      
+
     }));
-    
+
     NMNS.socket.on("add manager", socketResponse("담당자 추가하기", function(){
 			NMNS.refreshScheduleManager = true;
 		}, function(e) {
@@ -2124,7 +2124,7 @@
         NMNS.history.remove("info", findById);
         NMNS.initedInfoModal = false;
     }));
-    
+
     NMNS.socket.on("upload logo", socketResponse("로고이미지 등록하기", function(e){
       changeMainShopLogo(true, e.data.logo);
 			showSnackBar("<span>이미지를 등록하였습니다.</span>");
@@ -2185,7 +2185,7 @@
     NMNS.socket.on("delete noshow", socketResponse("노쇼 삭제하기", function(e) {
         NMNS.history.remove(e.data.id, findById);
     }, function(e) {
-        if (e && e.data) { 
+        if (e && e.data) {
             var origin = NMNS.history.find(function(item) { return item.id === e.data.id });
             if (origin) {
                 var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col col-3'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col col-3'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col col-4 base-font' style='font-size:10px'>" + origin.noShowCase + "</div><div class='col-2 pr-0 text-right'><span class='noShowSearchDelete' title='삭제'>&times;</span></div></div>");
@@ -2294,7 +2294,7 @@
       }
       // e.data.schedule.push({type:'SCHEDULE_ADDED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444'})// TODO : remove this line (for test)
       // e.data.schedule.push({type:'SCHEDULE_CANCELED', title:'홍길동', registeredDate: moment().format('YYYYMMDDHHmm'), contents:'매니큐어 바르기', start:moment().format('YYYYMMDDHHmm'), contact:'01011234444', id:'aaa'})
-      
+
       if(e.data.announcement.length > 0){
         $("#announcementArea").parent().removeClass('d-none');
         $("#announcementArea").append(drawNotificationList(e.data.announcement));
@@ -2318,7 +2318,7 @@
         $("#notificationBody").hide();
         $("#notificationEmpty").css('display', 'flex');
       }
-      
+
       var count = NMNS.info.newAnnouncement;
       if(count && count > 0){
         var unread = 0;
@@ -2344,7 +2344,7 @@
         NMNS.expectMoreAnnouncement = false;
       }
     }));
-    
+
     NMNS.socket.on("get menu list", socketResponse('메뉴 목록 조회', function(e){
       if($("#scheduleTabContentList").length){
         $("#scheduleTabContentList").html(generateMenuList(e.data));
@@ -2354,7 +2354,7 @@
 				NMNS.drawMenuList(true);
 			}
     }, undefined, true));
-    
+
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
       $("#salesForm").html(generateSalesContents(e.data));
       // $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
@@ -2367,7 +2367,7 @@
       $("#salesLoading").hide();
       $("#salesForm").show();
     }));
-    
+
     NMNS.socket.on("save sales", socketResponse('매출 내역 저장', function(e){
       showSnackBar('매출 내역을 저장하였습니다.')
       if($("#salesTab").is(":visible")){
@@ -2394,13 +2394,13 @@
       }
     }, true));
     //websocket response end
-    //Modal events start  
+    //Modal events start
     $(".modal").on("shown.bs.modal", function(){
       $(".modal-backdrop").one("touch click", function(e){//click on menubar
         $(".modal.show").modal('hide');
       })
     });
-    
+
     $("#infoModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2445,7 +2445,7 @@
         e.preventDefault();
         $("#infoLogo").trigger("click");
       });
-      
+
       $("#infoLogo").on("change", function(e){
   			var file = this.files[0];
         $(this).data('deleted', file);
@@ -2472,7 +2472,7 @@
   			}
       });
     }).on('show.bs.modal', refreshInfoModal);
-    
+
     $("#alrimModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2519,7 +2519,7 @@
         }
       });
       $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
-      
+
       $("#alrimHistorySearch").off("touch click").on("touch click", function() {
         var parameters = {};
         if ($("#alrimHistoryTarget").val() !== "") {
@@ -2538,7 +2538,7 @@
     }).on("hidden.bs.modal", function(){
       refreshAlrimModal();
     });
-    
+
     $("#noShowModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2552,7 +2552,7 @@
     }).on("shown.bs.modal", function(){
 			$("#noShowAddContact").focus();
 		});
-    
+
     $("#scheduleModal").on("hide.bs.modal", function() {
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.guide){
         NMNS.scheduleTarget.guide.clearGuideElement();
@@ -2582,14 +2582,14 @@
     $("#lnbLastMenu a").on("touch click", function(e) {
         e.preventDefault();
     });
-    
+
     $("#showTutorial").on("touch click", function(){
        if (!document.getElementById("tutorialScript")) {
             var script = document.createElement("script");
             script.src = "/nmns/js/tutorial.min.js";
             script.id = "tutorialScript";
             document.body.appendChild(script);
-    
+
             script.onload = function() {
                 $("#tutorialModal").modal();
             };
@@ -2640,14 +2640,14 @@
     $("#alrimTabList a[data-target='#alrimHistoryTab']").on("show.bs.tab", function(){
       $("#alrimHistorySearch").trigger('click');
     });
-    
+
     $("#scheduleTabList a[data-target='#scheduleTab']").on('touch click', function(){
       if($(this).next().hasClass('active')){
         initScheduleTab("switch");
       }
     }).on("shown.bs.tab", function(){
 			if($("#scheduleName").val() === ''){
-				$("#scheduleName").focus();	
+				$("#scheduleName").focus();
 			}
 		});
     $("#scheduleTabList a[data-target='#taskTab']").on('touch click', function(){
@@ -2656,7 +2656,7 @@
       }
     }).on("shown.bs.tab", function(){
 			if($("#taskName").val() === ''){
-				$("#taskName").focus();	
+				$("#taskName").focus();
 			}
 		});
     $("#scheduleTabList a[data-target='#salesTab']").one('show.bs.tab', function(){
@@ -2716,7 +2716,7 @@
 				$("#deleteTaskBtn").hide().next().removeClass('ml-1');
 				$("#scheduleBtn").text('예약 추가 완료');
 				$("#scheduleModal").removeClass('update').modal('show');
-			}      
+			}
     });
     $("#userModal").one('show.bs.modal', function(){
       //passwordTab
@@ -2764,7 +2764,7 @@
           var naverLogin = new naver.LoginWithNaverId({
         			clientId: "5dHto9KiEXdHoHJBDcqE",
         			callbackUrl: window.location.origin + '/naver',
-        			isPopup: true, 
+        			isPopup: true,
         			loginButton: {color:'green', type:1, height:20}
       		});
       		naverLogin.init();
@@ -2794,8 +2794,8 @@
 							snsLinkId:res.id,
 							snsEmail:res.kakao_account.email,
 							snsType: 'KAKAO'
-					  	});	
-					}                  
+					  	});
+					}
                 }, fail: function(error){
                   alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
                 }})
@@ -2841,7 +2841,7 @@
             return;
         }
         var color = $("#lnbManagerFormColor").data("value");
-        
+
         var id = $("#lnbManagerForm").data("id");
         if(id){
           var manager = findManager(id);
@@ -2911,12 +2911,12 @@
       }
       $("#lnbManagerForm").data('id', null).hide();
     }).one("touch click", initLnbManagerForm);
-    
+
     $(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
     });
-    
+
     //notification handling start
     NMNS.socket.emit("get noti");
     NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e) {
@@ -3010,7 +3010,7 @@
             item: $("#salesSearchContents").val() === '' ? undefined : $("#salesSearchContents").val()
           });
         };
-        
+
         $("#salesSearchName").autocomplete({
             serviceUrl: 'get customer info',
             paramName: 'name',
@@ -3036,7 +3036,7 @@
                 $('#scheduleContact').val(suggestion.data).trigger('blur');
             }
         }, NMNS.socket);
-        
+
         flatpickr("#salesSearchStartDate", {
             dateFormat: "Y. m. d",
             defaultDate: moment().startOf('month').toDate(),
@@ -3072,7 +3072,7 @@
 				}
 			}
     });
-    
+
     function switchMenu(e, isHistory){
       if(e && e.preventDefault){
         e.preventDefault();
@@ -3097,7 +3097,7 @@
         }
       }
     }
-    
+
     //menu switch end
     //set event listeners
     (function() {
@@ -3118,7 +3118,7 @@
         $(".addNoShowLink").one("touch click", initNoShowModal);
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render()}, 200));
         flatpickr.localize("ko");
-        
+
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
 					if($("#lnbManagerForm").is(":visible")){
@@ -3129,7 +3129,7 @@
               $("#mainAside").css('minWidth', '270px');
             }
 						setTimeout(function(){
-							$("#mainAside").addClass('show-collapsed');	
+							$("#mainAside").addClass('show-collapsed');
 						}, 300);
           }else{// about to hide aside
             $("#mainAside").css('minWidth', '0px').removeClass('show-collapsed');

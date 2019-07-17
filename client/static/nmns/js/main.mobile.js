@@ -5,11 +5,11 @@
         var word;
         var agent = navigator.userAgent.toLowerCase();
 
-        // IE old version ( IE 10 or Lower ) 
+        // IE old version ( IE 10 or Lower )
         if (navigator.appName == "Microsoft Internet Explorer") word = "msie ";
-        // IE 11 
+        // IE 11
         else if (agent.search("trident") > -1) word = "trident/.*rv:";
-        // Microsoft Edge  
+        // Microsoft Edge
         else if (agent.search("edge/") > -1) word = "edge/";
 
         var reg = new RegExp(word + "([0-9]{1,})(\\.{0,}[0-9]{0,1})");
@@ -296,7 +296,7 @@
 					});
 					$("#welcomeModal").modal("show");
 				}
-					
+
             /*if (!document.getElementById("tutorialScript")) {
                 var script = document.createElement("script");
                 script.src = "/nmns/js/tutorial.min.js";
@@ -363,9 +363,9 @@
     //business specific functions about calendar start
 		$("#toggleCalendarToday").on("touch click", function(){
 			$(this).blur();
-			NMNS.calendar.setDate(new Date());			
+			NMNS.calendar.setDate(new Date());
 			if(NMNS.siemaCalendar){
-				document.getElementById('mainCalendarRangeInput' + (NMNS.siemaCalendar.currentSlide + 1))._flatpickr.setDate(NMNS.calendar.getDate().toDate());	
+				document.getElementById('mainCalendarRangeInput' + (NMNS.siemaCalendar.currentSlide + 1))._flatpickr.setDate(NMNS.calendar.getDate().toDate());
 				NMNS.siemaCalendar.resizeHandler();
 				if($("#mainCalendarCalendar").is(":visible")){
 					$("#mainCalendarRange").trigger('click');
@@ -391,7 +391,7 @@
         html += "<div class='tui-full-calendar-schedule-cover'><div><div class='row align-items-center' style='margin-bottom:5px'><div class='row mx-0 col'>";
         html += ("<div title='"+type+"내용:"+(contents||'')+"' class='tui-full-calendar-time-schedule-title'>" + (contents || '(예약내용 없음)')+"</div>");
         html += ("<div class='montserrat ml-auto' style='font-weight:500'>" + (moment(schedule.start.toDate()).isSame(moment(schedule.end.toDate()), 'days')?(moment(schedule.start.toDate()).format("HH:mm") + " - " + moment(schedule.end.toDate()).format("HH:mm")):(moment(schedule.start.toDate()).format("MM.DD HH:mm") + " - " + moment(schedule.end.toDate()).format("MM.DD HH:mm"))) + "</div></div></div><div style='font-size:11px'>" + (schedule.raw.etc || '') + "</div><div class='mt-auto tui-full-calendar-time-schedule-contact'>" + (schedule.title ? "<span title='이름:"+schedule.title+"' class='mr-1'>" + schedule.title + "</span>" : "") + (schedule.raw.contact ? "<span title='연락처:" + dashContact(schedule.raw.contact, '.') + "'>" + dashContact(schedule.raw.contact, '.') + "</span>" : "") + "</div></div></div>");
-        
+
         return html;
     }
 
@@ -422,7 +422,7 @@
               $(weekday).addClass('mainCalendarOtherMonth');
             }
           });
-          
+
         }
       });
       return html;
@@ -466,7 +466,7 @@
           $(weekday).addClass('mainCalendarOtherMonth');
         }
       });
-      
+
       setSchedules();
       if(index === 0){//create previous week
         NMNS.siema.prepend(generateCarouselItem(moment($("#mainCalendarCarousel .mainCalendarWeek").eq(index).data('start'), 'YYYYMMDD').add(-7, 'days'))[0]);
@@ -498,9 +498,9 @@
       current = moment([current.currentYear + '' , current.currentMonth + '']).toDate();
       document.getElementById('mainCalendarRangeInput' + prevIndex)._flatpickr.jumpToDate(moment(current).add(-1, 'month').toDate());
       document.getElementById('mainCalendarRangeInput' + nextIndex)._flatpickr.jumpToDate(moment(current).add(1, 'month').toDate());
-      
+
     }
-    
+
     function onChangeMainCalendar(id){
       return function(){
         NMNS.calendar.setDate(moment($(id).val(), 'YYYYMMDD').toDate());
@@ -514,7 +514,7 @@
             $(weekday).addClass('mainCalendarOtherMonth');
           }
         });
-        
+
         $(id).val(null);
         setSchedules();
       };
@@ -546,7 +546,7 @@
       $("#mainTask").toggleClass('show');
       if($("#mainCalendarArea").toggle().is(":visible")){
 				NMNS.siema && NMNS.siema.resizeHandler();
-				NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();	
+				NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();
 			}
     }
 
@@ -615,7 +615,7 @@
         });
         return html;
     }*/
-    
+
     function updateManager(e){
       if(e.stopPropagation){
         e.stopPropagation();
@@ -633,7 +633,7 @@
       $("#lnbManagerForm").data('id', manager.id).show();
       $("#lnbManagerFormName").val(manager.name).focus();
     }
-    
+
     function removeManager(e){
       if(e.stopPropagation){
         e.stopPropagation();
@@ -651,7 +651,7 @@
       $("#lnbManagerList .lnbManagerItem[value='"+manager.id+"']").remove();
       NMNS.socket.emit("delete manager", { id: manager.id });
     }
-    
+
     function generateTaskList(taskList) {
       var html = "";
       if(taskList.length > 0){
@@ -679,7 +679,7 @@
       $("#mainShopName").text(shopName !== "" ? shopName : NMNS.email);
       $("#mainShopCapital").text(shopName !== ""? shopName.substring(0,1) : NMNS.email.substring(0,1));
     }
-    
+
     function changeMainShopLogo(isImage, shopName){
       if(isImage){
         $("#mainShopCapital").addClass('d-none');
@@ -707,7 +707,7 @@
             $("#alrimHistoryList .alrimDetailLink").off('touch click').on("touch click", function(){
               $(this).parent().toggleClass('show');
 							/*if($(this).parent().hasClass('show')){
-								(document.scrollingElement || document.documentElement).scrollTop = $(this).offset().top - ( $("html,body").height() - $(this).outerHeight(true) ) / 2;	
+								(document.scrollingElement || document.documentElement).scrollTop = $(this).offset().top - ( $("html,body").height() - $(this).outerHeight(true) ) / 2;
 							}*/
             })
         } else {
@@ -847,7 +847,7 @@
             NMNS.info.bizType = parameters.bizType;
             diff = true;
         }
-            
+
         if (diff) {
             NMNS.history.push(history);
             NMNS.socket.emit("update info", parameters);
@@ -872,7 +872,7 @@
     function initNoShowModal() {
         if (!$("#noShowScheduleList").hasClass("ps")) {
           // $("#noShowScheduleList").data("scroll", new PerfectScrollbar("#noShowScheduleList", { suppressScrollX: true }));
-        
+
           $(".noShowAddCase").off("touch click").on("touch click", function() {
             $(this).siblings().removeClass("bg-primary");
             $(this).toggleClass('bg-primary');
@@ -995,7 +995,7 @@
     }
 
     function generateTaskManagerList(allowClear) {
-        var html = allowClear?"<button type='button' class='dropdown-item tui-full-calendar-dropdown-item'>선택</button>":"";
+        var html = allowClear?"<button type='button' class='dropdown-item tui-full-calendar-dropdown-item' data-calendar-id=''>선택</button>":"";
         NMNS.calendar.getCalendars().forEach(function(item) {
             html += "<button type='button' class='dropdown-item tui-full-calendar-dropdown-item ellipsis' data-calendar-id='" + item.id + "' data-color='" + item.color + "'>" +
                 "<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot mr-3' style='background-color: " + item.color + "'></span>" +
@@ -1004,7 +1004,7 @@
         });
         return html;
     }
-    
+
     function generateContentsList(contents){
       var html = "";
       if(contents === null || contents === undefined){
@@ -1017,7 +1017,7 @@
         }
       }else if(!Array.isArray(contents)){
         contents = [contents];
-      } 
+      }
       var inputs = $('#scheduleTabContents input').toArray();
       contents.filter(function(item){
         return !inputs.find(function(input){return input.value === (item && item.value || item) && !(item === '' && input.value === '')});
@@ -1040,7 +1040,7 @@
         $(target).parent().remove();
       }
     }
-    
+
     function generateMenuList(menuList){
       var html = '';
       menuList.forEach(function(item){
@@ -1056,21 +1056,21 @@
         var membership = sales[0] && sales[0].balanceMembership > 0, isRegistered;
         sales.forEach(function(sale, index){//draw selective form area
           isRegistered = Number.isInteger(sale.priceCard) || Number.isInteger(sale.priceCash) || Number.isInteger(sale.priceMembership);
-          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'"'+(sale.id?' data-id="'+(sale.id || '')+'"':'') 
+          html += '<div class="scheduleSalesItem">'+sale.item+'</div><div class="scheduleSalesPayments" data-item="'+sale.item+'" data-index="'+index+'"'+(sale.id?' data-id="'+(sale.id || '')+'"':'')
           + (sale.customerId?(' data-customer-id="'+(sale.customerId || '')+'"'):'') + (sale.managerId?(' data-manager-id="'+(sale.managerId || '')+'"'):'')+ ' data-type="'+(sale.type || 'CARD')+'" data-is-registered="'+isRegistered+'">';
           if(!isRegistered){
             html += '<input type="text" pattern="[0-9]*" class="form-control form-control-sm scheduleSalesPaymentPrice" name="scheduleSalesPaymentPrice" value="'+(sale.price || '')+'" data-old-value="'+(sale.price || '')+'" placeholder="금액을 숫자로 입력하세요.">';
           }
           if(!isRegistered || Number.isInteger(sale.priceCard)){
-            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'" style="margin-right:30px">카드' 
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CARD" data-price="' + sale.priceCard + '" data-index="'+index+'" id="scheduleSalesPaymentCard' + index +'"'+(sale.type === "CARD" || !sale.type ? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCard'+index+'"></label><label for="scheduleSalesPaymentCard'+index+'" style="margin-right:30px">카드'
               + (sale.priceCard ? ' <span class="montserrat">'+(sale.priceCard+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           if(!isRegistered || Number.isInteger(sale.priceCard)){
-            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" || (isRegistered && !Number.isInteger(sale.priceCard))? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'" style="margin-right:30px">현금' 
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="CASH" data-price="' + sale.priceCash + '" data-index="'+index+'" id="scheduleSalesPaymentCash' + index +'"'+(sale.type === "CASH" || (isRegistered && !Number.isInteger(sale.priceCard))? ' checked="checked"' : '')+'><label for="scheduleSalesPaymentCash'+index+'"></label><label for="scheduleSalesPaymentCash'+index+'" style="margin-right:30px">현금'
               + (sale.priceCash ? ' <span class="montserrat">'+(sale.priceCash+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           if((isRegistered && Number.isInteger(sale.priceMembership)) || (!isRegistered && membership)){//등록된 메뉴이고 멤버십 가격이 있거나, 등록되지 않은 메뉴이고 멤버십 내역이 있는 경우
-            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"'+(!membership || sales[0].balanceMembership < sale.priceMembership ? ' disabled="disabled"' : '')+'><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" || (isRegistered && !Number.isInteger(sale.priceMembership))? ' checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십' 
+            html += '<input type="radio" class="scheduleSalesPayment" name="scheduleSalesPayment'+index+'" value="MEMBERSHIP" data-price="' + sale.priceMembership + '" data-index="'+index+'" id="scheduleSalesPaymentMembership' + index +'"'+(!membership || sales[0].balanceMembership < sale.priceMembership ? ' disabled="disabled"' : '')+'><label for="scheduleSalesPaymentMembership'+index+'"'+(sale.type === "MEMBERSHIP" || (isRegistered && !Number.isInteger(sale.priceMembership))? ' checked="checked"' : '')+'></label><label for="scheduleSalesPaymentMembership'+index+'">멤버십'
               + (sale.priceMembership ? ' <span class="montserrat">'+(sale.priceMembership+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")+'</span> 원' : '') + '</label>';
           }
           html += '</div>';
@@ -1198,21 +1198,21 @@
           }else{
             $("#scheduleStatus input[value='RESERVED']").prop('checked', true);
           }
-          
+
           document.getElementById('scheduleStartDate')._flatpickr.setDate(e.schedule.start.toDate());
           document.getElementById('scheduleEndDate')._flatpickr.setDate(e.schedule.end.toDate());
           $("#scheduleStartTime").val(moment(e.schedule.start.toDate()).format('HHmm'));
           $("#scheduleEndTime").val(moment(e.schedule.end.toDate()).format('HHmm'));
-    
+
           $('#scheduleName').val(e.schedule.title);
           $("#scheduleTabContents").append(generateContentsList(e.schedule.raw ?e.schedule.raw.contents : "")).find('button').off('touch click').on('touch click', function(){
             removeContent(this);
           });
-          
+
           $('#scheduleContact').val(e.schedule.raw ? e.schedule.raw.contact : e.schedule.contact);
           $('#scheduleEtc').val(e.schedule.raw ? e.schedule.raw.etc : e.schedule.etc);
           // $('#scheduleAllDay').attr('checked', e.schedule.isAllDay);
-          
+
           if(moment(e.schedule.start.toDate()).isBefore(moment())){
             $("#resendAlrimScheduleBtn").addClass('d-none').next().removeClass('ml-1');
           }else{
@@ -1220,7 +1220,7 @@
           }
           calendar = findManager(e.schedule.calendarId);
         }
-        
+
         if (!calendar) {
           $('#scheduleManager').html("<span class='tui-full-calendar-icon tui-full-calendar-calendar-dot' style='background-color: " + e.schedule.color + "'></span><span class='tui-full-calendar-content'>(삭제된 담당자)</span>").data('calendar-id', e.schedule.calendarId).data('color', e.schedule.color);
         }else{
@@ -1347,7 +1347,7 @@
                 onContactBlur();
             }, 300);
         });
-        
+
         $("#scheduleBtn").on("touch click", function(){
           var title, startDate, endDate, startTime, endTime, contents, contact, etc, calendarId, manager;
           try {
@@ -1390,11 +1390,11 @@
             showSnackBar('담당자를 지정해주세요.');
             return;
           }
-      
+
           if (startDate.getTime() > endDate.getTime()) { // swap two dates
               startDate = [endDate, endDate = startDate][0];
           }
-      
+
           title = $('#scheduleName').val();
           contents = JSON.stringify($("#scheduleTabContents input").filter(function(){return this.value !== ''}).map(function(){return {id:this.getAttribute('data-menu-id') || (NMNS.menuList? NMNS.menuList.find(function(menu){return menu.menuName === this.value}): NMNS.email + generateRandom()), value:this.value}}).toArray());
           contact = $('#scheduleContact').val().replace(/-/gi, '');
@@ -1406,7 +1406,7 @@
                   return;
               }
           }
-      
+
           if (NMNS.scheduleTarget && NMNS.scheduleTarget.schedule) {
               var origin = NMNS.scheduleTarget.schedule;
               origin.manager = origin.calendarId;
@@ -1414,7 +1414,7 @@
               if (origin.calendarId !== calendarId) { //담당자 변경
                   origin.newCalendarId = calendarId
                   NMNS.calendar.deleteSchedule(origin.id, origin.manager, true);
-                  
+
                   NMNS.calendar.createSchedules([{
                       id: origin.id,
                       calendarId: calendarId,
@@ -1523,7 +1523,7 @@
                   status: "RESERVED"
               });
           }
-      
+
           history.back();
         });
 				$("#deleteScheduleBtn").on("touch click", function(e){
@@ -1544,7 +1544,7 @@
       }
       refreshScheduleTab(e);
     }
-  
+
     function refreshTaskTab(task){
       var calendar;
       if(NMNS.refreshTaskManager){
@@ -1553,11 +1553,11 @@
             $("#taskManager").data("calendar-id", $(this).data("calendar-id")).data("color", $(this).data("color")).html($(this).html());
         });
       }
-      
+
       $(".taskDetailMenu").data("task", task);
       document.getElementById("taskStartDate")._flatpickr.setDate(moment(task.start, 'YYYYMMDDHHmm').toDate());
       document.getElementById("taskEndDate")._flatpickr.setDate(moment(task.end, 'YYYYMMDDHHmm').toDate());
-      
+
       /*var autoCompleteOption = {
         lookup:[{value:"오전 00:00"},{value:"오전 00:30"},{value:"오전 01:00"},{value:"오전 01:30"},{value:"오전 02:00"},{value:"오전 02:30"},{value:"오전 03:00"},{value:"오전 03:30"},{value:"오전 04:00"},{value:"오전 04:30"},{value:"오전 05:00"},{value:"오전 05:30"},{value:"오전 06:00"},{value:"오전 06:30"},{value:"오전 07:00"},{value:"오전 07:30"},{value:"오전 08:00"},{value:"오전 08:30"},{value:"오전 09:00"},{value:"오전 09:30"},{value:"오전 10:00"},{value:"오전 10:30"},{value:"오전 11:00"},{value:"오전 11:30"},{value:"오후 12:00"},{value:"오후 12:30"},{value:"오후 01:00"},{value:"오후 01:30"},{value:"오후 02:00"},{value:"오후 02:30"},{value:"오후 03:00"},{value:"오후 03:30"},{value:"오후 04:00"},{value:"오후 04:30"},{value:"오후 05:00"},{value:"오후 05:30"},{value:"오후 06:00"},{value:"오후 06:30"},{value:"오후 07:00"},{value:"오후 07:30"},{value:"오후 08:00"},{value:"오후 08:30"},{value:"오후 09:00"},{value:"오후 09:30"},{value:"오후 10:00"},{value:"오후 10:30"},{value:"오후 11:00"},{value:"오후 11:30"}],
         maxHeight:175,
@@ -1566,7 +1566,7 @@
       };*/
       $('#taskStartTime').val(getTimeFormat(moment(task.start, 'YYYYMMDDHHmm')));
       $("#taskEndTime").val(getTimeFormat(moment(task.end, 'YYYYMMDDHHmm')));
-      
+
       $("#taskName").val(task.name || "");
       $("#taskContents").val(task.raw ? task.raw.contents || "" : "");
       calendar = task.calendarId ? NMNS.calendar.getCalendars().find(function(item) {
@@ -1620,7 +1620,7 @@
             $("#taskCalendarModal").modal('hide');
           }
         });
-        
+
         $("#taskBtn").on("touch click", function() {
           if ($("#taskName").val() === "") {
               alert("일정 이름을 입력해주세요!");
@@ -1699,7 +1699,7 @@
       }
       refreshTaskTab(task);
     }
-    
+
     function getSchedule(start, end) {
         NMNS.socket.emit("get reserv", { start: toYYYYMMDD(start._date) + "0000", end: toYYYYMMDD(end._date) + "2359" });
     }
@@ -1842,9 +1842,9 @@
                   contents = item.contents
                 }
               }
-              html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" + 
-              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" + 
-              (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" + 
+              html += "<div class='row col-12 mx-0' style='padding: 10px 0;font-size:12px' data-id='" + (item.id || "") + "' data-manager='" + (item.manager || "") + "' data-status='" + (item.status || "") + "'" +
+              (item.contents ? (" title='" + contents + "'") : "") + "><div class='col-1 pl-0'><input type='checkbox' class='noShowScheduleCheck' id='noShowSchedule"+item.id+"'></input><label for='noShowSchedule"+item.id+"'></label></div><div class='col-2 montserrat px-0'>" +
+              (item.start ? moment(item.start, "YYYYMMDDHHmm").format("YYYY. MM. DD") : "") + "</div><div class='col-2 pr-0'>" + (item.name || "") + "</div><div class='col-3 pr-0 montserrat'>" + dashContact(item.contact) + "</div><div class='col-4 pr-0'>" +
               contents + "</div></div>";
             });
         }
@@ -1857,7 +1857,7 @@
             $("#noShowScheduleBtn span").css('opacity', 0.35)
           }
         })
-        
+
         /*if ($("#noShowScheduleList").hasClass("ps")) {
             $("#noShowScheduleList").data("scroll").update();
         }*/
@@ -1918,7 +1918,7 @@
 							}
 						}
 					}
-				}        
+				}
     }));
 
     NMNS.socket.on("get task", socketResponse("일정 가져오기", function(e){
@@ -1943,7 +1943,7 @@
         initTaskTab({id:data.data('id'), name:data.data('name'), start:data.data('start'), end:data.data('end'), calendarId:data.data('calendar-id'), category:'task'});
         switchMenu.call($(".taskDetailLink"), e);
       });
-      
+
     }));
     /*
     NMNS.socket.on("add manager", socketResponse("담당자 추가하기", undefined, function(e) {
@@ -2022,7 +2022,7 @@
       // e.data.summary.lastNoShowDate = '20190103';
       // e.data.summary.noShowCount = 2;
         if (e.data.summary.noShowCount > 0) {
-          
+
           $("#noShowClean").removeClass('d-flex').addClass('d-none');
           if(!$("#noShowDirtyImage").attr('src')){
             $("#noShowDirtyImage").attr('src', '/nmns/img/badperson.png');
@@ -2060,7 +2060,7 @@
     NMNS.socket.on("delete noshow", socketResponse("노쇼 삭제하기", function(e) {
         NMNS.history.remove(e.data.id, findById);
     }, function(e) {
-        if (e && e.data) { 
+        if (e && e.data) {
             var origin = NMNS.history.find(function(item) { return item.id === e.data.id });
             if (origin) {
                 var newRow = $("<div class='row col-12 noShowRow' data-id='" + origin.id + "' data-contact='" + (origin.contact || "") + "' data-date='" + (origin.date || "") + "' data-noshowcase='" + (origin.noShowCase || "") + "'><div class='col-3 px-0'>노쇼 날짜</div><div class='col-9 pl-0 montserrat'>" + (origin.date ? (origin.date.substring(0, 4) + ". " + origin.date.substring(4, 6) + ". " + origin.date.substring(6)) : "") + "</div><div class='col-3 px-0'>전화번호</div><div class='col-9 pl-0 montserrat'>" + (origin.contact ? dashContact(origin.contact) : "") + "</div><div class='col-3 px-0'>노쇼 사유</div><div class='col-9 pl-0'>" + (origin.noShowCase || "")+ "</div><div class='noShowSearchDelete'><span title='삭제'>&times;</span></div></div>");
@@ -2176,7 +2176,7 @@
       }else if(NMNS.announcementPage === 1){
         $("#announcementArea").append("<div class='m-auto text-center' style='font-size:14px;line-height:1.71'>아직 알림내역이 없어요.<br>공지사항, 예약 등록 내역, 예약 취소<br>내역이 보여집니다.</div>").addClass('d-flex');
       }
-      
+
       var count = NMNS.info.newAnnouncement;
       if(count && count > 0){
         var unread = 0;
@@ -2202,17 +2202,17 @@
         NMNS.expectMoreAnnouncement = false;
       }
     }));
-    
+
     NMNS.socket.on("get menu list", socketResponse('메뉴 목록 조회', function(e){
       if($("#scheduleTabContentList").length){
-        $("#scheduleTabContentList").html(generateMenuList(e.data));  
+        $("#scheduleTabContentList").html(generateMenuList(e.data));
       }
 			NMNS.menuList = e.data;
       if($("#mainMenuList").is(":visible") && NMNS.drawMenuList){
         NMNS.drawMenuList(true);
       }
     }, undefined, true));
-    
+
     NMNS.socket.on("get reserv sales", socketResponse('매출 정보 가져오기', function(e){
       //$("#salesForm").html(generateSalesContents(e.data));
       // $("#salesForm").html(generateSalesContents([{item:'123', customerId:'asdf', managerId:'sadf', balanceMembership: 30000}, {item:'1234', customerId:'asdf', managerId:'sadf', priceCard:1233123, priceCash: 111111, balanceMembership: 30000}]));//for test
@@ -2220,7 +2220,7 @@
       $("#salesLoading").hide();
       $("#salesForm").show();
     }));
-    
+
     NMNS.socket.on("save sales", socketResponse('매출 내역 저장', function(e){
       showSnackBar('매출 내역을 저장하였습니다.')
       if($("#salesTab").is(":visible")){
@@ -2245,13 +2245,13 @@
       }
     }, true));
     //websocket response end
-    //Modal events start  
+    //Modal events start
     $(".modal").on("shown.bs.modal", function(){
       $(".modal-backdrop").one("touch click", function(e){//click on menubar
         $(".modal.show").modal('hide');
       })
     });
-    
+
     $("#cancelStoreBtn").on("touch click", function() {
       if (document.activeElement.tagName === "INPUT") {
           return false;
@@ -2279,7 +2279,7 @@
     $(".storeLink").one('touch click', function(){
       $("#storeBtn").off("touch click").on("touch click", submitInfoModal);
     }).on('touch click', refreshInfoModal);
-    
+
     $("#cancelAlrimBtn").on("touch click", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2328,7 +2328,7 @@
         }
       });
       $("#alrimInfoBtn").off("touch click").on("touch click", submitAlrimModal);
-      
+
       $("#alrimHistorySearch").off("touch click").on("touch click", function() {
         var parameters = {};
         if ($("#alrimHistoryTarget").val() !== "") {
@@ -2343,7 +2343,7 @@
         }
       });
     });
-    
+
     $("#noShowModal").on("hide.bs.modal", function() {
         if (document.activeElement.tagName === "INPUT") {
             return false;
@@ -2355,7 +2355,7 @@
             $("#noShowTabList .nav-link[href='#noShowAdd']").tab("show");
         }
     });
-    
+
     $("#scheduleModal").on("hide.bs.modal", function() {
       if(NMNS.scheduleTarget && NMNS.scheduleTarget.guide){
         NMNS.scheduleTarget.guide.clearGuideElement();
@@ -2378,14 +2378,14 @@
         $("#noMoreTips").remove();
         $("#tipsModal").modal("show");
     });*/
-    
+
     $("#showTutorial").on("touch click", function(){
        if (!document.getElementById("tutorialScript")) {
             var script = document.createElement("script");
             script.src = "/nmns/js/tutorial.min.js";
             script.id = "tutorialScript";
             document.body.appendChild(script);
-    
+
             script.onload = function() {
                 $("#tutorialModal").modal();
             };
@@ -2422,7 +2422,7 @@
     $("#alrimTabList a[data-target='#alrimHistoryTab']").on("show.bs.tab", function(){
       $("#alrimHistorySearch").trigger('click');
     });
-    
+
     $("#scheduleTabList a[data-target='#scheduleTab']").on('touch click', function(){
       if($(this).next().hasClass('active')){
         initScheduleTab("switch");
@@ -2525,7 +2525,7 @@
           var naverLogin = new naver.LoginWithNaverId({
         			clientId: "5dHto9KiEXdHoHJBDcqE",
         			callbackUrl: window.location.origin + '/naver',
-        			isPopup: true, 
+        			isPopup: true,
         			loginButton: {color:'green', type:1, height:20}
       		});
       		naverLogin.init();
@@ -2597,7 +2597,7 @@
             return;
         }
         var color = $("#lnbManagerFormColor").data("value");
-        
+
         var id = $("#lnbManagerForm").data("id");
         if(id){
           var manager = findManager(id);
@@ -2659,7 +2659,7 @@
       }
       $("#lnbManagerForm").data('id', null).hide();
     }).one("touch click", initLnbManagerForm);*/
-    
+
     $("#mainCalendarRange").on("touch click", function(){
       $("#mainCalendarCarousel, #mainCalendarCalendar").toggle();
 			NMNS.siema && NMNS.siema.resizeHandler();
@@ -2713,12 +2713,12 @@
       }
       setRenderRangeText();
     });
-    
+
     /*$(".mfb-component__button--child").off("touch click").on("touch click", function(e) {
         e.preventDefault();
         document.getElementById("floatingButton").setAttribute("data-mfb-state", "closed");
     });*/
-    
+
     //notification handling start
     NMNS.socket.emit("get noti");
     NMNS.socket.on("get noti", socketResponse("서버 메시지 받기", function(e) {
@@ -2799,7 +2799,7 @@
         script.onload = function() {
           $("#salesSearchButton").removeClass('disabled')
         };
-        
+
         $("#salesSearchName").autocomplete({
             serviceUrl: 'get customer info',
             paramName: 'name',
@@ -2825,7 +2825,7 @@
                 $('#scheduleContact').val(suggestion.data).trigger('blur');
             }
         }, NMNS.socket);
-        
+
         $("#salesSearchStartDate").val(moment().startOf('month').format('YYYY. MM. DD'));
         $("#salesSearchEndDate").val(moment().format('YYYY. MM. DD'));
         flatpickr("#salesCalendar", {
@@ -2855,7 +2855,7 @@
         $("#mainSalesSearch").show();
       }
     });
-    
+
     function switchMenu(e, isHistory){
       if(e && e.preventDefault){
         e.preventDefault();
@@ -2875,7 +2875,7 @@
         // $("#mainTask").removeClass("show");
         if($(".calendarMenu").removeClass('fixedScroll').is(":visible")){
 					NMNS.siema && NMNS.siema.resizeHandler();
-					NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();	
+					NMNS.siemaCalendar && NMNS.siemaCalendar.resizeHandler();
 				}
         document.scrollingElement.scrollTop = 0;
         $("#mainAside").removeClass('sidebar-toggled');
@@ -2886,9 +2886,9 @@
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
 					if($(this).data("background") !== "white"){
-						$("#mainContents,body").removeClass('bg-white');	
+						$("#mainContents,body").removeClass('bg-white');
 					}else{
-						$("#mainContents,body").addClass('bg-white');	
+						$("#mainContents,body").addClass('bg-white');
 					}
 				}else{
 				  $("#detailMenuTitle").html($(this).data('title')).show().prev().hide();
@@ -2898,7 +2898,7 @@
       }
     }
     NMNS.switchMenu = switchMenu;
-    
+
     //menu switch end
     //set event listeners
     (function() {
@@ -2919,7 +2919,7 @@
         $(".addNoShowLink").one("touch click", initNoShowModal);
         window.addEventListener('resize', debounce(function(){NMNS.calendar.render()}, 200));
         flatpickr.localize("ko");
-        
+
         $(".taskMenu").on("touch click", onClickTask);// toggle task column
         $('#sidebarToggler').on('touch click', function(){// toggle side menu
           $('#mainAside').addClass('sidebar-toggled');
@@ -2956,7 +2956,7 @@
         // })
         $("#searchNoShow").on("keyup", function(e){
           if(e.keyCode === 13 || e.which === 13){
-            $(this).prev().trigger('click');              
+            $(this).prev().trigger('click');
           }
         }).prev().on("touch click", function(){
 					// switchMenu.apply(this, e);
