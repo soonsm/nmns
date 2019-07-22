@@ -248,7 +248,7 @@
       beforeChangeView: function(e){
         NMNS.calendar.changeView(e.viewName);
         NMNS.calendar.setDate(e.date);
-        setDropdownCalendarType();
+        // setDropdownCalendarType();
         setRenderRangeText();
         setSchedules();
       }
@@ -348,7 +348,7 @@
     }));
 
     //business specific functions about calendar start
-	$("#resizeCalendar").on("touch click", function(){
+	/*$("#resizeCalendar").on("touch click", function(){
 		if($(this).hasClass('maximized')){//about to minimize
 			$(".calendarMenu .menuTitle").css('display', 'flex');
 		}else{//about to maximize
@@ -356,11 +356,11 @@
 		}
 		NMNS.calendar.render();
 		$(this).toggleClass('maximized').blur();
-	});
+	});*/
 	$("#toggleCalendarToday").on("touch click", function(){
 		$(this).blur();
 		NMNS.calendar.setDate(new Date());
-		setDropdownCalendarType();
+		// setDropdownCalendarType();
 		setRenderRangeText();
 		setSchedules();
 	});
@@ -421,11 +421,11 @@
         }
         NMNS.calendar.changeView(viewName, true);
 
-        setDropdownCalendarType();
+        // setDropdownCalendarType();
         setRenderRangeText();
         setSchedules();
     }
-
+/*
     function setDropdownCalendarType() {// change calendar view on small device
         $(".calendarType").removeClass("active");
 
@@ -442,7 +442,7 @@
         }
 
     }
-
+*/
     function onClickNavi(e) { // prev, next button event on calendar
         var action = e.target.getAttribute('data-action');
         if (!action) {
@@ -464,8 +464,8 @@
     }
 
     function onClickTask(){ // handle event when click today's task text
-				if($(window).width() < 1600){
-					$(document.body).toggleClass('overflow-y-hidden');
+				// if($(window).width() < 1600){
+					// $(document.body).toggleClass('overflow-y-hidden');
 				// if($("#mainTask").hasClass("show")){// about to hide task
 				// $("#mainCalendarArea").css('minWidth', '');
 				// $("#mainContents").css("minWidth", '100%');
@@ -479,7 +479,7 @@
 				// $("#mainAside").css('minWidth', '270px');
 				// }
 				// }
-			 }
+			 // }
       $("#mainTask").toggleClass('show');
     }
 
@@ -1896,7 +1896,7 @@
     }
     //business specific functions about general features end
     //after calendar initialization start
-    setDropdownCalendarType();
+    // setDropdownCalendarType();
     setRenderRangeText();
     if($(window).width() < 900){
         $('#sidebarToggler').trigger('click')
@@ -3091,7 +3091,7 @@
         $("#mainContents").css("minWidth", '100%');
         $("#mainAside").css('minWidth', '0px');
         $("#mainTask").removeClass("show");
-				$(document.body).removeClass('overflow-y-hidden');
+				// $(document.body).removeClass('overflow-y-hidden');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
         }

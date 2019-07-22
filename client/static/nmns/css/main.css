@@ -583,10 +583,11 @@ input[type=checkbox]+label{
     max-width:237px;
     min-width:237px;
     width:237px;
-    left:30px;
+    left:0;
     z-index:0;
     margin-right:23px;
-		min-height:calc(100vh - 230px);
+	height:100%;
+		/* min-height:calc(100vh - 244px); */
 }
 /* body.overflow-y-hidden #mainRow #mainTask.show{
 	min-height:calc(100vh - 241px);
@@ -732,7 +733,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     width: auto;
 }
 
-#mainCalendarTools #calendarTypeMenu.dropdown-toggle:after {
+/* #mainCalendarTools #calendarTypeMenu.dropdown-toggle:after {
     margin-left: 0;
 }
 
@@ -741,7 +742,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
         margin-left: .255rem;
     }
 }
-
+ */
 #mainRow #mainContents {
     margin-top:79px;
 }
@@ -767,6 +768,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     transition: 0.3s margin-left ease;
 	position:relative;
 }
+/*
 #resizeCalendar{
 	content: url('/nmns/img/maximize.svg');
 	right:12px;
@@ -788,7 +790,7 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
 		background-image:url('/nmns/img/minimize.svg');
 	}
 }
-
+*/
 #mainTask.show+#mainCalendarArea {
     margin-left: 260px;
 }
@@ -799,12 +801,12 @@ div.tui-full-calendar-vlayout-container .tui-full-calendar-splitter+div[data-pan
     }
 }
 #mainCalendarWrapper{
-	height:calc(100vh - 358px);
+	/* height:calc(100vh - 358px); */
 	overflow-y:auto;
 }
-#resizeCalendar.maximized + div + #mainCalendarArea #mainCalendarWrapper{
+/* #resizeCalendar.maximized + div + #mainCalendarArea #mainCalendarWrapper{
 	height:calc(100vh - 282px);
-}
+} */
 body.overflow-y-hidden{
 	overflow-y:hidden;
 }
