@@ -272,7 +272,8 @@
         if (NMNS.calendar) {
             NMNS.calendar.setOptions({ week: { hourStart: (NMNS.info.bizBeginTime ? parseInt(NMNS.info.bizBeginTime.substring(0, 2), 10) : 9), hourEnd: (NMNS.info.bizEndTime ? parseInt(NMNS.info.bizEndTime.substring(0, 2), 10) + (NMNS.info.bizEndTime.substring(2) === "00" ? 0 : 1) : 23) } });
         }
-        NMNS.email = e.data.email || NMNS.email;
+				setTimeOptions();
+				NMNS.email = e.data.email || NMNS.email;
         NMNS.calendarHeight = ((NMNS.calendar.getOptions().week.hourEnd - NMNS.calendar.getOptions().week.hourStart) * 4.26) + 7.25;
         $("#mainCalendar").css("height", NMNS.calendarHeight + "rem");
         if (NMNS.info.authStatus === "BEFORE_EMAIL_VERIFICATION" && moment(NMNS.info.signUpDate, "YYYYMMDD").add(30, 'd').isSameOrAfter(moment(), 'day')) {// TODO : 알림 처리
@@ -443,6 +444,17 @@
 
     }
 */
+		function setTimeOptions(){
+			$("#scheduleStartTime option, #scheduleEndTime option, #taskStartTime option, #taskEndTime option").each(function(){
+				if($(this).val().substring(0,2) < NMNS.info.bizBeginTime.substring(0,2)){
+					$(this).hide();
+				}else if($(this).val().substring(0,2) > NMNS.info.bizEndTime.substring(0,2)){
+					$(this).hide();
+				}else{
+					$(this).show();
+				}
+			});
+		}
     function onClickNavi(e) { // prev, next button event on calendar
         var action = e.target.getAttribute('data-action');
         if (!action) {
@@ -792,6 +804,7 @@
             NMNS.info.bizBeginTime = parameters.bizBeginTime || "0900";
             NMNS.info.bizEndTime = parameters.bizEndTime || "2300";
             NMNS.calendar.setOptions({ week: { hourStart: (parameters.bizBeginTime ? parseInt(parameters.bizBeginTime.substring(0, 2), 10) : NMNS.calendar.getOptions().week.hourStart), hourEnd: (parameters.bizEndTime ? parseInt(parameters.bizEndTime.substring(0, 2), 10) : NMNS.calendar.getOptions().week.hourEnd) } });
+						setTimeOptions();
             diff = true;
         }
         if ($("#infoShopName").val() !== (NMNS.info.shopName || "")) {
@@ -2112,6 +2125,9 @@
         var history = NMNS.history.find(function(item) { return item.id === "info" });
         if (history.bizBeginTime || history.bizEndTime) {
             NMNS.calendar.setOptions({ week: { hourStart: history.bizBeginTime ? history.bizBeginTime.substring(0, 2) : NMNS.info.bizBeginTime.substring(0, 2), hourEnd: history.bizEndTime ? history.bizEndTime.substring(0, 2) : NMNS.info.bizEndTime.substring(0, 2) } });
+					NMNS.info.bizBeginTime = history.bizBeginTime || NMNS.info.bizBeginTime;
+					NMNS.info.bizEndTime = history.bizEndTime || NMNS.info.bizEndTime;
+					setTimeOptions();
         }
         if (history.shopName) {
             changeMainShopName(history.shopName);
