@@ -48,16 +48,16 @@ async function scan(params) {
     let num = 0;
     for (; i < users.length; i++) {
         let user = users[i];
-        // if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
-        //     let visitLog = user.visitLog;
-        //     let lastVisit = visitLog[visitLog.length - 1];
-        //     let rLength = user.reservationList.length;
-        //
-        //     if((lastVisit > '20190401' && rLength > 0) || rLength > 50){
-        //         console.log(`${user.email} ${lastVisit} ${rLength}`);
-        //     }
-        //
-        // }
+        if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
+            let visitLog = user.visitLog;
+            let lastVisit = visitLog[visitLog.length - 1];
+            let rLength = user.reservationList.length;
+
+            if(lastVisit > '20190714'){
+                console.log(`${user.email} ${lastVisit} ${JSON.stringify(user.deviceHist)}`);
+            }
+
+        }
 
 
         // let sizeof = require('object-sizeof');
@@ -66,15 +66,15 @@ async function scan(params) {
         //     console.log(`${user.email} size: ${size}`);
         // }
 
-        let reservationList = user.reservationList;
-        num += reservationList.length;
-
-        reservationList = reservationList.filter(reservation => !reservation.contact);
-
-        if(reservationList.length > 0){
-            console.log(`${user.email} size: ${reservationList.length}`);
-            numOfNoContact += reservationList.length;
-        }
+        // let reservationList = user.reservationList;
+        // num += reservationList.length;
+        //
+        // reservationList = reservationList.filter(reservation => !reservation.contact);
+        //
+        // if(reservationList.length > 0){
+        //     console.log(`${user.email} size: ${reservationList.length}`);
+        //     numOfNoContact += reservationList.length;
+        // }
     }
     console.log(`total count is ${num} and total no contact count is ${numOfNoContact}`);
 })();
