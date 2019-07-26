@@ -2879,10 +2879,7 @@
 				}
         document.scrollingElement.scrollTop = 0;
         $("#mainAside").removeClass('sidebar-toggled');
-        if(!isHistory){
-          history.pushState({link:$(this).data('link'), type:$(this).data('type'), title:$(this).data('title')}, "", $(this).data('history'));
-        }
-				if($(this).data('type') !== 'detail'){// 뒤로가기 제거
+        if($(this).data('type') !== 'detail'){// 뒤로가기 제거
 					$("#detailMenuTitle").hide().prev().show();
 					$("#exitDetailMenu").hide().prev().show();
 					if($(this).data("background") !== "white"){
@@ -2895,6 +2892,11 @@
 			    $(".announcementMenuLink").hide().next().show();
 					$("#mainContents,body").addClass('bg-white');
 				}
+				if(!isHistory){
+          history.pushState({link:$(this).data('link'), type:$(this).data('type'), title:$(this).data('title')}, "", $(this).data('history'));
+					ga('set', 'page', $(this).data('history'));
+					ga('send', 'pageview');
+        }
       }
     }
     NMNS.switchMenu = switchMenu;

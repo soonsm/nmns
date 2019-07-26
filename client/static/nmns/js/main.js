@@ -3110,6 +3110,8 @@
 				// $(document.body).removeClass('overflow-y-hidden');
         if(!isHistory){
           history.pushState({link:$(this).data('link')}, "", $(this).data('history'));
+					ga('set', 'page', $(this).data('history'));
+					ga('send', 'pageview');
         }
       }
     }
