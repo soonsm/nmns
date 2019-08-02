@@ -3030,7 +3030,7 @@
               }
             });
             var html = "";
-            var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 예약/일정 관리 화면에서 하실 수 있습니다!'}]
+            var faqs = [{title:'일정 추가는 어디서 하나요?', contents:'일정 추가는 데스크탑으로 접속하시면 예약/일정 관리 화면에서 하실 수 있습니다!'}, {title:'모바일에서는 예약 추가가 안되나요?', contents:'모바일 버전에서는 노쇼, 예약, 일정, 고객, 메뉴 추가 기능을 뺀 모든 서비스를 이용할 수 있어요.<br>추가 기능은 PC에서 이용할 수 있답니다!'}, {title:'고객을 추가로 등록하고 싶어요.', contents:'고객 추가는 고객관리 메뉴에서 하실 수 있습니다!'}, {title:'고객을 엑셀로 등록하고 싶어요.', contents:'엑셀등록 기능을 열심히 만들고 있는 중입니다. 조금만 기다려주세요!'}, {title:'노쇼로 등록한 전화번호는 개인정보가 아닌가요?', contents:'노쇼에 등록된 전화번호는 복호화가 불가능한 암호화 형태로 저장되어 관리자도 내용을 확인할 수 없습니다. 안심하세요!'}, {title:'예약과 일정은 무엇이 다른가요?', contents:'예약은 예약하는 고객이 있어서 시간표에 직접 등록되고, 일정은 매장의 운영에 필요한 일정을 등록하는데 사용됩니다.<br>예를들어, 매장 대청소 등을 일정으로 관리하면 편리하게 이용하실 수 있겠죠?'}]
             faqs.forEach(function(item, index) {
                 html += '<div class="row faqRow col mx-0" title="'+item.title+'"><a href="#faqDetail' + index + '" class="faqDetailLink collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="faqDetail' + index + '"></a><div class="ellipsis">' + item.title + '</div></div>' +
                     '<div class="row faqDetailRow collapse mx-0" id="faqDetail' + index + '"><div class="d-inline-flex pb-3"><span>ㄴ</span></div><span class="col px-2 pb-3">' + item.contents + '</span></div></div>';
