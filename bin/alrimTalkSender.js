@@ -11,7 +11,7 @@ const
 
 const logger = global.nmns.LOGGER;
 
-const url = 'https://www.washow.co.kr/'
+const url = 'https://washow.co.kr/'
 
 async function sendAlrimTalk(param){
     if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
