@@ -11,6 +11,8 @@ const
 
 const logger = global.nmns.LOGGER;
 
+const url = 'https://www.washow.co.kr/'
+
 async function sendAlrimTalk(param){
     if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
         return new Promise(resolve => {
@@ -50,8 +52,8 @@ exports.sendReservationConfirm = async function (user, reservation) {
             template_code: 'C02',
             btn_types: '웹링크',
             btn_txts: '예약취소',
-            btn_urls1: `http://washow.co.kr/web_cancel/key=${reservation.id}&&email=${user.email}`,
-            btn_urls2: `http://washow.co.kr/web_cancel/key=${reservation.id}&&email=${user.email}`,
+            btn_urls1: `${url}web_cancel/key=${reservation.id}&&email=${user.email}`,
+            btn_urls2: `${url}web_cancel/key=${reservation.id}&&email=${user.email}`,
             //url: `http://ec2-13-125-29-64.ap-northeast-2.compute.amazonaws.com/web_cancel/key=${reservation.id}&&email=${user.email}`,
             apiVersion: 1,
             client_id: apiStoreId
@@ -85,8 +87,8 @@ exports.sendReservationConfirmKaKao =  async function(user, alrimTalk) {
         template_code: 'C01',
         btn_types: '웹링크',
         btn_txts: '예약취소',
-        btn_urls1: `http://washow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
-        btn_urls2: `http://washow.co.kr/cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls1: `${url}cancel/key=${alrimTalk.reservationKey}`,
+        btn_urls2: `${url}cancel/key=${alrimTalk.reservationKey}`,
         apiVersion: 1,
         client_id: apiStoreId
     });
