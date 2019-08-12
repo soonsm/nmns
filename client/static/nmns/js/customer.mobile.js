@@ -40,7 +40,7 @@
             </div>\
           </div>\
           <div class="bottomButtonArea">\
-            <button type="button" class="btn btn-white col mr-1" id="closeCustomerModal">취소</button>\
+            <button type="button" class="btn btn-white col mr-1" id="deleteCustomer">고객삭제</button>\
             <button id="customerBtn" type="button" class="btn btn-accent col ml-1">저장</button>\
           </div>\
         </div>\
@@ -465,9 +465,26 @@
     }
     history.back();
   });
-  $("#closeCustomerModal").on("touch click", function(){
-    history.back();
-  })
+  $("#deleteCustomer").on("touch click", function(){
+		if(confirm("고객을 삭제한 뒤에도 고객의 예약 및 매출내역은 유지됩니다.\n정말 이 고객을 삭제하시겠어요?")){
+			var customer = $("#customerDetailMenu").data("customer");
+			var index = 0;
+			while(index < NMNS.customerList.length){
+				if(NMNS.customerList[index].id === customer.id){
+					break;
+				}
+				index++;
+			}
+			if(index >= NMNS.customerList.length){
+				return;
+			}
+			NMNS.history.push($.extend({ "index": index }, customer));
+			NMNS.socket.emit("delete customer", { "id": customer.id });
+			NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
+			drawCustomerList(true);
+			history.back();
+		}
+	});
   $("#customerTabList a[href='#customerAlrim']").on("show.bs.tab", function(){
     if($(this).data('id') !== $("#customerDetailMenu").data('customer').id){
       $(this).data('id', $("#customerDetailMenu").data('customer').id);

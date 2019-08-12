@@ -45,8 +45,8 @@
                   <div class="ml-auto"><span id="customerTotalSales" class="montserrat">0</span>원</div>\
                 </div>\
                 <div class="d-flex" style="margin-top:50px">\
+									<button type="button" class="btn btn-white col mr-1" id="deleteCustomer">고객삭제</button>\
                   <button type="button" class="btn btn-white col mr-1 addCustomerScheduleBtn">예약 추가</button>\
-                  <button type="button" class="btn btn-white col mr-1" id="closeCustomerModal" data-dismiss="modal">삭제</button>\
                   <button id="customerBtn" type="button" class="btn btn-accent col ml-1">저장</button>\
                 </div>\
               </div>\
@@ -386,21 +386,6 @@
           e.preventDefault();
           refreshCustomerModal($(this));
       });
-      list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
-          e.preventDefault();
-          if (confirm("정말 이 고객을 삭제하시겠어요?")) {
-              var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
-              if (Number.isInteger(index)) {
-                  var customer = NMNS.customerList[index];
-                  if (customer) {
-                      NMNS.history.push($.extend({ "index": index }, customer));
-                      NMNS.socket.emit("delete customer", { "id": customer.id });
-                      NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
-                      drawCustomerList(true);
-                  }
-              }
-          }
-      });
   }
   NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e) {
       NMNS.customerList = e.data;
@@ -727,6 +712,26 @@
       $("#customerModal").data("trigger", true).modal("hide");
       $($("#sidebarContainer .calendarMenuLink")[0]).trigger("click");
     });
+		$("#deleteCustomer").on("touch click", function(){
+		if(confirm("고객을 삭제한 뒤에도 고객의 예약 및 매출내역은 유지됩니다.\n정말 이 고객을 삭제하시겠어요?")){
+			var customer = $("#customerModal").data('customer');
+			var index = 0;
+			while(index < NMNS.customerList.length){
+				if(NMNS.customerList[index].id === customer.id){
+					break;
+				}
+				index++;
+			}
+			if(index >= NMNS.customerList.length){
+				return;
+			}
+			NMNS.history.push($.extend({ "index": index }, customer));
+			NMNS.socket.emit("delete customer", { "id": customer.id });
+			NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
+			drawCustomerList(true);
+			$("#customerModal").modal("hide");
+		}
+	});
   });
   
 
