@@ -317,6 +317,25 @@
       }
       return html;
   }
+	
+	function checkExit(){
+		var changed = false;
+		var customer = $("#customerDetailMenu").data("customer");
+		if($("#customerName").val() !== (customer.name || '')){
+			changed = true;
+		}
+		if(!changed && $("#customerContact").val().replace(/-/gi, '') !== (customer.contact || '')){
+			changed = true;
+		}
+		if(!changed && $("#customerManager").data('calendar-id') !== customer.managerId){
+			changed = true;
+		}
+		if(!changed && $("#customerEtc").val() !== (customer.etc || '')){
+			changed = true;
+		}
+		return changed ? confirm('변경된 내용이 있습니다. 창을 닫으면 저장되지 않은 내용은 사라집니다.') : true;
+	}
+	
   function drawCustomerList(refresh) {
       var list = $("#mainCustomerList");
       var html = "";
@@ -341,22 +360,8 @@
           e.preventDefault();
           refreshCustomerModal($(this));
           NMNS.switchMenu.call($(".customerDetailLink"), e);
+					$("#exitDetailMenu").data('trigger', checkExit);
       });
-      /*list.find(".deleteCustomerLink").off("touch click").on("touch click", function(e) {
-          e.preventDefault();
-          if (confirm("정말 이 고객을 삭제하시겠어요?")) {
-              var index = Number($(this).parentsUntil(undefined, ".card").data("index"));
-              if (Number.isInteger(index)) {
-                  var customer = NMNS.customerList[index];
-                  if (customer) {
-                      NMNS.history.push($.extend({ "index": index }, customer));
-                      NMNS.socket.emit("delete customer", { "id": customer.id });
-                      NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
-                      drawCustomerList(true);
-                  }
-              }
-          }
-      });*/
   }
   NMNS.socket.on("get customer list", socketResponse("고객 조회", function(e) {
       NMNS.customerList = e.data;

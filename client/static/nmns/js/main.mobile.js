@@ -2400,9 +2400,14 @@
       }
     });
 		$("#exitDetailMenu").on("touch click", function(){
-			/*$("#detailMenuTitle").hide().prev().show();
-			$(this).hide().prev().show();*/
-			history.back();
+			if($(this).data('trigger')){
+				if($(this).data('trigger')()){
+					$(this).data('trigger', null);
+					history.back();	
+				}
+			}else{
+				history.back();
+			}
 		});
     $('#mainMenu').on('shown.bs.popover', function(){
       $(".mainMenuRow a[data-link]").off("touch click").on("touch click", function(e){
@@ -3084,6 +3089,7 @@
 		  $("#detailMenuTitle").html(state.state.title).show().prev().hide();
 	    $(".announcementMenuLink").hide().next().show();
 		}
+		$("#exitDetailMenu").data('trigger', null);
   }
   $(document).on("scroll", function(){
     if($("#mainCalendar").is(":visible")){
