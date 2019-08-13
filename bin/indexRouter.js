@@ -192,7 +192,15 @@ module.exports = function (passport) {
             if (!snsLink) {
 				user = await db.getWebUser(snsEmail);
 				if(!user){
-					return sendResponse(res, false, `${snsEmail}로 가입되어있는 계정이 없습니다.`);
+                    res.status(200).json({
+                        status: '200',
+                        sns: {
+                            snsType: snsType,
+                            snsLinkId: snsLinkId,
+                            snsEmail: snsEmail
+                        }
+                    });
+                    return;
 				}
             } else {
                 user = await db.getWebUser(snsLink.email);
@@ -201,7 +209,15 @@ module.exports = function (passport) {
 					if(!user){
 						user = await db.getWebUser(snsEmail);
 						if(!user){
-							return sendResponse(res, false, `${snsEmail}로 가입되어있는 계정이 없습니다.`);
+                            res.status(200).json({
+                                status: '200',
+                                sns: {
+                                    snsType: snsType,
+                                    snsLinkId: snsLinkId,
+                                    snsEmail: snsEmail
+                                }
+                            });
+							return;
 						}else{
 							await db.setSnsLink({	
 								snsLinkId: snsLinkId,

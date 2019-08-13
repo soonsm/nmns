@@ -87,8 +87,8 @@ module.exports = function (server, sessionStore, passport, cookieParser) {
         //Socket-Io-Tester 사용 할 때 주석처리 해야 함 End
 
         //방문 기록 로깅
-        const MobileDetect = require('mobile-detect');
-        let md = new MobileDetect(socket.request.headers['user-agent']);
+        // const MobileDetect = require('mobile-detect');
+        // let md = new MobileDetect(socket.request.headers['user-agent']);
         // let visitLog = await newDb.visitLog(email, md.mobile() || 'pc');
 
         socket.sendPush = async function (data) {
