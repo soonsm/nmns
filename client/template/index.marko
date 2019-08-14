@@ -537,7 +537,7 @@
 		form.email.readOnly = true;
 		form.snsType.value = sns.snsType;
 		form.snsLinkId.value = sns.snsLinkId;
-		document.getElementById('signupPassword').style.display = 'none';
+		//document.getElementById('signupPassword').style.display = 'none';
 		
 		var modals = document.getElementsByClassName('modal');
 		for(var i=0;i<modals.length;i++){
@@ -736,12 +736,10 @@
 										var response = JSON.parse(xhr.response);
 										if(response.status != "200"){
 											alert(response.message || '카카오톡 로그인에 실패했습니다. 다시 시도해주세요.');
-											if(response.sns){//회원가입 되어있지 않은 경우
-												linkToSignup(response.sns);
-											}
-											return;
+                      return;
 										}
 										if(response.sns){//회원가입 되어있지 않은 경우
+                      alert('카카오 계정으로 처음 로그인하셨습니다. 회원 이용약관 페이지로 이동합니다.');
 											linkToSignup(response.sns);
 											return;
 										}
@@ -757,6 +755,7 @@
 								}));
 							}
 						}, fail: function(error){
+            console.log('aa3');
 							alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
 						}})
 					},
@@ -770,41 +769,76 @@
 				if(!document.getElementById('contract').checked && !document.getElementById('contractDesktop').checked){
 					alert('이용약관 동의는 필수입니다.');
 					return;
-				}
+				} else {
+          var signupForm = document.getElementById('signupForm');
+          if(signupForm.snsType.value === 'KAKAO' && signupForm.snsLinkId.value !== null && signupForm.email.value !== null){
+            var xhr2 = new XMLHttpRequest();
+            xhr2.open('POST', '/signup');
+            xhr2.onload = function() {
+              try{
+                 if (xhr2 && xhr2.status !== 200) {
+                     console.log(xhr2);
+                    alert((xhr2.response && xhr2.response.message) || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                    return;
+                 } else {
+                  var response = JSON.parse(xhr2.response);
+                  console.log(response);
+                  if(response.status !== "200"){
+                    alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                    return;
+                  }
+                  document.getElementById('signinForm').email.value = signupForm.email.value;
+                  showModal('signinModal')();
+                  document.getElementById('signupForm').reset();
+                 }
+              }catch(e){
+                console.error(e);
+                alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+              }				
+            };
+            var formData = new FormData(signupForm);
+            formData.delete('password');
+            formData.delete('repassword');
+            xhr2.send(formData);
+            return;
+          }
+        }
 				Kakao.Auth.login({
 					success: function(authObj) {
 						Kakao.API.request({url:'/v2/user/me', success:function(res){
 							if(!res.kakao_account.email || !res.kakao_account.email){
-								alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다. 카카오톡>설정>프라이버시>카카오 계정>연결 서비스 관리 메뉴에서 연결을 해제 후 다시 시도해주세요.');
+								alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다.\n카카오톡>설정>프라이버시>카카오 계정>연결 서비스 관리 메뉴에서 연결을 해제 후 다시 시도해주세요.');
 								Kakao.Auth.logout();
 							}else{
 								var xhr = new XMLHttpRequest();
-								xhr.open('POST', '/sns_signin');
-								xhr.setRequestHeader('Content-Type', 'application/json');
+								xhr.open('POST', '/signup');
+                var form = document.getElementById('signupForm');
+                form.email.value = res.kakao_account.email;
+                form.snsType.value = 'KAKAO';
+                form.snsLinkId.value = res.id;
 								xhr.onload = function() {
-									if (xhr && xhr.status === 200) {
-										var response = JSON.parse(xhr.response);
-										if(response.status != "200"){
-											alert(response.message || '카카오톡 로그인에 실패했습니다. 다시 시도해주세요.');
-											if(response.sns){//회원가입 되어있지 않은 경우
-												linkToSignup(response.sns);//TODO : send signup request to server
-											}
-											return;
-										}
-										if(response.sns){//회원가입 되어있지 않은 경우
-											linkToSignup(response.sns);//TODO : send signup request to server
-											return;
-										}
-										location.href = '/';
-									} else {
-										alert("카카오톡 로그인에 실패했습니다. 다시 시도해주세요!");
-									}
+                  try{
+                     if (xhr && xhr.status !== 200) {
+                        alert((xhr.response && xhr2.response.message) || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                        return;
+                     } else {
+                      var response = JSON.parse(xhr.response);
+                      if(response.status !== "200"){
+                        alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                        return;
+                      }
+                      document.getElementById('signinForm').email.value = form.email.value;
+                      showModal('signinModal')();
+                      document.getElementById('signupForm').reset();
+                     }
+                  }catch(e){
+                    alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                  }
 								};
-								xhr.send(JSON.stringify({
-									snsLinkId: res.id,
-									snsType: 'KAKAO',
-									snsEmail: res.kakao_account.email
-								}));
+                var formData = new FormData(form);
+                formData.delete('password');
+                formData.delete('repassword');
+								xhr.send(formData);
 							}
 						}, fail: function(error){
 							alert('카카오 서버와 연결하지 못했습니다. 다시 시도해주세요.');
@@ -853,6 +887,9 @@
 				alert('이용약관 동의는 필수입니다.');
 				return;
 			}
+      var signupForm = document.getElementById('signupForm');
+      signupForm.snsType.value = null;
+      signupForm.snsLinkId.value = null;
 			showModal('signupModal')();
 		});
 		addEvent(document.getElementById('signupAsNaver_wrapper'), 'click', function(e){
@@ -861,7 +898,39 @@
 				e.stopImmediatePropagation();
 				e.preventDefault();
 				return;
-			}
+			} else {
+        var signupForm = document.getElementById('signupForm');
+        if(signupForm.snsType.value === 'NAVER' && signupForm.snsLinkId.value !== null && signupForm.email.value !== null){
+          var xhr2 = new XMLHttpRequest();
+          xhr2.open('POST', '/signup');
+          xhr2.onload = function() {
+            try{
+               if (xhr2 && xhr2.status !== 200) {
+                  alert((xhr2.response && xhr2.response.message) || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                  return;
+               } else {
+                var response = JSON.parse(xhr2.response);
+                if(response.status !== "200"){
+                  alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
+                  return;
+                }
+                document.getElementById('signinForm').email.value = signupForm.email.value;
+                showModal('signinModal')();
+                document.getElementById('signupForm').reset();
+               }
+            }catch(e){
+              alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+            }
+          };
+          var formData = new FormData(signupForm);
+          formData.delete('password');
+          formData.delete('repassword');
+          xhr2.send(formData);
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return;
+        }
+      }
 		});
 		
 		addEvent(document.getElementById("agreeContract"), "click", function(e){
