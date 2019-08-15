@@ -540,13 +540,15 @@ module.exports = function(passport) {
           if (snsLink) {
             throw `이미 ${snsLink.snsType === 'NAVER'?'네이버':'카카오'} 계정으로 가입되어 있습니다.`;
           }
-        }        
+        }
+        data.authStatus = process.nmns.AUTH_STATUS.EMAIL_VERIFICATED;
       } else {
         //password strength check
         let strenthCheck = util.passwordStrengthCheck(password);
         if (strenthCheck.result === false) {
           throw strenthCheck.message;
         }
+        data.emailAuthToken = require('js-sha256')(email);
       }
 
       //기존 사용자 체크
@@ -557,7 +559,6 @@ module.exports = function(passport) {
       if (req.file) {
         data.logoFileName = req.file.filename;
       }
-      data.emailAuthToken = require('js-sha256')(email);
       let newUser = db.newWebUser(data);
       if (data.useYn === 'Y') {
         if (!data.callbackPhone || !util.phoneNumberValidation(data.callbackPhone)) {
@@ -572,7 +573,9 @@ module.exports = function(passport) {
       }
 
       if (await db.setWebUser(newUser)) {
-        emailSender.sendEmailVerification(email, data.emailAuthToken);
+        if (!data.snsType) {
+          emailSender.sendEmailVerification(email, data.emailAuthToken);
+        }
         if (data.kakaotalk) {
           let kakaoUser = await db.getUser(data.kakaotalk);
           if (kakaoUser) {
