@@ -44,8 +44,9 @@ window.addEventListener('load', function() {
 					'이메일은 필수정보입니다.\n\n네이버 > 내정보 > 보안설정 > 외부사이트 연결 페이지에서\nWA:SHOW 연결을 끊은 후 다시 시도해주세요.'
 				);
 				/* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
+				naverLogin.reprompt();
 				that.close();
-				//naverLogin.reprompt();
+				
 				return;
 			}
 			
@@ -61,7 +62,7 @@ window.addEventListener('load', function() {
 					}
 					if(isLogin){
 						if(response.sns){
-							parent.linkToSns(response.sns);
+							parent.linkToSignup(response.sns);
 							return;
 						}
 						parent.location.replace('https://' + window.location.hostname + '/');
