@@ -584,8 +584,8 @@ module.exports = function(passport) {
           }
         }
         if (data.snsType) {
-          db.setSnsLink(data);
-          req.logIn(user, function() {
+          await db.setSnsLink(data);
+          req.logIn(newUser, function() {
             res.redirect('/');
           });
           return;
