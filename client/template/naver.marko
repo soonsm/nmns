@@ -40,12 +40,10 @@ window.addEventListener('load', function() {
 			var parent = window.opener;
 			var email = naverLogin.user.getEmail();
 			if (email == undefined || email == null) {
-				parent.alert(
-					'이메일은 필수정보입니다.\n\n네이버 > 내정보 > 보안설정 > 외부사이트 연결 페이지에서\nWA:SHOW 연결을 끊은 후 다시 시도해주세요.'
-				);
+				alert('이메일은 필수정보입니다. 정보 제공에 동의해주세요.');
 				/* (5-1) 사용자 정보 재동의를 위하여 다시 네아로 동의페이지로 이동함 */
 				naverLogin.reprompt();
-				that.close();
+				//that.close();
 				
 				return;
 			}
@@ -62,6 +60,8 @@ window.addEventListener('load', function() {
 					}
 					if(isLogin){
 						if(response.sns){
+							that.close();
+							parent.alert('네이버 계정으로 처음 로그인하셨습니다. 회원 이용약관 동의 페이지로 이동합니다.');
 							parent.linkToSignup(response.sns);
 							return;
 						}
@@ -117,9 +117,8 @@ window.addEventListener('load', function() {
 				
 			
 		} else {
-			parent.alert('네이버 아이디 연동 및 로그인에 실패하였습니다. 잠시 후 다시 시도해주세요.');
-			self.opener = self;
-			that.close();
+			window.opener.alert('네이버 아이디 연동 및 로그인에 실패하였습니다. 다시 시도해주세요.');
+			self.close();
 		}
 	});
 });
