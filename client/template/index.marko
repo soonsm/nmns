@@ -789,8 +789,7 @@
                     return;
                   }
                   document.getElementById('signinForm').email.value = signupForm.email.value;
-                  showModal('signinModal')();
-                  document.getElementById('signupForm').reset();
+                  location.href = '/';
                  }
               }catch(e){
                 console.error(e);
@@ -808,7 +807,11 @@
 					success: function(authObj) {
 						Kakao.API.request({url:'/v2/user/me', success:function(res){
 							if(!res.kakao_account.email || !res.kakao_account.email){
-								alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다.\n카카오톡>설정>프라이버시>카카오 계정>연결 서비스 관리 메뉴에서 연결을 해제 후 다시 시도해주세요.');
+								Kakao.API.request({url:'/v1/user/unlink', success:function(res){
+									alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다.\n다시 시도해주세요.');
+								}, fail:function(){
+									alert('이메일 주소는 연동 및 로그인에 필수로 필요합니다.\n카카오톡>설정>프라이버시>카카오 계정>연결 서비스 관리 메뉴에서 연결을 해제 후 다시 시도해주세요.');
+								}});
 								Kakao.Auth.logout();
 							}else{
 								var xhr = new XMLHttpRequest();
@@ -817,7 +820,7 @@
                 form.email.value = res.kakao_account.email;
                 form.snsType.value = 'KAKAO';
                 form.snsLinkId.value = res.id;
-				xhr.onload = function() {
+								xhr.onload = function() {
                   try{
                      if (xhr && xhr.status !== 200) {
                         alert((xhr.response && xhr2.response.message) || '회원가입에 실패했습니다. 다시 시도해주세요.');

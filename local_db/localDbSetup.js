@@ -10,6 +10,7 @@ AWS.config.update({
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
 
+/*
 (async function(){
     var params = {
         TableName : "SnsLink",
@@ -31,8 +32,55 @@ var docClient = new AWS.DynamoDB.DocumentClient();
             console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
         }
     });
+})();*/
+
+(async function(){
+	docClient.delete({
+            TableName: 'WebSecheduler',
+            Key: {
+                "email": 'vukoreav@nate.com'
+            }
+        }, function (err, data) {
+            if (err) {
+                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+            } else {
+                console.log("Added item:", JSON.stringify(data));
+            }
+        });
 })();
 
+(async function(){
+	dynamodb.deleteTable({
+        TableName : "SnsLink"
+    }, function(err, data) {
+        if (err) {
+            console.error("Unable to delete table. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
+			
+		var params = {
+        TableName : "SnsLink",
+        KeySchema: [
+            { AttributeName: "snsLinkId", KeyType: "HASH"},
+        ],
+        AttributeDefinitions: [
+            { AttributeName: "snsLinkId", AttributeType: "S" },
+        ],
+        ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5
+        }
+    };
+    dynamodb.createTable(params, function(err, data) {
+        if (err) {
+            console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+        } else {
+            console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+        }
+    });
+        }
+    });
+})();
 // var params = {
 //     TableName : "KaKaoUserList",
 //     KeySchema: [
