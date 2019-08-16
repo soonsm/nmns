@@ -817,7 +817,7 @@
                 form.email.value = res.kakao_account.email;
                 form.snsType.value = 'KAKAO';
                 form.snsLinkId.value = res.id;
-								xhr.onload = function() {
+				xhr.onload = function() {
                   try{
                      if (xhr && xhr.status !== 200) {
                         alert((xhr.response && xhr2.response.message) || '회원가입에 실패했습니다. 다시 시도해주세요.');
@@ -828,9 +828,10 @@
                         alert(response.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
                         return;
                       }
-                      document.getElementById('signinForm').email.value = form.email.value;
-                      showModal('signinModal')();
-                      document.getElementById('signupForm').reset();
+                      window.location.reload();
+                      //document.getElementById('signinForm').email.value = form.email.value;
+                      //showModal('signinModal')();
+                      //document.getElementById('signupForm').reset();
                      }
                   }catch(e){
                     alert('회원가입에 실패했습니다. 다시 시도해주세요.');
