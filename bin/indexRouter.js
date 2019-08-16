@@ -585,6 +585,10 @@ module.exports = function(passport) {
         }
         if (data.snsType) {
           db.setSnsLink(data);
+          req.logIn(user, function() {
+            res.redirect('/');
+          });
+          return;
         }
         res.cookie('email', email);
         status = true;
