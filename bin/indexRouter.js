@@ -586,13 +586,13 @@ module.exports = function(passport) {
         if (data.snsType) {
           await db.setSnsLink(data);
           req.logIn(newUser, function() {
-            res.redirect('/');
+            return sendResponse(res, true);
           });
-          return;
+        }else{
+          res.cookie('email', email);
+          status = true;
+          message = '회원가입성공';
         }
-        res.cookie('email', email);
-        status = true;
-        message = '회원가입성공';
       }
     } catch (e) {
       status = false;
