@@ -436,7 +436,7 @@
   }, function(e) {
       if (e.data.reason === "DUPLICATED") {
           if (confirm("이미 같은 이름과 연락처를 가진 고객이 존재합니다.\n그 고객쪽으로 모든 정보 및 예약, 알림톡 내역을 합칠까요?")) {
-              NMNS.socket.emit("merge customer", {
+              NMNS.emit("merge customer", {
                   id: e.data.id,
                   name: $("#customerName").val(),
                   contact: $("#customerContact").val().replace(/-/gi, ''),
@@ -470,11 +470,11 @@
       drawCustomerList(true);
   }));
   NMNS.socket.on("merge customer", socketResponse("고객정보 합치기", function() {
-      NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
+      NMNS.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
       showSnackBar("<span>두 고객의 정보와 예약, 알림톡 내역을 합쳤습니다.</span>");
       $("#customerModal").modal("hide");
   }, function() {
-      NMNS.socket.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
+      NMNS.emit("get customer list", { "type": "all", "target": ($("#customerSearchTarget").val() === "" ? undefined : $("#customerSearchTarget").val()), "sort": $($(".customerSortType.active")[0]).data("action") });
       $("#customerModal").modal("hide");
   }));
   NMNS.socket.on("get membership history", socketResponse('멤버십 내역 조회', function(e){
@@ -543,7 +543,7 @@
         }
         var customer = $("#customerModal").data("customer");
         if (customer) {
-            NMNS.socket.emit("update customer", {
+            NMNS.emit("update customer", {
                 id: customer.id,
                 name: $("#customerName").val(),
                 contact: $("#customerContact").val().replace(/-/gi, ''),
@@ -569,7 +569,7 @@
 							cardSales:0,
 							cashSales:0
           };
-          NMNS.socket.emit("add customer", customer);
+          NMNS.emit("add customer", customer);
           NMNS.customerList.splice(0, 0, customer);
           drawCustomerList(true);
         }
@@ -581,7 +581,7 @@
         $("#customerAlrimNotEmpty").hide();
         $("#customerAlrimEmpty").hide();
         $("#customerAlrimLoading").show();
-        NMNS.socket.emit('get customer alrim', {id:$("#customerModal").data('customer').id});
+        NMNS.emit('get customer alrim', {id:$("#customerModal").data('customer').id});
       }
     }).one("show.bs.tab", function(){
       var isLoading = false;
@@ -638,7 +638,7 @@
         $("#customerMembershipList").hide();
         $("#customerMembershipEmpty").hide();
         $("#customerMembershipLoading").show();
-        NMNS.socket.emit('get membership history', {customerId:id});
+        NMNS.emit('get membership history', {customerId:id});
       }
     }).one("show.bs.tab", function(){
       $("#customerMembershipSales").on("keyup", function(e){
@@ -680,7 +680,7 @@
         }
 				$("#customerMembershipList").data('item').splice(0, 0, input);
 				drawCustomerMembershipList(true);
-        NMNS.socket.emit('add membership', input);
+        NMNS.emit('add membership', input);
       });
       $("#addCustomerMembershipSales").on("touch click", function(){
         if($("#customerMembershipChange").val().replace(/,/gi,'') === '' || !($("#customerMembershipChange").val().replace(/,/gi, '') * 1)){
@@ -701,7 +701,7 @@
           showSnackBar('적립 결제수단을 선택해주세요.');
           return;
         }
-        NMNS.socket.emit('add membership', input);
+        NMNS.emit('add membership', input);
         $("#customerMembershipList").data('item').splice(0, 0, input);
         drawCustomerMembershipList(true);
         $("#customerMembershipSales").val('');
@@ -726,7 +726,7 @@
 				return;
 			}
 			NMNS.history.push($.extend({ "index": index }, customer));
-			NMNS.socket.emit("delete customer", { "id": customer.id });
+			NMNS.emit("delete customer", { "id": customer.id });
 			NMNS.customerList.remove(customer.id, function(item, target) { return item.id === target });
 			drawCustomerList(true);
 			$("#customerModal").modal("hide");
@@ -866,7 +866,7 @@
 
   $("#searchCustomer").on("keyup", function(e) {
       if (e.which === 13) {
-          NMNS.socket.emit("get customer list", { type: "all", target: this.value, sort:$($(".customerSortType.active")[0]).data("action") });
+          NMNS.emit("get customer list", { type: "all", target: this.value, sort:$($(".customerSortType.active")[0]).data("action") });
       }
   });
   $("#addCustomerBtn").on("touch click", function(e) {

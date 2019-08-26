@@ -62,7 +62,7 @@
         }
       })
       if(diff){
-        NMNS.socket.emit('update menu list', menuList);
+        NMNS.emit('update menu list', menuList);
       }
       $(this).text('수정');
     }
@@ -117,7 +117,7 @@
           //   var menu = NMNS.menuList[index];
           //   if (menu) {
           //       NMNS.history.push($.extend({ "index": index }, menu));
-          //       NMNS.socket.emit("delete menu", { "id": menu.id });
+          //       NMNS.emit("delete menu", { "id": menu.id });
           //       NMNS.menuList.remove(menu.id, findById);
           //   }
           // }
@@ -162,7 +162,7 @@
           priceCard:$("#menuFormPriceCard").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCard").val().replace(/,/gi, '')*1,
           priceMembership:$("#menuFormPriceMembership").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceMembership").val().replace(/,/gi, '')*1
         };
-        NMNS.socket.emit('update menu', after);
+        NMNS.emit('update menu', after);
         origin = NMNS.menuList.find(function(item){ return item.id === after.id});
         origin.name = after.name;
         origin.priceCash = after.priceCash;
@@ -176,7 +176,7 @@
           priceCard:$("#menuFormPriceCard").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceCard").val().replace(/,/gi, '')*1,
           priceMembership:$("#menuFormPriceMembership").val().replace(/,/gi, '') === ''? null : $("#menuFormPriceMembership").val().replace(/,/gi, '')*1
         }
-        NMNS.socket.emit('add menu', origin);
+        NMNS.emit('add menu', origin);
         NMNS.menuList.push(origin);
       }
       $("#menuModal").modal('hide');

@@ -110,7 +110,7 @@
     if(!$(this).hasClass('disabled')){
       $(this).addClass('disabled');
       history.pushState({link:'salesMenu', subLink:'search'}, "", '/sales/search');
-      NMNS.socket.emit('get sales list', {
+      NMNS.emit('get sales list', {
         start:moment(document.getElementById('salesCalendar')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
         end:moment(document.getElementById('salesCalendar')._flatpickr.selectedDates[1]).format('YYYYMMDD'),
         name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),

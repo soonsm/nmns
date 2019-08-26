@@ -108,7 +108,7 @@
   $("#salesSearchButton").on("touch click", function(){
     if(!$(this).hasClass('disabled')){
       $(this).addClass('disabled');
-      NMNS.socket.emit('get sales list', {
+      NMNS.emit('get sales list', {
         start:moment(document.getElementById('salesSearchStartDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
         end:moment(document.getElementById('salesSearchEndDate')._flatpickr.selectedDates[0]).format('YYYYMMDD'),
         name:$("#salesSearchName").val() === ''? undefined:$("#salesSearchName").val(),
