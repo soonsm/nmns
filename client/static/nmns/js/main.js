@@ -1914,6 +1914,10 @@
     if($(window).width() < 900){
         $('#sidebarToggler').trigger('click')
     }
+		if(ga){
+			ga('create', 'UA-143798598-1', 'auto');
+			ga('send', 'pageview');
+		}
     //after calendar initialization end
     //websocket response start
     /*NMNS.socket.on("get tips", socketResponse("팁 정보 가져오기", function(e) {

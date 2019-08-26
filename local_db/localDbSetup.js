@@ -38,7 +38,7 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 	docClient.delete({
             TableName: 'WebSecheduler',
             Key: {
-                "email": 'vukoreav@nate.com'
+                "email": 'xogh1306@naver.com'
             }
         }, function (err, data) {
             if (err) {
