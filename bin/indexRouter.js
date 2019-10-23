@@ -16,6 +16,7 @@ const logger = global.nmns.LOGGER;
 const pcMainView = require('../client/template/main');
 const mobileMainView = require('../client/template/main.mobile');
 const indexView = require('../client/template/index');
+const homeView = require('../client/template/home');
 const cancelView = require('../client/template/reservationCancel');
 const naverView = require('../client/template/naver');
 
@@ -74,8 +75,8 @@ module.exports = function(passport) {
         });
       }
     } else {
-      //로그인 되지 않은 상태이므로 index page로 이동
-      res.redirect('/index');
+      //로그인 되지 않은 상태이므로 home page로 이동
+      res.redirect('/home');
     }
   });
 
@@ -106,6 +107,29 @@ module.exports = function(passport) {
     }
   });
 
+	
+  /**
+     * Home Page
+     */
+  router.get('/home', async function(req, res) {
+    if (req.user) {
+      let user = await db.getWebUser(req.user.email);
+      if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
+        //로그인 되있으면 main으로 이동
+        res.redirect('/');
+      } else {
+        render(res, homeView, {});
+      }
+    } else {
+      let errorMessage = req.session.errorMessage;
+      req.session.errorMessage = undefined;
+      render(res, homeView, {
+        kakaotalk:
+          req.query.kakaotalk && req.query.kakaotalk !== '' ? req.query.kakaotalk : undefined
+      });
+    }
+  });
+	
   /**
      * 로그인 요청 json format
      * {email: #사용자 이메일#, password: #비밀번호#}
@@ -354,12 +378,12 @@ module.exports = function(passport) {
     ) {
       await db.updateWebUser(email, { authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED });
       req.logIn(user, function() {
-        res.redirect('/');
+        res.redirect('/index');
       });
       return;
     }
 
-    res.redirect('/');
+    res.redirect('/index');
   });
 
   router.post('/resetPassword', async function(req, res) {
@@ -381,7 +405,7 @@ module.exports = function(passport) {
       }
     }
 
-    res.redirect('/');
+    res.redirect('/index');
   });
 
   router.get('/addNotice/title=:title&&contents=:contents', async (req, res) => {
