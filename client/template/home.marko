@@ -57,7 +57,7 @@
 
 <body class="left-0 right-0">
 
-<section class="bg-primary overflow-hidden flex flex-column" role="main" id="homePage">
+<section class="bg-primary overflow-hidden flex flex-column page" role="main" id="homePage">
 
 	<div class="page-top clearfix">
 		<div class="mx-auto justify-center flex">
@@ -75,9 +75,9 @@
 			</div>
 		</div>
 		
-		<div class="justify-center flex cursor-pointer white" style="margin-top:27px;opacity:0.7;font-size:14px">
+		<div id="homeAddNoShow" class="justify-center flex cursor-pointer white" style="margin-top:27px;opacity:0.7;font-size:14px">
 			노쇼 추가하기
-			<div class="homeAddNoShowIcon"></div>
+			<div class="homeAddNoShowIcon" style="margin-left:5px">+</div>
 		</div>
 	</div>
 	
@@ -95,23 +95,46 @@
 	</div>
 
 </section>
-<section id="homeSearchArea" class="none">
+<section id="homeSearchArea" class="page none">
 검색하기를 누르셨군요.
 </section>
-<section id="homeAddNoshow" class="none">
+<section id="homeAddNoShowArea" class="page none">
 노쇼 추가하기를 누르셨군요.
 </section>
 
 <script>
   document.getElementById("homeSearchNoShow").onclick = function(e){
 		document.getElementById("homePage").classList.add("none");//기본 화면을 없앤다.
+		document.getElementById("homePage").classList.remove("flex");//기본 화면을 없앤다.
 		document.getElementById("homeSearchArea").classList.remove("none");//검색화면을 보여준다.
+		history.pushState({link : "homeSearchArea"}, "", "/home/search");
 	};
 	
-	document.getElementById("home)
+	document.getElementById("homeAddNoShow").onclick = function(e){
+		document.getElementById("homePage").classList.add("none");//기본 화면을 없앤다.
+		document.getElementById("homePage").classList.remove("flex");//기본 화면을 없앤다.
+		document.getElementById("homeAddNoShowArea").classList.remove("none");//노쇼추가화면을 보여준다.
+		history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
+	}
 	
 	document.getElementById("homeLinkToIndex").onclick = function(e){
 		location.href = "/index";
+	}
+	
+	window.onpopstate = function(state){
+		var targets = document.getElementsByClassName('page');
+		for(var i=0;i<targets.length;i++){
+			targets[i].classList.add("none");
+			targets[i].classList.remove("flex");
+		}
+		if(state === null || state.state === null || state.state.link === "homePage"){//홈페이지로 돌아옴
+			document.getElementById("homePage").classList.add("flex");//기본 화면을 보여준다.
+			document.getElementById("homePage").classList.remove("none");//기본 화면을 보여준다.
+		}else{
+			document.getElementById(state.state.link).classList.add("flex");//화면을 보여준다.
+			document.getElementById(state.state.link).classList.remove("none");//화면을 보여준다.
+		}
+		
 	}
 </script>
 </body>
