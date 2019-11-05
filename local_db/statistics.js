@@ -48,23 +48,23 @@ async function scan(params) {
     let num = 0;
     for (; i < users.length; i++) {
         let user = users[i];
-        if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
-            let visitLog = user.visitLog;
-            let lastVisit = visitLog[visitLog.length - 1];
-            let rLength = user.reservationList.length;
-
-            if(lastVisit > '20190714'){
-                console.log(`${user.email} ${lastVisit} ${JSON.stringify(user.deviceHist)}`);
-            }
-
-        }
-
-
-        // let sizeof = require('object-sizeof');
-        // let size = sizeof(user)/1000;
-        // if(size > 100){
-        //     console.log(`${user.email} size: ${size}`);
+        // if(user.authStatus === 'EMAIL_VERIFICATED' && user.visitLog){
+        //     let visitLog = user.visitLog;
+        //     let lastVisit = visitLog[visitLog.length - 1];
+        //     let rLength = user.reservationList.length;
+        //
+        //     if(lastVisit > '20190714'){
+        //         console.log(`${user.email} ${lastVisit} ${JSON.stringify(user.deviceHist)}`);
+        //     }
+        //
         // }
+
+
+        let sizeof = require('object-sizeof');
+        let size = sizeof(user)/1000;
+        if(size > 100){
+            console.log(`${user.email} size: ${size}`);
+        }
 
         // let reservationList = user.reservationList;
         // num += reservationList.length;
