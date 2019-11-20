@@ -17,6 +17,7 @@ const pcMainView = require('../client/template/main');
 const mobileMainView = require('../client/template/main.mobile');
 const indexView = require('../client/template/index');
 const homeView = require('../client/template/home');
+// const homeView = require('../pages/hello');
 const cancelView = require('../client/template/reservationCancel');
 const naverView = require('../client/template/naver');
 
@@ -111,25 +112,28 @@ module.exports = function(passport) {
   /**
      * Home Page
      */
-  router.get('/home', async function(req, res) {
-    if (req.user) {
-      let user = await db.getWebUser(req.user.email);
-      if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
-        //로그인 되있으면 main으로 이동
-        res.redirect('/');
-      } else {
-        render(res, homeView, {});
+  router.get('/home', async function (req, res) {
+    const fs = require('fs');
+
+    fs.readFile('/client/template/onePage.html', (err, data) => {
+      if(err){
+
+      }else {
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(data);
       }
-    } else {
-      let errorMessage = req.session.errorMessage;
-      req.session.errorMessage = undefined;
-      render(res, homeView, {
-        kakaotalk:
-          req.query.kakaotalk && req.query.kakaotalk !== '' ? req.query.kakaotalk : undefined
-      });
-    }
+    });
   });
-	
+
+  /**
+   * 노쇼 조회
+   */
+  router.post('/search', async function(req, res){
+    let contact = req.body.contact;
+    let list = await newDb.getNoShow(contact);
+    await res.json(list);
+  });
+
   /**
      * 로그인 요청 json format
      * {email: #사용자 이메일#, password: #비밀번호#}

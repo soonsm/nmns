@@ -44,6 +44,21 @@
     *:focus{outline:none}html{background-color:#f8f8f8;min-height:100vh}.bg-primary{background-color:#334150;color:white}.bg-darkPrimary{background-color:#263240;color:white}.white{color:white}.bg-white{background-color:#fff;color:#393535}.bg-transparent{background-color:transparent}
     .page{max-height:100vh;height:calc(100vh - 3px)}.page-top{margin-bottom:auto}.page-bottom{margin-top:auto}
     #homeSearchNoShowExists{max-height:calc(100vh - 238px);overflow:auto;margin-bottom:15px}#homeSearchNoShowExists.withoutTooltip{max-height:calc(100vh - 140px)}.homeSearchNoShowData{margin:0 20px 5px 20px;padding:17px 20px;background-color:white;box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);color:#393535}.homeSearchNoShowData:last-child{margin-bottom:0}.homeSearchNoShowCase{word-break:break-all}.homeSearchAddToDesktopTooltipTip{width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:10px solid #fff;position:absolute;left:50%;bottom:-27px;transform: rotate(180deg)}
+    #searchBarDiv{
+      -webkit-animation-name: goUp;
+      -webkit-animation-duration: 0.5s;
+
+    }
+  /* Safari 4.0 - 8.0 */
+  @-webkit-keyframes goUp {
+    from {margin-top: 10%;}
+    to {margin-top: 0%;}
+  }
+  /* Standard syntax */
+  @keyframes goUp {
+    from {margin-top: 10%;}
+    to {margin-top: 0%;}
+  }
   </style>
   
 <!--[if lte IE 9]>
@@ -59,7 +74,6 @@
 <body class="left-0 right-0">
 
 <section class="bg-primary overflow-hidden flex flex-column page" role="main" id="homePage">
-
   <div class="page-top clearfix">
     <div class="mx-auto justify-center flex">
       <a class="montserrat" href="/" aria-label="WA:SHOW" style="margin-top:30px">
@@ -76,14 +90,14 @@
       </div>
     </div>
     
-    <div id="homeAddNoShow" class="justify-center flex cursor-pointer white absolute left-0 right-0" style="margin:27px auto 0 auto;opacity:0.7;font-size:14px;line-height:18px">
+    <div id="homeAddNoShow" class="justify-center flex cursor-pointer white absolute left-0 right-0" style="margin:27px auto 0 auto;opacity:0.7;font-size:14px;line-height:18px;cursor:pointer">
       노쇼 추가하기
       <div class="homeAddNoShowIcon" style="margin-left:5px"><img src="/nmns/img/home_add.svg" alt="노쇼 추가하기"/></div>
     </div>
   </div>
   
   <div class="page-bottom clearfix">
-    <div id="homeLinkToIndex" class="cursor-pointer justify-center flex relative" style="margin:30px">
+    <div id="homeLinkToIndex" class="cursor-pointer justify-center flex relative" style="margin:30px;cursor:pointer">
       <div class="bg-darkPrimary col-12 rounded" style="padding:22px 20px;line-height:1.44;font-size:16px;letter-spacing:-0.16px">
         <span class="white thin" style="line-height:23px"><span class="white regular" style="line-height:23px">노쇼 예방에 특화된</span><br>
         예약시스템을 경험하세요!</span>
@@ -95,13 +109,13 @@
 </section>
 <section id="homeSearchArea" class="page flex-column none">
   <div class="border-bottom" style="padding:22px 20px 15px 20px">
-    <div class="flex">
+    <div class="flex" id="searchBarDiv">
       <div class="block linkToHome bg-transparent">
-        <img src="/nmns/img/back.svg" alt="뒤로" style="vertical-align:middle"/>
+        <img id="goBackBtn" src="/nmns/img/back.svg" alt="뒤로" style="vertical-align:middle;cursor:pointer"/>
       </div>
-      <input class="border-none montserrat flex-auto bg-transparent" id="homeSearchNoShowContents" type="number" placeholder="휴대폰 번호로 노쇼 이력을 찾아보세요." style="padding:0 20px">
+      <input class="border-none montserrat flex-auto bg-transparent" id="homeSearchNoShowContents" type="text" placeholder="휴대폰 번호로 노쇼 이력을 찾아보세요." style="padding:0 20px">
       <div class="right bg-transparent" id="homeSearchNoShowAction">
-        <img src="/nmns/img/search.svg" alt="검색"/>
+        <img src="/nmns/img/search.svg" alt="검색" style="cursor:pointer"/>
       </div>
     </div>
   </div>
@@ -119,10 +133,9 @@
       <div id="homeSearchNoShowNotExist" class="none">
         <div class="center" style="margin-bottom:auto;font-size:15px;line-height:1.47">
           <img src="/nmns/img/goodperson.png" alt="노쇼를 하신 적이 없는 고객입니다." style="max-width:100vw"/>
-          이 분 최소 배우신분!<br/>
-          노쇼 이력이 없어요.
+          <div>이 분 최소 배우신분!<br />노쇼 이력이 없어요.</div>
         </div>
-        <div class="center homeSearchAddNoShow" style="margin-top:98px">
+        <div class="center homeSearchAddNoShow" style="margin-top:98px;cursor:pointer">
           <span style="opacity:0.7;line-height:23px">이 번호로 노쇼 등록하기</span><img src="/nmns/img/result_add.svg" alt="노쇼 등록하기" style="line-height:23px;vertical-align:middle;margin-left:5px"/>
         </div>
       </div>
@@ -172,19 +185,50 @@
     history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
   }
 
+  document.getElementById("goBackBtn").onclick = function(e){
+    document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
+    document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
+    document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
+    document.getElementById('homeSearchNoShowContents').value = '';
+    history.back();
+  }
+
   document.getElementById("homeLinkToIndex").onclick = function(e){
     location.href = "/index";
   }
   
   // search page events
+  document.getElementById("homeSearchNoShowContents").onkeypress = function(e){
+    if(isNaN(parseInt(e.key))){
+      e.returnValue=false;
+    }
+  }
   document.getElementById("homeSearchNoShowContents").onkeyup = function(e){
     if(e.key === "Enter"){
       document.getElementById("homeSearchNoShowAction").click();
+    }else{
+      let str = document.getElementById('homeSearchNoShowContents').value;
+      let cleaned = ('' + str).replace(/\D/g, '');
+      let formatted = '';
+      let length = cleaned.length;
+      if(length <= 3){
+        return;
+      }
+      if(length > 3 && length <= 6){
+        formatted = cleaned.substring(0,3) + '-' + cleaned.substring(3);
+      }else if(length > 6 && length <= 10 ){
+        formatted = cleaned.substring(0,3) + '-' + cleaned.substring(3, 6) + '-' + cleaned.substring(6);
+      }else{
+        formatted = cleaned.substring(0,3) + '-' + cleaned.substring(3, 7) + '-' + cleaned.substring(7);
+      }
+      document.getElementById('homeSearchNoShowContents').value =  formatted;
     }
   }
 
   document.getElementById("homeSearchNoShowAction").onclick = function(e){
-    searchNoShowAction(document.getElementById('homeSearchNoShowContents').value);
+    let str = document.getElementById('homeSearchNoShowContents').value;
+    let cleaned = ('' + str).replace(/\D/g, '');
+    searchNoShowAction(cleaned);
   }
 
   document.getElementById("homeSearchCloseTooltip").onclick = function(){
