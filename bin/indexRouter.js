@@ -77,7 +77,7 @@ module.exports = function(passport) {
       }
     } else {
       //로그인 되지 않은 상태이므로 home page로 이동
-      res.redirect('/home');
+      res.redirect('/index');
     }
   });
 
