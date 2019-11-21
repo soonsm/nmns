@@ -113,16 +113,7 @@ module.exports = function(passport) {
      * Home Page
      */
   router.get('/home', async function (req, res) {
-    const fs = require('fs');
-
-    fs.readFile('/client/template/onePage.html', (err, data) => {
-      if(err){
-
-      }else {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(data);
-      }
-    });
+    render(res, homeView);
   });
 
   /**
@@ -132,6 +123,20 @@ module.exports = function(passport) {
     let contact = req.body.contact;
     let list = await newDb.getNoShow(contact);
     await res.json(list);
+  });
+
+  router.post('/add', async function(req, res){
+    let noShow = req.body;
+    let status = true, message = null;
+    try{
+      await newDb.addNoShow('soonsm@gmail.com', noShow.phone, noShow.noShowDate, noShow.noShowCase);
+    }catch(e){
+      status = false;
+      message = '노쇼를 추가하지 못했습니다. 잠시 후 이용 바랍니다.';
+    }
+
+    await res.json({status: status, message : message});
+
   });
 
   /**
