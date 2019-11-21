@@ -536,6 +536,12 @@
     document.getElementById("dateInAddNoShow").valueAsDate = new Date();
     document.getElementById('chkAgree').checked = false;
     document.getElementById('reason1').checked = true;
+
+    document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
+    document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
+    document.getElementById('searchAddNoShow').style.visibility = 'hidden';//노쇼 추가 버튼 숨김
+    document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
+    document.getElementById('homeSearchNoShowContents').value = '';
   }
 
   let setVisiblity = function(elementId, show){
@@ -643,11 +649,6 @@
 
   document.getElementsByName("goBackBtn").forEach((btn)=>{
     btn.onclick = function(e){
-      document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
-      document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
-      document.getElementById('searchAddNoShow').style.visibility = 'hidden';//노쇼 추가 버튼 숨김
-      document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
-      document.getElementById('homeSearchNoShowContents').value = '';
       history.back();
     }
   });
