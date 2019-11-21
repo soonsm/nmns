@@ -430,8 +430,8 @@
         </div>
         <input id="noShowCaseEtc" type="text" class="bg-transparent flex-auto" placeholder="직접 입력"
                style="margin-top:25px; height: 35px; border-radius: 2px; border: solid 0.5px #707070; padding: 8px 15px 8px 15px">
-        <button id="btnAddNoShow" style="margin-top:39px; height: 42px;border-radius: 5px;box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);background-color: #fd5b77;">
-            <span style="margin-top: 14px; font-size: 13px; line-height: 1.69; color: #FFFFFF;">등록</span></button>
+        <div id="btnAddNoShow" class="flex items-center justify-center" style="margin-top:39px; height: 42px;border-radius: 5px;box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);background-color: #fd5b77;">
+            <span style="font-size: 13px; line-height: 1.69; letter-spacing: normal; color: #FFFFFF;">등록</span></div>
     </div>
 </section>
 <section id="contractArea" class="page none flex-column" style="color: #393535; background-color: #f8f8f8">
@@ -462,8 +462,8 @@
                 </div>
             </div>
 
-            <button id="btnAgreeAndAddNoShow" style="margin:32px 0 30px 0; height: 42px;border-radius: 5px;box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);background-color: #fd5b77;">
-                <span style="margin-top: 14px; font-size: 13px; line-height: 1.69; color: #FFFFFF;">등록하고 노쇼 추가하기</span></button>
+            <div id="btnAgreeAndAddNoShow" class="flex items-center justify-center" style="margin:32px 0 30px 0; height: 42px;border-radius: 5px;box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);background-color: #fd5b77;">
+                <span style="font-size: 13px; line-height: 1.69; color: #FFFFFF;">등록하고 노쇼 추가하기</span></div>
         </div>
     </div>
 </section>
@@ -536,6 +536,12 @@
         document.getElementById("dateInAddNoShow").valueAsDate = new Date();
         document.getElementById('chkAgree').checked = false;
         document.getElementById('reason1').checked = true;
+
+        document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
+        document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
+        document.getElementById('searchAddNoShow').style.visibility = 'hidden';//노쇼 추가 버튼 숨김
+        document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
+        document.getElementById('homeSearchNoShowContents').value = '';
     }
 
     let setVisiblity = function(elementId, show){
@@ -563,13 +569,13 @@
     }
 
     document.querySelectorAll('div[name="addNoShowDirect"]').forEach((el) => {
-       el.onclick = function(){
-           setVisiblity('homeSearchArea', false);
-           setVisiblity('homeAddNoShowArea', true);
-           history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
+        el.onclick = function(){
+            setVisiblity('homeSearchArea', false);
+            setVisiblity('homeAddNoShowArea', true);
+            history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
 
-           document.getElementById('telInAddNoShow').value = document.getElementById('homeSearchNoShowContents').value;
-       }
+            document.getElementById('telInAddNoShow').value = document.getElementById('homeSearchNoShowContents').value;
+        }
     });
 
     //노쇼 등록 요청 버튼
@@ -616,7 +622,7 @@
             return false;
         }
 
-        sendAjax('http://localhost:8080/add', noShowToSend, (res) => {
+        sendAjax('/add', noShowToSend, (res) => {
             setVisiblity('contractArea', false);
             if(res.status){
                 setVisiblity('homeAddNoShowArea', true);
@@ -642,14 +648,9 @@
 
 
     document.getElementsByName("goBackBtn").forEach((btn)=>{
-       btn.onclick = function(e){
-           document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
-           document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
-           document.getElementById('searchAddNoShow').style.visibility = 'hidden';//노쇼 추가 버튼 숨김
-           document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
-           document.getElementById('homeSearchNoShowContents').value = '';
-           history.back();
-       }
+        btn.onclick = function(e){
+            history.back();
+        }
     });
 
     document.getElementById("homeLinkToIndex").onclick = function(e){
@@ -666,6 +667,8 @@
         let str = document.getElementById('homeSearchNoShowContents').value;
         let cleaned = ('' + str).replace(/\D/g, '');
         searchNoShowAction(cleaned);
+
+        document.getElementById("homeSearchNoShowAction").blur();
     }
 
 
@@ -684,7 +687,7 @@
             return;
         }
 
-        sendAjax('http://localhost:8080/search', {contact: searchContents}, (data)=>{
+        sendAjax('/search', {contact: searchContents}, (data)=>{
 
             if(data.length === 0){// 노쇼 없음
                 document.getElementById('searchAddNoShow').style.visibility = 'hidden'; // 노쇼 추가 숨김
