@@ -8,18 +8,29 @@ require('./bin/logger');
 require('./bin/constant');
 
 const logger = global.nmns.LOGGER;
-
+let isProduction = false;
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == process.nmns.MODE.PRODUCTION ) ? process.nmns.MODE.PRODUCTION : process.nmns.MODE.DEVELOPMENT;
 if (process.env.NODE_ENV == process.nmns.MODE.PRODUCTION) {
     global.nmns.cdn = 'https://www.washow.co.kr';
+    isProduction = true;
     logger.info("Production Mode");
 } else if (process.env.NODE_ENV == process.nmns.MODE.DEVELOPMENT) {
     global.nmns.cdn = '';
     logger.info("Development Mode");
 }
 
-
 require('marko/node-require');
+
+// Configure lasso to control how JS/CSS/etc. is delivered to the browser
+require("lasso").configure({
+    plugins: [
+        "lasso-marko" // Allow Marko templates to be compiled and transported to the browser
+    ],
+    outputDir: __dirname + "/static", // Place all generated JS/CSS/etc. files into the "static" dir
+    bundlingEnabled: isProduction, // Only enable bundling in production
+    minify: isProduction, // Only minify JS and CSS code in production
+    fingerprintsEnabled: isProduction // Only add fingerprints to URLs in production
+});
 
 const
     express = require('express'),
@@ -37,7 +48,8 @@ const
     morgan = require("morgan"),
     mustacheExpress = require('mustache-express'),
     cookieParser = require('cookie-parser');
-    
+
+
 const
     message = require('./bin/message'),
     kakaoEventHandler = require('./bin/kakaoEventHandler'),
@@ -48,6 +60,8 @@ const
     db = require('./bin/webDb'),
     util = require('./bin/util')
 ;
+
+// app.use(require("lasso/middleware").serveStatic());
 
 //compression
 app.use(compression());

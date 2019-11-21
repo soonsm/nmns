@@ -16,6 +16,8 @@ const logger = global.nmns.LOGGER;
 const pcMainView = require('../client/template/main');
 const mobileMainView = require('../client/template/main.mobile');
 const indexView = require('../client/template/index');
+const homeView = require('../client/template/home');
+// const homeView = require('../pages/hello');
 const cancelView = require('../client/template/reservationCancel');
 const naverView = require('../client/template/naver');
 
@@ -74,8 +76,8 @@ module.exports = function(passport) {
         });
       }
     } else {
-      //로그인 되지 않은 상태이므로 index page로 이동
-      res.redirect('/index');
+      //로그인 되지 않은 상태이므로 home page로 이동
+      res.redirect('/home');
     }
   });
 
@@ -104,6 +106,37 @@ module.exports = function(passport) {
           req.query.kakaotalk && req.query.kakaotalk !== '' ? req.query.kakaotalk : undefined
       });
     }
+  });
+
+	
+  /**
+     * Home Page
+     */
+  router.get('/home', async function (req, res) {
+    render(res, homeView);
+  });
+
+  /**
+   * 노쇼 조회
+   */
+  router.post('/search', async function(req, res){
+    let contact = req.body.contact;
+    let list = await newDb.getNoShow(contact);
+    await res.json(list);
+  });
+
+  router.post('/add', async function(req, res){
+    let noShow = req.body;
+    let status = true, message = null;
+    try{
+      await newDb.addNoShow('soonsm@gmail.com', noShow.phone, noShow.noShowDate, noShow.noShowCase);
+    }catch(e){
+      status = false;
+      message = '노쇼를 추가하지 못했습니다. 잠시 후 이용 바랍니다.';
+    }
+
+    await res.json({status: status, message : message});
+
   });
 
   /**
@@ -354,12 +387,12 @@ module.exports = function(passport) {
     ) {
       await db.updateWebUser(email, { authStatus: process.nmns.AUTH_STATUS.EMAIL_VERIFICATED });
       req.logIn(user, function() {
-        res.redirect('/');
+        res.redirect('/index');
       });
       return;
     }
 
-    res.redirect('/');
+    res.redirect('/index');
   });
 
   router.post('/resetPassword', async function(req, res) {
@@ -381,7 +414,7 @@ module.exports = function(passport) {
       }
     }
 
-    res.redirect('/');
+    res.redirect('/index');
   });
 
   router.get('/addNotice/title=:title&&contents=:contents', async (req, res) => {

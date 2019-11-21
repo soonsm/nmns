@@ -20,7 +20,7 @@ let create = function(params){
         }
     });
 };
-
+/*
 (async function(){
     var params = {
         TableName : "SessionTable",
@@ -309,7 +309,7 @@ let create = function(params){
         }
     };
     create(params);
-})();
+})();*/
 /*
 (async function(){
     dynamodb.deleteTable({
@@ -321,7 +321,7 @@ let create = function(params){
             console.log("Deleted table. Table description JSON:", JSON.stringify(data, null, 2));
         }
     });
-})();*/
+})();*//*
 (async function(){
     var params = {
         TableName : "NoticeNew",
@@ -361,7 +361,7 @@ let create = function(params){
         });
     }
 })();
-/*
+*/
 let newWebUser = function (user) {
     return {
         email: user.email,
@@ -406,7 +406,7 @@ let newWebUser = function (user) {
 };
 
 (async function(){
-    let email = 'happy@store.com';
+    let email = 'nice@store.com';
     let password = 'xptmxm1!';
     let shopName = '와우네일샵';
     docClient.put({
@@ -420,7 +420,7 @@ let newWebUser = function (user) {
         }
     });
 })();
-*/
+
 //--------------------------Data delete-----------------------------
 /*
 (async function(){
