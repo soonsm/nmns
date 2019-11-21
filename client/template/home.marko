@@ -668,7 +668,11 @@
     let cleaned = ('' + str).replace(/\D/g, '');
     searchNoShowAction(cleaned);
 
-    document.getElementById("homeSearchNoShowAction").blur();
+
+    document.getElementById("homeSearchNoShowContents").blur();
+    document.getElementById("hideKeyboard").click();
+    document.getElementById("homeSearchNoShowCountArea").click();
+    document.getElementById("homeSearchNoShowCountArea").focus();
   }
 
 
