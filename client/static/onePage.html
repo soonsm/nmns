@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>WA:SHOW - 노쇼 말고 왓쇼!</title>
     <link rel="amphtml" href="/index.amp">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,shrink-to-fit=no">
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143798598-1"></script>
     <script>
@@ -61,7 +61,8 @@
 
         * {
             font-family: 'Spoqa Han Sans';
-            color: #334150
+            color: #334150;
+            flex-shrink: 0;
         }
 
         input {
@@ -335,7 +336,7 @@
         </div>
     </div>
 </section>
-<section id="homeAddNoShowArea" class="page none flex-column" style="color: #393535; background-color: #f8f8f8">
+<section id="homeAddNoShowArea" class="page none flex-column" style="color: #393535; background-color: #f8f8f8;">
     <div id='modalAddNoShowComplete' class="modalBackground none items-center justify-center">
         <div class="modal flex flex-column">
             <img src="/nmns/img/complete_check.svg" style="width: 70.9px; height: 70.9px; margin-top: 50px; margin-left: 125px"/>
@@ -364,16 +365,16 @@
             </div>
         </div>
     </div>
-    <div class="flex flex-column" style="margin:0px 20px 30px 20px;font-size: 15px; line-height: 1.13; letter-spacing: -0.15px;">
+    <div class="flex flex-column" style="margin:0px 20px 30px 20px;font-size: 15px; line-height: 1.13; letter-spacing: -0.15px; overflow: auto">
         <span style="margin-top: 38px;">
             고객 연락처
         </span>
-        <input id="telInAddNoShow" type="tel" class="bg-transparent flex-auto"
+        <input id="telInAddNoShow" type="tel" class="bg-transparent"
                style="margin-top:15px; height: 35px; border-radius: 2px; border: solid 0.5px #707070; padding: 8px 15px 8px 15px;">
         <span style="margin-top: 35px;">
             노쇼 날짜
         </span>
-        <input id="dateInAddNoShow" type="date" class="bg-transparent flex-auto"
+        <input id="dateInAddNoShow" type="date" class="bg-transparent"
                style="margin-top:15px; height: 35px; border-radius: 2px; border: solid 0.5px #707070; padding: 8px 15px 8px 15px">
         <span style="margin-top: 35px;">
             노쇼 사유
@@ -396,10 +397,11 @@
                 <label for="reason4"></label> <span style="margin-left:10px">진상</span>
             </div>
         </div>
-        <input id="noShowCaseEtc" type="text" class="bg-transparent flex-auto" placeholder="직접 입력"
+        <input id="noShowCaseEtc" type="text" class="bg-transparent" placeholder="직접 입력"
                style="margin-top:25px; height: 35px; border-radius: 2px; border: solid 0.5px #707070; padding: 8px 15px 8px 15px">
         <div id="btnAddNoShow" class="flex items-center justify-center" style="margin-top:39px; height: 42px;border-radius: 5px;box-shadow: 0 5px 6px 0 rgba(253, 91, 119, 0.25);background-color: #fd5b77;">
-            <span style="font-size: 13px; line-height: 1.69; letter-spacing: normal; color: #FFFFFF;">등록</span></div>
+            <span style="font-size: 13px; line-height: 1.69; letter-spacing: normal; color: #FFFFFF;">등록</span>
+        </div>
     </div>
 </section>
 <section id="contractArea" class="page none flex-column" style="color: #393535; background-color: #f8f8f8">
