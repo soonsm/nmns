@@ -64,6 +64,10 @@
             color: #334150
         }
 
+        input {
+            -webkit-appearance: none;
+        }
+
         .montserrat {
             font-family: 'Montserrat', 'Spoqa Han Sans'
         }
@@ -278,7 +282,7 @@
             <div class="block linkToHome bg-transparent">
                 <img name="goBackBtn" src="/nmns/img/back.svg" alt="뒤로" style="vertical-align:middle;cursor:pointer"/>
             </div>
-            <input class="border-none montserrat flex-auto bg-transparent" id="homeSearchNoShowContents" type="text" placeholder="휴대폰 번호로 노쇼 이력을 찾아보세요." style="padding:0 20px">
+            <input class="border-none montserrat flex-auto bg-transparent" id="homeSearchNoShowContents" type="tel" placeholder="휴대폰 번호로 노쇼 이력을 찾아보세요." style="padding:0 20px">
             <div class="right bg-transparent" id="homeSearchNoShowAction">
                 <img src="/nmns/img/search.svg" alt="검색" style="cursor:pointer"/>
             </div>
@@ -343,8 +347,8 @@
             </div>
             <hr style="margin-top: 48px; margin-bottom: 0px; width: 320px; height: 0px; opacity: 0.35;border: solid 0.5px #393535;">
             <div class="flex justify-between" style="margin-top: 22px; font-size:14px; line-height: 1.57; letter-spacing: normal; color: #393535;">
-                <button id="btnShare" style="margin-left: 25px;"><span>1초 만에 <span style="font-weight: bold">공유하기</span></span></button>
-                <button id="btnClose" style="margin-right: 25px"><span >닫기</span></button>
+                <div id="btnShare" style="margin-left: 25px;"><span>1초 만에 <span style="font-weight: bold">공유하기</span></span></div>
+                <div id="btnClose" style="margin-right: 25px"><span >닫기</span></div>
             </div>
         </div>
     </div>
@@ -364,7 +368,7 @@
         <span style="margin-top: 38px;">
             고객 연락처
         </span>
-        <input id="telInAddNoShow" type="text" class="bg-transparent flex-auto"
+        <input id="telInAddNoShow" type="tel" class="bg-transparent flex-auto"
                style="margin-top:15px; height: 35px; border-radius: 2px; border: solid 0.5px #707070; padding: 8px 15px 8px 15px;">
         <span style="margin-top: 35px;">
             노쇼 날짜
@@ -421,8 +425,8 @@
                 <div class="checkbox-wrapper">
                     <input type="checkbox" id="chkAgree" name="동의" style="display: none;"/><label for="chkAgree" class="checkbox-label"></label>
                 </div>
-                <div style="margin-left:8px; padding-top: 0px">
-                    <label style="line-height:1.43; letter-spacing: -0.14px; color: #393535; font-size: 14px; height: 36px;">이용약관을 꼭 읽어주시고 동의하신다면 체크해주세요!(필수)</label>
+                <div id="chkAgreeLabel" style="margin-left:8px; padding-top: 0px;">
+                    <label style="cursor: pointer; line-height:1.43; letter-spacing: -0.14px; color: #393535; font-size: 14px; height: 36px;">이용약관을 꼭 읽어주시고 동의하신다면 체크해주세요!(필수)</label>
                 </div>
             </div>
 
@@ -527,6 +531,9 @@
         }
         document.getElementById(elementId).classList.add(add);
         document.getElementById(elementId).classList.remove(remove);
+    }
+    document.getElementById("chkAgreeLabel").onclick = function(e){
+        document.getElementById("chkAgree").click();
     }
 
     // home page events
