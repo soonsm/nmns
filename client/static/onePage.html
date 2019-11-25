@@ -110,7 +110,7 @@
         }
 
         .page {
-            max-height: 100vh;
+            max-height: calc(100vh - 50px);
             height: calc(100vh - 3px)
         }
 
@@ -276,9 +276,12 @@
 
     <div class="page-bottom clearfix">
         <div id="homeLinkToIndex" class="cursor-pointer justify-center flex relative" style="margin:30px;cursor:pointer">
-            <div class="bg-darkPrimary col-12 rounded" style="padding:22px 20px;line-height:1.44;font-size:16px;letter-spacing:-0.16px">
-        <span class="white thin" style="line-height:23px"><span class="white regular" style="line-height:23px">노쇼 예방에 특화된</span><br>
-        예약시스템을 경험하세요!</span>
+            <div class="bg-darkPrimary col-12 rounded"
+                 style="padding:22px 0px;line-height:1.44;font-size:16px;letter-spacing:-0.16px">
+                <div style="margin-left:20px;">
+                    <span class="white thin" style="line-height:23px; ">
+                        <span class="white regular" style="line-height:23px">노쇼 예방에 특화된</span><br>예약시스템을 경험하세요!</span>
+                </div>
             </div>
             <div class="absolute bottom-0 right-0"><img src="/nmns/img/home_woman.svg" alt="홈 이미지"/></div>
         </div>
