@@ -310,8 +310,8 @@
     <div class="page-center flex-auto">
         <div id="homeSearchNoShowExists" class="none">
             <div class="flex items-center justify-between" style="margin: 32px 20px 16px 20px; font-size:14px;line-height:1.14;letter-spacing:-0.14px;color:#393535">
-                <div class="flex items-center">
-                    <div id="searchAddNoShow" name="addNoShowDirect" class="cursor-pointer black" style="cursor:pointer;visibility:hidden">이 번호로 노쇼 추가하기</div>
+                <div class="flex items-center" name="addNoShowDirect">
+                    <div id="searchAddNoShow" class="cursor-pointer black" style="cursor:pointer;visibility:hidden">이 번호로 노쇼 추가하기</div>
                     <div class="homeAddNoShowIcon" style="margin-left:5px"><img src="/nmns/img/search_add.svg" alt="노쇼 추가하기"/></div>
                 </div>
                 <div id="homeSearchNoShowCountArea" style="margin-right:0;visibility:hidden"><span>총</span><span id="homeSearchNoShowCount" style="font-weight: 500; line-height: 1.29; margin: 0px 1px 0px 5px"></span>건</div>
@@ -649,12 +649,12 @@
 
     document.getElementById("btnShare").onclick = function(e){
         const shareData = {
-            title: '노소공유',
-            text: '노쇼 공유!',
-            url: 'https://www.washow.co.kr/onePage.html',
+            title: 'WA:SHOW',
+            text: '노쇼 블랙리스트 공유',
+            url: 'https://www.washow.co.kr/home',
         }
         try {
-            navigator.share(shareData)
+            navigator.share(shareData);
         } catch(err) {
             console.log(JSON.stringify(err));
         }
