@@ -81,11 +81,6 @@
             outline: none
         }
 
-        /*body {*/
-        /*    background-color: #334150;*/
-        /*    min-height: 100vh*/
-        /*}*/
-
         .bg-primary {
             background-color: #334150;
             color: white
@@ -110,8 +105,6 @@
         }
 
         .page {
-            /*max-height: calc(100vh);*/
-            /*height: calc(100vh - 3px)*/
             height: 100vh; /* Fallback for browsers that do not support Custom Properties */
             height: calc(var(--vh, 1vh) * 100);
         }
@@ -244,7 +237,7 @@
     <![endif]-->
 </head>
 
-<body class="left-0 right-0" style="background-color: #334150;min-height: 100vh;">
+<body class="left-0 right-0" style="background-color: #334150;">
 <script>
     // if ('serviceWorker' in navigator) {
     //     window.addEventListener('load', function() {
@@ -323,12 +316,12 @@
                 </div>
             </div>
         </div>
-        <div id="homeSearchNoShowNotExist" class="none scrollArea center" style="max-height: calc(100vh - 166px);">
+        <div id="homeSearchNoShowNotExist" class="none scrollArea center" style="height: calc(var(--vh, 1vh) * 100 - 166px);">
             <div style="max-height: 240px;overflow: hidden;">
                 <img src="/nmns/img/goodperson.png" alt="노쇼를 하신 적이 없는 고객입니다." style="max-width:100vw;"/>
             </div>
             <div style="margin-bottom:0px;font-size:15px;line-height:1.47;">이 분 최소 배우신분!<br />노쇼 이력이 없어요.</div>
-            <div name="addNoShowDirect" class="center homeSearchAddNoShow" style="margin-top:98px;cursor:pointer">
+            <div name="addNoShowDirect" class="center homeSearchAddNoShow" style="cursor:pointer; margin-top:90px">
                 <span style="opacity:0.7;line-height:23px">이 번호로 노쇼 등록하기</span><img src="/nmns/img/result_add.svg" alt="노쇼 등록하기" style="line-height:23px;vertical-align:middle;margin-left:5px"/>
             </div>
         </div>
@@ -456,13 +449,13 @@
     </div>
 </section>
 <script>
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-
-    window.addEventListener('resize', () => {
+    let setPageHeight = function(){
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
-    });
+    }
+    setPageHeight();
+
+    window.addEventListener('resize', setPageHeight);
 
     let getToday = function(){
         let today = new Date();
