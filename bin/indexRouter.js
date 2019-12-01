@@ -33,7 +33,7 @@ module.exports = function(passport) {
   /**
      * Main Page(Calendar)
      */
-  router.get('/', async function(req, res) {
+  router.get('/home', async function(req, res) {
     //main calendar page
     if (req.user) {
       let user = await db.getWebUser(req.user.email);
@@ -89,7 +89,7 @@ module.exports = function(passport) {
       let user = await db.getWebUser(req.user.email);
       if (user.authStatus === process.nmns.AUTH_STATUS.EMAIL_VERIFICATED) {
         //로그인 되있으면 main으로 이동
-        res.redirect('/');
+        res.redirect('/home');
       } else {
         render(res, indexView, {
           email: user.email,
@@ -106,37 +106,6 @@ module.exports = function(passport) {
           req.query.kakaotalk && req.query.kakaotalk !== '' ? req.query.kakaotalk : undefined
       });
     }
-  });
-
-	
-  /**
-     * Home Page
-     */
-  router.get('/home', async function (req, res) {
-    render(res, homeView);
-  });
-
-  /**
-   * 노쇼 조회
-   */
-  router.post('/search', async function(req, res){
-    let contact = req.body.contact;
-    let list = await newDb.getNoShow(contact);
-    await res.json(list);
-  });
-
-  router.post('/add', async function(req, res){
-    let noShow = req.body;
-    let status = true, message = null;
-    try{
-      await newDb.addNoShow('soonsm@gmail.com', noShow.phone, noShow.noShowDate, noShow.noShowCase);
-    }catch(e){
-      status = false;
-      message = '노쇼를 추가하지 못했습니다. 잠시 후 이용 바랍니다.';
-    }
-
-    await res.json({status: status, message : message});
-
   });
 
   /**
@@ -170,7 +139,7 @@ module.exports = function(passport) {
           }
         }
         //로그인 성공
-        res.redirect('/');
+        res.redirect('/home');
       });
     })(req, res);
   });
@@ -201,7 +170,7 @@ module.exports = function(passport) {
   router.post('/sns_signin', async function(req, res) {
     let user = req.user;
     if (user) {
-      res.redirect('/');
+      res.redirect('/home');
       return;
     }
     let data = req.body;
@@ -439,7 +408,7 @@ module.exports = function(passport) {
       logger.error(e);
     }
 
-    res.redirect('/');
+    res.redirect('/home');
   });
 
   router.get('/web_cancel/key=:reservationKey&&email=:email', async (req, res) => {
@@ -648,10 +617,10 @@ module.exports = function(passport) {
         if (err) {
           logger.log('fail to destroy session: ', err);
         }
-        res.redirect('/');
+        res.redirect('/home');
       });
     } else {
-      res.redirect('/');
+      res.redirect('/home');
     }
   });
 
@@ -672,6 +641,30 @@ module.exports = function(passport) {
       var str = 'Your name is ' + req.body.name + ' and your nickname is ' + req.body.nickname;
       res.send(str);
     });
+  });
+
+  /*****
+   * SPA
+   */
+  router.get('/', async function (req, res) {
+    render(res, homeView);
+  });
+  router.post('/search', async function(req, res){
+    let contact = req.body.contact;
+    let list = await newDb.getNoShow(contact);
+    await res.json(list);
+  });
+  router.post('/add', async function(req, res){
+    let noShow = req.body;
+    let status = true, message = null;
+    try{
+      await newDb.addNoShow('soonsm@gmail.com', noShow.phone, noShow.noShowDate, noShow.noShowCase);
+    }catch(e){
+      status = false;
+      message = '노쇼를 추가하지 못했습니다. 잠시 후 이용 바랍니다.';
+    }
+
+    await res.json({status: status, message : message});
   });
 
   return router;

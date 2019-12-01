@@ -239,17 +239,17 @@
 
 <body class="left-0 right-0" style="background-color: #334150;">
 <script>
-    // if ('serviceWorker' in navigator) {
-    //     window.addEventListener('load', function() {
-    //         navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-    //             // Registration was successful
-    //             console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    //         }, function(err) {
-    //             // registration failed :(
-    //             console.log('ServiceWorker registration failed: ', err);
-    //         });
-    //     });
-    // }
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                // Registration was successful
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+                // registration failed :(
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
 </script>
 <section class="bg-primary overflow-hidden flex flex-column page" role="main" id="homePage">
     <div class="page-top clearfix">
@@ -318,7 +318,7 @@
         </div>
         <div id="homeSearchNoShowNotExist" class="none scrollArea center" style="height: calc(var(--vh, 1vh) * 100 - 166px);">
             <div style="max-height: 240px;overflow: hidden;">
-                <img src="/nmns/img/goodperson.png" alt="노쇼를 하신 적이 없는 고객입니다." style="max-width:100vw;"/>
+                <img src="/nmns/img/goodperson.png" alt="노쇼를 하신 적이 없는 고객입니다." style="max-width:330px;"/>
             </div>
             <div style="margin-bottom:0px;font-size:15px;line-height:1.47;">이 분 최소 배우신분!<br />노쇼 이력이 없어요.</div>
             <div name="addNoShowDirect" class="center homeSearchAddNoShow" style="cursor:pointer; margin-top:90px">
@@ -768,11 +768,10 @@
             document.querySelector('body').style.background = "#334150";
         }
         setVisiblity(linkName, true);
-
     }
 
     function getMobileOperatingSystem() {
-        const isInStandaloneMode = 'standalone' in window.navigator && window.navigator.standalone;
+        const isInStandaloneMode = ('standalone' in window.navigator && window.navigator.standalone) || (window.matchMedia('(display-mode: standalone)').matches);
         if(isInStandaloneMode){
             document.querySelector("#homeSearchArea .page-bottom").classList.add('none');
             return;
