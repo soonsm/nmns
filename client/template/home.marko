@@ -122,10 +122,10 @@
             margin-bottom: 15px
         }
         .scrollArea.noShowList {
-            max-height: calc(var(--vh, 1vh) * 100 - 238px);
+            max-height: calc(var(--vh, 1vh) * 100 - 140px)
         }
         .scrollArea.noShowList.scrollAreaWithBanner{
-            max-height: calc(var(--vh, 1vh) * 100 - 140px)
+            max-height: calc(var(--vh, 1vh) * 100 - 238px);
         }
 
         #homeSearchNoShowExists {
@@ -704,8 +704,7 @@
 
     document.getElementById("homeSearchCloseTooltip").onclick = function(){
         document.querySelector("#homeSearchArea .page-bottom").classList.add('none');
-
-        document.querySelector(".scrollArea").classList.add('scrollAreaWithBanner');
+        document.querySelector(".scrollArea").classList.remove('scrollAreaWithBanner');
     }
 
     // search handler
@@ -763,6 +762,7 @@
         deferredPrompt = e;
         e.preventDefault();
         showInstallBanner();
+        document.querySelector(".scrollArea").classList.add('scrollAreaWithBanner');
     });
 
     // common history handler
