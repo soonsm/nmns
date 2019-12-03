@@ -761,6 +761,7 @@
 
     window.addEventListener('beforeinstallprompt', e => {
         deferredPrompt = e;
+        e.preventDefault();
     });
 
     // common history handler
