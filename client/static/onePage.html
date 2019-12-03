@@ -762,6 +762,7 @@
     window.addEventListener('beforeinstallprompt', e => {
         deferredPrompt = e;
         e.preventDefault();
+        showInstallBanner();
     });
 
     // common history handler
@@ -782,7 +783,7 @@
         setVisiblity(linkName, true);
     }
 
-    function getMobileOperatingSystem() {
+    function showInstallBanner() {
         const isInStandaloneMode = ('standalone' in window.navigator && window.navigator.standalone) || (window.matchMedia('(display-mode: standalone)').matches);
         if(isInStandaloneMode){
             document.querySelector("#homeSearchArea .page-bottom").classList.add('none');
@@ -810,10 +811,7 @@
             document.querySelector(".homeSearchAddToDesktop.ios").classList.remove('flex');
             document.querySelector(".homeSearchAddToDesktop.ios").classList.add('none');
         }
-
-
     }
-    getMobileOperatingSystem();
 
 </script>
 </body>
