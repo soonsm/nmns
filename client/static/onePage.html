@@ -643,9 +643,13 @@
     }
 
     document.getElementById("btnShare").onclick = function(e){
+        let content = '노쇼와 블랙리스트공유, 똑똑한 예약관리를 한번에';
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            content = '노쇼와 블랙리스트공유, 똑똑한 예약관리를 한번에 - WA:SHOW'
+        }
         const shareData = {
             title: 'WA:SHOW',
-            text: '노쇼와 블랙리스트공유, 똑똑한 예약관리를 한번에 - WA:SHOW',
+            text: content,
             url: 'https://www.washow.co.kr/home',
         }
         try {
@@ -656,13 +660,18 @@
     }
 
     document.getElementById("btnClose").onclick = function(e){
+        let tel = document.getElementById('telInAddNoShow').value;
         resetAllInput();
 
         setVisiblity('modalAddNoShowComplete', false);
         setVisiblity('homeAddNoShowArea', false);
-        setVisiblity('homePage', true);
-        history.pushState({link: "homePage"}, "", "/home");
-        document.querySelector('body').style.background = "#334150";
+        setVisiblity('homePage', false);
+        setVisiblity('homeSearchArea', true);
+        history.pushState({link : "homeSearchArea"}, "", "/home/search");
+        document.querySelector('body').style.background = "#f8f8f8";
+        document.getElementById("homeSearchNoShowContents").value = tel;
+        document.getElementById("homeSearchNoShowAction").click();
+
     }
 
 
