@@ -558,12 +558,12 @@
         document.getElementById("chkAgree").click();
     }
 
-    let gaTrackingPage(page){
+    let gaTrackingPage = function(page){
         ga('gtag_UA_143798598_1.set', 'page', page);
         ga('gtag_UA_143798598_1.send', 'pageview');
     }
 
-    let gaTrackingEvent(action){
+    let gaTrackingEvent = function(action){
         ga('gtag_UA_143798598_1.send', 'event', 'NOSHOW_SPA', action);
     }
 
