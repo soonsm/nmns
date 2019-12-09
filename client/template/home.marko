@@ -562,25 +562,34 @@
     document.getElementById("homeSearchNoShow").onclick = function(e){
         setVisiblity('homePage', false);
         setVisiblity('homeSearchArea', true);
-        history.pushState({link : "homeSearchArea"}, "", "/home/search");
+        history.pushState({link : "homeSearchArea"}, "", "/search");
         document.querySelector('body').style.background = "#f8f8f8";
         document.getElementById("homeSearchNoShowContents").focus();
+
+        ga('set', 'page', '/search');
+        ga('send', 'pageview');
     };
 
     document.getElementById("homeAddNoShow").onclick = function(e){
         setVisiblity('homePage', false);
         setVisiblity('homeAddNoShowArea', true);
-        history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
+        history.pushState({link: "homeAddNoShowArea"}, "", "/add");
         document.querySelector('body').style.background = "#f8f8f8";
+
+        ga('set', 'page', '/add');
+        ga('send', 'pageview');
     }
 
     document.querySelectorAll('div[name="addNoShowDirect"]').forEach((el) => {
         el.onclick = function(){
             setVisiblity('homeSearchArea', false);
             setVisiblity('homeAddNoShowArea', true);
-            history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
+            history.pushState({link: "homeAddNoShowArea"}, "", "/add");
 
             document.getElementById('telInAddNoShow').value = document.getElementById('homeSearchNoShowContents').value;
+
+            ga('set', 'page', '/add');
+            ga('send', 'pageview');
         }
     });
 
@@ -615,8 +624,10 @@
 
         setVisiblity('homeAddNoShowArea', false);
         setVisiblity('contractArea', true);
-        history.pushState({link: "contractArea"}, "", "/home/contract");
+        history.pushState({link: "contractArea"}, "", "/contract");
 
+        ga('set', 'page', '/contract');
+        ga('send', 'pageview');
     }
 
 
@@ -636,7 +647,7 @@
             }else{
                 alert(res.message);
                 setVisiblity('homePage', true);
-                history.pushState({link: "homePage"}, "", "/home");
+                history.pushState({link: "homePage"}, "", "/");
                 document.querySelector('body').style.background = "#334150";
             }
         });
