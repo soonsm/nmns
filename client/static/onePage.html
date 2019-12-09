@@ -566,8 +566,8 @@
         document.querySelector('body').style.background = "#f8f8f8";
         document.getElementById("homeSearchNoShowContents").focus();
 
-        ga('set', 'page', '/search');
-        ga('send', 'pageview');
+        ga('gtag_UA_143798598_1.set', 'page', '/search');
+        ga('gtag_UA_143798598_1.send', 'pageview');
     };
 
     document.getElementById("homeAddNoShow").onclick = function(e){
@@ -576,8 +576,8 @@
         history.pushState({link: "homeAddNoShowArea"}, "", "/add");
         document.querySelector('body').style.background = "#f8f8f8";
 
-        ga('set', 'page', '/add');
-        ga('send', 'pageview');
+        ga('gtag_UA_143798598_1.set', 'page', '/add');
+        ga('gtag_UA_143798598_1.send', 'pageview');
     }
 
     document.querySelectorAll('div[name="addNoShowDirect"]').forEach((el) => {
@@ -588,8 +588,8 @@
 
             document.getElementById('telInAddNoShow').value = document.getElementById('homeSearchNoShowContents').value;
 
-            ga('set', 'page', '/add');
-            ga('send', 'pageview');
+            ga('gtag_UA_143798598_1.set', 'page', '/add');
+            ga('gtag_UA_143798598_1.send', 'pageview');
         }
     });
 
@@ -626,8 +626,8 @@
         setVisiblity('contractArea', true);
         history.pushState({link: "contractArea"}, "", "/contract");
 
-        ga('set', 'page', '/contract');
-        ga('send', 'pageview');
+        ga('gtag_UA_143798598_1.set', 'page', '/contract');
+        ga('gtag_UA_143798598_1.send', 'pageview');
     }
 
 
