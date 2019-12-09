@@ -676,6 +676,7 @@
         }
         try {
             navigator.share(shareData);
+            gaTrackingEvent('share_app');
         } catch(err) {
             console.log(JSON.stringify(err));
         }
@@ -773,10 +774,10 @@
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then(choiceResult => {
                 if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
                     document.getElementById('homeSearchCloseTooltip').click();
+                    gaTrackingEvent('install_app_success');
                 } else {
-                    console.log('User dismissed the A2HS prompt');
+                    console.log('User dismissed the prompt');
                 }
                 deferredPrompt = null;
             });
@@ -788,6 +789,7 @@
         e.preventDefault();
         showInstallBanner();
         document.querySelector(".scrollArea").classList.add('scrollAreaWithBanner');
+        gaTrackingEvent('install_app_try');
     });
 
     // common history handler
