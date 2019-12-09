@@ -558,6 +558,15 @@
         document.getElementById("chkAgree").click();
     }
 
+    let gaTrackingPage(page){
+        ga('gtag_UA_143798598_1.set', 'page', page);
+        ga('gtag_UA_143798598_1.send', 'pageview');
+    }
+
+    let gaTrackingEvent(action){
+        ga('gtag_UA_143798598_1.send', 'event', 'NOSHOW_SPA', action);
+    }
+
     // home page events
     document.getElementById("homeSearchNoShow").onclick = function(e){
         setVisiblity('homePage', false);
@@ -566,8 +575,7 @@
         document.querySelector('body').style.background = "#f8f8f8";
         document.getElementById("homeSearchNoShowContents").focus();
 
-        ga('gtag_UA_143798598_1.set', 'page', '/search');
-        ga('gtag_UA_143798598_1.send', 'pageview');
+        gaTrackingPage('/search');
     };
 
     document.getElementById("homeAddNoShow").onclick = function(e){
@@ -576,8 +584,7 @@
         history.pushState({link: "homeAddNoShowArea"}, "", "/add");
         document.querySelector('body').style.background = "#f8f8f8";
 
-        ga('gtag_UA_143798598_1.set', 'page', '/add');
-        ga('gtag_UA_143798598_1.send', 'pageview');
+        gaTrackingPage('/add');
     }
 
     document.querySelectorAll('div[name="addNoShowDirect"]').forEach((el) => {
@@ -588,8 +595,7 @@
 
             document.getElementById('telInAddNoShow').value = document.getElementById('homeSearchNoShowContents').value;
 
-            ga('gtag_UA_143798598_1.set', 'page', '/add');
-            ga('gtag_UA_143798598_1.send', 'pageview');
+            gaTrackingPage('/add');
         }
     });
 
@@ -626,8 +632,7 @@
         setVisiblity('contractArea', true);
         history.pushState({link: "contractArea"}, "", "/contract");
 
-        ga('gtag_UA_143798598_1.set', 'page', '/contract');
-        ga('gtag_UA_143798598_1.send', 'pageview');
+        gaTrackingPage('/contract');
     }
 
 
@@ -638,17 +643,23 @@
             document.getElementById("chkAgree").click();
         }
 
+        gaTrackingEvent('add_noshow');
+
         sendAjax('/add', noShowToSend, (res) => {
             setVisiblity('contractArea', false);
             if(res.status){
                 setVisiblity('homeAddNoShowArea', true);
                 history.pushState({link: "homeAddNoShowArea"}, "", "/add");
                 setVisiblity('modalAddNoShowComplete', true);
+
+                gaTrackingPage('/add');
             }else{
                 alert(res.message);
                 setVisiblity('homePage', true);
                 history.pushState({link: "homePage"}, "", "/");
                 document.querySelector('body').style.background = "#334150";
+
+                gaTrackingPage('/');
             }
         });
     }
@@ -683,6 +694,7 @@
         document.getElementById("homeSearchNoShowContents").value = tel;
         document.getElementById("homeSearchNoShowAction").click();
 
+        gaTrackingPage('/search');
     }
 
 
@@ -727,6 +739,8 @@
             alert(`전화번호가 올바르지 않습니다.(${searchContents})`);
             return;
         }
+
+        gaTrackingEvent('search_noshow');
 
         sendAjax('/search', {contact: searchContents}, (data)=>{
 
@@ -792,6 +806,8 @@
             document.querySelector('body').style.background = "#334150";
         }
         setVisiblity(linkName, true);
+
+        gaTrackingPage(location.pathname);
     }
 
     function showInstallBanner() {
