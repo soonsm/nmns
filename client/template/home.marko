@@ -642,7 +642,7 @@
             setVisiblity('contractArea', false);
             if(res.status){
                 setVisiblity('homeAddNoShowArea', true);
-                history.pushState({link: "homeAddNoShowArea"}, "", "/home/add");
+                history.pushState({link: "homeAddNoShowArea"}, "", "/add");
                 setVisiblity('modalAddNoShowComplete', true);
             }else{
                 alert(res.message);
@@ -661,7 +661,7 @@
         const shareData = {
             title: 'WA:SHOW',
             text: content,
-            url: 'https://www.washow.co.kr/home',
+            url: 'https://www.washow.co.kr',
         }
         try {
             navigator.share(shareData);
@@ -678,7 +678,7 @@
         setVisiblity('homeAddNoShowArea', false);
         setVisiblity('homePage', false);
         setVisiblity('homeSearchArea', true);
-        history.pushState({link : "homeSearchArea"}, "", "/home/search");
+        history.pushState({link : "homeSearchArea"}, "", "/search");
         document.querySelector('body').style.background = "#f8f8f8";
         document.getElementById("homeSearchNoShowContents").value = tel;
         document.getElementById("homeSearchNoShowAction").click();
