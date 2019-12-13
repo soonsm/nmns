@@ -646,6 +646,9 @@ module.exports = function(passport) {
   /*****
    * SPA
    */
+  router.get('/test', async function (req, res) {
+    render(res, require('../client/template/test'));
+  });
   router.get('/', async function (req, res) {
     render(res, homeView);
   });

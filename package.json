@@ -8,7 +8,6 @@
     "test": "jasmine"
   },
   "dependencies": {
-    "@lasso/marko-taglib": "^1.0.15",
     "aws-sdk": "^2.282.1",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
@@ -28,8 +27,6 @@
     "hangul-js": "^0.2.5",
     "js-sha256": "^0.9.0",
     "js-sha512": "^0.8.0",
-    "lasso": "^3.3.1",
-    "lasso-marko": "^2.4.8",
     "lodash": "^4.17.10",
     "marko": "4.10.0",
     "mobile-detect": "^1.4.2",
