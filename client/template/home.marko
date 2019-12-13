@@ -463,6 +463,44 @@
     </div>
 </section>
 <script>
+    let setVisiblity = function(elementId, show){
+        let add = 'flex', remove = 'none';
+        if(!show){
+            add = 'none';
+            remove = 'flex';
+        }
+        document.getElementById(elementId).classList.add(add);
+        document.getElementById(elementId).classList.remove(remove);
+    }
+    let gaTrackingPage = function(page){
+        try{
+            ga('gtag_UA_143798598_1.set', 'page', page);
+            ga('gtag_UA_143798598_1.send', 'pageview');
+        }catch(e){
+            console.log(e);
+        }
+    }
+
+    let gaTrackingEvent = function(action){
+        try{
+            ga('gtag_UA_143798598_1.send', 'event', 'NOSHOW_SPA', action);
+        }catch(e){
+            console.log(e);
+        }
+    }
+    let phone = '${(input.contact)}';
+    let view = '${(input.view)}';
+    if(view === 'addNoShow'){
+        setVisiblity('homePage', false);
+        setVisiblity('homeAddNoShowArea', true);
+        history.pushState({link: "homeAddNoShowArea"}, "", "/add");
+
+        document.getElementById('telInAddNoShow').value = phone;
+        // document.getElementById("dateInAddNoShow").value = getToday();
+
+        gaTrackingPage('/add');
+    }
+
     let setPageHeight = function(){
         let vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -557,26 +595,8 @@
         document.getElementById('homeSearchNoShowContents').value = '';
     }
 
-    let setVisiblity = function(elementId, show){
-        let add = 'flex', remove = 'none';
-        if(!show){
-            add = 'none';
-            remove = 'flex';
-        }
-        document.getElementById(elementId).classList.add(add);
-        document.getElementById(elementId).classList.remove(remove);
-    }
     document.getElementById("chkAgreeLabel").onclick = function(e){
         document.getElementById("chkAgree").click();
-    }
-
-    let gaTrackingPage = function(page){
-        ga('gtag_UA_143798598_1.set', 'page', page);
-        ga('gtag_UA_143798598_1.send', 'pageview');
-    }
-
-    let gaTrackingEvent = function(action){
-        ga('gtag_UA_143798598_1.send', 'event', 'NOSHOW_SPA', action);
     }
 
     // home page events
@@ -695,19 +715,15 @@
     }
 
     document.getElementById("btnClose").onclick = function(e){
-        let tel = document.getElementById('telInAddNoShow').value;
         resetAllInput();
 
         setVisiblity('modalAddNoShowComplete', false);
         setVisiblity('homeAddNoShowArea', false);
-        setVisiblity('homePage', false);
-        setVisiblity('homeSearchArea', true);
-        history.pushState({link : "homeSearchArea"}, "", "/search");
-        document.querySelector('body').style.background = "#f8f8f8";
-        document.getElementById("homeSearchNoShowContents").value = tel;
-        document.getElementById("homeSearchNoShowAction").click();
+        setVisiblity('homeSearchArea', false);
+        setVisiblity('homePage', true);
+        history.pushState({link : "homePage"}, "", "/");
 
-        gaTrackingPage('/search');
+        gaTrackingPage('/');
     }
 
 
@@ -755,29 +771,30 @@
 
         gaTrackingEvent('search_noshow');
 
-        sendAjax('/search', {contact: searchContents}, (data)=>{
+        function post(path, params, method='post') {
 
-            if(data.length === 0){// 노쇼 없음
-                document.getElementById('searchAddNoShow').style.visibility = 'hidden'; // 노쇼 추가 숨김
-                document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
-                document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
-                document.getElementById('homeSearchNoShowNotExist').classList.remove('none');//이미지 보여줌
-            }else{// 노쇼 있음
-                document.getElementById('searchAddNoShow').style.visibility = 'visible'; // 노쇼 추가 보여줌
-                document.getElementById('homeSearchNoShowCount').innerText = data.length;//총 갯수 넣어주기
-                document.getElementById('homeSearchNoShowCountArea').style.visibility = 'visible';//총 갯수 보여줌
-                let list = "";
-                data.sort((a, b) => {
-                    return b.date - a.date;
-                });
-                data.forEach(function(noShow){
-                    list += "<div class='homeSearchNoShowData flex'><div class='homeSearchNoShowDate montserrat'>"+noShow.date.substring(0,4)+"."+noShow.date.substring(4,6)+"."+noShow.date.substring(6)+"</div><span style='margin:0 15px;opacity:0.5;color:#393535;'> |</span><div class='homeSearchNoShowCase'>"+ (noShow.noShowCase || '노쇼') +"</div></div>";
-                });
-                document.getElementById('homeSearchNoShowList').innerHTML = list;// 리스트 채움
-                document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
-                document.getElementById('homeSearchNoShowExists').classList.remove('none');//리스트 보여줌
+            // The rest of this code assumes you are not using a library.
+            // It can be made less wordy if you use one.
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+
+            for (const key in params) {
+                if (params.hasOwnProperty(key)) {
+                    const hiddenField = document.createElement('input');
+                    hiddenField.type = 'hidden';
+                    hiddenField.name = key;
+                    hiddenField.value = params[key];
+
+                    form.appendChild(hiddenField);
+                }
             }
-        });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        post('/search', {contact: searchContents});
     }
 
     let deferredPrompt = null;

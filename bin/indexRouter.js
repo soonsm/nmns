@@ -17,7 +17,7 @@ const pcMainView = require('../client/template/main');
 const mobileMainView = require('../client/template/main.mobile');
 const indexView = require('../client/template/index');
 const homeView = require('../client/template/home');
-// const homeView = require('../pages/hello');
+const searchView = require('../client/template/search');
 const cancelView = require('../client/template/reservationCancel');
 const naverView = require('../client/template/naver');
 
@@ -649,10 +649,16 @@ module.exports = function(passport) {
   router.get('/', async function (req, res) {
     render(res, homeView);
   });
+  router.post('/', async function(req, res){
+    let contact = req.body.contact;
+    let view = req.body.view;
+    render(res, homeView, {view: view, contact: contact});
+  });
   router.post('/search', async function(req, res){
     let contact = req.body.contact;
     let list = await newDb.getNoShow(contact);
-    await res.json(list);
+
+    render(res, searchView, {noShowList : list, contact: contact});
   });
   router.post('/add', async function(req, res){
     let noShow = req.body;

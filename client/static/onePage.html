@@ -15,6 +15,7 @@
         gtag('config', 'UA-143798598-1');
     </script>
     <script data-ad-client="ca-pub-9033171735953041" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="theme-color" content="#334150"/>
@@ -755,29 +756,54 @@
 
         gaTrackingEvent('search_noshow');
 
-        sendAjax('/search', {contact: searchContents}, (data)=>{
 
-            if(data.length === 0){// 노쇼 없음
-                document.getElementById('searchAddNoShow').style.visibility = 'hidden'; // 노쇼 추가 숨김
-                document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
-                document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
-                document.getElementById('homeSearchNoShowNotExist').classList.remove('none');//이미지 보여줌
-            }else{// 노쇼 있음
-                document.getElementById('searchAddNoShow').style.visibility = 'visible'; // 노쇼 추가 보여줌
-                document.getElementById('homeSearchNoShowCount').innerText = data.length;//총 갯수 넣어주기
-                document.getElementById('homeSearchNoShowCountArea').style.visibility = 'visible';//총 갯수 보여줌
-                let list = "";
-                data.sort((a, b) => {
-                    return b.date - a.date;
-                });
-                data.forEach(function(noShow){
-                    list += "<div class='homeSearchNoShowData flex'><div class='homeSearchNoShowDate montserrat'>"+noShow.date.substring(0,4)+"."+noShow.date.substring(4,6)+"."+noShow.date.substring(6)+"</div><span style='margin:0 15px;opacity:0.5;color:#393535;'> |</span><div class='homeSearchNoShowCase'>"+ (noShow.noShowCase || '노쇼') +"</div></div>";
-                });
-                document.getElementById('homeSearchNoShowList').innerHTML = list;// 리스트 채움
-                document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
-                document.getElementById('homeSearchNoShowExists').classList.remove('none');//리스트 보여줌
+        function post(path, params, method='post') {
+
+            // The rest of this code assumes you are not using a library.
+            // It can be made less wordy if you use one.
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+
+            for (const key in params) {
+                if (params.hasOwnProperty(key)) {
+                    const hiddenField = document.createElement('input');
+                    hiddenField.type = 'hidden';
+                    hiddenField.name = key;
+                    hiddenField.value = params[key];
+
+                    form.appendChild(hiddenField);
+                }
             }
-        });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        post('/search', {contact: searchContents});
+        // sendAjax('/search', {contact: searchContents}, (data)=>{
+        //
+        //     if(data.length === 0){// 노쇼 없음
+        //         document.getElementById('searchAddNoShow').style.visibility = 'hidden'; // 노쇼 추가 숨김
+        //         document.getElementById('homeSearchNoShowCountArea').style.visibility = 'hidden';//총 갯수 숨김
+        //         document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
+        //         document.getElementById('homeSearchNoShowNotExist').classList.remove('none');//이미지 보여줌
+        //     }else{// 노쇼 있음
+        //         document.getElementById('searchAddNoShow').style.visibility = 'visible'; // 노쇼 추가 보여줌
+        //         document.getElementById('homeSearchNoShowCount').innerText = data.length;//총 갯수 넣어주기
+        //         document.getElementById('homeSearchNoShowCountArea').style.visibility = 'visible';//총 갯수 보여줌
+        //         let list = "";
+        //         data.sort((a, b) => {
+        //             return b.date - a.date;
+        //         });
+        //         data.forEach(function(noShow){
+        //             list += "<div class='homeSearchNoShowData flex'><div class='homeSearchNoShowDate montserrat'>"+noShow.date.substring(0,4)+"."+noShow.date.substring(4,6)+"."+noShow.date.substring(6)+"</div><span style='margin:0 15px;opacity:0.5;color:#393535;'> |</span><div class='homeSearchNoShowCase'>"+ (noShow.noShowCase || '노쇼') +"</div></div>";
+        //         });
+        //         document.getElementById('homeSearchNoShowList').innerHTML = list;// 리스트 채움
+        //         document.getElementById('homeSearchNoShowNotExist').classList.add('none');//이미지 숨김
+        //         document.getElementById('homeSearchNoShowExists').classList.remove('none');//리스트 보여줌
+        //     }
+        // });
     }
 
     let deferredPrompt = null;
