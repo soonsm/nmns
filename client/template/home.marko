@@ -794,7 +794,8 @@
             form.submit();
         }
 
-        post('/search', {contact: searchContents});
+        // post('/search', {contact: searchContents});
+        location.href = "/search/contact=" + searchContents;
     }
 
     let deferredPrompt = null;

@@ -660,6 +660,13 @@ module.exports = function(passport) {
 
     render(res, searchView, {noShowList : list, contact: contact});
   });
+
+  router.get('/search/contact=:contact', async function(req, res){
+    let contact = req.params.contact;
+    let list = await newDb.getNoShow(contact);
+
+    render(res, searchView, {noShowList : list, contact: contact});
+  });
   router.post('/add', async function(req, res){
     let noShow = req.body;
     let status = true, message = null;
