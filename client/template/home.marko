@@ -496,7 +496,7 @@
         history.pushState({link: "homeAddNoShowArea"}, "", "/add");
 
         document.getElementById('telInAddNoShow').value = phone;
-        // document.getElementById("dateInAddNoShow").value = getToday();
+        document.querySelector('body').style.background = "#f8f8f8";
 
         gaTrackingPage('/add');
     }
