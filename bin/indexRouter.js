@@ -624,34 +624,32 @@ module.exports = function(passport) {
     }
   });
 
-  router.get('/form-tester', (req, res) => {
-    res.render('form-tester.html', {
-      title: 'Form Tester'
-    });
-  });
-
-  router.post('/form-tester', (req, res) => {
-    upload(req, res, function(err) {
-      if (err) {
-        console.log(err);
-      }
-      console.log(req.body);
-      console.log(req.file);
-
-      var str = 'Your name is ' + req.body.name + ' and your nickname is ' + req.body.nickname;
-      res.send(str);
-    });
-  });
 
   /*****
    * SPA
    */
-  router.get('/test', async function (req, res) {
-    render(res, require('../client/template/test'));
-  });
   router.get('/', async function (req, res) {
-    render(res, homeView);
+    let totalNoShowCount = await newDb.getTotalNoShowCount();
+    if(req.session.visit){
+      req.session.visit +=1;
+    }else{
+      req.session.visit = 1;
+    }
+
+    if(!req.session.addNoShow){
+      req.session.addNoShow = 0;
+    }
+
+    console.log(totalNoShowCount + 5000);
+
+    render(res, homeView, {
+      noShowCount: totalNoShowCount + 5000,
+      searchCount: 200 + Math.floor(Math.random()*(30+1)),
+      visitCount: req.session.visit,
+      addNoShowCount: req.session.addNoShow
+    });
   });
+
   router.post('/', async function(req, res){
     let contact = req.body.contact;
     let view = req.body.view;
@@ -675,12 +673,45 @@ module.exports = function(passport) {
     let status = true, message = null;
     try{
       await newDb.addNoShow('soonsm@gmail.com', noShow.phone, noShow.noShowDate, noShow.noShowCase);
+      if(req.session.addNoShow){
+        req.session.addNoShow +=1;
+      }else{
+        req.session.addNoShow = 1;
+      }
     }catch(e){
       status = false;
       message = '노쇼를 추가하지 못했습니다. 잠시 후 이용 바랍니다.';
     }
 
     await res.json({status: status, message : message});
+  });
+
+  router.post('/getRecent', async function(req, res){
+    let status = true, message = null;
+    let list;
+    let now = moment();
+    try{
+      list = await newDb.getRecentNoShow();
+      for(let item of list){
+        let timestamp = moment(item.timestamp, 'YYYYMMDDHHmmssSSS');
+        let duration = moment.duration(now.diff(timestamp));
+        if(duration.as('seconds') < 60){
+          item.before = duration.seconds() + '초 전';
+        }else if(duration.as('minutes') < 60){
+          item.before = duration.minutes() + '분 전';
+        }else if(duration.as('hours') < 24){
+          item.before = duration.hours() + '시간 전';
+        }else{
+          item.before = duration.days() + '일 전';
+        }
+      }
+
+    }catch(e){
+      status = false;
+      message = '최근 노쇼 내역 가져오기를 실패했습니다. 잠시 후 이용 바랍니다.';
+    }
+
+    await res.json({status: status, data: list, message : message});
   });
 
   return router;

@@ -258,6 +258,13 @@ exports.addNoShow = async function (email, phone, noShowDate, noShowCase, id, na
         }
     });
 
+    let maskedPhone;
+    if(phone.length === 11){
+        maskedPhone = phone.substring(0,3) + '-****-' + phone.substring(7);
+    }else{
+        maskedPhone = phone.substring(0,3) + '-***-' + phone.substring(6);
+    }
+
     return await put({
         TableName: process.nmns.TABLE.NoShow,
         Item: {
@@ -267,10 +274,42 @@ exports.addNoShow = async function (email, phone, noShowDate, noShowCase, id, na
             email: email,
             noShowCase: noShowCase,
             id: id,
-            name: name
+            name: name,
+            maskedPhone: maskedPhone,
+            hasMaskedPhone: 'yes'
         }
     });
 };
+
+exports.getRecentNoShow = async function(){
+    return await queryPaging({
+        TableName: process.nmns.TABLE.NoShow,
+        IndexName: 'TimestampIndex',
+        KeyConditionExpression: 'hasMaskedPhone = :yes',
+        ExpressionAttributeValues: {
+            ':yes': 'yes',
+        },
+        ScanIndexForward: false,
+    }, 20, 1);
+}
+
+let getTotalCount = function (tableName) {
+    return new Promise((resolve) => {
+        let svc = new AWS.DynamoDB();
+        svc.describeTable({TableName: tableName},function(err, data) {
+            if (err) {
+                resolve();
+            } else {
+                var table = data['Table'];
+                resolve(table['ItemCount']);
+            }
+        });
+    });
+}
+
+exports.getTotalNoShowCount = async function(){
+    return await getTotalCount(process.nmns.TABLE.NoShow);
+}
 
 exports.getNoShow = async function (phone, email) {
     if (!nmnsUtil.phoneNumberValidation(phone)) {
