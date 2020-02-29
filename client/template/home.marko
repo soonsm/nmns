@@ -137,7 +137,8 @@
             padding: 17px 20px;
             background-color: white;
             box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.05);
-            color: #393535
+            color: #393535;
+            font-size:14px;
         }
 
         .homeSearchNoShowData:last-child {
@@ -151,6 +152,24 @@
         .homeSearchNoShowCase {
             word-break: break-all;
             width: calc(100% - 110px);
+            display: block;
+            display: -webkit-box;
+            line-height: 1.57;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top:-3px;
+        }
+        .homeSearchNoShowCase.homeSearchRecentNoShowCase{
+            width: calc(100% - 184px);
+            padding-right:12px;
+        }
+        .homeSearchRecentNoShowBefore{
+            opacity:0.5
+        }
+        .homeSearchRecentNoShowPhone, .homeSearchRecentNoShowPhone+span, .homeSearchRecentNoShowBefore{
+            align-self: flex-start;
         }
 
         .homeSearchAddToDesktopTooltipTip {
@@ -329,7 +348,7 @@
 <!--        </script>-->
         <div id="homeSearchNoShowExists">
             <div class="flex-column scrollArea noShowList">
-                <div id="homeSearchNoShowList" class="flex-column"></div>
+                <div id="homeSearchNoShowList" class="flex-column" style="margin-top:30px"></div>
             </div>
         </div>
         <div id="homeSearchNoShowNotExist" class="none center">
@@ -613,7 +632,7 @@
             if(res.status === true){
                 var list = '';
                 res.data.forEach(function(noShow){
-                    list += "<div class='homeSearchNoShowData flex'><div class='homeSearchNoShowDate montserrat'>"+noShow.date.substring(0,4)+"."+noShow.date.substring(4,6)+"."+noShow.date.substring(6)+"</div><span style='margin:0 15px;opacity:0.5;color:#393535;'> |</span><div class='homeSearchNoShowCase'>"+ (noShow.noShowCase || '노쇼') +"</div></div>";
+                    list += "<div class='homeSearchNoShowData items-center flex'><div class='homeSearchRecentNoShowPhone montserrat'>"+(noShow.maskedPhone || "010-****-****")+"</div><span style='margin:0 15px;opacity:0.5;color:#393535;'> |</span><div class='homeSearchNoShowCase homeSearchRecentNoShowCase'>"+ (noShow.noShowCase || '노쇼') +"</div><div class='homeSearchRecentNoShowBefore'>"+noShow.before+"</div></div>";
                 });
                 document.getElementById('homeSearchNoShowList').innerHTML = list;// 리스트 채움
             }

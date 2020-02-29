@@ -153,6 +153,21 @@
             word-break: break-all;
             width: calc(100% - 110px);
         }
+        .homeSearchNoShowCase {
+            word-break: break-all;
+            width: calc(100% - 110px);
+            display: block;
+            display: -webkit-box;
+            line-height: 1.57;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top:-3px;
+        }
+        .homeSearchNoShowDate, .homeSearchNoShowDate+span{
+            align-self: flex-start;
+        }
 
         .homeSearchAddToDesktopTooltipTip {
             width: 0;
