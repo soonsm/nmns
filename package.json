@@ -54,7 +54,8 @@
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.1",
     "gulp-uglify": "^3.0.1",
-    "jasmine": "^3.4.0"
+    "jasmine": "^3.4.0",
+    "lasso": "^3.3.1"
   },
   "browserslist": [
     "last 2 versions",

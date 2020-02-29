@@ -261,34 +261,49 @@
     </div>
 
     <div class="page-center clearfix relative">
-        <div class="justify-center flex rounded bg-white cursor-pointer p2" id="homeSearchNoShow" style="margin:0 30px; box-shadow: 0 15px 10px 0 rgba(0, 0, 0, 0.1);">
+        <div class="justify-center flex rounded bg-white cursor-pointer p2" id="homeSearchNoShow" style="margin:75px 30px 0 30px; box-shadow: 0 15px 10px 0 rgba(0, 0, 0, 0.1);">
             <div class="homeSearchNoShowIcon"><img src="/nmns/img/search.svg" alt="검색" style="margin-bottom: -2px;"/></div>
             <div class="flex-auto flex items-center" style="opacity:0.35;font-size:14px;margin-left:15px">
                 휴대폰 번호로 노쇼 이력을 찾아보세요.
             </div>
         </div>
-
-        <div id="homeAddNoShow" class="justify-center flex cursor-pointer white absolute left-0 right-0" style="margin:27px auto 0 auto;opacity:0.7;font-size:14px;line-height:18px;cursor:pointer">
-            노쇼 추가하기
-            <div class="homeAddNoShowIcon" style="margin-left:5px"><img src="/nmns/img/home_add.svg" alt="노쇼 추가하기"/></div>
+        <div class="justify-center flex rounded p2" style="border:0.5px solid rgba(255,255,255,0.5);margin:0 30px">
+            <div class="flex-auto flex flex-column items-center center white col-6">
+                <div class="bold montserrat white" style="opacity:0.9;font-size:22px">${input.noShowCount}</div>
+                <div class="white" style="opacity:0.35;font-size:11px;margin-top:1px">등록된 전체 노쇼수</div>
+            </div>
+            <div class="flex-auto flex flex-column items-center center white col-6">
+                <div class="bold montserrat white" style="opacity:0.9;font-size:22px">${input.searchCount}</div>
+                <div class="white" style="opacity:0.35;font-size:11px;margin-top:1px">최근 7일간 노쇼 조회수</div>
+            </div>
         </div>
     </div>
 
     <div class="page-bottom clearfix">
-        <div id="homeLinkToIndex" class="cursor-pointer justify-center flex relative" style="margin:30px;cursor:pointer">
+
+
+        <div id="homeAddNoShow" class="justify-center flex flex-column cursor-pointer white" style="font-size:14px;cursor:pointer">
+            <div id="homeAddNoShowCountSummary" class="bold white center" style="margin-bottom:8px"></div>
+            <div class="flex white center justify-center" style="opacity:0.7">
+                노쇼 등록하기
+                <div class="homeAddNoShowIcon" style="margin-left:5px"><img src="/nmns/img/home_add.svg" alt="노쇼 추가하기"/></div>
+            </div>
+        </div>
+
+        <div id="homeLinkToIndex" class="cursor-pointer justify-center flex relative" style="margin:22px 30px 30px 30px;cursor:pointer">
             <div class="bg-darkPrimary col-12 rounded"
-                 style="padding:22px 0px;line-height:1.44;font-size:16px;letter-spacing:-0.16px">
+                 style="padding:14px 0px;line-height:1.44;font-size:14px;letter-spacing:-0.16px">
                 <div style="margin-left:20px;">
                     <span class="white thin" style="line-height:23px; ">
                         <span class="white regular" style="line-height:23px">노쇼 예방에 특화된</span><br>예약시스템을 경험하세요!</span>
                 </div>
             </div>
-            <div class="absolute bottom-0 right-0"><img src="/nmns/img/home_woman.svg" alt="홈 이미지" style="margin-bottom: -2px;"/></div>
+            <div class="absolute bottom-0 right-0"><img src="/nmns/img/home_woman.svg" alt="홈 이미지" style="margin-bottom: -2px;height:83px"/></div>
         </div>
     </div>
 
 </section>
-<section id="homeSearchArea" class="page flex-column none">
+<section id="homeSearchArea" class="page flex-column none" style="background-color:#f8f8f8">
     <div style="padding:22px 20px 15px 20px; border-bottom: 0.5px solid rgba(57, 53, 53, .7);">
         <div class="flex" id="searchBarDiv">
             <div class="block linkToHome bg-transparent">
@@ -312,19 +327,9 @@
 <!--        <script>-->
 <!--            (adsbygoogle = window.adsbygoogle || []).push({});-->
 <!--        </script>-->
-        <div id="homeSearchNoShowExists" class="none">
-            <div class="flex items-center justify-between" style="margin: 32px 20px 16px 20px; font-size:14px;line-height:1.14;letter-spacing:-0.14px;color:#393535">
-                <div class="flex items-center" name="addNoShowDirect">
-                    <div id="searchAddNoShow" class="cursor-pointer black" style="cursor:pointer;visibility:hidden">이 번호로 노쇼 추가하기</div>
-                    <div class="homeAddNoShowIcon flex items-center" style="margin-left:5px"><img src="/nmns/img/search_add.svg" alt="노쇼 추가하기"/></div>
-                </div>
-                <div id="homeSearchNoShowCountArea" style="margin-right:0;visibility:hidden"><span>총</span><span id="homeSearchNoShowCount" class="montserrat" style="font-weight: 500; line-height: 1.29; margin: 0px 1px 0px 5px"></span>건</div>
-            </div>
+        <div id="homeSearchNoShowExists">
             <div class="flex-column scrollArea noShowList">
                 <div id="homeSearchNoShowList" class="flex-column"></div>
-                <div style="margin:35px 0;text-align:center">
-                    <a href="mailto:support@washow.co.kr" style="text-decoration:none;opacity:0.7">기록삭제 요청하기 &gt;</a>
-                </div>
             </div>
         </div>
         <div id="homeSearchNoShowNotExist" class="none center">
@@ -364,7 +369,7 @@
     <div id='modalAddNoShowComplete' class="modalBackground none items-center justify-center">
         <div class="modal flex flex-column">
             <img src="/nmns/img/complete_check.svg" style="width: 70.9px; height: 70.9px; margin-top: 50px; margin-left: 125px"/>
-            <div style="margin-top: 49.1px; margin-left: 33.5px; width:253px; height:114px; font-size: 15px; line-height: 1.6; letter-spacing: -0.15px; text-align: center; color: #393535;">
+            <div class="center" style="margin-top: 49.1px; margin-left: 33.5px; width:253px; height:114px; font-size: 15px; line-height: 1.6; letter-spacing: -0.15px; color: #393535;">
                 <span style="font-weight: bold">등록이 완료 되었어요.</span>
                 <br />
                 <br />
@@ -383,7 +388,7 @@
                 <img name="goBackBtn" src="/nmns/img/back.svg" alt="뒤로" style="vertical-align:middle;cursor:pointer"/>
             </div>
             <div class="flex-auto flex justify-center" style="position: absolute;left: 50%;transform: translate(-50%, -50%);">
-                <div style="margin-top: 21px; height: 26px ;font-size: 22px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.18;letter-spacing: -0.22px; text-align: center;color: #334150;">
+                <div class="center" style="margin-top: 21px; height: 26px ;font-size: 22px;font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.18;letter-spacing: -0.22px; color: #334150;">
                     노쇼 등록
                 </div>
             </div>
@@ -435,7 +440,7 @@
                 <img name="goBackBtn" src="/nmns/img/back.svg" alt="뒤로" style="vertical-align:middle;cursor:pointer"/>
             </div>
             <div class="flex-auto flex justify-center" style="position: absolute;left: 50%;transform: translate(-50%, -50%);">
-                <div style="margin-top: 21px; height: 26px; font-size: 22px; font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.18;letter-spacing: -0.22px;text-align: center;color: #334150;">
+                <div class="center" style="margin-top: 21px; height: 26px; font-size: 22px; font-weight: bold;font-stretch: normal;font-style: normal;line-height: 1.18;letter-spacing: -0.22px;color: #334150;">
                     약관 동의
                 </div>
             </div>
@@ -462,6 +467,15 @@
     </div>
 </section>
 <script>
+
+    // polyfill for IE
+    if (typeof NodeList !== "undefined" && NodeList.prototype && !NodeList.prototype.forEach) {
+        NodeList.prototype.forEach = Array.prototype.forEach;
+    }
+    if (typeof HTMLCollection !== "undefined" && HTMLCollection.prototype && !HTMLCollection.prototype.forEach) {
+        HTMLCollection.prototype.forEach = Array.prototype.forEach;
+    }
+
     let setVisiblity = function(elementId, show){
         let add = 'flex', remove = 'none';
         if(!show){
@@ -502,7 +516,7 @@
 
     let setPageHeight = function(){
         let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
+        document.documentElement.style.setProperty('--vh', vh + 'px');
     }
     setPageHeight();
 
@@ -510,11 +524,11 @@
 
     let getToday = function(){
         let today = new Date();
-        let dd = String(today.getDate()).padStart(2, '0');
-        let mm = String(today.getMonth() + 1).padStart(2, '0');
+        let dd = today.getDate();
+        let mm = today.getMonth() + 1;
         let yyyy = today.getFullYear();
 
-        return `${yyyy}-${mm}-${dd}`
+        return yyyy + '-' + (mm <= 9 ? '0' : '') + mm  + '-' + (dd <= 9 ? '0' : '') + dd;
     }
 
     document.getElementById("dateInAddNoShow").value = getToday();
@@ -533,11 +547,11 @@
     };
 
     let phoneNumberValidation = function(phone){
-        const phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
+        var phoneRex = /^01([016789]?)([0-9]{3,4})([0-9]{4})$/;
         return phoneRex.test(phone);
     };
     let dateValidation = function(date){
-        const dateRex = /([0-9]{8})$/;
+        var dateRex = /([0-9]{8})$/;
         return dateRex.test(date);
     }
 
@@ -582,7 +596,7 @@
     }
 
     let resetAllInput = function(){
-        ['homeSearchNoShowContents', 'telInAddNoShow', 'noShowCaseEtc'].forEach( id => document.getElementById(id).value = null);
+        ['homeSearchNoShowContents', 'telInAddNoShow', 'noShowCaseEtc'].forEach(function(id) {document.getElementById(id).value = null});
         document.getElementById("dateInAddNoShow").value = getToday();
         document.getElementById('chkAgree').checked = false;
         document.getElementById('reason1').checked = true;
@@ -592,6 +606,18 @@
         document.getElementById('searchAddNoShow').style.visibility = 'hidden';//노쇼 추가 버튼 숨김
         document.getElementById('homeSearchNoShowExists').classList.add('none');//리스트 숨김
         document.getElementById('homeSearchNoShowContents').value = '';
+    }
+
+    let requestAndShowRecentNoShow = function(){
+        sendAjax('/getRecent', {}, function(res){
+            if(res.status === true){
+                var list = '';
+                res.data.forEach(function(noShow){
+                    list += "<div class='homeSearchNoShowData flex'><div class='homeSearchNoShowDate montserrat'>"+noShow.date.substring(0,4)+"."+noShow.date.substring(4,6)+"."+noShow.date.substring(6)+"</div><span style='margin:0 15px;opacity:0.5;color:#393535;'> |</span><div class='homeSearchNoShowCase'>"+ (noShow.noShowCase || '노쇼') +"</div></div>";
+                });
+                document.getElementById('homeSearchNoShowList').innerHTML = list;// 리스트 채움
+            }
+        })
     }
 
     document.getElementById("chkAgreeLabel").onclick = function(e){
@@ -606,6 +632,7 @@
         document.querySelector('body').style.background = "#f8f8f8";
         document.getElementById("homeSearchNoShowContents").focus();
 
+        requestAndShowRecentNoShow();
         gaTrackingPage('/search');
     };
 
@@ -618,7 +645,7 @@
         gaTrackingPage('/add');
     }
 
-    document.querySelectorAll('div[name="addNoShowDirect"]').forEach((el) => {
+    document.querySelectorAll('div[name="addNoShowDirect"]').forEach(function(el) {
         el.onclick = function(){
             setVisiblity('homeSearchArea', false);
             setVisiblity('homeAddNoShowArea', true);
@@ -637,13 +664,13 @@
         let str = document.getElementById('telInAddNoShow').value;
         let phone = ('' + str).replace(/\D/g, '');
         if(!phoneNumberValidation(phone)){
-            alert(`전화번호가 올바르지 않습니다.(${str})`);
+            alert('전화번호가 올바르지 않습니다.(' + str + ')');
             return false;
         }
         str = document.getElementById('dateInAddNoShow').value;
         let date = str.replace(/-/gi, '');
         if(!dateValidation(date)){
-            alert(`날짜가 올바르지 않습니다.(${str})`);
+            alert('날짜가 올바르지 않습니다.(' + str + ')');
             return false;
         }
 
@@ -676,7 +703,7 @@
 
         gaTrackingEvent('add_noshow');
 
-        sendAjax('/add', noShowToSend, (res) => {
+        sendAjax('/add', noShowToSend, function(res) {
             setVisiblity('contractArea', false);
             if(res.status){
                 setVisiblity('homeAddNoShowArea', true);
@@ -697,10 +724,10 @@
 
     document.getElementById("btnShare").onclick = function(e){
         let content = '노쇼와 블랙리스트공유, 똑똑한 예약관리를 한번에';
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
             content = '노쇼와 블랙리스트공유, 똑똑한 예약관리를 한번에 - WA:SHOW'
         }
-        const shareData = {
+        var shareData = {
             title: 'WA:SHOW',
             text: content,
             url: 'https://www.washow.co.kr',
@@ -727,7 +754,7 @@
 
 
 
-    document.getElementsByName("goBackBtn").forEach((btn)=>{
+    document.getElementsByName("goBackBtn").forEach(function(btn){
         btn.onclick = function(e){
             history.back();
         }
@@ -737,7 +764,7 @@
         location.href = "/index";
     }
 
-    addTelListener(document.getElementById("homeSearchNoShowContents"), ()=>{
+    addTelListener(document.getElementById("homeSearchNoShowContents"), function(){
         document.getElementById("homeSearchNoShowAction").click();
     });
     addTelListener(document.getElementById("telInAddNoShow"));
@@ -764,23 +791,23 @@
             alert("검색할 전화번호를 입력해주세요.");
             return;
         } else if (!phoneNumberValidation(searchContents)) {
-            alert(`전화번호가 올바르지 않습니다.(${searchContents})`);
+            alert('전화번호가 올바르지 않습니다.(' + searchContents + ')');
             return;
         }
 
         gaTrackingEvent('search_noshow');
 
-        function post(path, params, method='post') {
+        function post(path, params, method) {
 
             // The rest of this code assumes you are not using a library.
             // It can be made less wordy if you use one.
-            const form = document.createElement('form');
-            form.method = method;
+            var form = document.createElement('form');
+            form.method = method ? method : 'post';
             form.action = path;
 
-            for (const key in params) {
+            for (var key in params) {
                 if (params.hasOwnProperty(key)) {
-                    const hiddenField = document.createElement('input');
+                    var hiddenField = document.createElement('input');
                     hiddenField.type = 'hidden';
                     hiddenField.name = key;
                     hiddenField.value = params[key];
@@ -802,7 +829,7 @@
         if(deferredPrompt){
             deferredPrompt.prompt();
             gaTrackingEvent('install_app_try');
-            deferredPrompt.userChoice.then(choiceResult => {
+            deferredPrompt.userChoice.then(function(choiceResult) {
                 if (choiceResult.outcome === 'accepted') {
                     document.getElementById('homeSearchCloseTooltip').click();
                     gaTrackingEvent('install_app_yes');
@@ -814,7 +841,7 @@
         }
     }
 
-    window.addEventListener('beforeinstallprompt', e => {
+    window.addEventListener('beforeinstallprompt', function(e) {
         deferredPrompt = e;
         e.preventDefault();
         showInstallBanner();
@@ -842,7 +869,7 @@
     }
 
     function showInstallBanner() {
-        const isInStandaloneMode = ('standalone' in window.navigator && window.navigator.standalone) || (window.matchMedia('(display-mode: standalone)').matches);
+        var isInStandaloneMode = ('standalone' in window.navigator && window.navigator.standalone) || (window.matchMedia('(display-mode: standalone)').matches);
         if(isInStandaloneMode){
             document.querySelector("#homeSearchArea .page-bottom").classList.add('none');
             return;
@@ -869,6 +896,16 @@
             document.querySelector(".homeSearchAddToDesktop.ios").classList.remove('flex');
             document.querySelector(".homeSearchAddToDesktop.ios").classList.add('none');
         }
+    }
+
+    var addNoShowCountSummaryList = ['노쇼 번호를 등록해 노쇼 예방에 힘써주세요!', '노쇼 방지 지킴이가 되어볼까요? 번호 등록하기', '노쇼 블랙리스트를 만들어 모두에게 도움이 되어주세요!'];
+
+    if(${input.addNoShowCount} > 0){
+        document.getElementById("homeAddNoShowCountSummary").innerText = Math.random() % 2 === 0 ? '노쇼 ${input.addNoShowCount}건 등록으로 노쇼없는 세상에 기여하는 중!' : '${input.addNoShowCount}건 등록한 노쇼로 사장님들께 많은 도움이 되었어요!';
+    }else if(${input.visitCount} > 1){
+        document.getElementById("homeAddNoShowCountSummary").innerText = '벌써 ${input.visitCount}번 째 방문! 노쇼 방지 지킴이가 되어주세요!';
+    }else{
+        document.getElementById("homeAddNoShowCountSummary").innerText = addNoShowCountSummaryList[Math.floor(Math.random() * 3)];
     }
 
 </script>
