@@ -669,7 +669,7 @@ module.exports = function(passport) {
 
     render(res, homeView, {
       noShowCount: (isNaN(totalNoShowCount) ? 0 : totalNoShowCount) + 5000,
-      searchCount: 200 + Math.floor(Math.random() * (30 + 1)),
+      searchCount: 213 + Number(moment().format('DD')),
       visitCount: req.session.visit,
       addNoShowCount: req.session.addNoShow
     });
