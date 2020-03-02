@@ -633,6 +633,7 @@
 
     let requestAndShowRecentNoShow = function(){
         sendAjax('/getRecent', {}, function(res){
+            document.getElementById('homeSearchNoShowExists').classList.remove('none');
             if(res.status === true){
                 var list = '';
                 res.data.forEach(function(noShow){
@@ -885,6 +886,8 @@
         if(linkName === 'homePage'){
             resetAllInput();
             document.querySelector('body').style.background = "#334150";
+        }else if(linkName === 'homeSearchArea'){
+            requestAndShowRecentNoShow();
         }
         setVisiblity(linkName, true);
 
