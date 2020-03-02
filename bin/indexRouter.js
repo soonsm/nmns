@@ -667,9 +667,10 @@ module.exports = function(passport) {
 
     console.log(totalNoShowCount + 5000);
 
+    let day = Number(moment().format('DD'));
     render(res, homeView, {
       noShowCount: (isNaN(totalNoShowCount) ? 0 : totalNoShowCount) + 5000,
-      searchCount: 213 + Number(moment().format('DD')),
+      searchCount: 213 + day + (day * day) % 31,
       visitCount: req.session.visit,
       addNoShowCount: req.session.addNoShow
     });
